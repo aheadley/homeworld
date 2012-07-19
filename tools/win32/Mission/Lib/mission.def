@@ -1,0 +1,76 @@
+LIBRARY    mission
+DESCRIPTION "Mission editor & renderer library"
+EXPORTS
+; Mission editor
+	misSetFile=_misSetFile@8
+
+	misGetVal=_misGetVal@16
+	misGetListByKey=_misGetListByKey@20
+	misGetListBySection=_misGetListBySection@20
+
+	misPutVal=_misPutVal@16
+	misPutListByKey=_misPutListByKey@16
+
+	misOpen=_misOpen@8
+	misWriteAttrib=_misWriteAttrib@12
+	misWriteInfo=_misWriteInfo@8
+	misWriteNew=_misWriteNew@4
+	misWriteVal=_misWriteVal@12
+	misClose=_misClose@4
+
+	misShellExec=_misShellExec@4
+
+	misGetVer=_misGetVer@4
+	misGetHash=_misGetHash@4
+	misGetErr=_misGetErr@8
+
+; Renderer
+	rendInit=_rendInit@0
+	rendClean=_rendClean@0
+
+	rendAngCheck=_rendAngCheck@12
+	rendAngConv=_rendAngConv@20
+
+	rendNewObj=_rendNewObj@12
+	rendFindObj=_rendFindObj@8
+	rendDelObj=_rendDelObj@4
+	rendResetObj=_rendResetObj@4
+	rendSetObjLink=_rendSetObjLink@8
+	rendGetObjTrans=_rendGetObjTrans@16
+	rendGetObjScale=_rendGetObjScale@16
+	rendGetObjSize=_rendGetObjSize@16
+	rendGetObjRot=_rendGetObjRot@16
+	rendTransObj=_rendTransObj@16
+	rendScaleObj=_rendScaleObj@16
+	rendRotObj=_rendRotObj@16
+	rendGetObjMode=_rendGetObjMode@8
+	rendSetObjMode=_rendSetObjMode@8
+	rendSetObjCol=_rendSetObjCol@8
+
+	rendNewCont=_rendNewCont@12
+	rendDelCont=_rendDelCont@4
+	rendSetContDetail=_rendSetContDetail@8
+	rendSetContView=_rendSetContView@20
+	rendSetContScale=_rendSetContScale@8
+	rendSetContBand=_rendSetContBand@12
+	rendSetContGrid=_rendSetContGrid@12
+	rendSetContRot=_rendSetContRot@12
+	rendSetContCursor=_rendSetContCursor@12
+	rendSetContSel=_rendSetContSel@8
+	rendCheckContSel=_rendCheckContSel@12
+	rendCheckContCamera=_rendCheckContCamera@16
+	rendGetContCamera=_rendGetContCamera@12
+	rendSetContCamera=_rendSetContCamera@16
+	rendTransContCamera=_rendTransContCamera@12
+	rendScaleContCamera=_rendScaleContCamera@8
+	rendRotContCamera=_rendRotContCamera@12
+
+	rendUpdateCont=_rendUpdateCont@4
+	rendResizeCont=_rendResizeCont@4
+	rendPaintCont=_rendPaintCont@4
+
+	rendGetSel=_rendGetSel@12
+	rendSetSel=_rendSetSel@8
+	rendTransSel=_rendTransSel@12
+	rendScaleSel=_rendScaleSel@12
+	rendRotSel=_rendRotSel@16

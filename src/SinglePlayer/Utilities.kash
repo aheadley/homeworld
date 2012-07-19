@@ -1,0 +1,254 @@
+//      KAS Utility File
+
+#ifndef __UTILITIES_KASH
+#define __UTILITIES_KASH
+
+
+
+//=============================================================================
+//    Macro Definitions:
+//=============================================================================
+// General Utility Macros
+
+#define IntrudersWorthWhile(ships)          \
+        (ShipsSelectCapital(SHIPS_Capital, ships) ||                    \
+         (ShipsSelectClass(SHIPS_Corvettes, ships, "CLASS_Corvette") > Random(1,3)) ||    \
+         (ShipsSelectClass(SHIPS_Fighters, ships, "CLASS_Fighter") > Random(2,4)))
+
+// true if the Ships are strikecraft
+#define ShipsAreStrikeCraft(ships)                  \
+            (ShipsSelectClass(SHIPS_Fighters, ships, "CLASS_Fighter") ||    \
+             ShipsSelectClass(SHIPS_Corvette, ships, "CLASS_Corvette"))
+
+// move attacks an individual ship
+#define MoveAttackIndividual(individual, targets)                   \
+         ShipsSelectIndex(individual, targets, Random(0,ShipsCount(targets)));  \
+         MoveAttack(individual);
+
+// attacks an individual ship
+#define AttackIndividual(individual, targets)                   \
+         ShipsSelectIndex(individual, targets, Random(0,ShipsCount(targets)));  \
+         Attack(individual);
+
+//returns TRUE if ships have been rendered at LOD 4 or less
+#define ShipsRenderedUpTo4(ships)           \
+        (RenderedShips(ships, 4) || RenderedShips(ships, 3) || RenderedShips(ships, 2) || RendredShips(ships, 1) || RenderedShips(ships, 0))
+
+//returns TRUE if ships have been rendered at LOD 3 or less
+#define ShipsRenderedUpTo3(ships)           \
+        (RenderedShips(ships, 3) || RenderedShips(ships, 2) || RendredShips(ships, 1) || RenderedShips(ships, 0))
+
+//returns TRUE if ships have been rendered at LOD 2 or less
+#define ShipsRenderedUpTo2(ships)           \
+        (RenderedShips(ships, 2) || RendredShips(ships, 1) || RenderedShips(ships, 0))
+
+//returns TRUE if ships have been rendered at LOD 1 or less
+#define ShipsRenderedUpTo1(ships)           \
+        (RendredShips(ships, 1) || RenderedShips(ships, 0))
+
+// Increments a counter that gets set to min when it exceeds a certain number
+// i.e. if max is 3 and min is 1, the counter will go 1, 2, 3, 1, 2, 3 every
+//      time this macro is called.
+// count is the name of the variable (already created) that is this counter
+#define IncRevolvingCount(count, max, min)          \
+                    VarInc(count);                \
+                    IF (VarGet(count) > (max))    \
+                        VarSet(count, (min));     \
+                    ENDIF
+
+
+// Mission 13 specific definitions
+// Sets all the distance variables (between the test ships and the TeleportOutPoints)
+#define SetDistVars(point)              \
+                VarCreateSet("DistTo1", FindDistance(POINT_GATETeleportOutPoint1, point));   \
+                VarCreateSet("DistTo2", FindDistance(POINT_GATETeleportOutPoint2, point));   \
+                VarCreateSet("DistTo3", FindDistance(POINT_GATETeleportOutPoint3, point));   \
+                VarCreateSet("DistTo4", FindDistance(POINT_GATETeleportOutPoint4, point));   \
+                VarCreateSet("DistTo5", FindDistance(POINT_GATETeleportOutPoint5, point));   \
+                VarCreateSet("DistTo6", FindDistance(POINT_GATETeleportOutPoint6, point));   \
+                VarCreateSet("DistTo7", FindDistance(POINT_GATETeleportOutPoint7, point));   \
+                VarCreateSet("DistTo8", FindDistance(POINT_GATETeleportOutPoint8, point));
+
+// if the distance of "var" is smaller than the current minimum distance,
+// "var" becomes the minimum distance
+#define MinDist(var, varnum)                                \
+                IF (VarGet(var) < VarGet("MinDist"))      \
+                    VarSet("MinDist", VarGet(var));       \
+                    VarSet("Nearest2Enemy", (varnum));             \
+                ENDIF
+
+// Mission 16 specific definitions
+// Macros for the defender walls
+#define SetPost(post, value)             \
+                IF (VarGet(post) == 1)                          \
+                    VarSet("G_DefPost1", value);        \
+                ELSEIF (VarGet(post) == 2)                      \
+                    VarSet("G_DefPost2", value);        \
+                ELSEIF (VarGet(post) == 3)                      \
+                    VarSet("G_DefPost3", value);        \
+                ELSEIF (VarGet(post) == 4)                      \
+                    VarSet("G_DefPost4", value);        \
+                ELSEIF (VarGet(post) == 5)                      \
+                    VarSet("G_DefPost5", value);        \
+                ENDIF
+
+// should be in if statement
+#define EmptyPostLower(post)                                                                                    \
+                (((VarGet(post) == 2) && (!VarGet("G_DefPost1"))) ||                                                    \
+                 ((VarGet(post) == 3) && (!VarGet("G_DefPost1") || !VarGet("G_DefPost2"))) ||                           \
+                 ((VarGet(post) == 4) && (!VarGet("G_DefPost1") || !VarGet("G_DefPost2") || !VarGet("G_DefPost3"))) ||  \
+                 ((VarGet(post) == 5) && (!VarGet("G_DefPost1") || !VarGet("G_DefPost2") || !VarGet("G_DefPost3") || !VarGet("G_DefPost4"))))
+
+// should be in if statement
+#define EmptyPostHigher(post)                                                                                    \
+                (((VarGet(post) == 4) && (!VarGet("G_DefPost5"))) ||                                                    \
+                 ((VarGet(post) == 3) && (!VarGet("G_DefPost5") || !VarGet("G_DefPost4"))) ||                           \
+                 ((VarGet(post) == 2) && (!VarGet("G_DefPost5") || !VarGet("G_DefPost4") || !VarGet("G_DefPost3"))) ||  \
+                 ((VarGet(post) == 1) && (!VarGet("G_DefPost5") || !VarGet("G_DefPost4") || !VarGet("G_DefPost3") || !VarGet("G_DefPost2"))))
+
+// send a message to all other walls
+#define MsgToWalls(msg)                                     \
+                    MsgSend(TEAM_DefenderSquad1, msg);          \
+                    MsgSend(TEAM_DefenderSquad2, msg);          \
+                    MsgSend(TEAM_DefenderSquad3, msg);          \
+                    MsgSend(TEAM_DefenderSquad4, msg);          \
+                    MsgSend(TEAM_DefenderSquad5, msg);          \
+
+
+#define MsgToWallsDontIncludeMe(msg)                 \
+                IF (ThisTeamIs(TEAM_DefenderSquad1))            \
+                    MsgSend(TEAM_DefenderSquad2, msg);          \
+                    MsgSend(TEAM_DefenderSquad3, msg);          \
+                    MsgSend(TEAM_DefenderSquad4, msg);          \
+                    MsgSend(TEAM_DefenderSquad5, msg);          \
+                ELSEIF (ThisTeamIs(TEAM_DefenderSquad2))        \
+                    MsgSend(TEAM_DefenderSquad1, msg);          \
+                    MsgSend(TEAM_DefenderSquad3, msg);          \
+                    MsgSend(TEAM_DefenderSquad4, msg);          \
+                    MsgSend(TEAM_DefenderSquad5, msg);          \
+                ELSEIF (ThisTeamIs(TEAM_DefenderSquad3))        \
+                    MsgSend(TEAM_DefenderSquad1, msg);          \
+                    MsgSend(TEAM_DefenderSquad2, msg);          \
+                    MsgSend(TEAM_DefenderSquad4, msg);          \
+                    MsgSend(TEAM_DefenderSquad5, msg);          \
+                ELSEIF (ThisTeamIs(TEAM_DefenderSquad4))        \
+                    MsgSend(TEAM_DefenderSquad1, msg);          \
+                    MsgSend(TEAM_DefenderSquad2, msg);          \
+                    MsgSend(TEAM_DefenderSquad3, msg);          \
+                    MsgSend(TEAM_DefenderSquad5, msg);          \
+                ELSEIF (ThisTeamIs(TEAM_DefenderSquad5))        \
+                    MsgSend(TEAM_DefenderSquad1, msg);          \
+                    MsgSend(TEAM_DefenderSquad2, msg);          \
+                    MsgSend(TEAM_DefenderSquad3, msg);          \
+                    MsgSend(TEAM_DefenderSquad4, msg);          \
+                ENDIF
+
+#define MsgToAssault(msg)   \
+                MsgSend(TEAM_AssaultCruiser1, msg);              \
+                MsgSend(TEAM_AssaultTeamDestroyer1, msg);        \
+                MsgSend(TEAM_AssaultTeamIonCannon, msg);         \
+                MsgSend(TEAM_AssaultTeamFrigs, msg);             \
+                MsgSend(TEAM_AssaultTeamDestroyer2, msg);        \
+                MsgSend(TEAM_AssaultMissileDestroyer1, msg);           \
+                MsgSend(TEAM_AssaultMissileDestroyer2, msg);
+
+#define MsgToBattleGroup1(msg)      \
+                MsgSend(TEAM_BG1HeavyCruiser, msg);              \
+                MsgSend(TEAM_BG1Destroyer1, msg);        \
+                MsgSend(TEAM_BG1Destroyer2, msg);         \
+                MsgSend(TEAM_BG1Destroyer3, msg);             \
+                MsgSend(TEAM_BG1Frigates, msg);        \
+                MsgSend(TEAM_BG1IonFrigates, msg);
+
+#define MsgToBattleGroup2(msg)      \
+                MsgSend(TEAM_BG2HeavyCruiser, msg);         \
+                MsgSend(TEAM_BG2Frigates, msg);             \
+                MsgSend(TEAM_BG2IonFrigates, msg);
+
+#define MsgToEliteHarrass(msg)     \
+                MsgSend(TEAM_EliteHarrassCarrier, msg);         \
+                MsgSend(TEAM_EliteHarrassBombers, msg);         \
+                MsgSend(TEAM_EliteHarrassCorvettes, msg);       \
+                MsgSend(TEAM_EliteHarrassIonFrigs, msg);
+
+#define MsgToEliteGuard(msg)     \
+                MsgSend(TEAM_EliteGuardCarrier, msg);         \
+                MsgSend(TEAM_EliteGuardMGC, msg);         \
+                MsgSend(TEAM_EliteGuardAB, msg);
+
+#define MsgToHonourGuard(msg)     \
+                MsgSend(TEAM_HonourGuardHC1, msg);         \
+                MsgSend(TEAM_HonourGuardHC2, msg);         \
+                MsgSend(TEAM_HonourGuardHC3, msg);
+//                MsgSend(TEAM_HonourGuardDefenceFrig, msg);
+
+#define MsgToSuicideFighters(msg)       \
+                MsgSend(TEAM_SuicideFighters1, msg);        \
+                MsgSend(TEAM_SuicideFighters2, msg);        \
+                MsgSend(TEAM_SuicideFighters3, msg);        \
+                MsgSend(TEAM_SuicideFighters4, msg);
+
+#define MsgToAntiFighters(msg)       \
+                MsgSend(TEAM_AntiFighterMC1, msg);        \
+                MsgSend(TEAM_AntiFighterMC1, msg);        \
+                MsgSend(TEAM_AntiFighter1GW, msg);
+
+#define ThisTeamIsBattleGroup1()        \
+                ThisTeamIs(TEAM_BG1HeavyCruiser)    ||      \
+                ThisTeamIs(TEAM_BG1Destroyer1)      ||      \
+                ThisTeamIs(TEAM_BG1Destroyer2)      ||      \
+                ThisTeamIs(TEAM_BG1Destroyer3)      ||      \
+                ThisTeamIs(TEAM_BG1Frigates)        ||      \
+                ThisTeamIs(TEAM_BG1IonFrigates)
+
+#define ThisTeamIsBattleGroup2()        \
+                ThisTeamIs(TEAM_BG2HeavyCruiser)  ||       \
+                ThisTeamIs(TEAM_BG2Frigates)      ||      \
+                ThisTeamIs(TEAM_BG2IonFrigates)
+
+#define ThisTeamIsAssault()   \
+                ThisTeamIs(TEAM_AssaultCruiser1)         ||    \
+                ThisTeamIs(TEAM_AssaultTeamDestroyer1)   ||     \
+                ThisTeamIs(TEAM_AssaultTeamIonCannon)    ||     \
+                ThisTeamIs(TEAM_AssaultTeamFrigs)        ||     \
+                ThisTeamIs(TEAM_AssaultTeamDestroyer2)   ||     \
+                ThisTeamIs(TEAM_AssaultMissileDestroyer1)      ||     \
+                ThisTeamIs(TEAM_AssaultMissileDestroyer2)
+
+#define ThisTeamIsEliteHarrass()     \
+                ThisTeamIs(TEAM_EliteHarrassBombers) ||         \
+                ThisTeamIs(TEAM_EliteHarrassCorvettes) ||       \
+                ThisTeamIs(TEAM_EliteHarrassIonFrigs) ||         \
+                ThisTeamIs(TEAM_EliteHarrassCarrier)
+
+#define ThisTeamIsEliteGuard()     \
+                ThisTeamIs(TEAM_EliteGuardMGC) ||         \
+                ThisTeamIs(TEAM_EliteGuardAB) ||       \
+                ThisTeamIs(TEAM_EliteGuardCarrier)
+
+#define ThisTeamIsHonourGuard()     \
+                ThisTeamIs(TEAM_HonourGuardHC1) ||         \
+                ThisTeamIs(TEAM_HonourGuardHC2) ||         \
+                ThisTeamIs(TEAM_HonourGuardHC3)
+//                ThisTeamIs(TEAM_HonourGuardDefenceFrig)
+
+#define ThisTeamIsSuicideFighters()     \
+                ThisTeamIs(TEAM_SuicideFighters1) ||        \
+                ThisTeamIs(TEAM_SuicideFighters2) ||        \
+                ThisTeamIs(TEAM_SuicideFighters3) ||        \
+                ThisTeamIs(TEAM_SuicideFighters4)
+
+#define ThisTeamIsAntiFighter()     \
+                ThisTeamIs(TEAM_AntiFighterMC1) ||        \
+                ThisTeamIs(TEAM_AntiFighterMC2) ||        \
+                ThisTeamIs(TEAM_AntiFighter1GW)
+
+//=============================================================================
+//    Defector Macros
+//=============================================================================
+#define RemoveTraitors(ships)    \
+                ShipsRemove(ships, TEAMSHIPS_DefectorDestroyer);   \
+                ShipsRemove(ships, TEAMSHIPS_DefectorIonFrigs);
+
+//this is the last line
+#endif

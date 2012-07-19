@@ -1,0 +1,69 @@
+unsupported: problems, revert to default before calling techsupport
+
+general note about non-dependence of tweaks
+
+...
+
+OpenGL: controls availability of Default OpenGL renderer
+
+OpenGL, Win95 only: controls whether Default OpenGL is available under Windows 95 (ie. not Win98, NT4, or Win2000)
+
+Direct3D: controls availability of Direct3D as a renderer for the device
+
+Direct3D, Win95 only: dis/allows Direct3D for the device under Windows 95 only
+
+3dfx OpenGL: determines whether 3dfx OpenGL renderer will appear when the device is present in the system.  The logic here is that 3dfx OpenGL is redundant with a Voodoo Banshee or Voodoo 3, as Default OpenGL provides the same functionality.
+
+32bit modes: remove 32bit display modes from the listing.  Some 3D hardware reports that 32bit modes are available for rendering, when in fact they are not.
+
+OpenGL 32bit modes: remove 32bit display modes from the Default OpenGL listing only (does not affect Direct3D).
+
+OpenGL DirectDraw: if disabled, do not use DirectDraw for setting the display into fullscreen exclusive mode
+
+OpenGL double buffer actually double: some GLs actually triple buffer when double buffering is requested.  Disable this option if mouse trails are being left behind on front end screens.
+
+software DirectDraw: Currently only the Savage3D requires this to be disabled.  Windows DIBs are used for blitting backbuffers if DirectDraw is not used ... slower, sure, but not as slow as you'd think.
+
+fast front end:
+
+fast front end, OpenGL only:
+
+fast front end, Direct3D only:
+
+paletted textures:
+
+antialiasing:
+
+read textures from hardware:
+
+point smoothing:
+
+additive alpha:
+
+iterated alpha:
+
+DrawPixels:
+
+user clipping planes:
+
+dither while alpha blending:
+
+background colour:
+
+background colour, Direct3D only:
+
+don't nudge fonts in y:
+
+don't nudge fonts in x:
+
+unfiltered fonts:
+
+mode disabling doesn't affect software:
+
+mixed depth modes:
+
+small textures:
+
+...
+
+16bit 640x480, etc:

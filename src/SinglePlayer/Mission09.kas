@@ -1,0 +1,1135 @@
+//
+//  MISSION09 - Ghostship
+//
+//
+#include "..\\Game\\speechevent.h"
+#include "attributes.h"
+#include "..\\Game\\soundmusic.h"
+    LOCALIZATION //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+            LSTRING_Savegame
+                "09 - Sea of Lost Souls"
+                "09 - La Mer des Ames Perdues"
+                "09 - Meer der verlorenen Seelen"
+				"09 - Mar de las almas perdidas"
+				"09 - Il mare delle anime perdute"
+
+            LSTRING_LocationCard
+                "Deep Space - Sea of Lost Souls"
+                "Espace infini - La Mer des Ames Perdues"
+                "Tiefer Weltraum – Meer der verlorenen Seelen"
+				"Espacio profundo - Mar de las almas perdidas"
+				"Spazio profondo - Il mare delle anime perdute"
+
+            LSTRING_FleetIntelIntro
+                "Sensors detect a vessel here.  It doesn't match any of the profiles we have encountered.  Send in a team to investigate."
+                "Les instruments détectent un vaisseau à ces coordonnées. Aucune correspondance avec les profils rencontrés auparavant. Envoyez une équipe d'investigation."
+                "Die Sensoren haben hier ein Schiff entdeckt. Keines der uns bekannten Profile ist darauf anwendbar. Schicken Sie ein Team aus, um es zu untersuchen."
+                "Los sensores detectan una nave. No encaja con ninguno de los perfiles conocidos. Envíen un equipo de investigación."
+				"I sensori rilevano una nave, di origine sconosciuta. Invia una squadra per investigare."
+
+            LSTRING_Objective1
+                "Investigate Anomaly"
+                "Analyse de l'anomalie."
+                "Anomalie untersuchen."
+                "Investigar anomalía"
+				"Investiga l'anomalia"
+
+            LSTRING_Objective2
+                "Destroy Alien Vessel"
+                "Destruction vaisseau inconnu."
+                "Unbekanntes Schiff zerstören."
+                "Destruir nave desconocida"
+				"Distruggi l'astronave sconosciuta"
+
+            LSTRING_Objective3
+                "Salvage the Unknown Vessel"
+                "Récupération vaisseau inconnu."
+                "Untersuchen Sie das Geisterschiff."
+                "Salvar la nave desconocida"
+				"Salva l'astronave sconosciuta"
+
+            LSTRING_TraderIntro
+                "Welcome, traveller.  We have something you may be interested in."
+                "Bienvenue, voyageur. On a quelque chose qui pourrait t'intéresser."
+                "Willkommen, Reisender. Wir haben etwas, das euch interessieren könnte."
+                "Bienvenido, viajero. Tenemos algo que puede interesarte."
+				"Benvenuto, viaggiatore. Abbiamo qualcosa che potrebbe interessarti."
+
+            LSTRING_TraderPurchaseMade
+                "Thank you.  Enjoy your purchase."
+                "Merci. Profitez bien de votre acquisition."
+                "Besten Dank. Erfreut euch an eurem Kauf."
+                "Gracias. Que disfrutes de tu compra."
+				"Grazie. Speriamo che ti torni utile."
+
+            LSTRING_Hyperspace
+                "                HYPERSPACE"
+                "                HYPERESPACE"
+                "        HYPERRAUMSPRUNG"
+                "                    HIPERESPACIO"
+				"					IPERSPAZIO"
+    ENDL //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     Traders     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+FSM Traders
+    States Attack1, Attack2, Talking, TalkingMore, Trading, TalkMore, TalkAlot, BlahBlah, Utalk2Much, OuttaHere;
+
+    INIT
+      TraderGUIDisable (FALSE);
+      // Set these right away so the player never sees the wrong lines
+      TraderGUIDialogSet (0, LSTRING_TraderIntro);
+      TraderGUIDialogSet (1, LSTRING_TraderIntro);
+      TraderGUIDialogSet (2, LSTRING_TraderIntro);
+      TraderGUIDialogSet (3, LSTRING_TraderIntro);
+      TraderGUIDialogSet (4, LSTRING_TraderPurchaseMade);
+      TraderGUIDialogSet (5, LSTRING_TraderPurchaseMade);
+      TeamAttributesSet(ATTRIBUTES_Defector);
+      Jump Talking;
+    ENDINIT
+    WATCH
+      UnderAttack(SHIPS_FuckingStupid);
+      IF ((ShipsCount(SHIPS_FuckingStupid)>0) AND (VarGet("G_FuckingStupid")=FALSE))
+        VarCreateSet("G_FuckingStupid", TRUE);
+        TimerCreateSetStart("AttackTraders1Timer", 12);
+        JUMP Attack1;
+      ENDIF
+
+      IF (TeamHealthAverage()<40)
+        TeamHealthSet (100);
+      ENDIF
+    ENDWATCH
+
+
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+//Defensive States
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+    STATE Attack1
+        INIT
+        ENDINIT
+        WATCH
+          IF ((TimerExpiredDestroy("AttackTraders1Timer")) AND (UnderAttack(SHIPS_FuckingStupid)>0))
+            JUMP Attack2;
+          ELSEIF ((TimerExpiredDestroy("AttackTraders1Timer")) AND (UnderAttack(SHIPS_FuckingStupid)<1))
+            VarDestroy("G_FuckingStupid");
+            VarSet("G_AreTheyHere",1);
+            Jump Talking;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE Attack2
+        INIT
+          MsgSendAll("FuckingStupid");
+        ENDINIT
+        WATCH
+          FindEnemiesNearTeam(SHIPS_DeadPlayerShips, 1000000);
+          ShipsRemove(SHIPS_DeadPlayerShips, SHIPS_PlayerMothership);
+          IF (ShipsCount(SHIPS_DeadPlayerShips)>0)
+            Attack(SHIPS_DeadPlayerShips);
+          ELSEIF  (ShipsCount(SHIPS_DeadPlayerShips)<1)
+            JUMP OuttaHere;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE Talking //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+              SpeechEvent (M09_Traders_CouldNotApproach, 0);
+              //SubtitleSimulate(5, 6000, LSTRING_InfoExchange);
+            ENDINIT
+            WATCH
+              IF (IntelEventEnded())
+                Jump TalkingMore;
+              ENDIF
+            ENDWATCH
+        ENDSTATE Talking //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE TalkingMore //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+              SpeechEvent (M09_Traders_ExchangeInfo, 0);
+              //SubtitleSimulate(5, 6000, LSTRING_InfoExchange);
+            ENDINIT
+            WATCH
+              IF (IntelEventEnded())
+                Jump Trading;
+              ENDIF
+            ENDWATCH
+        ENDSTATE  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE Trading //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+              TraderGUIDisplay ();
+              TechSetCost("RepairTech", 0);
+              TechSetPurchase ("RepairTech");
+              TraderGUIDialogSet (0, LSTRING_TraderIntro);
+              TraderGUIDialogSet (1, LSTRING_TraderIntro);
+              TraderGUIDialogSet (2, LSTRING_TraderIntro);
+              TraderGUIDialogSet (3, LSTRING_TraderIntro);
+              TraderGUIDialogSet (4, LSTRING_TraderPurchaseMade);
+              TraderGUIDialogSet (5, LSTRING_TraderPurchaseMade);
+
+              TimerCreateSetStart ("WaitingForPurchase", 60);
+            ENDINIT
+            WATCH
+              IFONCE (((TimerExpiredDestroy ("WaitingForPurchase")) OR (TechGet ("RepairTech")))  AND (NOT TraderGUIIsDisplayed()=TRUE))
+                SpeechEvent (M09_Traders_InfoTransfered, 0);
+                TimerCreateSetStart ("WaitingToTalk", 6);
+              ENDIFONCE
+
+              IFONCE (TimerExpired("WaitingToTalk"))
+                Jump BlahBlah;
+              ENDIFONCE
+            ENDWATCH
+        ENDSTATE Trading //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE BlahBlah //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+              IF (RaceOfHuman () = 0)
+                SpeechEvent (M09_Fleet_HelpUsDefeatKushan, 0); // TAIIDAN
+              ELSEIF (RaceOfHuman () = 1)
+                SpeechEvent (M09_Fleet_HelpUsDefeatTaiidan, 0);  //KUSHAN
+              ENDIF
+            ENDINIT
+            WATCH
+              IF (IntelEventEnded())
+                Jump Utalk2Much;
+              ENDIF
+            ENDWATCH
+        ENDSTATE BlahBlah //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE Utalk2Much //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+              IF (RaceOfHuman () = 0)
+                SpeechEvent (M09_Traders_CouncilKushan, 0);  //KUSHAN
+              ELSEIF (RaceOfHuman () = 1)
+                SpeechEvent (M09_Traders_CouncilTaiidan, 0); // TAIIDAN
+              ENDIF
+            ENDINIT
+            WATCH
+              IF (IntelEventEnded())
+                Jump OuttaHere;
+              ENDIF
+            ENDWATCH
+        ENDSTATE Utalk2Much //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE OuttaHere //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+              MusicStop(4);
+              TeamHyperspaceOut();
+              MsgSendAll("SeeYa");
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE OuttaHere //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+ENDFSM Traders
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     BentusiTraders     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     Mission Flow    ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+FSM MissionFlow
+
+    States FirstWarning, RUCrazy, YoureMeat, BuildMissileDestroyer, BuildMissileDestroyer2, BuildMissileDestroyer3, WarpGrav, GhostIntro,
+           GhostTransIn, FIGhost2, NISletIng, NISletIng2, GhostOpenSensors, FIGhost, FIGhostPING, FIGhostPointer, FIGhostPointer2, GhostTransOut,
+           FIYoureStupidTransIn, YoureStupidOpenSensors, FIYoureStupid, FIYoureStupidPointer, YoureStupidTransOut,
+           FIDangerWillRobinson, FIDangerWillRobinson2, FIDangerWillRobinson3, FIControlField,
+           FIMajorFluctuations, FIFieldReleased, FIWeGetShips, FISendACrew, FIitsOld, AlmostDone, Done, ItsOver;
+
+    INIT
+      VarCreateSet("G_AreTheyHere", 0);
+      TimerCreateSetStart("StartTimer", 5);
+      //Jump GhostIntro;
+    ENDINIT
+
+    WATCH
+      IF ((VarGet("G_FuckingStupid")=TRUE) AND (VarGet("G_AreTheyHere")<2))
+        VarInc("G_AreTheyHere");
+        JUMP Done;
+      ENDIF
+
+      IF (TimerExpiredDestroy("StartTimer"))
+        Jump GhostIntro;
+      ENDIF
+    ENDWATCH
+
+    STATE GhostIntro   //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+            //'Hyperspace Successful' Intro Ingame event
+            SpeechEvent(M09_Fleet_AnomolyDetected, 0);
+            //TimerCreateSetStart ("FIGetOnWithItTimer", 4);
+        ENDINIT
+
+        WATCH
+            //IF (TimerExpiredDestroy ("FIGetOnWithItTimer"))
+            IF (IntelEventEnded ())
+              Jump GhostTransIn;
+            ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE GhostTransIn  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          wideScreenIn(90);
+          //Jump GhostOpenSensors;
+          TimerCreateSetStart ("GoIntoSM", 4);
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy ("GoIntoSM"))
+            Jump GhostOpenSensors;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE GhostOpenSensors //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+         INIT
+           TimerCreateSetStart ("FIOpenSensorsTimer", 1);
+         ENDINIT
+         WATCH
+           IF (TimerExpiredDestroy ("FIOpenSensorsTimer"))
+             OpenSensors (TRUE);
+             PauseUniverse();
+             Jump FIGhost;
+           ENDIF
+         ENDWATCH
+    ENDSTATE
+
+    STATE FIGhost  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+            SpeechEvent(M09_Intel_VesselDetected, 0);
+            //SubtitleSimulate(0, 5000, LSTRING_FIPingGS);
+            TimerCreateSetStart("FISeTimer", 1);
+        ENDINIT
+
+        WATCH
+            IF (TimerExpiredDestroy ("FISeTimer"))
+              Jump FIGhostPING;
+            ENDIF
+        ENDWATCH
+    ENDSTATE
+
+   STATE FIGhostPING //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          PingAddShips(TEAMSHIPS_GhostShip, "Ghostship");
+          TimerCreateSetStart ("FIGhostPINGTimer", 1);
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy ("FIGhostPINGTimer"))
+             Jump FIGhostPointer;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+   STATE FIGhostPointer //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          TutSetPointerTargetShip("GhostPOINTER", TEAMSHIPS_GhostShip);
+          TimerCreateSetStart ("FIGhostPINGTimer", 3);
+        ENDINIT
+        WATCH
+          IF (IntelEventEnded())
+            Jump FIGhost2;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+    STATE FIGhost2   //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+            SpeechEvent(M09_Intel_ShipsInactive, 0);
+            TimerCreateSetStart ("FIGhost2Timer", 1);
+        ENDINIT
+
+        WATCH
+            IF (TimerExpiredDestroy ("FIGhost2Timer"))
+              TutRemoveAllPointers ();
+              Jump FIGhostPointer2;
+            ENDIF
+        ENDWATCH
+    ENDSTATE
+
+   STATE FIGhostPointer2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          TutSetPointerTargetShip("FrigPOINTER", TEAMSHIPS_CapturedFrigates);
+          TutSetPointerTargetShip("ArrayPOINTER", TEAMSHIPS_CapturedIonArray);
+          TutSetPointerTargetShip("DestroyerPOINTER", TEAMSHIPS_CapturedMissileDestroyer);
+          ObjectiveCreate("InvestigateAnomoly", LSTRING_Objective1, LSTRING_FleetIntelIntro);
+        ENDINIT
+
+        WATCH
+          IF (IntelEventEnded())
+            Jump GhostTransOut;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+    STATE GhostTransOut      //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+            wideScreenOut(60);
+            TimerCreateSetStart("TimerTransOut", 1);
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy ("TimerTransOut"))
+             Jump AlmostDone;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE FIYoureStupidTransIn  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+            wideScreenIn(90);
+            Jump YoureStupidOpenSensors;
+        ENDINIT
+        WATCH
+        ENDWATCH
+    ENDSTATE
+
+    STATE YoureStupidOpenSensors //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+         INIT
+              TimerCreateSetStart ("FIYoureStupidOpenSensorsTimer", 1);
+         ENDINIT
+         WATCH
+             IF (TimerExpiredDestroy ("FIYoureStupidOpenSensorsTimer"))
+                OpenSensors (TRUE);
+                PauseUniverse();
+                Jump FIYoureStupid;
+             ENDIF
+         ENDWATCH
+    ENDSTATE
+
+    STATE FIYoureStupid  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+            SpeechEvent(M09_Intel_ControlField, 0);
+            //SubtitleSimulate(4, 5000, LSTRING_FIYoureStupid);
+            TimerCreateSetStart("FIYoureStupidSeTimer", 1);
+        ENDINIT
+        WATCH
+            IF (IntelEventEnded())
+              WideScreenOut(30);
+              JUMP  AlmostDone;
+            ENDIF
+            IF (TimerExpiredDestroy ("FIYoureStupidSeTimer"))
+              Jump FIYoureStupidPointer;
+            ENDIF
+        ENDWATCH
+    ENDSTATE
+
+   STATE FIYoureStupidPointer //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          TutSetPointerTargetAIVolume("GhostUsurpingRangePOINTER", VOLUME_GhostUsurpingRange);
+          TimerCreateSetStart ("FIYoureStupidPINGTimer", 4);
+        ENDINIT
+        WATCH
+          IF (IntelEventEnded())
+            WideScreenOut(30);
+            JUMP AlmostDone;
+          ENDIF
+          IF (TimerExpiredDestroy ("FIYoureStupidPINGTimer"))
+             Jump YoureStupidTransOut;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+   STATE YoureStupidTransOut      //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+            wideScreenOut(60);
+            TimerCreateSetStart("YoureStupidTimerTransOut", 1);
+        ENDINIT
+
+        WATCH
+          IF (TimerExpiredDestroy ("YoureStupidTimerTransOut"))
+             Jump AlmostDone;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+// Commented out by Erin on 07.30.99 - see new states below
+//  STATE FIDangerWillRobinson  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+//      INIT
+//        TutCameraFocus(TEAMSHIPS_GhostShip);
+//        TutCameraFocus(TEAMSHIPS_GhostShip);
+//        SpeechEvent (M09_Intel_NeutralizeVessel,0);
+//        ObjectiveCreate("DestroyUnknownVessel", LSTRING_Objective2, LSTRING_Objective2);
+//        ObjectiveSet("InvestigateAnomoly", TRUE);
+//      ENDINIT
+//      WATCH
+//        IF (IntelEventEnded())
+//          TutCameraFocusCancel();
+//          TutCameraFocusCancel();
+//          Jump Done;
+//        ENDIF
+//      ENDWATCH
+//  ENDSTATE
+
+
+        STATE FIDangerWillRobinson //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+              WideScreenIn (90);                              // Wide screen in over 3 seconds
+              TimerCreateSetStart ("AlienVesselWideScreen", 4);  // Then hold it for 1 more
+            ENDINIT
+            WATCH
+              IF (TimerExpiredDestroy ("AlienVesselWideScreen"))
+                SoundEvent(262);
+                TutCameraFocus (TEAMSHIPS_GhostShip);
+                TutCameraFocus (TEAMSHIPS_GhostShip);
+                Jump FIDangerWillRobinson2;
+              ENDIF
+            ENDWATCH
+        ENDSTATE FIDangerWillRobinson //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FIDangerWillRobinson2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+              SpeechEvent (M09_Intel_NeutralizeVessel,0);     //  Attention!  Those ships are operational.  We believe the control center is the alien vessel.  It should be neutralized.
+              IFONCE (TRUE)
+                ObjectiveCreate("DestroyUnknownVessel", LSTRING_Objective2, LSTRING_Objective2);
+                ObjectiveSet("InvestigateAnomoly", TRUE);
+              ENDIFONCE
+              TutResetGameMessageQueue();
+            ENDINIT
+            WATCH
+              IF (IntelEventEnded ())
+                Jump FIDangerWillRobinson3;
+              ENDIF
+
+              // if the player cancels focus before FI is done talking, remove the letterbox in 60 frames (2 seconds)
+              IF (TutGameSentMessage ("Game_BandBoxFocus,Game_ClickFocus,KB_CancelFocus,KB_Focus,KB_Sensors,TB_SensorsManager"))
+                IF (VarGet ("PlayerChangedFocus") = FALSE)
+                  WideScreenOut (60);
+                  VarCreateSet ("PlayerChangedFocus", TRUE);
+                 ENDIF
+              ENDIF
+            ENDWATCH
+        ENDSTATE FIDangerWillRobinson2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FIDangerWillRobinson3 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+              TimerCreateSetStart ("G_GoBackToPreviousFocus", 1);
+              TimerCreateSetStart ("G_StartUnLetterbox", 2);
+              TimerCreateSetStart ("G_WaitForLBXOutToFinish", 4);
+            ENDINIT
+            WATCH
+              IF (TimerExpiredDestroy ("G_GoBackToPreviousFocus"))
+                IF (VarGet ("PlayerChangedFocus") = FALSE)
+                  SoundEvent(262);
+                  TutCameraFocusCancel();
+                ENDIF
+              ENDIF
+
+              IF (TimerExpiredDestroy ("G_StartUnLetterbox"))
+                IF (VarGet ("PlayerChangedFocus") = FALSE)
+                  WideScreenOut (60);
+                  VarCreateSet ("PlayerChangedFocus", TRUE);
+                ENDIF
+              ENDIF
+
+              IF (TimerExpiredDestroy ("G_WaitForLBXOutToFinish"))
+                VarDestroy ("PlayerChangedFocus");
+                Jump Done;
+              ENDIF
+            ENDWATCH
+        ENDSTATE FIDangerWillRobinson3 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+    STATE FIControlField   //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          SpeechEvent (M09_Intel_LostControl,0);
+          //SubtitleSimulate(4, 5000, LSTRING_FIControlField);
+        ENDINIT
+
+        WATCH
+          IF (IntelEventEnded())
+            Jump Done;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE FIMajorFluctuations   //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          SpeechEvent (M09_Intel_MinimalEffect,0);
+        ENDINIT
+
+        WATCH
+          IFONCE (IntelEventEnded())
+            SpeechEvent (M09_Intel_DirectAllFire ,0);
+            TimerCreateSetStart("DirectTimer", 4);
+          ENDIFONCE
+
+          IF (TimerExpiredDestroy("DirectTimer"))
+            JUMP Done;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE FIFieldReleased  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          IF (VarGet("G_NumberOfUsurpedShips")<1)
+            //plays the 'no caps taken message'
+            //Print("Vessel Neutralized - No Ships Taken");
+            SpeechEvent (M09_Intel_VesselNeutralizedSHORTNEW ,0);
+          ELSE
+            //Print("Vessel Neutralized - Player Ships Taken");
+            //plays the 'crews have regained control message'
+            SpeechEvent (M09_Intel_VesselNeutralized ,0);
+          ENDIF
+          ObjectiveSet("DestroyUnknownVessel", TRUE);
+          PingRemove("Ghostship");
+        ENDINIT
+
+        WATCH
+          IF (IntelEventEnded())
+            JUMP FIWeGetShips;
+            //TimerCreateSetStart("ItsOldTimer", 2);
+            //SpeechEvent(M09_Intel_SalvageUnknownShip, 0);
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE FIWeGetShips  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          IF (VarGet("G_FuckVariable")=TRUE)
+             //Print("We have control of foreign vessels");
+             SpeechEvent (M09_Intel_SalvageShip ,0);
+           ELSE
+             JUMP FISendACrew;
+           ENDIF
+        ENDINIT
+
+        WATCH
+          IF (IntelEventEnded())
+            JUMP FISendACrew;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE FISendACrew  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+            //Print("Send a slaveg team");
+            SpeechEvent (M09_Intel_SendSalvageTeam ,0);
+            ObjectiveCreate("SalvageUnknownVessel", LSTRING_Objective3, LSTRING_Objective3);
+            TimerCreateSetStart("FuckTimer", 4);
+        ENDINIT
+
+        WATCH
+          IF (TimerExpiredDestroy("FuckTimer"))
+            JUMP Done;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE FIitsOld  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          SpeechEvent (M09_Intel_SalvageDocked ,0);
+          ObjectiveSet("SalvageUnknownVessel", TRUE);
+        ENDINIT
+
+        WATCH
+            IF (IntelEventEnded())
+            Jump WarpGrav;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE WarpGrav  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          SpeechEvent (M09_Intel_ResearchGravWell ,0);
+          VarCreateSet("G_LetmGrav", TRUE);
+          TimerCreateSetStart("FuckTimer", 6);
+        ENDINIT
+        WATCH
+          IF (IntelEventEnded())
+            Jump Done;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE NISletIng //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+      INIT
+        TimerCreateSetStart ("WideScreenInBeforeNISLet", 4);
+        //MusicPlay (NISlet01);
+        WideScreenIn(90);                                   //90 frames == 3 seconds
+      ENDINIT
+      WATCH
+        IFONCE (TimerExpiredDestroy ("WideScreenInBeforeNISLet"))
+          Jump NISletIng2;
+        ENDIFONCE
+      ENDWATCH
+    ENDSTATE NISletIng //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+    STATE NISletIng2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+      INIT
+        VarCreateSet ("G_PlayNislet", 60);
+      ENDINIT
+      WATCH
+        IFONCE (VarGet("G_Nislet60Complete")=TRUE)
+          FSMCREATE (Traders, TEAM_Traders);
+          //TutCameraFocus(TEAMSHIPS_Traders);
+          //TutCameraFocus(TEAMSHIPS_Traders);
+          Jump Done;
+        ENDIFONCE
+      ENDWATCH
+    ENDSTATE NISletIng2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+// Commented out by Erin on 07.30.99 - see new states below
+//  STATE BuildMissileDestroyer  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+//      INIT
+//        TutCameraFocus(SHIPS_PlayerMslDestroyer);
+//        TutCameraFocus(SHIPS_PlayerMslDestroyer);
+//        SpeechEvent (M09_Intel_ConstructMissleDestroyer ,0);
+//      ENDINIT
+//      WATCH
+//        IF (IntelEventEnded())
+//          TutCameraFocusCancel();
+//          TutCameraFocusCancel();
+//          Jump Done;
+//        ENDIF
+//      ENDWATCH
+//  ENDSTATE
+
+
+        STATE BuildMissileDestroyer //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+              WideScreenIn (90);                              // Wide screen in over 3 seconds
+              TimerCreateSetStart ("MissileDestroyerWideScreen", 4);  // Then hold it for 1 more
+            ENDINIT
+            WATCH
+              IF (TimerExpiredDestroy ("MissileDestroyerWideScreen"))
+                SoundEvent(262);
+                TutCameraFocus(SHIPS_PlayerMslDestroyer);
+                TutCameraFocus(SHIPS_PlayerMslDestroyer);
+                Jump BuildMissileDestroyer2;
+              ENDIF
+            ENDWATCH
+        ENDSTATE BuildMissileDestroyer //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE BuildMissileDestroyer2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+              SpeechEvent (M09_Intel_ConstructMissleDestroyer ,0);    //  After seizing the Missile Destroyer, construction reports we can now build a similar vessel.
+              TutResetGameMessageQueue();
+            ENDINIT
+            WATCH
+              IF (IntelEventEnded ())
+                Jump BuildMissileDestroyer3;
+              ENDIF
+
+              // if the player cancels focus before FI is done talking, remove the letterbox in 60 frames (2 seconds)
+              IF (TutGameSentMessage ("Game_BandBoxFocus,Game_ClickFocus,KB_CancelFocus,KB_Focus,KB_Sensors,TB_SensorsManager"))
+                IF (VarGet ("PlayerChangedFocus2") = FALSE)
+                  WideScreenOut (60);
+                  VarCreateSet ("PlayerChangedFocus2", TRUE);
+                ENDIF
+              ENDIF
+            ENDWATCH
+        ENDSTATE BuildMissileDestroyer2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE BuildMissileDestroyer3 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+              TimerCreateSetStart ("G_GoBackToPreviousFocus", 1);
+              TimerCreateSetStart ("G_StartUnLetterbox", 2);
+              TimerCreateSetStart ("G_WaitForLBXOutToFinish", 4);
+            ENDINIT
+            WATCH
+              IF (TimerExpiredDestroy ("G_GoBackToPreviousFocus"))
+                IF (VarGet ("PlayerChangedFocus2") = FALSE)
+                  SoundEvent(262);
+                  TutCameraFocusCancel();
+                ENDIF
+              ENDIF
+
+              IF (TimerExpiredDestroy ("G_StartUnLetterbox"))
+                IF (VarGet ("PlayerChangedFocus2") = FALSE)
+                  WideScreenOut (60);
+                  VarCreateSet ("PlayerChangedFocus2", TRUE);
+                ENDIF
+              ENDIF
+
+              IF (TimerExpiredDestroy ("G_WaitForLBXOutToFinish"))
+                VarDestroy ("PlayerChangedFocus2");
+                Jump Done;
+              ENDIF
+            ENDWATCH
+        ENDSTATE BuildMissileDestroyer3 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //   Don't Fuck With The Bentusi
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+    STATE FirstWarning
+        INIT
+          SpeechEvent(M04_Traders_StopAttackNow, 0);
+        ENDINIT
+
+        WATCH
+          IF (IntelEventEnded())
+            JUMP RUCrazy;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE RUCrazy
+        INIT
+          SpeechEvent(M04_Intel_CeaseFire, 0);
+        ENDINIT
+        WATCH
+          IF (IntelEventEnded())
+            JUMP Done;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE YoureMeat
+        INIT
+          SpeechEvent(M04_Traders_KickAss, 0);
+        ENDINIT
+        WATCH
+          IF (IntelEventEnded())
+            JUMP Done;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //   END Don't Fuck With The Bentusi
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+    STATE AlmostDone  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          TutRemoveAllPointers ();
+          UnpauseUniverse();
+          CloseSensors (TRUE);
+          Jump Done;
+        ENDINIT
+
+        WATCH
+        ENDWATCH
+    ENDSTATE
+
+    STATE Done  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          VarDestroy("G_CLICK_InvestigateAnomoly");
+          VarDestroy("G_CLICK_DestroyUnknownVessel");
+          VarDestroy("G_CLICK_SalvageUnknownVessel");
+        ENDINIT
+        WATCH
+          IFONCE (MsgReceived("WereAttacking"))
+            JUMP FIDangerWillRobinson;
+          ENDIFONCE
+
+          //First time GhostshipFSM catures player ship, make a jump to a state that plays intel 9.4
+          IFONCE (MsgReceived("FirstShipUsurped"))
+            JUMP FIControlField;
+          ENDIFONCE
+
+          //third time the player looses a ship play 9.5
+          IFONCE (VarGet("G_NumberOfUsurpedShips")>2)
+            //VarSet("G_NumberOfUsurpedShips", 0);
+            JUMP FIYoureStupidTransIn;
+          ENDIFONCE
+
+          // Build Missile Destroyer
+          IFONCE (VarGet("G_GiveMissileTech")=TRUE)
+            FindEnemyShipsOfType (SHIPS_PlayerMslDestroyer, "MissileDestroyer");
+            IF (ShipsCount(SHIPS_PlayerMslDestroyer)=1)
+              JUMP BuildMissileDestroyer;
+            ENDIF
+          ENDIFONCE
+
+          //after GS has taken 10% damage then it send a message to play 9.6
+          IFONCE (MsgReceived("10%Damagetaken"))
+            JUMP FIMajorFluctuations;
+          ENDIFONCE
+
+          //After GS has shut player gets 'Salvage derelect' Objective.
+          IFONCE (MsgReceived("20%Damagetaken"))
+            JUMP FIFieldReleased;
+          ENDIFONCE
+
+          IFONCE (TutGameSentMessage("Game_TechnologyReturned"))
+            JUMP FIitsOld;
+          ENDIFONCE
+
+          //After Player salvages GS, Traders Come down
+          IFONCE (TimerExpiredDestroy("FuckTimer"))
+            JUMP NISletIng;
+          ENDIFONCE
+
+          //First Bentusi Warning
+          IF ((VarGet("G_FuckingStupid")=TRUE) AND (VarGet("G_AreTheyHere")<2))
+            Jump FirstWarning;
+          ENDIF
+
+          //Second Bentusi Warning
+          IFONCE (MsgReceived("FuckingStupid"))
+            Jump YoureMeat;
+          ENDIFONCE
+
+          IFONCE (MsgReceived("SeeYa"))
+            JUMP ItsOver;
+          ENDIFONCE
+
+
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+// Check to see if user has re-initiated briefing.
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+          IF (VarGet("G_CLICK_InvestigateAnomoly"))
+            Jump GhostTransIn;
+          ENDIF
+
+          IF(VarGet("G_CLICK_DestroyUnknownVessel"))
+             Jump FIDangerWillRobinson;
+          ENDIF
+
+          IF (VarGet("G_CLICK_SalvageUnknownVessel"))
+           Jump FISendACrew;
+          ENDIF
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+// END Check to see if user has re-initiated briefing.
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        ENDWATCH
+    ENDSTATE Done
+
+    STATE ItsOver  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          SpeechEvent (M09_Intel_HyperspaceReady ,0);
+        ENDINIT
+        WATCH
+          IF (IntelEventEnded())
+            ObjectiveCreate("Hyperspace", LSTRING_Hyperspace, LSTRING_Hyperspace);
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+ENDFSM MissionFlow
+//----------------------     End Mission Flow     ----------------------
+
+
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     GhostShip     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+FSM GhostShip        //these states will control how ships are captured, controlled and added to the usurped FSM to attack the player
+    States Waiting, Transmution, Dormant;
+
+    INIT
+      ShipsSetNonRetaliation(ThisTeamShips);
+      VarCreateSet("G_ItsAlive",1);
+      VarCreateSet("G_NumberOfUsurpedShips",0);
+      TeamAttributesSet(1);
+      Jump Waiting;
+    ENDINIT
+    WATCH
+
+      IFONCE (TeamHealthAverage()<95)
+         MsgSendAll("10%Damagetaken");
+      ENDIFONCE
+
+      IF (TeamHealthAverage()<90)
+         MsgSendAll("20%Damagetaken");
+         JUMP Dormant;
+      ENDIF
+      IFONCE ((VarGet("G_NumberOfUsurpedShips")=1)  AND (NOT (VarGet("G_NoCaps")= TRUE)))
+        VarCreateSet("G_NoCaps", TRUE);
+        MsgSendAll("FirstShipUsurped");
+      ENDIFONCE
+    ENDWATCH
+
+       STATE Waiting //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+            ENDINIT
+            WATCH
+              FindEnemiesInside(VOLUME_GhostUsurpingRange, SHIPS_CouldbUsurped, 1000);
+              VarCreateSet ("CouldbUsurpedSHIPS", ShipsCount (SHIPS_CouldbUsurped));
+              ShipsSelectCapital (SHIPS_WillbUsurped, SHIPS_CouldbUsurped);
+              VarCreateSet ("WillbUsurpedSHIPS", ShipsCount (SHIPS_WillbUsurped));
+              IF (ShipsCount(SHIPS_WillbUsurped)>0)
+                 Jump Transmution;
+              ENDIF
+            ENDWATCH
+        ENDSTATE Waiting //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE Transmution //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+              VarInc("G_NumberOfUsurpedShips");
+              ShipsSwitchPlayerOwner(SHIPS_WillbUsurped);
+              ReinforceTeamWithShips(TEAM_UsurpTeam, SHIPS_WillbUsurped);
+              ShipsClear (SHIPS_WillbUsurped);
+              JUMP Waiting;
+            ENDINIT
+
+            WATCH
+            ENDWATCH
+        ENDSTATE Transmution //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE Dormant //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+              VarSet("G_ItsAlive",0);
+              //TimerCreateSetStart("GhostDontDie", 1200);
+            ENDINIT
+            WATCH
+              IF (TeamHealthAverage()<20)
+                 //VarSet("G_ItsAlive",1);
+                 TeamHealthSet (100);
+                 //Jump Waiting;
+              ENDIF
+            ENDWATCH
+        ENDSTATE Dormant //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+ENDFSM GhostShip
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     GhostShip     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     UsurpedShips     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+FSM UsurpedShips
+    States Waiting, Combatre, Dormant;
+
+    INIT
+      Jump Waiting;
+    ENDINIT
+    WATCH
+      IF (VarGet("G_ItsAlive")=0)
+        JUMP Dormant;
+      ENDIF
+    ENDWATCH
+
+        STATE Waiting //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+              TeamMakeCrazy(TRUE);
+            ENDINIT
+
+            WATCH
+              //TeamAttributesBitSet(ATTRIBUTES_SMColorInvisible);
+              FindEnemiesInside(VOLUME_GhostCombatRange, SHIPS_WillbAttacked, 1000);
+              IF (ShipsCount(SHIPS_WillbAttacked)>0)
+                ShipsClear(SHIPS_WillbAttacked);
+                Jump Combatre;
+              ENDIF
+            ENDWATCH
+        ENDSTATE Waiting //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        STATE Combatre //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+              IFONCE (TRUE)
+                TimerCreateSetStart("WellGetToYouSoon", 20);
+              ENDIFONCE
+              TeamMakeCrazy(FALSE);
+            ENDINIT
+
+            WATCH
+              //TeamAttributesBitSet(ATTRIBUTES_SMColorInvisible);
+              //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+              IFONCE (TimerExpiredDestroy("WellGetToYouSoon"))
+                MsgSendAll("WereAttacking");
+              ENDIFONCE
+              //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+              FindEnemiesInside(VOLUME_GhostCombatRange, SHIPS_WillbDestroyed, 1000);
+              IF (ShipsCount(SHIPS_WillbDestroyed)>0)
+                Attack(SHIPS_WillbDestroyed);
+              ELSEIF (ShipsCount(SHIPS_WillbDestroyed)<1)
+                Jump Waiting;
+              ENDIF
+            ENDWATCH
+        ENDSTATE Combatre //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        STATE Dormant //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+              IF ((ShipsCount(TEAMSHIPS_CapturedFrigates)>0) OR
+                (ShipsCount(TEAMSHIPS_CapturedIonArray)>0) OR
+                (ShipsCount(TEAMSHIPS_CapturedMissileDestroyer)>0) OR
+                (ShipsCount(TEAMSHIPS_CapturedMultiBeam)>0))
+                VarCreateSet("G_FuckVariable", TRUE);
+              ENDIF
+
+              IFONCE(ShipsCount(TEAMSHIPS_CapturedMissileDestroyer)>0)
+                TimerCreateSetStart("MissileTimer", 15);
+              ENDIFONCE
+              TeamAttributesBitSet(ATTRIBUTES_SMColorGreen);
+              TeamSwitchPlayerOwner();
+            ENDINIT
+            WATCH
+              IFONCE (TimerExpiredDestroy("MissileTimer"))
+                VarCreateSet("G_GiveMissileTech",TRUE);
+              ENDIFONCE
+              IF (VarGet("G_ItsAlive")=1)
+                JUMP Waiting;
+              ENDIF
+            ENDWATCH
+        ENDSTATE Dormant //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+ENDFSM UsurpedShips
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     UsurpedShips     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+
+
+
+//ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ     Global Stuff     ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
+INIT
+        FSMCreate(GhostShip, TEAM_GhostShip);
+        //FSMCreate(BentusiTraders, TEAM_BentusiTraders);
+        FSMCreate(MissionFlow, TEAM_DummyTeam);
+
+        FSMCreate(UsurpedShips, TEAM_CapturedFrigates);
+        FSMCreate(UsurpedShips, TEAM_CapturedIonArray);
+        FSMCreate(UsurpedShips, TEAM_CapturedMissileDestroyer);
+        FSMCreate(UsurpedShips, TEAM_CapturedMultiBeam);
+        FSMCreate(UsurpedShips, TEAM_UsurpTeam);
+
+        VarCreateSet ("G_GetOuttaHere", FALSE);
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        SaveLevel (9, LSTRING_Savegame);
+        LocationCard(5000, LSTRING_LocationCard);
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+ENDINIT
+
+WATCH
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      Ship Selection
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        ShipsClear(SHIPS_BadShips);
+        ShipsAdd(SHIPS_BadShips, TEAMSHIPS_CapturedFrigates);
+        ShipsAdd(SHIPS_BadShips, TEAMSHIPS_CapturedIonArray);
+        ShipsAdd(SHIPS_BadShips, TEAMSHIPS_CapturedMissileDestroyer);
+        ShipsAdd(SHIPS_BadShips, TEAMSHIPS_CapturedMultiBeam);
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      technology
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        IFONCE (VarGet("G_LetmGrav")=TRUE)
+          MsgSendAll("WeWarpGrav");
+          TechSetResearch("GravityWellGeneratorTech");
+        ENDIFONCE
+
+        IF (VarGet("G_GiveMissileTech")=TRUE)
+          TechSet("MissileWeapons");
+        ENDIF
+
+
+        // MISSION 02 Tech stuff:
+        // if player researches Corvette drive, allow Corvette chassis                  // (Build: Light Corvette)
+        IFONCE (TechGet ("MassDrive10Kt"))
+                TechSetResearch ("Chassis2");
+        ENDIFONCE
+
+        // if player researches Corvette chassis, allow Heavy Corvette upgrade            // (Build: Heavy Corvette)
+        IF ((TechGet ("Chassis2")) AND (VarGet ("SetMediumGuns") = FALSE))
+                TechSetResearch ("MediumGuns");
+                VarCreateSet ("SetMediumGuns", TRUE);
+        ENDIF
+
+        // MISSION 01 Tech stuff: //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        // if player researches Fighter chassis, allow Corvette Drive                   // (Build: Repair Corvette)
+        IFONCE (TechGet ("Chassis1"))
+                TechSetResearch ("MassDrive10Kt");
+        ENDIFONCE
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+ENDWATCH
+//ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ     Global Stuff     ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ

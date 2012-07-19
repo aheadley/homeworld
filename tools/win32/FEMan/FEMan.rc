@@ -1,0 +1,790 @@
+//Microsoft Developer Studio generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE DISCARDABLE
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE DISCARDABLE
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE DISCARDABLE
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "#ifdef _WIN32\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#endif\r\n"
+    "#include ""res\\FEMan.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#include ""afxprint.rc""       // printing/print preview resources\r\n"
+    "#endif\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON    DISCARDABLE     "res\\FEMan.ico"
+IDR_FEMANTYPE           ICON    DISCARDABLE     "res\\FEManDoc.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDR_MAINFRAME           BITMAP  MOVEABLE PURE   "res\\Toolbar.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+IDR_MAINFRAME TOOLBAR DISCARDABLE  16, 15
+BEGIN
+    BUTTON      ID_FILE_NEW
+    BUTTON      ID_FILE_OPEN
+    BUTTON      ID_FILE_SAVE
+    SEPARATOR
+    BUTTON      ID_EDIT_CUT
+    BUTTON      ID_EDIT_COPY
+    BUTTON      ID_EDIT_PASTE
+    SEPARATOR
+    BUTTON      ID_FILE_PRINT
+    BUTTON      ID_APP_ABOUT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAINFRAME MENU PRELOAD DISCARDABLE
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "&New\tCtrl+N",                ID_FILE_NEW
+        MENUITEM "&Open...\tCtrl+O",            ID_FILE_OPEN
+        MENUITEM "&Save\tCtrl+S",               ID_FILE_SAVE
+        MENUITEM "Save &As...",                 ID_FILE_SAVE_AS
+        MENUITEM "&Export\tCtrl+X",             ID_FILE_EXPORT
+        MENUITEM SEPARATOR
+        MENUITEM "&Print...\tCtrl+P",           ID_FILE_PRINT
+        MENUITEM "Print Pre&view",              ID_FILE_PRINT_PREVIEW
+        MENUITEM "P&rint Setup...",             ID_FILE_PRINT_SETUP
+        MENUITEM SEPARATOR
+        MENUITEM "Recent File",                 ID_FILE_MRU_FILE1, GRAYED
+        MENUITEM SEPARATOR
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&Edit"
+    BEGIN
+        MENUITEM "&Undo\tCtrl+Z",               ID_EDIT_UNDO
+        MENUITEM SEPARATOR
+        MENUITEM "Cu&t\tCtrl+X",                ID_EDIT_CUT
+        MENUITEM "&Copy\tCtrl+C",               ID_EDIT_COPY
+        MENUITEM "&Paste\tCtrl+V",              ID_EDIT_PASTE
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+        POPUP "&Language"
+        BEGIN
+            MENUITEM "&English\tCtrl+1",            ID_VIEW_LANGUAGE_ENGLISH
+            , CHECKED
+            MENUITEM "&French\tCtrl+2",             ID_VIEW_LANGUAGE_FRENCH
+            , CHECKED
+            MENUITEM "&German\tCtrl+3",             ID_VIEW_LANGUAGE_GERMAN
+            , CHECKED
+            MENUITEM "&Spanish\tCtrl+4",            ID_VIEW_LANGUAGE_PIGLATIN
+            , CHECKED
+            MENUITEM "&Italian\tCtrl+5",            ID_VIEW_LANGUAGE_SWAHILI
+            , CHECKED
+            MENUITEM "Sans&krit\tCtrl+6",           ID_VIEW_LANGUAGE_SANSKRIT
+            , CHECKED
+        END
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About FEMan...",             ID_APP_ABOUT
+    END
+    POPUP "O&ptions"
+    BEGIN
+        MENUITEM "Choose &Default Font",        ID_OPTIONS_CHOOSEDEFAULTFONT
+    END
+END
+
+IDR_FLOWTREEDEFAULT MENU DISCARDABLE
+BEGIN
+    POPUP "FTD"
+    BEGIN
+        POPUP "Ne&w"
+        BEGIN
+            MENUITEM "Scree&n",                     ID_FTD_NEW_SCREEN
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "&Cut",                        ID_FTD_CUT, GRAYED
+        MENUITEM "C&opy",                       ID_FTD_COPY, GRAYED
+        MENUITEM "&Paste",                      ID_FTD_PASTE, GRAYED
+        MENUITEM SEPARATOR
+        POPUP "Arrange &Screens"
+        BEGIN
+            MENUITEM "By &Name",                    ID_FTD_ARRANGESCREENS_BYNAME
+
+            MENUITEM "By &Type",                    ID_FTD_ARRANGESCREENS_BYTYPE
+
+            MENUITEM "By Si&ze",                    ID_FTD_ARRANGESCREENS_BYSIZE
+
+            MENUITEM "By &Date",                    ID_FTD_ARRANGESCREENS_BYDATE
+
+            MENUITEM SEPARATOR
+            MENUITEM "&Auto Arrange",               ID_FTD_ARRANGESCREENS_AUTOARRANGE
+
+        END
+        MENUITEM "Lin&e up Screens",            ID_FTD_LINEUPSCREENS
+    END
+END
+
+IDR_SCREENICON MENU DISCARDABLE
+BEGIN
+    POPUP "SI"
+    BEGIN
+        MENUITEM "&Properties",                 ID_SI_PROPERTIES
+        MENUITEM SEPARATOR
+        POPUP "&New"
+        BEGIN
+            MENUITEM "&ScreenLink",                 ID_SI_NEW_SCREENLINK
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "&Delete Selected Screen(s)",  ID_SI_DELETESCREEN
+    END
+END
+
+IDR_SCREENLINK MENU DISCARDABLE
+BEGIN
+    POPUP "SL"
+    BEGIN
+        MENUITEM "&Properties",                 ID_SL_PROPERTIES
+        MENUITEM SEPARATOR
+        MENUITEM "&Delete ScreenLink",          ID_SL_DELETESCREENLINK
+    END
+END
+
+IDR_SCREENEDITDEFAULT MENU DISCARDABLE
+BEGIN
+    POPUP "SED"
+    BEGIN
+        POPUP "&New"
+        BEGIN
+            MENUITEM "&Rectangle",                  ID_SED_NEW_RECTANGLE
+            MENUITEM "&Bitmap",                     ID_SED_NEW_BITMAP
+            MENUITEM "&Text String",                ID_SED_NEW_TEXTSTRING
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "&Paste",                      ID_SED_PASTE
+        MENUITEM SEPARATOR
+        MENUITEM "&Grid",                       ID_SED_GRID
+        MENUITEM "Grid &Options",               ID_SED_GRIDOPTIONS
+    END
+END
+
+IDR_SCREENOBJECTRECT MENU DISCARDABLE
+BEGIN
+    POPUP "SOR"
+    BEGIN
+        MENUITEM "P&roperties",                 ID_SOR_PROPERTIES
+        MENUITEM SEPARATOR
+        MENUITEM "&Bring To Front",             ID_SOR_BRINGTOFRONT
+        MENUITEM "&Send To Back",               ID_SOR_SENDTOBACK
+        MENUITEM SEPARATOR
+        MENUITEM "&Cut",                        ID_SOR_CUT
+        MENUITEM "C&opy",                       ID_SOR_COPY
+        MENUITEM SEPARATOR
+        MENUITEM "&Delete Selected Object(s)",  ID_SOR_DELETESELECTEDSCREENS
+    END
+END
+
+IDR_SCREENOBJECTBITMAP MENU DISCARDABLE
+BEGIN
+    POPUP "SOB"
+    BEGIN
+        MENUITEM "P&roperties",                 ID_SOB_PROPERTIES
+        MENUITEM SEPARATOR
+        MENUITEM "&Bring to Front",             ID_SOB_BRINGTOFRONT
+        MENUITEM "&Send to Back",               ID_SOB_SENDTOBACK
+        MENUITEM SEPARATOR
+        MENUITEM "&Cut",                        ID_SOB_CUT
+        MENUITEM "C&opy",                       ID_SOB_COPY
+        MENUITEM SEPARATOR
+        MENUITEM "&Delete Selected Object(s)",  ID_SOB_DELETE
+    END
+END
+
+IDR_SCREENOBJECTSTRING MENU DISCARDABLE
+BEGIN
+    POPUP "SOS"
+    BEGIN
+        MENUITEM "P&roperties",                 ID_SOS_PROPERTIES
+        MENUITEM SEPARATOR
+        MENUITEM "&Bring To Front",             ID_SOS_BRINGTOFRONT
+        MENUITEM "&Send To Back",               ID_SOS_SENDTOBACK
+        MENUITEM "Size to &Content",            ID_SOS_SIZETOCONTENT
+        MENUITEM SEPARATOR
+        MENUITEM "&Cut",                        ID_SOS_CUT
+        MENUITEM "C&opy",                       ID_SOS_COPY
+        MENUITEM SEPARATOR
+        MENUITEM "&Delete Selected Object(s)",  ID_SOS_DELETESELECTEDSCREENS
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_MAINFRAME ACCELERATORS PRELOAD MOVEABLE PURE
+BEGIN
+    "1",            ID_VIEW_LANGUAGE_ENGLISH, VIRTKEY, CONTROL, NOINVERT
+    "2",            ID_VIEW_LANGUAGE_FRENCH, VIRTKEY, CONTROL, NOINVERT
+    "3",            ID_VIEW_LANGUAGE_GERMAN, VIRTKEY, CONTROL, NOINVERT
+    "4",            ID_VIEW_LANGUAGE_PIGLATIN, VIRTKEY, CONTROL, NOINVERT
+    "5",            ID_VIEW_LANGUAGE_SWAHILI, VIRTKEY, CONTROL, NOINVERT
+    "6",            ID_VIEW_LANGUAGE_SANSKRIT, VIRTKEY, CONTROL, NOINVERT
+    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    "N",            ID_FILE_NEW,            VIRTKEY, CONTROL, NOINVERT
+    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
+    "P",            ID_FILE_PRINT,          VIRTKEY, CONTROL, NOINVERT
+    "S",            ID_FILE_SAVE,           VIRTKEY, CONTROL, NOINVERT
+    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL, NOINVERT
+    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT, NOINVERT
+    VK_DELETE,      ID_SOR_DELETESELECTEDSCREENS, VIRTKEY, NOINVERT
+    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT, NOINVERT
+    VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
+    VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
+    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT, NOINVERT
+    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL, NOINVERT
+    "X",            ID_FILE_EXPORT,         VIRTKEY, SHIFT, CONTROL,
+                                                    NOINVERT
+    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
+END
+
+IDR_FLOWTREE_ACCEL ACCELERATORS DISCARDABLE
+BEGIN
+    "1",            ID_VIEW_LANGUAGE_ENGLISH, VIRTKEY, CONTROL, NOINVERT
+    "2",            ID_VIEW_LANGUAGE_FRENCH, VIRTKEY, CONTROL, NOINVERT
+    "3",            ID_VIEW_LANGUAGE_GERMAN, VIRTKEY, CONTROL, NOINVERT
+    "4",            ID_VIEW_LANGUAGE_PIGLATIN, VIRTKEY, CONTROL, NOINVERT
+    "5",            ID_VIEW_LANGUAGE_SWAHILI, VIRTKEY, CONTROL, NOINVERT
+    "6",            ID_VIEW_LANGUAGE_SANSKRIT, VIRTKEY, CONTROL, NOINVERT
+    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
+    VK_DELETE,      ID_SI_DELETESCREEN,     VIRTKEY, NOINVERT
+    VK_RETURN,      ID_SI_PROPERTIES,       VIRTKEY, ALT, NOINVERT
+    "X",            ID_FILE_EXPORT,         VIRTKEY, SHIFT, CONTROL,
+                                                    NOINVERT
+END
+
+IDR_SCREENEDIT_ACCEL ACCELERATORS DISCARDABLE
+BEGIN
+    "1",            ID_VIEW_LANGUAGE_ENGLISH, VIRTKEY, CONTROL, NOINVERT
+    "2",            ID_VIEW_LANGUAGE_FRENCH, VIRTKEY, CONTROL, NOINVERT
+    "3",            ID_VIEW_LANGUAGE_GERMAN, VIRTKEY, CONTROL, NOINVERT
+    "4",            ID_VIEW_LANGUAGE_PIGLATIN, VIRTKEY, CONTROL, NOINVERT
+    "5",            ID_VIEW_LANGUAGE_SWAHILI, VIRTKEY, CONTROL, NOINVERT
+    "6",            ID_VIEW_LANGUAGE_SANSKRIT, VIRTKEY, CONTROL, NOINVERT
+    "C",            ID_SOB_COPY,            VIRTKEY, CONTROL, NOINVERT
+    "G",            ID_SED_GRID,            VIRTKEY, CONTROL, NOINVERT
+    "O",            ID_FILE_OPEN,           VIRTKEY, CONTROL, NOINVERT
+    "V",            ID_SED_PASTE,           VIRTKEY, CONTROL, NOINVERT
+    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT, NOINVERT
+    VK_DELETE,      ID_SOR_DELETESELECTEDSCREENS, VIRTKEY, NOINVERT
+    "X",            ID_SOB_CUT,             VIRTKEY, CONTROL, NOINVERT
+    "X",            ID_FILE_EXPORT,         VIRTKEY, SHIFT, CONTROL,
+                                                    NOINVERT
+    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOG DISCARDABLE  0, 0, 217, 55
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About FEMan"
+FONT 8, "MS Sans Serif"
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
+    LTEXT           "Front End Manager Version 2.0",IDC_STATIC,40,10,119,8,
+                    SS_NOPREFIX
+    LTEXT           "Copyright © 1997 Relic Entertainment Inc.",IDC_STATIC,
+                    40,23,129,8
+    DEFPUSHBUTTON   "OK",IDOK,178,7,32,14,WS_GROUP
+    LTEXT           "By Alex Garden et al.",IDC_STATIC,40,36,162,8
+END
+
+IDD_SCREENPROPERTIES DIALOG DISCARDABLE  0, 0, 178, 199
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Screen Properties"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_EDIT1,13,28,130,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT2,55,42,20,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT3,123,42,20,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT10,13,72,150,93,ES_MULTILINE | ES_AUTOVSCROLL |
+                    ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_HSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,65,178,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,121,178,50,14
+    LTEXT           "&Name of screen",IDC_STATIC,13,18,49,8
+    LTEXT           "Page Width:",IDC_STATIC,13,44,38,8
+    LTEXT           "Page Height:",IDC_STATIC,79,44,40,8
+    GROUPBOX        "User Defined Information:",IDC_STATIC,7,63,164,109
+    GROUPBOX        "Screen Information:",IDC_STATIC,7,7,164,54
+END
+
+IDD_SOR_PROPERITES DIALOG DISCARDABLE  0, 0, 216, 250
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Rectangle Properties"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Visible Border",IDC_CHECK1,"Button",BS_AUTOCHECKBOX |
+                    WS_TABSTOP,13,16,59,10
+    EDITTEXT        IDC_EDIT6,61,26,25,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT1,61,42,25,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT4,90,42,25,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT5,120,42,25,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Edit Border Color",IDC_BUTTON1,148,42,56,14
+    CONTROL         "Visible Content",IDC_CHECK2,"Button",BS_AUTOCHECKBOX |
+                    WS_TABSTOP,13,71,61,10
+    EDITTEXT        IDC_EDIT11,61,81,25,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT12,90,81,25,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT7,61,97,25,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT8,90,97,25,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT9,120,97,25,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Edit Content Color",IDC_BUTTON2,148,97,58,14
+    EDITTEXT        IDC_EDIT10,13,126,183,93,ES_MULTILINE | ES_AUTOVSCROLL |
+                    ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_HSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,96,229,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,159,229,50,14
+    GROUPBOX        "Border Information:",IDC_STATIC,7,7,202,53
+    LTEXT           "Border Colour:",IDC_STATIC,13,45,44,8
+    LTEXT           "Border Width:",IDC_STATIC,13,29,42,10
+    GROUPBOX        "Content Information:",IDC_STATIC,7,62,202,53
+    LTEXT           "Border Colour:",IDC_STATIC,13,100,44,8
+    GROUPBOX        "User Defined Information:",IDC_STATIC,7,117,202,109
+    LTEXT           "Content Width:",IDC_STATIC,13,84,44,8
+END
+
+IDD_SL_PROPERTIES DIALOG DISCARDABLE  0, 0, 178, 183
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Screen Link Properties"
+FONT 8, "MS Sans Serif"
+BEGIN
+    EDITTEXT        IDC_EDIT1,13,27,152,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT10,13,58,150,93,ES_MULTILINE | ES_AUTOVSCROLL |
+                    ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_HSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,66,162,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,121,162,50,14
+    LTEXT           "Screen Link Name:",IDC_STATIC,13,17,58,8
+    GROUPBOX        "User Defined Information:",IDC_STATIC,7,49,164,109
+    GROUPBOX        "Screen Link Information:",IDC_STATIC,7,7,164,40
+END
+
+IDD_SOB_PROPERITES DIALOG DISCARDABLE  0, 0, 178, 166
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Bitmap Properties"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Visible Content",IDC_CHECK1,"Button",BS_AUTOCHECKBOX |
+                    WS_TABSTOP,13,16,60,11
+    EDITTEXT        IDC_EDIT10,13,41,150,93,ES_MULTILINE | ES_AUTOVSCROLL |
+                    ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_HSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,7,145,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,63,145,50,14
+    GROUPBOX        "Content Information:",IDC_STATIC,7,7,164,23
+    GROUPBOX        "User Defined Information:",IDC_STATIC,7,32,164,109
+END
+
+IDD_SOS_PROPERITES DIALOG DISCARDABLE  0, 0, 249, 354
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION
+CAPTION "String Properties"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Auto Size to Content",IDC_CHECK1,"Button",
+                    BS_AUTOCHECKBOX | WS_TABSTOP,13,17,75,10
+    CONTROL         "Visible",IDC_RADIO1,"Button",BS_AUTORADIOBUTTON |
+                    WS_TABSTOP,41,28,38,10
+    EDITTEXT        IDC_EDIT1,61,38,27,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT4,92,38,27,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT5,121,38,31,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Edit Text Color",IDC_BUTTON3,180,38,56,14
+    EDITTEXT        IDC_EDIT6,61,56,28,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT7,92,56,27,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT8,121,56,31,14,ES_AUTOHSCROLL
+    PUSHBUTTON      "Edit Text Back",IDC_BUTTON2,180,56,56,14
+    CONTROL         "&Left",IDC_JUST_LEFT,"Button",BS_AUTORADIOBUTTON |
+                    WS_TABSTOP,49,83,28,10
+    EDITTEXT        IDC_EDIT13,13,112,107,28,ES_MULTILINE | ES_AUTOVSCROLL |
+                    ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_HSCROLL
+    EDITTEXT        IDC_EDIT14,125,112,107,28,ES_MULTILINE | ES_AUTOVSCROLL |
+                    ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_HSCROLL
+    EDITTEXT        IDC_EDIT15,14,158,107,28,ES_MULTILINE | ES_AUTOVSCROLL |
+                    ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_HSCROLL
+    EDITTEXT        IDC_EDIT16,126,158,107,28,ES_MULTILINE | ES_AUTOVSCROLL |
+                    ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_HSCROLL
+    EDITTEXT        IDC_EDIT17,14,204,107,28,ES_MULTILINE | ES_AUTOVSCROLL |
+                    ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_HSCROLL
+    EDITTEXT        IDC_EDIT18,126,204,107,28,ES_MULTILINE | ES_AUTOVSCROLL |
+                    ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_HSCROLL
+    EDITTEXT        IDC_EDIT10,13,250,222,73,ES_MULTILINE | ES_AUTOVSCROLL |
+                    ES_AUTOHSCROLL | ES_WANTRETURN | WS_VSCROLL | WS_HSCROLL
+    PUSHBUTTON      "Choose Font",IDC_BUTTON1,7,333,50,14
+    DEFPUSHBUTTON   "OK",IDOK,138,333,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,192,333,50,14
+    LTEXT           "Content:",IDC_STATIC,13,29,25,8
+    CONTROL         "Masked",IDC_RADIO2,"Button",BS_AUTORADIOBUTTON,81,28,42,
+                    10
+    CONTROL         "None",IDC_RADIO3,"Button",BS_AUTORADIOBUTTON,125,28,46,
+                    10
+    GROUPBOX        "User Defined Information:",IDC_STATIC,7,239,235,89
+    GROUPBOX        "Content Information:",IDC_STATIC,7,7,235,232
+    LTEXT           "Text Colour:",IDC_STATIC,13,41,44,8
+    LTEXT           "Text Back:",IDC_STATIC,13,59,44,8
+    LTEXT           "Text Language 0 (English):",IDC_STATIC,13,100,106,8
+    LTEXT           "Text Language 1 (French):",IDC_STATIC,125,100,106,8
+    LTEXT           "Text Language 2 (German):",IDC_STATIC,14,147,106,8
+    LTEXT           "Text Language 3 (Spanish):",IDC_STATIC,126,147,106,8
+    LTEXT           "Text Language 4 (Italian):",IDC_STATIC,14,192,106,8
+    LTEXT           "Text Language 5 (Sanskrit):",IDC_STATIC,126,192,106,8
+    LTEXT           "Justification:",IDC_STATIC,18,75,40,8
+    LTEXT           "| <--",IDC_STATIC,66,75,12,8
+    LTEXT           "--> | <--",IDC_STATIC,89,75,22,8
+    LTEXT           "--> |",IDC_STATIC,124,75,12,8
+    CONTROL         "&Centre",IDC_JUST_CENTRE,"Button",BS_AUTORADIOBUTTON,83,
+                    83,37,10
+    CONTROL         "&Right",IDC_JUST_RIGHT,"Button",BS_AUTORADIOBUTTON,121,
+                    83,33,10
+END
+
+IDD_GRIDOPTIONS DIALOG DISCARDABLE  0, 0, 187, 51
+STYLE DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Dialog"
+FONT 8, "MS Sans Serif"
+BEGIN
+    CONTROL         "Active Grid",IDC_CHECK2,"Button",BS_AUTOCHECKBOX |
+                    WS_TABSTOP,7,7,49,10
+    CONTROL         "Visible Grid",IDC_CHECK1,"Button",BS_AUTOCHECKBOX |
+                    WS_TABSTOP,7,19,51,10
+    EDITTEXT        IDC_EDIT1,76,28,26,14,ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "OK",IDOK,130,7,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,130,24,50,14
+    LTEXT           "Grid Spacing in Pixels:",IDC_STATIC,7,31,68,8
+END
+
+
+#ifndef _MAC
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "Comments", "First really useful version of the FEMan\0"
+            VALUE "CompanyName", "Relic Entertainment Inc.\0"
+            VALUE "FileDescription", "FEMAN MFC Application\0"
+            VALUE "FileVersion", "2, 0, 0, 1\0"
+            VALUE "InternalName", "FEMAN\0"
+            VALUE "LegalCopyright", "Copyright © 1997\0"
+            VALUE "OriginalFilename", "FEMAN.EXE\0"
+            VALUE "ProductName", "FEMAN Application\0"
+            VALUE "ProductVersion", "1, 0, 0, 1\0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+#endif    // !_MAC
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO DISCARDABLE
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 210
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+
+    IDD_SCREENPROPERTIES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 171
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 192
+    END
+
+    IDD_SOR_PROPERITES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 209
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 243
+    END
+
+    IDD_SL_PROPERTIES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 171
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 176
+    END
+
+    IDD_SOB_PROPERITES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 171
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 159
+    END
+
+    IDD_SOS_PROPERITES, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 242
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 347
+    END
+
+    IDD_GRIDOPTIONS, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 180
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 44
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE PRELOAD DISCARDABLE
+BEGIN
+    IDR_MAINFRAME           "FEMan\n\nFEMan\nFEMan Files (*.fem)\n.FEM\nFEMan.Document\nFEMan Document"
+END
+
+STRINGTABLE PRELOAD DISCARDABLE
+BEGIN
+    AFX_IDS_APP_TITLE       "FEMan"
+    AFX_IDS_IDLEMESSAGE     "Ready"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+    ID_INDICATOR_EXT        "EXT"
+    ID_INDICATOR_CAPS       "CAP"
+    ID_INDICATOR_NUM        "NUM"
+    ID_INDICATOR_SCRL       "SCRL"
+    ID_INDICATOR_OVR        "OVR"
+    ID_INDICATOR_REC        "REC"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+    ID_FILE_NEW             "Create a new document\nNew"
+    ID_FILE_OPEN            "Open an existing document\nOpen"
+    ID_FILE_CLOSE           "Close the active document\nClose"
+    ID_FILE_SAVE            "Save the active document\nSave"
+    ID_FILE_SAVE_AS         "Save the active document with a new name\nSave As"
+    ID_FILE_PAGE_SETUP      "Change the printing options\nPage Setup"
+    ID_FILE_PRINT_SETUP     "Change the printer and printing options\nPrint Setup"
+    ID_FILE_PRINT           "Print the active document\nPrint"
+    ID_FILE_PRINT_PREVIEW   "Display full pages\nPrint Preview"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+    ID_APP_ABOUT            "Display program information, version number and copyright\nAbout"
+    ID_APP_EXIT             "Quit the application; prompts to save documents\nExit"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+    ID_FILE_MRU_FILE1       "Open this document"
+    ID_FILE_MRU_FILE2       "Open this document"
+    ID_FILE_MRU_FILE3       "Open this document"
+    ID_FILE_MRU_FILE4       "Open this document"
+    ID_FILE_MRU_FILE5       "Open this document"
+    ID_FILE_MRU_FILE6       "Open this document"
+    ID_FILE_MRU_FILE7       "Open this document"
+    ID_FILE_MRU_FILE8       "Open this document"
+    ID_FILE_MRU_FILE9       "Open this document"
+    ID_FILE_MRU_FILE10      "Open this document"
+    ID_FILE_MRU_FILE11      "Open this document"
+    ID_FILE_MRU_FILE12      "Open this document"
+    ID_FILE_MRU_FILE13      "Open this document"
+    ID_FILE_MRU_FILE14      "Open this document"
+    ID_FILE_MRU_FILE15      "Open this document"
+    ID_FILE_MRU_FILE16      "Open this document"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+    ID_NEXT_PANE            "Switch to the next window pane\nNext Pane"
+    ID_PREV_PANE            "Switch back to the previous window pane\nPrevious Pane"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+    ID_WINDOW_SPLIT         "Split the active window into panes\nSplit"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+    ID_EDIT_CLEAR           "Erase the selection\nErase"
+    ID_EDIT_CLEAR_ALL       "Erase everything\nErase All"
+    ID_EDIT_COPY            "Copy the selection and put it on the Clipboard\nCopy"
+    ID_EDIT_CUT             "Cut the selection and put it on the Clipboard\nCut"
+    ID_EDIT_FIND            "Find the specified text\nFind"
+    ID_EDIT_PASTE           "Insert Clipboard contents\nPaste"
+    ID_EDIT_REPEAT          "Repeat the last action\nRepeat"
+    ID_EDIT_REPLACE         "Replace specific text with different text\nReplace"
+    ID_EDIT_SELECT_ALL      "Select the entire document\nSelect All"
+    ID_EDIT_UNDO            "Undo the last action\nUndo"
+    ID_EDIT_REDO            "Redo the previously undone action\nRedo"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+    ID_VIEW_TOOLBAR         "Show or hide the toolbar\nToggle ToolBar"
+    ID_VIEW_STATUS_BAR      "Show or hide the status bar\nToggle StatusBar"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+    AFX_IDS_SCSIZE          "Change the window size"
+    AFX_IDS_SCMOVE          "Change the window position"
+    AFX_IDS_SCMINIMIZE      "Reduce the window to an icon"
+    AFX_IDS_SCMAXIMIZE      "Enlarge the window to full size"
+    AFX_IDS_SCNEXTWINDOW    "Switch to the next document window"
+    AFX_IDS_SCPREVWINDOW    "Switch to the previous document window"
+    AFX_IDS_SCCLOSE         "Close the active window and prompts to save the documents"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+    AFX_IDS_SCRESTORE       "Restore the window to normal size"
+    AFX_IDS_SCTASKLIST      "Activate Task List"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+    AFX_IDS_PREVIEW_CLOSE   "Close print preview mode\nCancel Preview"
+END
+
+STRINGTABLE DISCARDABLE
+BEGIN
+    ID_FILE_EXPORT          "Export the file to a game-specific format\tExport"
+END
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#endif
+#include "res\FEMan.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#include "afxprint.rc"       // printing/print preview resources
+#endif
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

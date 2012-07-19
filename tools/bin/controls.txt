@@ -1,0 +1,16 @@
+rotateLatitude = rightX
+rotateLongitude = rightY
+zoom = leftRightY
+zoomInMult = .95
+zoomOutMult = 1.05
+panMultX = 0.03
+panMultY = 0.03
+degreeMultX = 0.5
+degreeMultY = 0.5
+selectX = leftX
+selectY = leftY
+motherShipLength = 2.0
+motherShipWidth = 1.0
+motherShipHeight = 1.0
+clipNearDistance = 0.1
+FOV = 90.0

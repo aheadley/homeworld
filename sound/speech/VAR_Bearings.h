@@ -1,0 +1,27 @@
+/* VAR_Numbers */
+#define		000			0
+#define		015			1
+#define		030			2
+#define		045			3
+#define		060			4
+#define		075			5
+#define		090			6
+#define		105			7
+#define		120			8
+#define		135			9
+#define		150			10
+#define		165			11
+#define		180			12
+#define		195			13
+#define		210			14
+#define		225			15
+#define		240			16
+#define		255			17
+#define		270			18
+#define		285			19
+#define		300			20
+#define		315			21
+#define		330			22
+#define		345			23
+#define		360			24
+

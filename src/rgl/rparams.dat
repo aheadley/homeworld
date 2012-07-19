@@ -1,0 +1,11 @@
+[drivers]
+;dll name features aliases
+;features:
+;       a(fast alpha)
+;       b(fast blend)
+;       l(lit palettes)
+dll sw a b L software_kgl
+dll fx A B l accel_3dfx_glide_glide2_glide2x
+dll d3d A B l d3d_direct3d_directaxe_ms
+default sw
+

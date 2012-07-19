@@ -1,0 +1,5 @@
+SCC = This is a Source Code Control file
+
+[MissionMan.vbp]
+SCC_Aux_Path = "\\codex\Homeworld\SS"
+SCC_Project_Name = "$/tools/win32/Mission/Man", QBSAAAAA

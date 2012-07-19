@@ -1,0 +1,2269 @@
+//
+// MISSION 04 : Primary   Begin collection of resources
+//            : Primary   Destroy all Turanic Raider ships
+//            : Secondary Build a resource controller
+//            : Secondary Assess enemy fleet
+//            : Secondary Build an Assualt Frigate for use against Turanic Raider Mothership
+//
+#include "..\\Game\\speechevent.h"
+#include "..\\Game\\soundmusic.h"
+#include "attributes.h"
+    LOCALIZATION
+
+        LSTRING_LocationCard
+            "Great Wastelands"
+            "Macro-déserts"
+            "Große Einöde"
+            "Grandes páramos"
+			"Le lande desolate"
+
+        LSTRING_PrimaryObjective01
+            "Begin collection of resources."
+            "Démarrage collecte des ressources."
+            "Mit der Sammlung von Rohstoffen beginnen."
+            "Comenzar recolección de recursos."
+			"Inizia la raccolta delle risorse."
+
+        LSTRING_PrimaryObjective02
+            "Destroy all Turanic Raider ships"
+            "Destruction totalité des Vaisseaux du Maraudeur Turanique"
+             "Alle Schiffe der turanischen Freibeuter sind zu zerstören."
+            "Destruir todas las naves de asalto turánicas"
+			"Distruggi tutte le astronavi Raider dei Turanic"
+
+        LSTRING_SecondaryObjective01
+            "Build and Deploy Resource Controller"
+            "Construction et mise en place du Contrôleur des Ressources"
+            "Rohstoffüberwachungsschiff bauen und einsetzen."
+            "Construir y desarrollar controlador de recursos"
+			"Costruisci e posiziona un Controllore di Risorse."
+
+        LSTRING_FISetupCollection
+            "Set up a collection operation."
+            "Mise en oeuvre opération de collecte."
+            "Sammelaktion einleiten."
+            "Establecer operación de recolección."
+			"Prepara un'operazione di raccolta."
+
+        LSTRING_FIResourceControllerTip
+            "Move your resource controller as close to heavy resource areas as possible.  This will reduce your resource collectors dropoff time and increase your resource collection efficiency."
+            "Approchez le plus possible votre Contrôleur des Ressources des gisements importants de ressources. Ceci réduira la durée de déchargement pour le Collecteur de Ressources et améliorera l'efficacité de la collecte."
+            "Bringen Sie Ihr Rohstoffüberwachungsschiff so dicht wie möglich an ergiebige Rohstoffbereiche heran. Das verringert die Transportzeit der Rohstoffernteschiffe und erhöht die Effizienz der Rohstoffernte."
+            "Acerca el controlador de recursos a las zonas con abundancia de recursos tanto como puedas. Esto reduce el tiempo de descarga de los recolectores de recursos y aumenta la eficacia de la recolección."
+			"Sposta il Collettore di Risorse il più vicino possibile alle zone più ricche di risorse. In questo modo, ridurrai al minimo i tempi morti della raccolta, ottimizzandone la produzione."
+
+        LSTRING_TraderIntro
+            "Welcome."
+            "Bienvenue."
+            "Willkommen."
+            "Bienvenido."
+			"Benvenuto."
+
+        LSTRING_TraderPurchaseMade
+            "Thank you.  Enjoy your purchase."
+            "Merci. Profitez bien de votre acquisition."
+            "Besten Dank. Erfreut euch an eurem Kauf."
+            "Gracias. Que disfrutes de tu compra."
+			"Grazie. Speriamo che il tuo acquisto ti torni utile."
+
+        LSTRING_Savegame
+            "04 - Great Wastelands"
+            "04 - Macro-déserts"
+            "04 - Große Einöde"
+            "04 - Grandes páramos"
+			"04 - Le lande desolate"
+
+        LSTRING_Objective1
+            "Protect The Fleet"
+            "Protection de la Flotte"
+            "Die Flotte schützen."
+            "Proteger la flota"
+			"Progetta la flotta"
+
+        LSTRING_GoodBusiness
+            "When you have collected enough resources we have a piece of technology that we would be willing to sell you."
+            "Nous possédons une avancée technologique que nous serions prêts à vous vendre lorsque vous aurez réuni assez de ressources."
+            "Wenn ihr genügend Rohstoffe gesammelt habt, haben wir eine Technologie, die wir euch verkaufen würden"
+            "Cuando hayas recolectado suficientes recursos, tenemos cierta tecnología que estamos dispuestos a venderte."
+			"Quando avrai raccolto risorse sufficienti, vieni da noi: abbiamo qualcosa che crediamo ti potrà tornare davvero utile."
+
+        LSTRING_IonFrigs
+            "Several Turanic Raider capital ships have just hyperspaced in close to the Mothership.  They pose by far the greatest threat yet faced.  Protecting the Mothership is the highest priority."
+            "Plusieurs Unités lourdes du Maraudeur Turanique viennent de sortir de l'hyperespace près du Vaisseau Mère. C'est de loin la menace la plus sérieuse qui se soit présentée jusqu'à présent. Priorité absolue : Protection du Vaisseau Mère."
+            "Mehrere Schlachtschiffe der turanischen Freibeuter sind gerade in der Nähe des Mutterschiffs aus dem Hyperraum gekommen. Sie stellen mit Abstand die größte Gefahr dar, der wir uns je gegenüber sahen. Der Schutz des Mutterschiffs hat oberste Priorität."
+            "Varias Naves capital turánicas de asalto acaban de salir del hiperespacio cerca de la Nave nodriza. Representan el mayor peligro al que nos hemos enfrentado. Nuestra prioridad es la de proteger a la Nave nodriza."
+			"Molte navi Incursori dei Turanic sono appena emerse dall'Iperspazio e si stanno dirigendo verso l'Astronave Madre. Siamo di fronte a una minaccia senza precedenti, è assolutamente necessario difendere l'Astronave Madre."
+
+        LSTRING_TBHyperspace
+            "                HYPERSPACE"
+            "                HYPERESPACE"
+            "        HYPERRAUMSPRUNG"
+            "              HIPERESPACIO"
+			"				IPERSPAZIO"
+
+        LSTRING_FIGoGetThem
+            "Destroy Retreating Turanic Raider Carrier"
+            "Destruction du transporteur fuyard du Maraudeur Turanique"
+            "Trägerschiffe der zurückweichenden turanischen Freibeuter zerstören."
+            "Destruir el portanaves de asalto turánico que se retira"
+			"Distruggi l'astronave Porta-Incursori dei Turanic in ritirata."
+
+    ENDL
+
+
+//----------------------      Trader Arrival     ----------------------
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+//      Trader Arrival
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+FSM Traders
+    STATES Wait, Attack1, Attack2, Done, AlmostDone, TradersHyperspaceIn, BentusiFleetIntelIN, BentusiFIOpenSensors, BentusiFIpointer,  TradersFCFeelie, TraderNIS, TimeToTrade, TipClickToTrade,  TaiidanAgentsArrive, TradersLeave;
+
+    INIT
+      VarCreateSet("G_FuckingStupid", 0);
+      TraderGUIDisable (FALSE);
+      TeamVelocityMaxSet(10000);
+      TeamHyperspaceOut();
+      //JUMP Wait;
+      JUMP Wait;
+    ENDINIT
+
+    WATCH
+      UnderAttack(SHIPS_FuckingStupid);
+      ShipsSelectCapital(SHIPS_CapsFuckingStupid, SHIPS_FuckingStupid);
+      IF ((ShipsCount(SHIPS_FuckingStupid)>0) AND (VarGet("G_FuckingStupid")=0) AND (VarGet("G_TradersRHere")=TRUE))
+        VarSet("G_FuckingStupid", 1);
+        TimerCreateSetStart("AttackTraders1Timer", 16);
+        JUMP Attack1;
+      ENDIF
+    ENDWATCH
+
+    STATE Wait
+      INIT
+      ENDINIT
+      WATCH
+        IFONCE (TimerExpiredDestroy("G_TimerTradersVisit"))
+          JUMP TradersHyperspaceIn;
+        ENDIFONCE
+      ENDWATCH
+    ENDSTATE
+
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+//Defensive States
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+    STATE Attack1
+        INIT
+          Stop();
+        ENDINIT
+        WATCH
+          IF ((TimerExpired("AttackTraders1Timer")) AND (UnderAttack(SHIPS_FuckingStupid)>0))
+            JUMP Attack2;
+          ELSEIF ((TimerExpired("AttackTraders1Timer")) AND (UnderAttack(SHIPS_FuckingStupid)<1))
+            VarSet("G_FuckingStupid", 0);
+            IF (VarGet("BentState")=1)
+              Jump TradersHyperspaceIn;
+            ELSEIF (VarGet("BentState")=2)
+              Jump TradersHyperspaceIn;
+            ELSEIF (VarGet("BentState")=3)
+              Jump TimeToTrade;
+            ELSEIF (VarGet("BentState")=4)
+              Jump TradersLeave;
+            ENDIF
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE Attack2
+        INIT
+          VarCreateSet("G_FuckingStupid2", TRUE);
+        ENDINIT
+        WATCH
+          FindEnemiesInside (VOLUME_WorldSphere, SHIPS_DeadPlayerShips,1000000);
+          //ShipsRemove(SHIPS_DeadPlayerShips, SHIPS_PlayerMothership);
+          ShipsSelectCapital(SHIPS_DeadPlayerCaps, SHIPS_DeadPlayerShips);
+
+          IF (ShipsCount(SHIPS_DeadPlayerCaps)>0)
+            Attack(SHIPS_DeadPlayerCaps);
+          ELSEIF  (ShipsCount(SHIPS_DeadPlayerCaps)<1)
+            JUMP TradersLeave;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+    STATE TradersHyperspaceIn
+      INIT
+        IFONCE (TRUE)
+          TeamHyperspaceIn(POINT_TraderOriginPoint);
+        ENDIFONCE
+        VarCreateSet("BentState", 1);
+        PatrolPath(PATH_BentusiAvenue);
+        Jump BentusiFleetIntelIN;
+      ENDINIT
+
+      WATCH
+      ENDWATCH
+    ENDSTATE
+
+    STATE BentusiFleetIntelIN    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+      INIT
+        VarSet("BentState", 2);
+      ENDINIT
+      WATCH
+        IFONCE ((FindShipsInside(VOLUME_PlayIntelHere, SHIPS_IsInside)>0) AND (ShipsSelectType(SHIPS_ISBentusi, SHIPS_IsInside, "FloatingCity")>0))
+          WideScreenIn(75); // NIS un-letterboxes this for us.
+          TimerCreateSetStart("BentTimer", 3);
+        ENDIFONCE
+
+        IFONCE(TimerExpiredDestroy("BentTimer"))
+          PauseShipBuilding();
+          VarCreateSet("G_TradersRHere", TRUE);
+          Jump BentusiFIOpenSensors;
+        ENDIFONCE
+      ENDWATCH
+    ENDSTATE
+
+    STATE BentusiFIOpenSensors    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+      INIT
+        PingAddShips(TEAMSHIPS_Traders, "BentusiPing");
+        OpenSensors (TRUE);
+        SpeechEvent(M04_Intel_LongRangeSensors, 0);
+        Jump BentusiFIpointer;
+      ENDINIT
+      WATCH
+      ENDWATCH
+    ENDSTATE
+
+    STATE BentusiFIpointer    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+      INIT
+        TutSetPointerTargetShip("BentusiPOINTER", TEAMSHIPS_Traders);
+        Jump TradersFCFeelie;
+      ENDINIT
+      WATCH
+      ENDWATCH
+    ENDSTATE
+
+    STATE TradersFCFeelie     //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+      INIT
+      ENDINIT
+      WATCH
+        IF (PathNextPoint()=0)
+          PingRemove("BentusiPing");
+          HideShips(TEAMSHIPS_Traders);
+          Jump TraderNIS;
+        ENDIF
+      ENDWATCH
+    ENDSTATE
+
+    STATE TraderNIS      //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+      INIT
+        TutRemoveAllPointers();
+        CloseSensors (TRUE);
+        TeamAttributesSet(ATTRIBUTES_Defector);
+        VarCreateSet("G_PlayNis", 4);
+      ENDINIT
+      WATCH
+        IFONCE (TRUE)
+            //deleting the first trader ship 'cause the NIS gives us a second
+            //  I'm doing this in the watch state because the NIS should already
+            //  be playing
+            ShipsSelectIndex(SHIPS_Trader, THISTEAMSHIPS, 0);
+            DeleteShips(SHIPS_Trader);
+        ENDIFONCE
+
+        IFONCE (VarGet("G_Nis4Complete"))
+          UnpauseShipBuilding();
+          //MusicPlay (NISlet01);
+          TimerCreateSetStart("NisTimer", 2);
+        ENDIFONCE
+
+        IF (TimerExpiredDestroy("NisTimer"))
+          Jump TimeToTrade;
+        ENDIF
+      ENDWATCH
+    ENDSTATE TraderNIS
+
+    STATE TimeToTrade     //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+      INIT
+        VarSet("BentState", 3);
+        SoundEvent (267);
+        IF (TechGet("Chassis3"))
+          // Bring up the Trader GUI.
+          TraderGUIDisplay();
+          IF (RUsGet(0)<500)
+            TechSetCost("IonWeapons", 300);
+          ELSEIF (RUsGet(0)>500)
+            TechSetCost("IonWeapons", 500);
+          ENDIF
+          TechSetPurchase("IonWeapons");
+          TraderGUIDialogSet (0, LSTRING_TraderIntro);
+          TraderGUIDialogSet (1, LSTRING_TraderIntro);
+          TraderGUIDialogSet (2, LSTRING_GoodBusiness);
+          TraderGUIDialogSet (4, LSTRING_TraderPurchaseMade);
+          TraderGUIDialogSet (5, LSTRING_TraderPurchaseMade);
+        ELSEIF (NOT (TechGet("Chassis3")))
+          // Bring up the Trader GUI.
+          TraderGUIDisplay();
+          IF (RUsGet(0)<500)
+            TechSetCost("PlasmaWeapons", 300);
+          ELSEIF (RUsGet(0)>500)
+            TechSetCost("PlasmaWeapons", 500);
+          ENDIF
+          TechSetPurchase("PlasmaWeapons");
+          TraderGUIDialogSet (0, LSTRING_TraderIntro);
+          TraderGUIDialogSet (1, LSTRING_TraderIntro);
+          TraderGUIDialogSet (2, LSTRING_GoodBusiness);
+          TraderGUIDialogSet (4, LSTRING_TraderPurchaseMade);
+          TraderGUIDialogSet (5, LSTRING_TraderPurchaseMade);
+        ENDIF
+        TimerCreateSetStart("FuckOffTimer", 300);
+      ENDINIT
+
+      WATCH
+        IF (((NOT TraderGUIIsDisplayed()) AND ((TechGet("IonWeapons")) OR  (TechGet("PlasmaWeapons")))) OR (TimerExpiredDestroy("FuckOffTimer")))
+          Jump TipClickToTrade;
+        ENDIF
+      ENDWATCH
+    ENDSTATE
+
+    STATE TipClickToTrade     //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          TimerCreateSetStart("TipClickToTrade", 1);
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy("TipClickToTrade"))
+            Jump TaiidanAgentsArrive;
+          ENDIF
+        ENDWATCH
+    ENDSTATE TipClickToTrade
+
+    STATE TaiidanAgentsArrive     //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+
+          IF (RaceOfHuman()=0)
+            SpeechEvent(M04_Traders_FarewellKushan, 0);
+          ELSEIF (RaceOfHuman()=1)
+            SpeechEvent(M04_Traders_FarewellTaiidan, 0);
+          ENDIF
+             TimerCreateSetStart("GoneTimer", 12);
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy("GoneTimer"))
+            Jump TradersLeave;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE TradersLeave     //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          VarSet("BentState", 4);
+          TraderGUIDisable (TRUE);
+          //MusicStop(4);
+          TimerCreateSetStart("AllHellLetsLoose", 15);
+          VarDestroy("G_TradersRHere");
+          TeamHyperspaceOut();
+        ENDINIT
+        WATCH
+          Jump Done;
+        ENDWATCH
+    ENDSTATE TradersLeave
+
+    STATE AlmostDone  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          TutRemoveAllPointers ();
+          UnpauseUniverse();
+          CloseSensors (TRUE);
+          Jump Done;
+        ENDINIT
+        WATCH
+        ENDWATCH
+   ENDSTATE
+
+    STATE Done     //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+        ENDINIT
+
+        WATCH
+          IFONCE (TimerExpiredDestroy("AllHellLetsLoose"))
+            MsgSendAll ("AttackPlayerMothership");
+            VarCreateSet ("G_AssaultMsgSent",TRUE);
+            MsgSendAll("TradersGone");
+          ENDIFONCE
+        ENDWATCH
+    ENDSTATE Done
+
+ENDFSM Traders
+
+
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+//      End Trader Arrival
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+//--------------------     End Traders     ---------------------
+
+
+
+//----------------------     Mission Briefing     ----------------------
+FSM MissionBriefing
+    States FirstWarning, YoureMeat, RUCrazy, ResourceVeinsIntro, ResourceVeinsTransIn, ResourceVeinsOpenSensors, FIResourceVeins, FIResourceVeinsPING, ResourceVeinsTransOut, CheckExist, HasTech, HasShip, Intro, FrigatesFITransIn, FrigatesFIOpenSensors, FrigateFI, FrigatesFIPingAndPointer, FrigatesFITransOut, PTFTransIn, PTFOpenSensors, ProtectFI, PTFPingAndPointer, PTFTransOut, DP1TransIn, DP1OpenSensors, DP1CFI, DP1PingAndPointer, DP1TransOut, CarrierTransIn, RenderedCarrier, Done;
+
+    INIT
+      VarCreateSet("G_AreTheyHere", 0);
+      TimerCreateSetStart("TimerFIInitialBriefing", 4);
+    ENDINIT
+
+    WATCH
+      IFONCE (TimerExpired("TimerFIInitialBriefing"))
+        Jump ResourceVeinsIntro;
+      ENDIFONCE
+
+    IFONCE (RUsEnemyCollected()>=600)
+        TimerCreateSetStart("G_TimerTradersVisit", 9);
+        ObjectiveSet("CollectResources", TRUE);
+      ENDIFONCE
+    ENDWATCH
+
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+//      Initial Resourcing
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+    STATE ResourceVeinsIntro  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+      INIT
+        SpeechEvent(M04_Fleet_HyperspaceSuccesful,0);
+        TimerCreateSetStart("MarniTimer", 5);
+      ENDINIT
+
+      WATCH
+        IF (TimerExpiredDestroy("MarniTimer"))
+          Jump ResourceVeinsTransIn;
+          ENDIF
+      ENDWATCH
+    ENDSTATE
+
+    STATE ResourceVeinsTransIn //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          WideScreenIn(90);
+          Jump ResourceVeinsOpenSensors;
+        ENDINIT
+
+        WATCH
+        ENDWATCH
+    ENDSTATE
+
+    STATE ResourceVeinsOpenSensors //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+         INIT
+           TimerCreateSetStart ("FIOpenSensorsTimer", 4);
+         ENDINIT
+         WATCH
+           IF (TimerExpiredDestroy ("FIOpenSensorsTimer"))
+             OpenSensors (TRUE);
+             PauseUniverse();
+             Jump FIResourceVeins;
+           ENDIF
+         ENDWATCH
+    ENDSTATE
+
+    STATE FIResourceVeins
+        INIT
+          SpeechEvent(M04_Intel_ScannerData, 0);
+          ObjectiveCreate("CollectResources", LSTRING_PrimaryObjective01, LSTRING_FISetupCollection);
+          TimerCreateSetStart("FISeTimer", 1);
+        ENDINIT
+        WATCH
+          IF (IntelEventEnded())
+            TimerCreateSetStart("G_TimerSecondaryObjective01", 30);
+            WideScreenOut(30);
+            JUMP Done;
+          ENDIF
+          IF (TimerExpiredDestroy ("FISeTimer"))
+            Jump FIResourceVeinsPING;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+   STATE FIResourceVeinsPING //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          TutSetPointerTargetAIVolume("ResourceVeinsPOINTER", VOLUME_ResourcePointerVolume);
+          TimerCreateSetStart("FIFIResourceVeinsPINGTimer", 5);
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy ("FIFIResourceVeinsPINGTimer"))
+             Jump ResourceVeinsTransOut;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+    STATE ResourceVeinsTransOut
+      INIT
+        WideScreenOut(60);
+        TimerCreateSetStart("TimerTransOut", 1);
+      ENDINIT
+
+      WATCH
+        IF ((TimerExpiredDestroy ("TimerTransOut")) OR (IntelEventEnded()))
+          TimerCreateSetStart("G_TimerSecondaryObjective01", 15);
+          Jump Done;
+        ENDIF
+      ENDWATCH
+    ENDSTATE
+
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+//      End Initial Resourcing
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+//      Resource Collector
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+    STATE HasTech
+      INIT
+        SpeechEvent(M04_Intel_ResearchController, 0);
+        ObjectiveCreateSecondary("BuildResourceController", LSTRING_SecondaryObjective01, LSTRING_FIResourceControllerTip);
+      ENDINIT
+      WATCH
+        IF (IntelEventEnded())
+          JUMP Done;
+        ENDIF
+      ENDWATCH
+    ENDSTATE HasTech
+
+    STATE HasShip
+      INIT
+        SpeechEvent(M04_Intel_MoveController, 0);
+      ENDINIT
+      WATCH
+        IF (IntelEventEnded())
+          JUMP Done;
+        ENDIF
+      ENDWATCH
+    ENDSTATE HasShip
+
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+//      End Resource Collector
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+//    Ion  Frigate  Arrival
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+    STATE FrigatesFITransIn
+        INIT
+            wideScreenIn(45);
+            //VarCreateSet("LetterBoxHere", 99);
+            MusicPlay(B01_TuranicRaidersLong);
+            PingAddShips(TEAMSHIPS_IonFrig1, "Turanic Raider Ion Array Frigate");
+            PingAddShips(TEAMSHIPS_IonFrig2, "Turanic Raider Ion Array Frigate");
+            PingAddShips(TEAMSHIPS_IonFrig3, "Turanic Raider Ion Array Frigate");
+        ENDINIT
+
+        WATCH
+          JUMP FrigatesFIOpenSensors;
+        ENDWATCH
+    ENDSTATE
+
+    STATE FrigatesFIOpenSensors //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+         INIT
+           TimerCreateSetStart ("FIOpenSensorsTimer", 1);
+         ENDINIT
+         WATCH
+           IF (TimerExpired("FIOpenSensorsTimer"))
+             OpenSensors(TRUE);
+             PauseUniverse();
+             Jump FrigateFI;
+           ENDIF
+         ENDWATCH
+    ENDSTATE
+
+    STATE FrigateFI
+        INIT
+          SpeechEvent(M04_Intel_DefendTheMothership,0);
+          TimerCreateSetStart("TimerResourceVeins", 2);
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy("TimerResourceVeins"))
+            Jump FrigatesFIPingAndPointer;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE FrigatesFIPingAndPointer //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          TutSetPointerTargetShip("Frig1POINTER", TEAMSHIPS_IonFrig1);
+          TutSetPointerTargetShip("Frig2POINTER", TEAMSHIPS_IonFrig2);
+          TutSetPointerTargetShip("Frig3POINTER", TEAMSHIPS_IonFrig3);
+          TimerCreateSetStart ("FIPointerTimer", 4);
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy ("FIPointerTimer"))
+            Jump FrigatesFITransOut;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE FrigatesFITransOut
+        INIT
+            WideScreenOut(60);
+            Jump Done;
+        ENDINIT
+        WATCH
+        ENDWATCH
+    ENDSTATE
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //    End Ion  Frigate  Arrival
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //    Protect the fleet
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+    STATE PTFTransIn
+        INIT
+            wideScreenIn(90);
+            Jump PTFOpenSensors;
+        ENDINIT
+
+        WATCH
+        ENDWATCH
+    ENDSTATE
+
+    STATE PTFOpenSensors
+         INIT
+              TimerCreateSetStart ("FIOpenSensorsTimer", 2);
+         ENDINIT
+         WATCH
+             IF (TimerExpired("FIOpenSensorsTimer"))
+                OpenSensors (TRUE);
+                PauseUniverse();
+                Jump ProtectFI;
+             ENDIF
+         ENDWATCH
+    ENDSTATE
+
+    STATE ProtectFI
+        INIT
+          IF (ShipsCount(SHIPS_ResourcersNearby)>0)
+            SpeechEvent(M04_Intel_DefendTheFleet,0);
+          ELSE
+            SpeechEvent(M04_Intel_DefendTheFleetShort,0);
+          ENDIF
+          ObjectiveCreate("ProtectTheFleet", LSTRING_Objective1, LSTRING_IonFrigs);
+          TimerCreateSetStart ("TimerProtect", 2);
+        ENDINIT
+        WATCH
+            IF (IntelEventEnded())
+              WideScreenOut(30);
+              JUMP Done;
+            ENDIF
+            IF (TimerExpiredDestroy("TimerProtect"))
+              Jump PTFPingAndPointer;
+            ENDIF
+        ENDWATCH
+    ENDSTATE
+
+   STATE PTFPingAndPointer //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          IF (VarGet("G_IAmTheWalrus")=1)
+            TutSetPointerTargetShip("BadPOINTER", TEAMSHIPS_TuranicHarrassFighters);
+          ELSEIF (VarGet("G_IAmTheWalrus")=2)
+            TutSetPointerTargetShip("BadPOINTER", TEAMSHIPS_TuranicFighters);
+          ELSEIF (VarGet("G_IAmTheWalrus")=3)
+            TutSetPointerTargetShip("BadPOINTER", TEAMSHIPS_StdCorvette1);
+          ELSEIF (VarGet("G_IAmTheWalrus")=4)
+            TutSetPointerTargetShip("BadPOINTER", TEAMSHIPS_StdCorvette2);
+          ELSEIF (VarGet("G_IAmTheWalrus")=5)
+            TutSetPointerTargetShip("BadPOINTER", TEAMSHIPS_MissileCorvette1);
+          ENDIF
+          TimerCreateSetStart ("FIPointerTimer", 9);
+        ENDINIT
+        WATCH
+          IF (IntelEventEnded())
+            WideScreenOut(30);
+            JUMP Done;
+          ENDIF
+          IF (TimerExpiredDestroy ("FIPointerTimer"))
+            Jump PTFTransOut;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+    STATE PTFTransOut      // This is our transit out state from the Sensors Manager
+        INIT
+            wideScreenOut(60); // How do you do this?
+            TimerCreateSetStart("FiTransOut", 1);
+        ENDINIT
+
+        WATCH
+          IF ((TimerExpiredDestroy ("FiTransOut")) OR (IntelEventEnded()))
+             Jump Done;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //   END Protect the fleet
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //   Destory P1 Carrier
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+    STATE DP1TransIn
+        INIT
+          WideScreenIn(90);
+          Jump DP1OpenSensors;
+        ENDINIT
+
+        WATCH
+        ENDWATCH
+    ENDSTATE
+
+    STATE DP1OpenSensors //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          TimerCreateSetStart ("FIOpenSensorsTimer", 2);
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy ("FIOpenSensorsTimer"))
+            OpenSensors (TRUE);
+            PauseUniverse();
+            Jump DP1CFI;
+          ENDIF
+         ENDWATCH
+    ENDSTATE
+
+    STATE DP1CFI
+        INIT
+          IF (RaceOfHuman () = 0)
+            SpeechEvent(M04_Intel_CarrierRetreatingTaiidan, 0);
+          ELSEIF (RaceOfHuman () = 1)
+            SpeechEvent(M04_Intel_CarrierRetreatingKushan, 0);
+          ENDIF
+          //SpeechEvent(2728,0);
+          ObjectiveCreate("DestroyP1Ms", LSTRING_FIGoGetThem, LSTRING_FIGoGetThem);
+          TimerCreateSetStart ("TimerDP1C", 1);
+        ENDINIT
+
+        WATCH
+          IF (IntelEventEnded())
+            WideScreenOut(30);
+            JUMP Done;
+          ENDIF
+          IF (TimerExpiredDestroy("TimerDP1C"))
+            Jump DP1PingAndPointer;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+   STATE DP1PingAndPointer //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          TutSetPointerTargetShip("GoodPOINTER", TEAMSHIPS_P1Mothership);
+          TimerCreateSetStart ("FIPointerTimer", 8);
+        ENDINIT
+        WATCH
+
+          IF (IntelEventEnded())
+            WideScreenOut(30);
+            JUMP Done;
+          ENDIF
+          IF (TimerExpiredDestroy ("FIPointerTimer"))
+             Jump DP1TransOut;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+    STATE DP1TransOut
+        INIT
+            wideScreenOut(60); // How do you do this?
+            TimerCreateSetStart("FiTransOut", 1);
+        ENDINIT
+
+        WATCH
+          IF ((TimerExpiredDestroy ("FiTransOut")) OR (IntelEventEnded()))
+             Jump Done;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //   End Destory P1 Carrier
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //   Don't Fuck With The Bentusi
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+    STATE FirstWarning
+        INIT
+          VarCreateSet("G_FuckingStupid", 2);
+          SpeechEvent(M04_Traders_StopAttackNow, 0);
+          TimerCreateSetStart("UBetterStop", 2);
+        ENDINIT
+
+        WATCH
+          IF (TimerExpiredDestroy("UBetterStop"))
+            JUMP RUCrazy;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE RUCrazy
+        INIT
+          IF (ShipsCount(SHIPS_FuckingStupid)>0)
+            SpeechEvent(M04_Intel_CeaseFire, 0);
+          ELSE
+            JUMP Done;
+          ENDIF
+        ENDINIT
+        WATCH
+          IF (IntelEventEnded())
+            JUMP Done;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE YoureMeat
+        INIT
+          SpeechEvent(M04_Traders_KickAss, 0);
+        ENDINIT
+        WATCH
+          IF (IntelEventEnded())
+            JUMP Done;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //   END Don't Fuck With The Bentusi
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //   Rendered Carrier
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    STATE CarrierTransIn
+        INIT
+          WideScreenIn(90);
+          TimerCreateSetStart("TimerForNikki", 4);
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy("TimerForNikki"))
+            JUMP RenderedCarrier;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE RenderedCarrier
+        INIT
+          SoundEvent(262);
+          TutCameraFocus(TEAMSHIPS_P1Mothership);
+          TutCameraFocus(TEAMSHIPS_P1Mothership);
+          SpeechEvent(M04_Intel_DiscoveredCarrier,0);
+        ENDINIT
+        WATCH
+          IF (IntelEventEnded())
+            WideScreenOut(30);
+            SoundEvent(262);
+            TutCameraFocusCancel();
+            TutCameraFocusCancel();
+            JUMP Done;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //   END Rendered Carrier
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //   Done
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+    STATE Done
+        INIT
+          TutRemoveAllPointers();
+          UnpauseUniverse();
+          IF (SensorsIsOpen(1)=TRUE)
+            CloseSensors(TRUE);
+          ENDIF
+          VarDestroy("G_CLICK_ProtectTheFleet");
+          VarDestroy("G_CLICK_BuildResourceController");
+          VarDestroy("G_CLICK_DestroyP1Ms");
+          VarDestroy("G_CLICK_CollectResources");
+        ENDINIT
+
+        WATCH
+          //After the initial resourcing objective is finished this one makes player make and deploy a resource controller
+          IF ((TimerExpired("G_TimerSecondaryObjective01")) AND (NOT(ObjectiveGet("BuildResourceController")=TRUE)) AND (NOT(VarGet("G_TradersRHere")=TRUE)))
+            FindEnemiesInside(VOLUME_MajorResourceVolume, SHIPS_PResourcing, 500);
+            ShipsSelectType (SHIPS_PResourceController, SHIPS_PResourcing, "ResourceController");
+            IF ((NOT FindEnemyShipsOfType(SHIPS_PlayerShips, "ResourceController")) AND (NOT(VarGet("GotVar")=TRUE)))
+              VarCreateSet("GotVar", TRUE);
+              Jump  HasTech;
+            ELSEIF ((FindEnemyShipsOfType(SHIPS_PlayerShips, "ResourceController")) AND (NOT(VarGet("GotVar2")=TRUE)))
+              VarCreateSet("GotVar2", TRUE);
+              JUMP HasShip;
+            ELSEIF (ShipsCount(SHIPS_PResourceController)>0)
+              ObjectiveSet("BuildResourceController", TRUE);
+            ENDIF
+          ENDIF
+
+          //Set off by first combat, sets 'Protect the fleet'
+          IFONCE ((VarGet("G_ResourcersAttacked")=TRUE) OR (ShipsCount(TEAMSHIPS_TuranicHarrassFighters)<1))
+            MusicPlay(B01_TuranicRaidersLong);
+            JUMP PTFTransIn;
+          ENDIFONCE
+
+          //Ion Frigs show
+          IFONCE (VarGet("G_IonFrigsHere")=TRUE)
+            JUMP FrigatesFITransIn;
+          ENDIFONCE
+
+          //Don't let Carrier escape
+          IFONCE  ((VarGet("G_IcantLetYouGo")=TRUE) AND (ShipsCount(TEAMSHIPS_P1Mothership)>0))
+            //ObjectiveSet("ProtectTheFleet", TRUE);
+            Jump DP1TransIn;
+          ENDIFONCE
+
+          //First Bentusi Warning
+          IF (VarGet("G_FuckingStupid")=1)
+            Jump FirstWarning;
+          ENDIF
+
+          //Second Bentusi Warning
+          IFONCE (VarGet("G_FuckingStupid2")=TRUE)
+            Jump YoureMeat;
+          ENDIFONCE
+
+          //Turanic Raider Carrier
+          IFONCE (RenderedShips(TEAMSHIPS_P1Mothership, 3))
+            JUMP CarrierTransIn;
+          ENDIFONCE
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+// Check to see if user has re-initiated briefing.
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+          IF (VarGet("G_CLICK_BuildResourceController"))
+            Jump HasTech;
+          ENDIF
+
+          IF (VarGet("G_CLICK_CollectResources"))
+             Jump ResourceVeinsTransIn;
+          ENDIF
+
+          IF (VarGet("G_CLICK_DestroyP1Ms"))
+           Jump DP1TransIn;
+          ENDIF
+
+          IF (VarGet("G_CLICK_ProtectTheFleet"))
+            Jump PTFTransIn;
+          ENDIF
+        ENDWATCH
+    ENDSTATE Done
+
+ //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+ //   Done
+ //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+ENDFSM MissionBriefing
+//----------------------     End Mission Briefing     ----------------------
+
+
+
+//--------------------     TuranicFighters     ---------------------
+FSM TuranicFighters
+
+  STATES AssaultMothership, DefendMothership, AttackTimer, DefendYourSelf, Dead;
+
+  INIT
+    HideShips(TEAMSHIPS_TuranicFighters);
+    VarCreateSet("requested", 0);
+    VarCreateSet("needed", 0);
+    VarCreateSet("newships", 0);
+    VarCreateSet("DontBuild", 0);
+  ENDINIT
+
+  WATCH
+    //Reinforcement section////////////////////////////////////////////////////////////////////////
+    IF ((TeamCount()>0) AND (VarGet("DontBuild")=0))
+      IF (TeamCount() + VarGet("requested") < TeamCountOriginal())
+    VarSet("needed", TeamCountOriginal() - (TeamCount() + VarGet("requested")));
+        RequestShipsOriginal(VarGet("needed"));
+        VarSet("DontBuild", 1);
+        TimerCreateSetStart("BuildAgain", 10);
+        //Print("Requesting STD CORV for debugging purposes");
+        VarSet("requested", VarGet("requested") + VarGet("needed"));
+      ENDIF
+      VarSet("newships", NewShipsAdded());
+      IF (VarGet("newships"))
+        VarSet("requested", VarGet("requested") - VarGet("newships"));
+      ENDIF
+      IF (TimerExpiredDestroy("BuildAgain"))
+        VarSet("DontBuild", 0);
+      ENDIF
+    ENDIF
+    //Reinforcement section////////////////////////////////////////////////////////////////////////
+
+
+   IF (ShipsCount(TEAMSHIPS_TuranicFighters)<1)
+     JUMP Dead;
+   ELSEIF (ShipsCount(SHIPS_EnemyAttackers)>0)
+     JUMP DefendMothership;
+   ELSEIF ((UnderAttack(SHIPS_AttackFighters)) AND (TeamCount()<=(TeamCountOriginal()/2)))
+     JUMP DefendYourSelf;
+   ELSEIF ((VarGet("G_AssaultMsgSent")=TRUE) AND (NOT (VarGet("G_StartingTimer")=True)))
+     JUMP AttackTimer;
+   ELSEIF ((VarGet("G_AssaultMsgSent")=TRUE) AND (VarGet("G_StartingTimer")=True))
+     JUMP AssaultMothership;
+   ENDIF
+
+  ENDWATCH
+
+  STATE  DefendMothership     //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    INIT
+    ENDINIT
+
+    WATCH
+      IF (ShipsCount(SHIPS_AttackingFighters)>0)
+        Attack(SHIPS_AttackingFighters);
+      ELSEIF (ShipsCount(SHIPS_AttackingFighters)<1)
+        AttackFlank(SHIPS_AttackingCorvettes);
+      ELSEIF  ((ShipsCount(SHIPS_AttackingFighters)<1) AND (ShipsCount(SHIPS_AttackingCorvettes)<1))
+        AttackFlank(SHIPS_AttackingCapitalShips);
+      ELSEIF  ((ShipsCount(SHIPS_AttackingFighters)<1) AND
+        (ShipsCount(SHIPS_AttackingCorvettes)<1) AND
+        (ShipsCount(SHIPS_AttackingCapitalShips)<1))
+        Attack(SHIPS_EnemyAttackers);
+      ELSEIF   (ShipsCount(SHIPS_EnemyAttackers)<1)
+        JUMP AssaultMothership;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+  STATE AttackTimer      //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    INIT
+    ENDINIT
+
+    WATCH
+      IFONCE ( MsgReceived("AttackPlayerMothership") )
+        TimerCreateSetStart("FighterDelay",(Random(30, 100)));
+      ENDIFONCE
+
+      IFONCE ( TimerExpired("FighterDelay") )
+        VarCreateSet("G_StartingTimer", True);
+        UnhideShips(TEAMSHIPS_TuranicFighters);
+        JUMP AssaultMothership;
+      ENDIFONCE
+    ENDWATCH
+
+  ENDSTATE
+
+  STATE  DefendYourSelf      //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    INIT
+    ENDINIT
+
+    WATCH
+      IF ((UnderAttack(SHIPS_AttackFighters)>0) AND (TeamCount()<=(TeamCountOriginal()/2)))
+        Attack(SHIPS_AttackFighters);
+      ENDIF
+      IF (ShipsCount(SHIPS_AttackFighters)<1)
+        JUMP AssaultMothership;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+  STATE  AssaultMothership      //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    INIT
+    ENDINIT
+
+    WATCH
+      //ÄÄÄÄÄÄÄÄÄÄÄÄ
+      IFONCE ((NOT(VarGet("G_ResourcersAttacked")=TRUE)) AND (FindEnemiesNearTeam(SHIPS_NearNone, 15000)))
+        VarCreateSet("G_ResourcersAttacked", TRUE);
+        VarSet("G_IAmTheWalrus", 2);
+      ENDIFONCE
+      //ÄÄÄÄÄÄÄÄÄÄÄÄ
+
+      IF (ShipsCount(SHIPS_PlayerCapitalShips)>0)
+        Attack(SHIPS_PlayerCapitalShips);
+      ELSEIF ((ShipsCount(SHIPS_PlayerCapitalShips)<1) AND (ShipsCount(SHIPS_PlayerFighters)>0))
+        Attack(SHIPS_PlayerFighters);
+      ELSEIF ((ShipsCount(SHIPS_PlayerFighters)<1) AND (ShipsCount(SHIPS_PlayerCapitalShips)<1))
+        Attack(SHIPS_PlayerCorvettes);
+      ELSEIF ((ShipsCount(SHIPS_PlayerFighters)<1) AND
+        (ShipsCount(SHIPS_PlayerCorvettes)<1) AND
+        (ShipsCount(SHIPS_PlayerCapitalShips)<1))
+        Attack(SHIPS_PlayerShips);
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+
+  STATE Dead      //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    INIT
+    ENDINIT
+
+    WATCH
+    ENDWATCH
+
+  ENDSTATE Dead
+
+ENDFSM TuranicFighters
+//----------------------     End TuranicFighters     ---------------
+
+
+//----------------------     TuranicHarrassFighters     ------------
+FSM TuranicHarrassFighters
+  STATES AssaultEnemy, Prowling, DefendSelf, NeverNeverLand, Dead;
+
+  INIT
+    VarCreateSet("requested", 0);
+    VarCreateSet("needed", 0);
+    VarCreateSet("newships", 0);
+    JUMP NeverNeverLand;
+  ENDINIT
+
+  WATCH
+    IF (ShipsCount(TEAMSHIPS_TuranicHarrassFighters)<1)
+      JUMP Dead;
+    ENDIF
+    FindEnemiesNearTeam(SHIPS_InTheArea, 5000);
+    ShipsSelectType (SHIPS_ResourcersTemp, SHIPS_InTheArea, "ResourceController");
+    ShipsSelectType (SHIPS_ResourcersNearby, SHIPS_InTheArea, "ResourceCollector");
+    ShipsAdd(SHIPS_ResourcersNearby, SHIPS_ResourcersTemp);
+  ENDWATCH
+
+  STATE  NeverNeverLand      //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    INIT
+      TeamHyperspaceOut();
+    ENDINIT
+    WATCH
+      IF (MsgReceived("TradersGone"))
+         TeamHyperspaceIn(POINT_HarrassIn);
+        Jump Prowling;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+  STATE  DefendSelf     //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    INIT
+    ENDINIT
+    WATCH
+      IF (UnderAttack(SHIPS_AttackHarrassers)>0)
+        Attack(SHIPS_AttackHarrassers);
+      ELSEIF (ShipsCount(SHIPS_AttackHarrassers)<1)
+        JUMP Prowling;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+  STATE  Prowling      //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    INIT
+      PatrolPath(PATH_HarrassPath);
+    ENDINIT
+    WATCH
+      IF (UnderAttack(SHIPS_AttackHarrassers)>0)
+        VarCreateSet("G_ResourcersAttacked", True);
+          //ÄÄÄÄÄÄÄÄ
+          IFONCE (VarGet("G_IAmTheWalrus")=0)
+            VarSet("G_IAmTheWalrus", 1);
+          ENDIFONCE
+          //ÄÄÄÄÄÄÄÄ
+        JUMP DefendSelf;
+      ELSEIF (ShipsCount(SHIPS_InTheArea)>0)
+        JUMP AssaultEnemy;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+  STATE  AssaultEnemy      //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    INIT
+      MusicPlay(B01_TuranicRaidersLong);
+      VarCreateSet("G_ResourcersAttacked", True);
+      //ÄÄÄÄÄÄÄÄ
+      IFONCE (VarGet("G_IAmTheWalrus")=0)
+        VarSet("G_IAmTheWalrus", 1);
+      ENDIFONCE
+      //ÄÄÄÄÄÄÄÄ
+    ENDINIT
+    WATCH
+      IF (ShipsCount(SHIPS_ResourcersNearby)>0)
+        Attack(SHIPS_ResourcersNearby);
+      ELSEIF ((ShipsCount(SHIPS_ResourcersNearby)<1) AND (ShipsCount(SHIPS_InTheArea)>0))
+        Attack(SHIPS_InTheArea);
+      ELSEIF ((ShipsCount(SHIPS_ResourcersNearby)<1) AND (ShipsCount(SHIPS_InTheArea)<1))
+        JUMP Prowling;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+  STATE Dead       //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    INIT
+    ENDINIT
+
+    WATCH
+    ENDWATCH
+  ENDSTATE Dead
+
+ENDFSM TuranicHarrassFighters
+//----------------------     End TuranicHarrassFighters     --------
+
+//----------------------     Ion Frigate 1     ---------------------
+FSM IonFrig1
+  STATES Waiting, AssaultMothership, DefendMothership, LovingMe, CircleAttackMothership, TimerToLeave;
+
+  INIT
+   TeamHyperspaceOut();
+   JUMP Waiting;
+  ENDINIT
+
+  WATCH
+    IF (Underattack(SHIPS_AttackFrig1)>0)
+      ShipsSelectClass (SHIPS_PCapShipsAttackFrig1, SHIPS_AttackFrig1, "CLASS_CapitalShips");
+      JUMP LovingMe;
+    ENDIF
+  ENDWATCH
+
+  STATE  Waiting      //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    INIT
+    ENDINIT
+    WATCH
+      IF (VarGet("G_ResourcersAttacked")=TRUE)
+        //VarCreateSet("KillMyLandLord", TRUE);
+        JUMP TimerToLeave;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+  STATE  LovingMe      //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    INIT
+    ENDINIT
+    WATCH
+      IF ((ShipsCount(SHIPS_PCapShipsAttackFrig1)>0) AND (NOT (VarGet("NoSoupForYou")=TRUE)))
+        VarCreateSet("NoSoupForYou", TRUE);
+        MoveAttack(SHIPS_PCapShipsAttackFrig1);
+      ELSEIF ((ShipsCount(SHIPS_PCapShipsAttackFrig1)<1) AND (VarGet("NoSoupForYou")=TRUE))
+        VarDestroy("NoSoupForYou");
+        JUMP AssaultMothership;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+  STATE  TimerToLeave      //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    INIT
+      TimerCreateSetStart("FrigTimer1", 200);
+    ENDINIT
+    WATCH
+      IFONCE (TimerExpired("FrigTimer1"))
+        TeamHyperspaceIn(POINT_IonFrig1Point);
+        VarCreateSet("G_IonFrigsHere", TRUE);
+        JUMP CircleAttackMothership;
+      ENDIFONCE
+    ENDWATCH
+  ENDSTATE
+
+  STATE  AssaultMothership      //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    INIT
+    ENDINIT
+    WATCH
+      JUMP CircleAttackMothership;
+    ENDWATCH
+  ENDSTATE
+
+  STATE  CircleAttackMothership      //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    INIT
+      MoveAttack(SHIPS_PlayerMothership);
+    ENDINIT
+
+    WATCH
+      FindEnemiesNearTeam (SHIPS_NearFrig1, 8000);
+      ShipsSelectType (SHIPS_NastyCaps1, SHIPS_NearFrig1, "SalCapCorvette");
+      IF ((ShipsCount(SHIPS_NastyCaps1)>0) AND (NOT(VarGet("WasSalCaps")=TRUE)))
+        VarCreateSet("WasSalCaps", TRUE);
+        Attack(SHIPS_NastyCaps1);
+      ELSEIF ((ShipsCount(SHIPS_NastyCaps1)<1) AND (VarGet("WasSalCaps")=TRUE))
+        VarDestroy("WasSalCaps");
+        JUMP CircleAttackMothership;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+
+ENDFSM IonFrig1
+//----------------------     End Ion Frigate 1     -----------------
+
+//----------------------     Ion Frigate 2     ---------------------
+FSM IonFrig2
+  STATES Waiting, AssaultMothership, DefendMothership, LovingMe, CircleAttackMothership, TimerToLeave;
+
+  INIT
+
+    TeamHyperspaceOut();
+    JUMP Waiting;
+  ENDINIT
+
+  WATCH
+    IF (Underattack(SHIPS_AttackFrig2)>0)
+      ShipsSelectClass (SHIPS_PCapShipsAttackFrig2, SHIPS_AttackFrig2, "CLASS_CapitalShips");
+      JUMP LovingMe;
+    ENDIF
+  ENDWATCH
+
+  STATE  LovingMe     //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    INIT
+    ENDINIT
+    WATCH
+      IF ((ShipsCount(SHIPS_PCapShipsAttackFrig2)>0) AND (NOT (VarGet("NoSoupForYou")=TRUE)))
+        VarCreateSet("NoSoupForYou", TRUE);
+        MoveAttack(SHIPS_PCapShipsAttackFrig2);
+      ELSEIF ((ShipsCount(SHIPS_PCapShipsAttackFrig2)<1) AND (VarGet("NoSoupForYou")=TRUE))
+        VarDestroy("NoSoupForYou");
+        JUMP AssaultMothership;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+  STATE  Waiting     //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    INIT
+    ENDINIT
+    WATCH
+      IF ((VarGet("G_ResourcersAttacked")=TRUE) AND (NOT (VarGet("KillMyLandLord")=TRUE)))
+        VarCreateSet("KillMyLandLord", TRUE);
+        JUMP TimerToLeave;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+  STATE  TimerToLeave     //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    INIT
+      TimerCreateSetStart("FrigTimer2", 200);
+    ENDINIT
+    WATCH
+        IFONCE (TimerExpired ("FrigTimer2"))
+           TeamHyperspaceIn(POINT_IonFrig2Point);
+           VarCreateSet("G_IonFrigsHere", TRUE);
+           JUMP CircleAttackMothership;
+        ENDIFONCE
+    ENDWATCH
+  ENDSTATE
+
+  STATE  AssaultMothership     //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    INIT
+    ENDINIT
+    WATCH
+      JUMP CircleAttackMothership;
+    ENDWATCH
+  ENDSTATE
+
+  STATE  CircleAttackMothership     //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    INIT
+      MoveAttack(SHIPS_PlayerMothership);
+    ENDINIT
+    WATCH
+      FindEnemiesNearTeam (SHIPS_NearFrig2, 8000);
+      ShipsSelectType (SHIPS_NastyCaps2, SHIPS_NearFrig2, "SalCapCorvette");
+      IF ((ShipsCount(SHIPS_NastyCaps2)>0) AND (NOT(VarGet("WasSalCaps")=TRUE)))
+        VarCreateSet("WasSalCaps", TRUE);
+        Attack(SHIPS_NastyCaps2);
+      ELSEIF ((ShipsCount(SHIPS_NastyCaps2)<1) AND (VarGet("WasSalCaps")=TRUE))
+        VarDestroy("WasSalCaps");
+        JUMP CircleAttackMothership;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+ENDFSM IonFrig2
+//----------------------     End Ion Frigate 2     -----------------
+
+//----------------------     Ion Frigate 3     ---------------------
+FSM IonFrig3
+  STATES Waiting, AssaultMothership, DefendMothership, LovingMe, CircleAttackMothership, TimerToLeave;
+
+  INIT
+   TeamHyperspaceOut();
+   JUMP Waiting;
+  ENDINIT
+  WATCH
+    IF (Underattack(SHIPS_AttackFrig3)>0)
+      ShipsSelectClass (SHIPS_PCapShipsAttackFrig3, SHIPS_AttackFrig3, "CLASS_CapitalShips");
+      JUMP LovingMe;
+    ENDIF
+  ENDWATCH
+
+  STATE  Waiting       //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    INIT
+    ENDINIT
+    WATCH
+        IF ((VarGet("G_ResourcersAttacked")=TRUE) AND (NOT (VarGet("KillMyLandLord")=TRUE)))
+           VarCreateSet("KillMyLandLord", TRUE);
+           JUMP TimerToLeave;
+        ENDIF
+    ENDWATCH
+  ENDSTATE
+
+  STATE  LovingMe     //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    INIT
+    ENDINIT
+    WATCH
+      IF ((ShipsCount(SHIPS_PCapShipsAttackFrig3)>0) AND (NOT (VarGet("NoSoupForYou")=TRUE)))
+        VarCreateSet("NoSoupForYou", TRUE);
+        MoveAttack(SHIPS_PCapShipsAttackFrig3);
+      ELSEIF ((ShipsCount(SHIPS_PCapShipsAttackFrig3)<1) AND (VarGet("NoSoupForYou")=TRUE))
+        VarDestroy("NoSoupForYou");
+        JUMP AssaultMothership;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+  STATE  TimerToLeave     //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    INIT
+      TimerCreateSetStart("FrigTimer3", 200);
+    ENDINIT
+    WATCH
+        IFONCE (TimerExpired ("FrigTimer3"))
+           TeamHyperspaceIn(POINT_IonFrig3Point);
+           VarCreateSet("G_IonFrigsHere", TRUE);
+           JUMP CircleAttackMothership;
+        ENDIFONCE
+    ENDWATCH
+  ENDSTATE
+
+  STATE  AssaultMothership      //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    INIT
+    ENDINIT
+    WATCH
+      JUMP CircleAttackMothership;
+    ENDWATCH
+  ENDSTATE
+
+  STATE  CircleAttackMothership        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    INIT
+      MoveAttack(SHIPS_PlayerMothership);
+    ENDINIT
+    WATCH
+      FindEnemiesNearTeam (SHIPS_NearFrig3, 8000);
+      ShipsSelectType (SHIPS_NastyCaps3, SHIPS_NearFrig3, "SalCapCorvette");
+      IF ((ShipsCount(SHIPS_NastyCaps3)>0) AND (NOT(VarGet("WasSalCaps")=TRUE)))
+        VarCreateSet("WasSalCaps", TRUE);
+        Attack(SHIPS_NastyCaps3);
+      ELSEIF ((ShipsCount(SHIPS_NastyCaps3)<1) AND (VarGet("WasSalCaps")=TRUE))
+        VarDestroy("WasSalCaps");
+        JUMP CircleAttackMothership;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+ENDFSM IonFrig3
+//----------------------     End Ion Frigate 3     -----------------
+
+//----------------------     Std Corvette 1     --------------------
+FSM StdCorvette1
+
+  STATES Waiting, AssaultMothership, DefendMothership, DefendYourSelf, AssaultTimer, Dead;
+
+  INIT
+    HideShips(TEAMSHIPS_StdCorvette1);
+    VarCreateSet("requested", 0);
+    VarCreateSet("needed", 0);
+    VarCreateSet("newships", 0);
+    VarCreateSet("DontBuild", 0);
+    JUMP Waiting;
+  ENDINIT
+
+  WATCH
+    //Reinforcement section////////////////////////////////////////////////////////////////////////
+    IF ((TeamCount()>0) AND (VarGet("DontBuild")=0))
+      IF (TeamCount() + VarGet("requested") < TeamCountOriginal())
+    VarSet("needed", TeamCountOriginal() - (TeamCount() + VarGet("requested")));
+        RequestShipsOriginal(VarGet("needed"));
+        VarSet("DontBuild", 1);
+        TimerCreateSetStart("BuildAgain", 20);
+        //Print("Requesting STD CORV for debugging purposes");
+        VarSet("requested", VarGet("requested") + VarGet("needed"));
+      ENDIF
+      VarSet("newships", NewShipsAdded());
+      IF (VarGet("newships"))
+        VarSet("requested", VarGet("requested") - VarGet("newships"));
+      ENDIF
+      IF (TimerExpiredDestroy("BuildAgain"))
+        VarSet("DontBuild", 0);
+      ENDIF
+    ENDIF
+    //Reinforcement section////////////////////////////////////////////////////////////////////////
+
+    IF (ShipsCount(TEAMSHIPS_StdCorvette1)<1)
+      JUMP Dead;
+    ELSEIF (ShipsCount(SHIPS_EnemyAttackers)>0)
+      JUMP DefendMothership;
+    ELSEIF (UnderAttack(SHIPS_AttackC1))
+      JUMP DefendYourSelf;
+    ELSEIF ((NOT (VarGet("G_AssaultMsgSent")=TRUE)) AND (NOT (VarGet("G_CStartingTimer")=True)))
+      JUMP Waiting;
+    ELSEIF ((VarGet("G_AssaultMsgSent")=TRUE) AND (NOT (VarGet("G_CStartingTimer")=True)))
+      JUMP AssaultTimer;
+    ELSEIF ((VarGet("G_AssaultMsgSent")=TRUE) AND (VarGet("G_CStartingTimer")=True))
+      JUMP AssaultMothership;
+    ENDIF
+  ENDWATCH
+
+  STATE  DefendMothership
+    INIT
+    ENDINIT
+
+    WATCH
+      IF (ShipsCount(SHIPS_AttackingCapitalShips)>0)
+        Attack(SHIPS_AttackingCapitalShips);
+      ELSEIF (ShipsCount(SHIPS_AttackingCapitalShips)<1)
+        AttackFlank(SHIPS_AttackingCorvettes);
+      ELSEIF  ((ShipsCount(SHIPS_AttackingCapitalShips)<1) AND (ShipsCount(SHIPS_AttackingCorvettes)<1))
+        AttackFlank(SHIPS_AttackingFighters);
+      ELSEIF  ((ShipsCount(SHIPS_AttackingFighters)<1) AND
+        (ShipsCount(SHIPS_AttackingCorvettes)<1) AND
+        (ShipsCount(SHIPS_AttackingCapitalShips)<1))
+        Attack(SHIPS_EnemyAttackers);
+      ELSEIF   (ShipsCount(SHIPS_EnemyAttackers)<1)
+        JUMP AssaultMothership;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+  STATE  Waiting
+    INIT
+    ENDINIT
+    WATCH
+      IF (VarGet("G_AssaultMsgSent")=TRUE)
+         JUMP AssaultTimer;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+  STATE AssaultTimer
+    INIT
+    ENDINIT
+
+    WATCH
+      IF (NOT (VarGet("G_CTimeExists")=True))
+        TimerCreateSetStart("Corvette1Delay",(Random(40, 100)));
+        VarCreateSet("G_CTimeExists", True);
+      ENDIF
+      IF ((TimerExpired("Corvette1Delay")) AND (NOT (VarGet("G_CStartingTimer")=True)))
+        VarCreateSet("G_CStartingTimer", True);
+        UnhideShips(TEAMSHIPS_StdCorvette1);
+        JUMP AssaultMothership;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+  STATE  AssaultMothership
+    INIT
+    ENDINIT
+
+    WATCH
+      //ÄÄÄÄÄÄÄÄÄÄÄÄ
+      IFONCE ((NOT(VarGet("G_ResourcersAttacked")=TRUE))  AND (FindEnemiesNearTeam(SHIPS_NearNone, 15000)))
+        VarCreateSet("G_ResourcersAttacked", TRUE);
+        VarCreateSet("G_IAmTheWalrus", 3);
+      ENDIFONCE
+      //ÄÄÄÄÄÄÄÄÄÄÄÄ
+
+      IF (ShipsCount(SHIPS_PlayerResourcers)>0)
+        Attack(SHIPS_PlayerResourcers);
+      ELSEIF (ShipsCount(SHIPS_PlayerFighters)>0)
+        Attack(SHIPS_PlayerFighters);
+      ELSEIF (ShipsCount(SHIPS_PlayerFighters)<1)
+        Attack(SHIPS_PlayerCapitalShips);
+      ELSEIF  ((ShipsCount(SHIPS_PlayerFighters)<1) AND (ShipsCount(SHIPS_PlayerCapitalShips)<1))
+        Attack(SHIPS_PlayerShips);
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+  STATE  DefendYourSelf
+    INIT
+    ENDINIT
+
+    WATCH
+      IF ((UnderAttack(SHIPS_AttackC1)>0) AND (TeamCount()<=(TeamCountOriginal()/2)))
+        Attack(SHIPS_AttackC1);
+      ELSEIF (ShipsCount(SHIPS_AttackC1)<1)
+        JUMP AssaultMothership;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+  STATE Dead
+    INIT
+    ENDINIT
+
+    WATCH
+    ENDWATCH
+  ENDSTATE Dead
+
+ENDFSM StdCorvette1
+//----------------------     End Std Corvette 1     ------------------
+
+//----------------------     Std Corvette 2     ----------------------
+FSM StdCorvette2
+  STATES Waiting, AssaultMothership, DefendMothership, DefendYourSelf, AssaultTimer, Dead ;
+
+  INIT
+    HideShips(TEAMSHIPS_StdCorvette2);
+    VarCreateSet("requested", 0);
+    VarCreateSet("needed", 0);
+    VarCreateSet("newships", 0);
+    VarCreateSet("DontBuild", 0);
+    JUMP Waiting;
+  ENDINIT
+
+  WATCH
+
+
+    //Reinforcement section////////////////////////////////////////////////////////////////////////
+    IF ((TeamCount()>0) AND (VarGet("DontBuild")=0))
+      IF (TeamCount() + VarGet("requested") < TeamCountOriginal())
+    VarSet("needed", TeamCountOriginal() - (TeamCount() + VarGet("requested")));
+        RequestShipsOriginal(VarGet("needed"));
+        VarSet("DontBuild", 1);
+        TimerCreateSetStart("BuildAgain", 20);
+        //Print("Requesting STD CORV for debugging purposes");
+        VarSet("requested", VarGet("requested") + VarGet("needed"));
+      ENDIF
+      VarSet("newships", NewShipsAdded());
+      IF (VarGet("newships"))
+        VarSet("requested", VarGet("requested") - VarGet("newships"));
+      ENDIF
+      IF (TimerExpiredDestroy("BuildAgain"))
+        VarSet("DontBuild", 0);
+      ENDIF
+    ENDIF
+    //Reinforcement section////////////////////////////////////////////////////////////////////////
+
+    IF (ShipsCount(TEAMSHIPS_StdCorvette2)<1)
+      JUMP Dead;
+    ELSEIF (ShipsCount(SHIPS_EnemyAttackers)>0)
+      JUMP DefendMothership;
+    ELSEIF (UnderAttack(SHIPS_AttackC2))
+      JUMP DefendYourSelf;
+    ELSEIF ((NOT (VarGet("G_AssaultMsgSent")=TRUE)) AND (NOT (VarGet("G_C2StartingTimer")=True)))
+     JUMP Waiting;
+    ELSEIF ((ShipsCount(TEAMSHIPS_MissileCorvette1)<1) AND (NOT (VarGet("G_C2StartingTimer")=True)))
+     //VarCreateSet("StartingTimer", True);
+     JUMP AssaultTimer;
+    ELSEIF ((VarGet("G_AssaultMsgSent")=TRUE) AND (VarGet("G_C2StartingTimer")=True))
+     JUMP AssaultMothership;
+    ENDIF
+
+
+
+  ENDWATCH
+
+  STATE  DefendMothership
+    INIT
+    ENDINIT
+
+    WATCH
+      IF (ShipsCount(SHIPS_AttackingCapitalShips)>0)
+        Attack(SHIPS_AttackingCapitalShips);
+      ELSEIF (ShipsCount(SHIPS_AttackingCapitalShips)<1)
+        AttackFlank(SHIPS_AttackingCorvettes);
+      ELSEIF  ((ShipsCount(SHIPS_AttackingCapitalShips)<1) AND (ShipsCount(SHIPS_AttackingCorvettes)<1))
+        AttackFlank(SHIPS_AttackingFighters);
+      ELSEIF  ((ShipsCount(SHIPS_AttackingFighters)<1) AND
+        (ShipsCount(SHIPS_AttackingCorvettes)<1) AND
+        (ShipsCount(SHIPS_AttackingCapitalShips)<1))
+        Attack(SHIPS_EnemyAttackers);
+      ELSEIF   (ShipsCount(SHIPS_EnemyAttackers)<1)
+        JUMP AssaultMothership;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+
+  STATE  Waiting
+    INIT
+    ENDINIT
+    WATCH
+      IF (VarGet("G_AssaultMsgSent")=TRUE)
+         JUMP AssaultTimer;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+  STATE AssaultTimer
+    INIT
+    ENDINIT
+
+    WATCH
+
+      IF (NOT (VarGet("G_C2TimeExists")=True))
+        TimerCreateSetStart("Corvette2Delay",(Random(50, 150)));
+        VarCreateSet("G_C2TimeExists", True);
+      ELSEIF ((TimerExpired("Corvette2Delay")) AND (NOT (VarGet("G_C2StartingTimer")=True)))
+        VarCreateSet("G_C2StartingTimer", True);
+        UnhideShips(TEAMSHIPS_StdCorvette2);
+        JUMP AssaultMothership;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+  STATE  AssaultMothership
+    INIT
+    ENDINIT
+
+    WATCH
+      //ÄÄÄÄÄÄÄÄÄÄÄÄ
+      IFONCE ((NOT(VarGet("G_ResourcersAttacked")=TRUE))  AND (FindEnemiesNearTeam(SHIPS_NearNone, 15000)))
+        VarCreateSet("G_ResourcersAttacked", TRUE);
+        VarSet("G_IAmTheWalrus", 4);
+      ENDIFONCE
+      //ÄÄÄÄÄÄÄÄÄÄÄÄ
+
+      IF (ShipsCount(SHIPS_PlayerResourcers)>0)
+        Attack(SHIPS_PlayerResourcers);
+      ELSEIF (ShipsCount(SHIPS_PlayerFighters)>0)
+        Attack(SHIPS_PlayerFighters);
+      ELSEIF (ShipsCount(SHIPS_PlayerFighters)<1)
+        Attack(SHIPS_PlayerCapitalShips);
+      ELSEIF  ((ShipsCount(SHIPS_PlayerFighters)<1) AND (ShipsCount(SHIPS_PlayerCapitalShips)<1))
+        Attack(SHIPS_PlayerShips);
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+
+  STATE  DefendYourSelf
+    INIT
+    ENDINIT
+
+    WATCH
+      IF ((UnderAttack(SHIPS_AttackC2)>0) AND (TeamCount()<=(TeamCountOriginal()/2)))
+        Attack(SHIPS_AttackC2);
+      ELSEIF (ShipsCount(SHIPS_AttackC2)<1)
+        JUMP AssaultMothership;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+
+  STATE Dead
+    INIT
+    ENDINIT
+
+    WATCH
+    ENDWATCH
+  ENDSTATE Dead
+
+ENDFSM StdCorvette2
+//----------------------     End Std Corvette 2     -------------------------
+
+//----------------------     Missile Corvette 1     -------------------------
+FSM MissileCorvette1
+
+  STATES Waiting, AssaultMothership, DefendMothership, DefendYourSelf, AssaultTimer, Dead;
+
+  INIT
+   HideShips(TEAMSHIPS_MissileCorvette1);
+   VarCreateSet("requested", 0);
+   VarCreateSet("needed", 0);
+   VarCreateSet("newships", 0);
+   VarCreateSet("DontBuild", 0);
+  ENDINIT
+
+  WATCH
+
+    //Reinforcement section////////////////////////////////////////////////////////////////////////
+    IF ((TeamCount()>0) AND (VarGet("DontBuild")=0))
+      IF (TeamCount() + VarGet("requested") < TeamCountOriginal())
+    VarSet("needed", TeamCountOriginal() - (TeamCount() + VarGet("requested")));
+        RequestShipsOriginal(VarGet("needed"));
+        VarSet("DontBuild", 1);
+        TimerCreateSetStart("BuildAgain", 20);
+        //Print("Requesting STD CORV for debugging purposes");
+        VarSet("requested", VarGet("requested") + VarGet("needed"));
+      ENDIF
+      VarSet("newships", NewShipsAdded());
+      IF (VarGet("newships"))
+        VarSet("requested", VarGet("requested") - VarGet("newships"));
+      ENDIF
+      IF (TimerExpiredDestroy("BuildAgain"))
+        VarSet("DontBuild", 0);
+      ENDIF
+    ENDIF
+    //Reinforcement section////////////////////////////////////////////////////////////////////////
+
+    IF (ShipsCount(TEAMSHIPS_MissileCorvette1)<1)
+      JUMP Dead;
+    ELSEIF (ShipsCount(SHIPS_EnemyAttackers)>0)
+      JUMP DefendMothership;
+    ELSEIF (UnderAttack(SHIPS_AttackMc))
+      JUMP DefendYourSelf;
+    ELSEIF ((NOT (VarGet("G_AssaultMsgSent")=TRUE)) AND (NOT (VarGet("G_MCStartingTimer")=True)))
+     JUMP Waiting;
+    ELSEIF ((ShipsCount(TEAMSHIPS_StdCorvette1)<1) AND (NOT (VarGet("G_MCStartingTimer")=True)))
+     //VarCreateSet("StartingTimer", True);
+     JUMP AssaultTimer;
+    ELSEIF ((VarGet("G_AssaultMsgSent")=TRUE) AND (VarGet("G_MCStartingTimer")=True))
+     JUMP AssaultMothership;
+    ENDIF
+  ENDWATCH
+
+  STATE  Waiting
+    INIT
+    ENDINIT
+    WATCH
+      IF ((VarGet("G_AssaultMsgSent")=TRUE) AND (NOT (VarGet("OnceTheFuck")=TRUE)))
+         VarCreateSet("OnceTheFuck", True);
+         JUMP AssaultTimer;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+  STATE AssaultTimer
+    INIT
+    ENDINIT
+
+    WATCH
+      IF (NOT (VarGet("G_MCTimeExists")=True))
+        TimerCreateSetStart("MCorvetteDelay",(Random(40, 120)));
+        VarCreateSet("G_MCTimeExists", True);
+      ELSEIF ((TimerExpired("MCorvetteDelay")) AND (NOT (VarGet("G_MCStartingTimer")=True)))
+        VarCreateSet("G_MCStartingTimer", True);
+        UnhideShips(TEAMSHIPS_MissileCorvette1);
+        JUMP AssaultMothership;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+
+  STATE  AssaultMothership
+    INIT
+    ENDINIT
+
+    WATCH
+      //ÄÄÄÄÄÄÄÄÄÄÄÄ
+      IFONCE ((NOT(VarGet("G_ResourcersAttacked")=TRUE)) AND (FindEnemiesNearTeam(SHIPS_NearNone, 15000)))
+        VarCreateSet("G_ResourcersAttacked", TRUE);
+        VarSet("G_IAmTheWalrus", 5);
+      ENDIFONCE
+      //ÄÄÄÄÄÄÄÄÄÄÄÄ
+
+      IF (ShipsCount(SHIPS_PlayerFighters)>0)
+        Attack(SHIPS_PlayerFighters);
+      ELSEIF (ShipsCount(SHIPS_PlayerFighters)<1)
+        Attack(SHIPS_PlayerCorvettes);
+      ELSEIF  ((ShipsCount(SHIPS_PlayerFighters)<1) AND (ShipsCount(SHIPS_PlayerCorvettes)<1))
+        Attack(SHIPS_PlayerCapitalShips);
+      ELSEIF  ((ShipsCount(SHIPS_PlayerFighters)<1) AND
+        (ShipsCount(SHIPS_PlayerCorvettes)<1) AND
+        (ShipsCount(SHIPS_PlayerCapitalShips)<1))
+        Attack(SHIPS_PlayerShips);
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+  STATE  DefendYourSelf
+    INIT
+    ENDINIT
+
+    WATCH
+      IF (ShipsCount(SHIPS_AttackMc)>0)
+        Attack(SHIPS_AttackMc);
+      ENDIF
+      IF (ShipsCount(SHIPS_AttackMc)<1)
+        JUMP AssaultMothership;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+  STATE  DefendMothership
+    INIT
+    ENDINIT
+
+    WATCH
+      IF (ShipsCount(SHIPS_AttackingFighters)>0)
+        Attack(SHIPS_AttackingFighters);
+      ELSEIF (ShipsCount(SHIPS_AttackingFighters)<1)
+        AttackFlank(SHIPS_AttackingCorvettes);
+      ELSEIF  ((ShipsCount(SHIPS_AttackingFighters)<1) AND
+        (ShipsCount(SHIPS_AttackingCorvettes)<1))
+        Attack(SHIPS_AttackingCapitalShips);
+      ELSEIF  ((ShipsCount(SHIPS_AttackingFighters)<1) AND
+        (ShipsCount(SHIPS_AttackingCorvettes)<1) AND
+        (ShipsCount(SHIPS_AttackingCapitalShips)<1))
+        Attack(SHIPS_EnemyAttackers);
+      ELSEIF (ShipsCount(SHIPS_EnemyAttackers)<1)
+        JUMP AssaultMothership;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+  STATE Dead
+    INIT
+    ENDINIT
+
+    WATCH
+    ENDWATCH
+  ENDSTATE Dead
+ENDFSM MissileCorvette1
+
+//----------------------     End Missile Corvette 1      ------------
+
+//----------------------     P1 Mothership     ----------------------
+FSM P1Mothership
+  STATES Waiting, LovingMe, AssaultMothership, RetreatMothership, AssaultTimer, SpewDeath, Kamikaze, Dead;
+
+  INIT
+    TeamHyperspaceOut();
+    JUMP Waiting;
+    //VarCreateSet("G_ReadyToSpew", TRUE);
+  ENDINIT
+  WATCH
+    IFONCE (TeamHealthAverage ()<50)
+      VarCreateSet("Leaving", TRUE);
+      JUMP RetreatMothership;
+    ENDIFONCE
+
+    IFONCE (ShipsCount(TEAMSHIPS_P1Mothership)<1)
+      JUMP Dead;
+    ENDIFONCE
+
+    IF ((UnderAttack(SHIPS_EnemyOfMS)>0) AND (NOT(VarGet("G_SaveAiMothership")=TRUE)))
+      ShipsSelectCapital(SHIPS_PCapShipsAttackCarrier, SHIPS_EnemyOfMS);
+      IF(ShipsCount(SHIPS_PCapShipsAttackCarrier)>0)
+        VarCreateSet("G_SaveAiMothership", TRUE);
+        JUMP LovingMe;
+      ENDIF
+    ENDIF
+  ENDWATCH
+
+  STATE  LovingMe
+    INIT
+    ENDINIT
+    WATCH
+     UnderAttack(SHIPS_EnemyOfMS);
+     IF (ShipsSelectClass(SHIPS_PCapShipsAttackCarrier, SHIPS_EnemyOfMS, "CLASS_CapitalShips")>0)
+       Attack(SHIPS_PCapShipsAttackCarrier);
+     ELSE
+       ShipsClear(SHIPS_EnemyOfMS);
+       IF (VarGet("Leaving")=TRUE)
+         JUMP RetreatMothership;
+       ELSEIF (Varget("G_ReadyToSpew")=TRUE)
+         VarDestroy("G_SaveAiMothership");
+         JUMP SpewDeath;
+       ELSE
+         VarDestroy("G_SaveAiMothership");
+         JUMP AssaultTimer;
+       ENDIF
+     ENDIF
+   ENDWATCH
+  ENDSTATE
+
+  STATE  Waiting
+    INIT
+    ENDINIT
+    WATCH
+        IF (MsgReceived ("AttackPlayerMothership"))
+           TeamHyperspaceIn(POINT_P1MsPoint);
+           JUMP AssaultTimer;
+        ENDIF
+    ENDWATCH
+  ENDSTATE
+
+  STATE  AssaultTimer
+    INIT
+      IFONCE (TRUE)
+        TimerCreateSetStart("DoggieTimer", 80);
+      ENDIFONCE
+    ENDINIT
+    WATCH
+      IF (TimerExpired("DoggieTimer"))
+        JUMP AssaultMothership;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+  STATE  AssaultMothership
+    INIT
+      TeamVelocityMaxSet(170);
+      PatrolPath(PATH_PathMotherShipFlank);
+      VarCreateSet("StillOnPath", True);
+    ENDINIT
+    WATCH
+      IF (PathNextPoint()=0)
+         MoveTo(POINT_PointMotherShipFlank);
+         Vardestroy("StillOnPath");
+         TeamVelocityMaxClear();
+         JUMP SpewDeath;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+  STATE SpewDeath
+    INIT
+      VarCreateSet("G_ReadyToSpew", TRUE);
+    ENDINIT
+    WATCH
+      IF ((ShipsCount(TEAMSHIPS_IonFrig1)<1) AND (ShipsCount(TEAMSHIPS_IonFrig2)<1) AND (ShipsCount(TEAMSHIPS_IonFrig3)<1))
+        PingAddShips(TEAMSHIPS_P1Mothership, "Turanic Raider Mothership");
+        JUMP Kamikaze;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+  STATE Kamikaze
+    INIT
+      MoveAttack(SHIPS_PlayerMothership);
+    ENDINIT
+
+    WATCH
+      IF ((UnderAttack(SHIPS_EnemyOfMS)>0) AND (ShipsSelectClass(SHIPS_PCapShipsAttackCarrier, SHIPS_EnemyOfMS, "CLASS_CapitalShips")>0))
+        VarCreateSet("IWasAttacked", True);
+        Attack(SHIPS_PlayerMothership);
+      ELSEIF ((VarGet("IWasAttacked")=True) AND (UnderAttack(SHIPS_EnemyOfMS)<1))
+        VarDestroy("IWasAttacked");
+        ShipsClear(SHIPS_EnemyOfMS);
+        JUMP Kamikaze;
+      ENDIF
+    ENDWATCH
+  ENDSTATE
+
+  STATE  RetreatMothership
+    INIT
+      //Stop();
+      TeamVelocityMaxClear();
+      MoveTo(POINT_TuranicRetreatPoint);
+    ENDINIT
+    WATCH
+      IFONCE (Nearby(POINT_TuranicRetreatPoint, 40000))
+        VarCreateSet("G_IcantLetYouGo", TRUE);
+      ENDIFONCE
+
+      IFONCE (Nearby(POINT_TuranicRetreatPoint, 1000))
+        TeamHyperspaceOut();
+        MissionFailed ();
+      ENDIFONCE
+    ENDWATCH
+  ENDSTATE
+
+  STATE Dead
+    INIT
+    ENDINIT
+
+    WATCH
+    ENDWATCH
+  ENDSTATE Dead
+
+ENDFSM P1Mothership
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     End P1 Mothership ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     ProtectFrigs     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+FSM ProtectFrigs
+    States Wait, Guard, Attack, Done;
+        INIT
+          TeamHyperspaceOut();
+          JUMP Wait;
+        ENDINIT
+        WATCH
+          //IFONCE (ShipsCount(TEAMSHIPS_P1Mothership)<1)
+          //  JUMP Done;
+          //ENDIFONCE
+        ENDWATCH
+
+        STATE Wait //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+            ENDINIT
+            WATCH
+              IFONCE(MsgReceived("AttackPlayerMothership"))
+                TeamHyperspaceIn(POINT_P1MsGuardPoint);
+                Jump Guard;
+              ENDIFONCE
+            ENDWATCH
+        ENDSTATE
+
+        State Guard
+            INIT
+              Guard(TEAMSHIPS_P1Mothership);
+            ENDINIT
+            WATCH
+              IF ((UnderAttackElsewhere(TEAM_P1Mothership, SHIPS_VictemFrig1)>0) OR (FindEnemiesNearTeam(SHIPS_NearFrig1, 5000)>0))
+                JUMP Attack;
+              ENDIF
+            ENDWATCH
+        ENDSTATE
+
+        State Attack
+            INIT
+            ENDINIT
+            WATCH
+              UnderAttackElsewhere (TEAM_P1Mothership, SHIPS_VictemFrig1);
+              FindEnemiesNearTeam (SHIPS_NearFrig1, 10000);
+              ShipsSelectType (SHIPS_NastyCaps1, SHIPS_NearFrig1, "SalCapCorvette");
+              ShipsSelectCapital(SHIPS_CapsVictemFrig1, SHIPS_VictemFrig1);
+              ShipsSelectCapital(SHIPS_CapsNearFrig1, SHIPS_NearFrig1);
+              ShipsSelectIndex (SHIPS_IndxCapsVictemFrig1, SHIPS_CapsVictemFrig1, 0);
+              ShipsSelectIndex (SHIPS_IndxCapsNearFrig1, SHIPS_CapsNearFrig1, 0);
+
+              IF (ShipsCount(SHIPS_NastyCaps1)>0)
+                Attack(SHIPS_NastyCaps1);
+              ELSEIF (ShipsCount(SHIPS_CapsVictemFrig1)>0)
+                Attack(SHIPS_IndxCapsVictemFrig1);
+              ELSEIF(ShipsCount(SHIPS_CapsNearFrig1)>0)
+                Attack(SHIPS_IndxCapsNearFrig1);
+              ELSEIF(ShipsCount(SHIPS_NearFrig1)>0)
+                Attack(SHIPS_NearFrig1);
+              ELSEIF(ShipsCount(TEAMSHIPS_P1Mothership)>0)
+                JUMP Guard;
+              ENDIF
+            ENDWATCH
+        ENDSTATE
+
+        State Done
+          INIT
+            TeamHyperSpaceOut();
+          ENDINIT
+          WATCH
+          ENDWATCH
+        ENDSTATE
+
+ENDFSM
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     ProtectFrigs     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ                      ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     Global Stuff     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ                      ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+INIT
+    FSMCREATE (TuranicFighters, TEAM_TuranicFighters);
+    FSMCREATE (TuranicHarrassFighters, TEAM_TuranicHarrassFighters);
+    FSMCREATE (IonFrig1, TEAM_IonFrig1);
+    FSMCREATE (IonFrig2, TEAM_IonFrig2);
+    FSMCREATE (IonFrig3, TEAM_IonFrig3);
+    FSMCREATE (StdCorvette1, TEAM_StdCorvette1);
+    FSMCREATE (StdCorvette2, TEAM_StdCorvette2);
+    FSMCREATE (MissileCorvette1, TEAM_MissileCorvette1);
+    FSMCREATE (P1Mothership, TEAM_P1Mothership);
+    FSMCREATE (MissionBriefing, TEAM_TeamOfDummys);
+    FSMCREATE (Traders, TEAM_Traders);
+    FSMCREATE (ProtectFrigs, TEAM_ProtectFrigs);
+
+    // Draw the location Card
+    SaveLevel (4, LSTRING_Savegame);
+    LocationCard(10000, LSTRING_LocationCard);
+    VarCreateSet("G_IAmTheWalrus", 0);
+ENDINIT
+
+WATCH
+    //Offensive ship selection//
+    FindEnemiesInside (VOLUME_WorldSphere, SHIPS_PlayerShips,1000000);
+    ShipsSelectClass (SHIPS_PlayerFighters, SHIPS_PlayerShips, "CLASS_Fighter");
+    ShipsSelectClass (SHIPS_PlayerCorvettes, SHIPS_PlayerShips, "CLASS_Corvette");
+    ShipsSelectClass (SHIPS_PlayerCapitalShips, SHIPS_PlayerShips, "CLASS_CapitalShips");
+    ShipsSelectClass (SHIPS_PlayerMothership, SHIPS_PlayerShips, "CLASS_Mothership");
+    ShipsSelectType (SHIPS_PlayerResourcers, SHIPS_PlayerShips, "ResourceCollector");
+    ShipsSelectClass (SHIPS_PlayerFrigates, SHIPS_PlayerShips, "CLASS_Frigate");
+    ShipsSelectClass (SHIPS_PlayerDestroyer, SHIPS_PlayerShips, "CLASS_Destroyer");
+    ShipsSelectClass (SHIPS_PlayerHeavyCruiser, SHIPS_PlayerShips, "CLASS_HeavyCruiser");
+    ShipsSelectClass (SHIPS_PlayerCarrier, SHIPS_PlayerShips, "CLASS_Carrier");
+
+    ShipsSelectCapital(SHIPS_PlayerCapitalShips, SHIPS_PlayerShips);
+
+    //Defensive ship selection//
+    UnderAttackElsewhere (TEAM_P1Mothership, SHIPS_EnemyAttackers);
+    ShipsSelectClass (SHIPS_AttackingFighters, SHIPS_EnemyAttackers, "CLASS_Fighter");
+    ShipsSelectClass (SHIPS_AttackingCorvettes, SHIPS_EnemyAttackers, "CLASS_Corvette");
+    ShipsSelectClass (SHIPS_AttackingCapitalShips, SHIPS_EnemyAttackers, "CLASS_CapitalShips");
+
+    ShipsSelectClass (SHIPS_AttackingFrigates, SHIPS_EnemyAttackers, "CLASS_Frigate");
+    ShipsSelectClass (SHIPS_AttackingDestroyer, SHIPS_EnemyAttackers, "CLASS_Destroyer");
+    ShipsSelectClass (SHIPS_AttackingHeavyCruiser, SHIPS_EnemyAttackers, "CLASS_HeavyCruiser");
+    ShipsSelectClass (SHIPS_AttackingCarrier, SHIPS_EnemyAttackers, "CLASS_Carrier");
+
+    ShipsAdd (SHIPS_AttackingCapitalShips, SHIPS_AttackingFrigates);
+    ShipsAdd (SHIPS_AttackingCapitalShips, SHIPS_AttackingDestroyer);
+    ShipsAdd (SHIPS_AttackingCapitalShips, SHIPS_AttackingHeavyCruiser);
+    ShipsAdd (SHIPS_AttackingCapitalShips, SHIPS_AttackingCarrier);
+
+    //Enemy Ship Selection
+    FindShipsInside (VOLUME_WorldSphere, SHIPS_AllShips);
+    ShipsAdd (SHIPS_AllP1, TEAMSHIPS_TuranicFighters);
+    ShipsAdd (SHIPS_AllP1, TEAMSHIPS_TuranicHarrassFighters);
+
+    ShipsAdd (SHIPS_AllP1, TEAMSHIPS_IonFrig1);
+    ShipsAdd (SHIPS_AllP1, TEAMSHIPS_IonFrig2);
+    ShipsAdd (SHIPS_AllP1, TEAMSHIPS_IonFrig3);
+    ShipsAdd (SHIPS_AllP1, TEAMSHIPS_StdCorvette1);
+    ShipsAdd (SHIPS_AllP1, TEAMSHIPS_StdCorvette2);
+    ShipsAdd (SHIPS_AllP1, TEAMSHIPS_MissileCorvette1);
+    ShipsAdd (SHIPS_AllP1, TEAMSHIPS_P1Mothership);
+    ShipsAdd (SHIPS_AllP1, TEAMSHIPS_ProtectFrigs);
+
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+//Objectives
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    IFONCE (ShipsCount(TEAMSHIPS_P1Mothership)<1)
+      ObjectiveSet("DestroyP1Ms", TRUE);
+      MusicStop(B01_TuranicRaidersLong);
+      //TimerCreateSetStart("OuttaHereTimer", 5);
+    ENDIFONCE
+
+    IFONCE ((ShipsCount(TEAMSHIPS_P1Mothership)<1)
+      AND (ShipsCount(TEAMSHIPS_IonFrig1)<1)
+      AND (ShipsCount(TEAMSHIPS_IonFrig2)<1)
+      AND (ShipsCount(TEAMSHIPS_IonFrig3)<1)
+      AND (ShipsCount(TEAMSHIPS_ProtectFrigs)<1)
+      AND ((UnderAttackElsewhere (TEAM_TuranicFighters, SHIPS_Out)<1)
+      AND (UnderAttackElsewhere (TEAM_TuranicHarrassFighters, SHIPS_Out)<1)
+      AND (UnderAttackElsewhere (TEAM_StdCorvette1, SHIPS_Out)<1)
+      AND (UnderAttackElsewhere (TEAM_StdCorvette2, SHIPS_Out)<1)
+      AND (UnderAttackElsewhere (TEAM_MissileCorvette1, SHIPS_Out)<1))
+      AND (NOT(ShipsOrder (SHIPS_AllP1)=2)))
+      TimerCreateSetStart("EndOfTheWorldAsWeKnowIt", 5);
+    ENDIFONCE
+
+    IFONCE(TimerExpiredDestroy("EndOfTheWorldAsWeKnowIt"))
+#ifdef OEM
+        SpeechEvent(M04OEM_Intel_Hyperspace, 0);
+#else
+        IF (RaceOfHuman () = 0)
+          SpeechEvent(M04_Intel_HyperspaceKushan, 0);
+        ELSEIF (RaceOfHuman () = 1)
+          SpeechEvent(M04_Intel_HyperspaceTaiidan, 0);
+        ENDIF
+#endif
+        ObjectiveCreate("Hyperspace", LSTRING_TBHyperspace, LSTRING_TBHyperspace);
+
+        ObjectiveSet("ProtectTheFleet", TRUE);
+    ENDIFONCE
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+//END Objectives
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+//      technology
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+    // MISSION 02 Tech stuff: //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        // if player researches Corvette drive, allow Corvette chassis                  // (Build: Light Corvette)
+        IFONCE (TechGet ("MassDrive10Kt"))
+                TechSetResearch ("Chassis2");
+        ENDIFONCE
+
+        // if player researches Corvette chassis, allow Heavy Corvette upgrade            // (Build: Heavy Corvette)
+        IF ((TechGet ("Chassis2")) AND (VarGet ("SetMediumGuns") = FALSE))
+                TechSetResearch ("MediumGuns");
+                VarCreateSet ("SetMediumGuns", TRUE);
+        ENDIF
+
+        // MISSION 01 Tech stuff: //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        // if player researches Fighter chassis, allow Corvette Drive                   // (Build: Repair Corvette)
+        IFONCE (TechGet ("Chassis1"))
+                TechSetResearch ("MassDrive10Kt");
+        ENDIFONCE
+
+ENDWATCH
+//----------------------     End Global Stuff     ----------------------
+

@@ -1,0 +1,90 @@
+@echo off
+if "%@eval[2+2]" != "4" echo ERROR: 4NT NOT LOADED
+
+::on break (echo [BREAK IGNORED]  IF YOU INTERRUPT THIS PROCESS, YOU'LL HAVE TO QUIT AND RESTART THE 4NT SESSION.)
+on break (echo. & echo [RESTARTING] & echo. & goto :RESTART)
+on errormsg (echo SHIT.  ERROR MAKING BIGFILE. & quit)
+
+setlocal
+unalias *
+
+:RESTART
+
+echo.
+inkey /K"YN" Did you do a FULL GET of $\Tools\Batch and $\Tools\Bin (Y/N)?  %%ukey
+if "%ukey" == "N" quit
+
+echo.
+echo If you didn't delete your \Homeworld\Data directory before doing the last
+echo FULL GET of $\Data, the old date/time stamps could create later problems.
+inkey /K"YN" Did you do DELETE your \Homeworld\Data directory and do a FULL GET of $\Data (Y/N)?  %%ukey
+if "%ukey" == "N" quit
+
+echo.
+inkey /K"YN" Did you do a GETSOUND (Y/N)?  %%ukey
+if "%ukey" == "N" quit
+
+text
+
+The bigfile listing can be made of a combination of:
+   (1) the BigContents.txt file in $\Tools\Batch
+   (2) the current listing of your \Homeworld\Data directory
+       (this will be written to \Homeworld\Data\DataContents.txt)
+   (3) the pre-existing version of \Homeworld\Data\DataConents.txt
+endtext
+
+cd %HW_Data%
+del /q /e Homeworld.big
+
+del /q /e BigContents.txt
+> BigContents.txt
+
+inkey /K"1N" Do you want to use (1) or (N)ot ?  %%ukey
+iff "%ukey" == "1" then
+        ::copy /q %HW_Root%\Tools\Batch\BigContents.txt BigContents.txt
+        do L in @%HW_Root%\Tools\Batch\BigContents.txt
+                set K=%L
+                if "%@LEFT[12, %@TRIM[%@UPPER[%K]]]" != "HW_MUSIC.WXD" .AND. "%@LEFT[12, %@TRIM[%@UPPER[%K]]]" != " HW_COMP.VCE" .AND. %@Len[%K] GT 0 echo %K >> BigContents.txt
+        enddo
+endiff
+
+iff exist DataContents.txt then
+        inkey /K"23N" Do you want to use (2), or (3), or (N)either ? %%ukey
+else
+        inkey /K"2N" Do you want to use (2) or (N)ot ? %%ukey
+endiff
+iff "%ukey" == "2" then
+        del /q /e DataContents.txt
+        dir /b /s /a-d > DataContents.txt
+        do L in @DataContents.txt
+                set K=%@RIGHT[ %@Eval[%@Len[%L] - %@Len[%HW_Data%] - 1], %L]
+                if "%@LEFT[12, %@TRIM[%@UPPER[%K]]]" != "HW_MUSIC.WXD" .AND. "%@LEFT[12, %@TRIM[%@UPPER[%K]]]" != " HW_COMP.VCE" .AND. "%K" != "BigContents.txt" .AND. "%K" != "DataContents.txt" .AND. %@Len[%K] GT 0 echo %K >> BigContents.txt
+        enddo
+endiff
+iff "%ukey" == "3" then
+        do L in @DataContents.txt
+                set K=%%L
+                if "%@LEFT[12, %@TRIM[%@UPPER[%K]]]" != "HW_MUSIC.WXD" .AND. "%@LEFT[12, %@TRIM[%@UPPER[%K]]]" != " HW_COMP.VCE" .AND. "%K" != "BigContents.txt" .AND. "%K" != "DataContents.txt" .AND. %@Len[%K] GT 0 echo %K >> BigContents.txt
+        enddo
+endiff
+
+::
+::      The end result of that code above is to create a file
+::      called BigContents.txt with all of the files in the data
+::      directory listed in it.  At the start of the file, there
+::      can be an optional section (the BigContents.txt from
+::      Tools\Batch) that has commonly loaded files and their
+::      relative orders.  This will help optimize the layout
+::      of the bigfile for minimal seeking.
+::
+
+text
+
+Making Homeworld.big
+After you check BigContents.txt, you should manually go
+biggie -f Homeworld.big @BigContents.txt
+endtext
+
+::biggie -f Homeworld.big @BigContents.txt
+
+endlocal

@@ -1,0 +1,33 @@
+; MissionMan script, Tuesday, Aug 17 1999, 5:43:48 PM
+; Copyright (c) 1998-99, Relic Entertainment Inc.
+; Multiplayer Level: GasGiant3
+; Info: Rumble in the Stratosphere
+
+[Rumble in the Stratosphere]
+
+MissionSphere    -1,?,ResourceSphere,0.0,0.0,0.0,30000.0,0.0,ResourceSphere_1.missphere,?
+MissionSphere    1,R1,Mothership,47689.0,75044.0,-20602.0,30000.0,0.0,Mothership_1.missphere,0
+MissionSphere    0,R1,Mothership,47689.0,75044.0,-20602.0,30000.0,0.0,Mothership_0.missphere,0
+MissionSphere    2,R1,Mothership,47689.0,75044.0,-20602.0,30000.0,0.0,Mothership_2.missphere,0
+
+Lighting    default
+smDepthCueRadius    50000
+smDepthCueStartRadius    20000
+smCircleBorder    90000
+smZoomMax    250000
+smZoomMin    30000
+smInitialDistance    150000
+smUniverseSizeX    200000
+smUniverseSizeZ    110000
+smUniverseSizeY    200000
+ExcludeShips    P1,All
+ExcludeShips    P2,All
+ExcludeShips    P3,All
+ExcludeShips    Traders,All
+ExcludeShips    R1,LightDefender
+ExcludeShips    R2,LightDefender
+ExcludeShips    R1,HeadShotAsteroid
+ExcludeShips    R2,HeadShotAsteroid
+ExcludeDerelict    ALL
+IncludeDerelict    Crate
+SongNumber    -1

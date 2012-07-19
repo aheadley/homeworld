@@ -1,0 +1,9 @@
+SCC = This is a Source Code Control file
+
+[hw.mak]
+SCC_Aux_Path = "\\codex\Homeworld\SS"
+SCC_Project_Name = "$/src/Win32", RULAAAAA
+
+[sw.mak]
+SCC_Aux_Path = "\\codex\Homeworld\SS"
+SCC_Project_Name = "$/src/Win32", RULAAAAA

@@ -1,0 +1,2101 @@
+//----------------------------------------------------------------------//
+//                                                                      //
+//        Mission5 OEM - Turanic Lair                                   //
+//                                                                      //
+//----------------------------------------------------------------------//
+#include "..\\Game\\speechevent.h"
+#include "..\\Game\\soundmusic.h"
+#include "attributes.h"
+
+    LOCALIZATION //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+
+            LSTRING_Savegame
+                "05 - Turanic Raider Planetoid"
+                "French version goes here"
+                "German version goes here"
+				"Spanish Version goes here"
+				"Italian Version goes here"
+
+            LSTRING_LocationCard
+                "Deep Space - Turanic Raider Planetoid"
+                "French version goes here"
+                "German version goes here"
+				"Spanish Version goes here"
+				"Italian Version goes here"
+
+            LSTRING_Objective1
+                "Destroy Enemy Carriers"
+                "French version goes here"
+                "German version goes here"
+				"Spanish Version goes here"
+				"Italian Version goes here"
+
+            LSTRING_FcHyperspaceSuccessful
+                "Hyperspace successful."
+                "French version goes here"
+                "German version goes here"
+				"Spanish Version goes here"
+				"Italian Version goes here"
+
+            LSTRING_FiIonTech
+                "Research Division reports it is now equipped for Ion Cannon technology.  We advise commencing research immediately."
+                "French version goes here"
+                "German version goes here"
+				"Spanish Version goes here"
+				"Italian Version goes here"
+
+            LSTRING_FiPlasmaTech
+                "Research Division reports it is now equipped for Plasma Bomb technology.  We advise commencing research immediately"
+                "French version goes here"
+                "German version goes here"
+				"Spanish Version goes here"
+				"Italian Version goes here"
+
+            LSTRING_FiPlanetoidHere
+                "Sensors indicate a heavily armed planetary defense system which we cannot penetrate."
+                "French version goes here"
+                "German version goes here"
+				"Spanish Version goes here"
+				"Italian Version goes here"
+
+            LSTRING_FiTuranicFleet
+                "The planetary garrison must have alerted the main Turanic Raider Fleet which is currently Hyperspacing in here."
+                "French version goes here"
+                "German version goes here"
+				"Spanish Version goes here"
+				"Italian Version goes here"
+
+            LSTRING_FiStopCarriers
+                "They are retreating to the planetoid. We must stop their Carriers from reaching the safety of the planetary defenses."
+                "French version goes here"
+                "German version goes here"
+				"Spanish Version goes here"
+				"Italian Version goes here"
+
+            LSTRING_FiPrepare
+                "The Turanic Carriers are launching Strike Craft.  Prepare for assault."
+                "French version goes here"
+                "German version goes here"
+				"Spanish Version goes here"
+				"Italian Version goes here"
+
+            LSTRING_FiYouLoose
+                "A Turanic Raider Carrier has reached the planetary defense zone.  They will remain a serious threat to us."
+                "French version goes here"
+                "German version goes here"
+				"Spanish Version goes here"
+				"Italian Version goes here"
+
+            LSTRING_FiPlanetaryDefensesHere
+                "The planetary defense system covers this area. Any of our ships entering its range will be destroyed.  Avoid this area at all costs."
+                "French version goes here"
+                "German version goes here"
+				"Spanish Version goes here"
+				"Italian Version goes here"
+
+            LSTRING_FiYouWin
+                "We have destroyed the body of the Turanic Raider fleet. We can now proceed on our journey. Hyperspace when ready."
+                "French version goes here"
+                "German version goes here"
+				"Spanish Version goes here"
+				"Italian Version goes here"
+
+            LSTRING_Hyperspace
+                "                HYPERSPACE"
+                "                HYPERESPACE"
+                "        HYPERRAUMSPRUNG"
+                "                    HIPERESPACIO"
+				"					IPERSPAZIO"
+    ENDL //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+
+//ออออออออออออออออออออ      Mission Flow     อออออออออออออออออออ
+FSM MissionFlow
+
+    States Intro, TechAvailable, TransIn, OpenSensors, FIPlanetoid, FIPlanetoidPointer, FITuranicFleet, FITuranicFleetPointer, FIDestroyBadGuys, StartNIS, WaitForFightersLaunched, YouLoose, YoullGetYours, DontGoThere, DontGoHere, ItsOverBetweenUs, IllMissYou, AlmostDone, Done;
+
+    INIT
+      TimerCreateSetStart("FuckTimer", 2);
+    ENDINIT
+
+    WATCH
+      IFONCE (TimerExpiredDestroy("FuckTimer"))
+        Jump TransIn;
+      ENDIFONCE
+    ENDWATCH
+
+    STATE Intro   //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+            //SubtitleSimulate(0, 4000, LSTRING_FcHyperspaceSuccessful);
+            SpeechEvent(M05_Fleet_HyperspaceSuccessful, 0);
+            TimerCreateSetStart("FuckTimer", 4);
+        ENDINIT
+        WATCH
+          IFONCE (TimerExpiredDestroy("FuckTimer"))
+            Jump TechAvailable;
+          ENDIFONCE
+        ENDWATCH
+    ENDSTATE
+
+    STATE TechAvailable  //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          IF(VarGet("G_WeGetPlaz")=TRUE)
+            //SubtitleSimulate(4, 6000, LSTRING_FiPlasmaTech);
+            SpeechEvent(M05_Intel_ResearchPlasmaBomb, 0);
+          ELSEIF(VarGet("G_WeGetIonz")=TRUE)
+            //SubtitleSimulate(4, 6000, LSTRING_FiIonTech);
+            SpeechEvent(M05_Intel_ResearchIonCannon, 0);
+          ENDIF
+          TimerCreateSetStart("FuckTimer", 7);
+        ENDINIT
+
+        WATCH
+          IF(TimerExpiredDestroy("FuckTimer"))
+            Jump Done;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+//-----------------------------------------------
+//Mission Objective Intel Event
+//-----------------------------------------------
+
+    STATE TransIn  //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          WideScreenIn(90);
+          Jump OpenSensors;
+        ENDINIT
+        WATCH
+        ENDWATCH
+    ENDSTATE
+
+    STATE OpenSensors //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+         INIT
+           TimerCreateSetStart ("FIOpenSensorsTimer", 2);
+         ENDINIT
+         WATCH
+           IFONCE (TimerExpiredDestroy ("FIOpenSensorsTimer"))
+             OpenSensors (TRUE);
+             PauseUniverse();
+             Jump FIPlanetoid;
+           ENDIFONCE
+         ENDWATCH
+    ENDSTATE
+
+    STATE FIPlanetoid  //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          //SubtitleSimulate(4, 6000, LSTRING_FiPlanetoidHere);
+          SpeechEvent(M05OEM_Intel_PlanetaryDefense, 0);
+          TimerCreateSetStart("FuckTimer", 1);
+        ENDINIT
+        WATCH
+          IF(TimerExpiredDestroy("FuckTimer"))
+            Jump FIPlanetoidPointer;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE FIPlanetoidPointer  //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          //TutSetPointerTargetAIVolume("PlanetPOINTER", VOLUME_PlanetSphere);
+        ENDINIT
+        WATCH
+          IF (IntelEventEnded())
+            MsgSendAll("ComeOnDown");
+            Jump FITuranicFleet;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE FITuranicFleet //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          TutRemoveAllPointers();
+          //SubtitleSimulate(4, 7000, LSTRING_FiTuranicFleet);
+          SpeechEvent(M05OEM_Intel_HyperspacingIn, 0);
+          TimerCreateSetStart("FuckTimer", 1);
+        ENDINIT
+        WATCH
+          IF(TimerExpiredDestroy("FuckTimer"))
+             Jump FITuranicFleetPointer;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE FITuranicFleetPointer //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          TutSetPointerTargetShip("CarrierPOINTER1", TEAMSHIPS_TuranicCarrier1);
+          TutSetPointerTargetShip("CarrierPOINTER2", TEAMSHIPS_TuranicCarrier2);
+          TutSetPointerTargetShip("FrigPOINTER1", TEAMSHIPS_TuranicFrigs1);
+          TutSetPointerTargetShip("FrigPOINTER2", TEAMSHIPS_TuranicFrigs2);
+        ENDINIT
+        WATCH
+          IF (IntelEventEnded())
+            TutRemoveAllPointers ();
+            Jump FIDestroyBadGuys;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+    STATE FIDestroyBadGuys      //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          //SubtitleSimulate(4, 7000, LSTRING_FiStopCarriers);
+          SpeechEvent(M05OEM_Intel_DestroyCarriers, 0);
+          ObjectiveCreate("DestroyEnemyCarriers", LSTRING_Objective1, LSTRING_Objective1);
+        ENDINIT
+        WATCH
+          IF (IntelEventEnded())
+            WideScreenOut(60);
+            Jump AlmostDone;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+//-----------------------------------------------
+//Fake NIS
+//-----------------------------------------------
+
+    STATE StartNIS      //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          WideScreenIn(60);
+          TimerCreateSetStart("FakeNISTimer", 2);
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy("FakeNISTimer"))
+             SoundEvent(262);
+             TutCameraFocus(TEAMSHIPS_TuranicCarrier1);
+             TutCameraFocus(TEAMSHIPS_TuranicCarrier1);
+             MsgSendAll("LaunchYourFighters");
+             //SubtitleSimulate(4, 7000, LSTRING_FiPrepare);
+             SpeechEvent(M05OEM_Intel_PrepareForAssault, 0);
+             TimerCreateSetStart("FakeNISTimer", 15);
+             JUMP WaitForFightersLaunched;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE WaitForFightersLaunched      //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          MsgSendAll("LaunchMoreFighters");
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy("FakeNISTimer"))
+            SoundEvent(262);
+            TutCameraFocusCancel();
+            TutCameraFocusCancel();
+            WideScreenOut(45);
+
+            JUMP Done;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+//-----------------------------------------------
+//You Failed
+//-----------------------------------------------
+
+    STATE YouLoose     //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          FindShipsNearPoint (SHIPS_WinnerShips, POINT_LoosePoint, 1000);
+          IF ((ShipsCount(SHIPS_WinnerShips))>(ShipsRemove(SHIPS_WinnerShips, TEAMSHIPS_TuranicCarrier1)))
+            SoundEvent(262);
+            TutCameraFocus(TEAMSHIPS_TuranicCarrier1);
+            TutCameraFocus(TEAMSHIPS_TuranicCarrier1);
+          ELSE
+            SoundEvent(262);
+            TutCameraFocus(TEAMSHIPS_TuranicCarrier2);
+            TutCameraFocus(TEAMSHIPS_TuranicCarrier2);
+          ENDIF
+          //SubtitleSimulate(4, 8000, LSTRING_FiYouLoose);
+          SpeechEvent(M05OEM_Intel_MissionFailed, 0);
+        ENDINIT
+        WATCH
+          IF (IntelEventEnded())
+            MissionFailed();
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+//-----------------------------------------------
+// Planetary Defence Warning
+//-----------------------------------------------
+
+    STATE YoullGetYours      //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          TutRemoveAllPointers();
+          //TutCameraFocus(SHIPS_YoullGetYours);
+          //TutCameraFocus(SHIPS_YoullGetYours);
+          TimerCreateSetStart("GettingYoursTimer", 4);
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy("GettingYoursTimer"))
+            WideScreenIn(45);
+            JUMP DontGoThere;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE DontGoThere      //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          OpenSensors (TRUE);
+          PauseUniverse();
+          //SubtitleSimulate(4, 7000, LSTRING_FiPlanetaryDefensesHere);
+          SpeechEvent(M05OEM_Intel_StayOutOfRange, 0);
+          TimerCreateSetStart("FuckTimer", 1);
+        ENDINIT
+        WATCH
+          IF(TimerExpiredDestroy("FuckTimer"))
+             Jump DontGoHere;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE DontGoHere     //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          TutSetPointerTargetAIVolume("DefensePOINTER", VOLUME_DefenceRange);
+          TimerCreateSetStart("FuckTimer", 4);
+        ENDINIT
+        WATCH
+          IF(TimerExpiredDestroy("FuckTimer"))
+             WideScreenOut(30);
+             Jump AlmostDone;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+//-----------------------------------------------
+// You Won Intel Event
+//-----------------------------------------------
+
+    STATE ItsOverBetweenUs     //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          TimerCreateSetStart("FuckTimer", 6);
+        ENDINIT
+        WATCH
+          IF(TimerExpiredDestroy("FuckTimer"))
+             Jump IllMissYou;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE IllMissYou     //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          //SubtitleSimulate(4, 8000, LSTRING_FiYouWin);
+          SpeechEvent(M05OEM_Intel_DestroyedRaiders, 0);
+        ENDINIT
+        WATCH
+        ENDWATCH
+    ENDSTATE
+//-----------------------------------------------
+// Done States
+//-----------------------------------------------
+
+    STATE AlmostDone  //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          TutRemoveAllPointers ();
+          UnpauseUniverse();
+          CloseSensors (TRUE);
+          Jump Done;
+        ENDINIT
+
+        WATCH
+        ENDWATCH
+   ENDSTATE
+
+   STATE Done  //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+        ENDINIT
+
+        WATCH
+          // research events
+          IFONCE (VarGet("G_WeGetPlaz") OR VarGet("G_WeGetIonz"))
+            JUMP TechAvailable;
+          ENDIFONCE
+
+          //This message is passed by the Carrier teams when they reach the Path Point
+          //thereby triggering the FAKENIS which inturn will pass a message back to launch the fighters.
+          IFONCE (MsgReceived("PlayFakeNIS"))
+            JUMP StartNIS;
+          ENDIFONCE
+
+          //Battle Music
+          IFONCE (MsgReceived("MusicIsaWorldWithinItself"))
+            MusicPlay(B01_TuranicRaidersLong);
+          ENDIFONCE
+
+
+          //Player Looses
+          IFONCE (MsgReceived("WeMadeItHere"))
+            JUMP YouLoose;
+          ENDIFONCE
+
+          //If the player enters the range of the planetary defences
+          IFONCE (FindEnemiesInside(VOLUME_DefenceRange, SHIPS_YoullGetYours, 1000))
+            JUMP YoullGetYours;
+          ENDIFONCE
+
+          //Player destroys P1 Carriers
+          IFONCE (VarGet("G_ByeByeLove")=TRUE)
+            JUMP ItsOverBetweenUs;
+          ENDIFONCE
+        ENDWATCH
+   ENDSTATE Done
+
+ENDFSM MissionFlow
+//ออออออออออออออออออออ      End Mission Flow     อออออออออออออออออออ
+//----------------------------------------------------------------------
+
+//ออออออออออออออออออออ     TuranicFrigs1     อออออออออออออออออออ
+FSM TuranicFrigs1
+
+    States Wait, Guard, Attack, Done;
+        INIT
+          TeamHyperspaceOut();
+          JUMP Wait;
+        ENDINIT
+        WATCH
+          IFONCE (ShipsCount(TEAMSHIPS_TuranicCarrier1)<1)
+            JUMP Done;
+          ENDIFONCE
+        ENDWATCH
+
+        STATE Wait //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+            INIT
+            ENDINIT
+
+            WATCH
+              IFONCE(MsgReceived("ComeOnDown"))
+                TeamHyperspaceIn(POINT_Frig1In);
+                Jump Guard;
+              ENDIFONCE
+            ENDWATCH
+        ENDSTATE
+
+        State Guard
+            INIT
+              Guard(TEAMSHIPS_TuranicCarrier1);
+            ENDINIT
+            WATCH
+              IF ((UnderAttackElsewhere(TEAM_TuranicCarrier1, SHIPS_VictemFrig1)>0) OR (FindEnemiesNearTeam(SHIPS_NearFrig1, 5000)>0))
+                JUMP Attack;
+              ENDIF
+            ENDWATCH
+        ENDSTATE
+
+        State Attack
+            INIT
+              IFONCE (True)
+                MsgSendAll("MusicIsaWorldWithinItself");
+              ENDIFONCE
+            ENDINIT
+            WATCH
+              UnderAttackElsewhere (TEAM_TuranicCarrier1, SHIPS_VictemFrig1);
+              FindEnemiesNearTeam (SHIPS_NearFrig1, 10000);
+              ShipsSelectType (SHIPS_NastyCaps1, SHIPS_NearFrig1, "SalCapCorvette");
+              ShipsSelectCapital(SHIPS_CapsVictemFrig1, SHIPS_VictemFrig1);
+              ShipsSelectCapital(SHIPS_CapsNearFrig1, SHIPS_NearFrig1);
+              ShipsSelectIndex (SHIPS_IndxCapsVictemFrig1, SHIPS_CapsVictemFrig1, 0);
+              ShipsSelectIndex (SHIPS_IndxCapsNearFrig1, SHIPS_CapsNearFrig1, 0);
+
+              IF (ShipsCount(SHIPS_NastyCaps1)>0)
+                Attack(SHIPS_NastyCaps1);
+              ELSEIF (ShipsCount(SHIPS_CapsVictemFrig1)>0)
+                FormationSphere();
+                Attack(SHIPS_IndxCapsVictemFrig1);
+              ELSEIF(ShipsCount(SHIPS_CapsNearFrig1)>0)
+                FormationSphere();
+                Attack(SHIPS_IndxCapsNearFrig1);
+              ELSEIF(ShipsCount(SHIPS_NearFrig1)>0)
+                Attack(SHIPS_NearFrig1);
+              ELSE
+                JUMP Guard;
+              ENDIF
+            ENDWATCH
+        ENDSTATE
+
+        State Done
+          INIT
+            Reinforce (TEAM_TuranicFrigs2);
+          ENDINIT
+          WATCH
+          ENDWATCH
+        ENDSTATE
+
+ENDFSM
+//ออออออออออออออออออออ     TuranicFrigs1     อออออออออออออออออออ
+
+//ออออออออออออออออออออ     TuranicFrigs2     อออออออออออออออออออ
+FSM TuranicFrigs2
+    States Wait, Guard, Attack, Done;
+        INIT
+          TeamHyperspaceOut();
+          JUMP Wait;
+        ENDINIT
+        WATCH
+          IFONCE (ShipsCount(TEAMSHIPS_TuranicCarrier2)<1)
+            JUMP Done;
+          ENDIFONCE
+        ENDWATCH
+
+        STATE Wait //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+            INIT
+            ENDINIT
+
+            WATCH
+              IFONCE(MsgReceived("ComeOnDown"))
+                TeamHyperspaceIn(POINT_Frig2In);
+                Jump Guard;
+              ENDIFONCE
+            ENDWATCH
+        ENDSTATE
+
+        State Guard
+            INIT
+              Guard(TEAMSHIPS_TuranicCarrier2);
+            ENDINIT
+            WATCH
+              IF ((UnderAttackElsewhere(TEAM_TuranicCarrier2, SHIPS_VictemFrig2)>0) OR (FindEnemiesNearTeam(SHIPS_NearFrig2, 5000)>0))
+                JUMP Attack;
+              ENDIF
+            ENDWATCH
+        ENDSTATE
+
+        State Attack
+            INIT
+              IFONCE (True)
+                MsgSendAll("MusicIsaWorldWithinItself");
+              ENDIFONCE
+            ENDINIT
+            WATCH
+              UnderAttackElsewhere (TEAM_TuranicCarrier2, SHIPS_VictemFrig2);
+              FindEnemiesNearTeam (SHIPS_NearFrig2, 10000);
+              ShipsSelectType(SHIPS_NastyCaps2, SHIPS_NearFrig2, "SalCapCorvette");
+              ShipsSelectCapital(SHIPS_CapsVictemFrig2, SHIPS_VictemFrig2);
+              ShipsSelectCapital(SHIPS_CapsNearFrig2, SHIPS_NearFrig2);
+              ShipsSelectIndex (SHIPS_IndxCapsVictemFrig2, SHIPS_CapsVictemFrig2, 0);
+              ShipsSelectIndex (SHIPS_IndxCapsNearFrig2, SHIPS_CapsNearFrig2, 0);
+
+              IF (ShipsCount(SHIPS_NastyCaps2)>0)
+                Attack(SHIPS_NastyCaps2);
+              ELSEIF (ShipsCount(SHIPS_CapsVictemFrig2)>0)
+                FormationSphere ();
+                Attack(SHIPS_IndxCapsVictemFrig2);
+              ELSEIF(ShipsCount(SHIPS_CapsNearFrig2)>0)
+                FormationSphere ();
+                Attack(SHIPS_IndxCapsNearFrig2);
+              ELSEIF(ShipsCount(SHIPS_NearFrig2)>0)
+                Attack(SHIPS_NearFrig2);
+              ELSE
+                JUMP Guard;
+              ENDIF
+            ENDWATCH
+        ENDSTATE
+
+        State Done
+          INIT
+            Reinforce (TEAM_TuranicFrigs1);
+          ENDINIT
+          WATCH
+          ENDWATCH
+        ENDSTATE
+ENDFSM
+//ออออออออออออออออออออ     TuranicFrigs2     อออออออออออออออออออ
+
+//----------------------------------------------------------------------
+
+//ออออออออออออออออออออ     ProtFightersC1a     อออออออออออออออออออ
+FSM ProtFightersC1a
+
+States Wait, Launching, Guard, Attack;
+    INIT
+      DockInstant(TEAM_TuranicCarrier1);
+      VarCreateSet("requested", 0);
+      VarCreateSet("needed", 0);
+      VarCreateSet("newships", 0);
+      JUMP Wait;
+    ENDINIT
+    WATCH
+      //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+      //      Replenishment
+      //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+      IF (ShipsCount(TEAMSHIPS_TuranicCarrier1)>0)
+        IF (TeamCount() + VarGet("requested") < TeamCountOriginal())
+      VarSet("needed", TeamCountOriginal() - (TeamCount() + VarGet("requested")));
+      RequestShipsOriginal(VarGet("needed"));
+          //Print("Fighters C1A Requesting");
+      VarSet("requested", VarGet("requested") + VarGet("needed"));
+        ENDIF
+
+        VarSet("newships", NewShipsAdded());
+        IF (VarGet("newships"))
+          VarSet("requested", VarGet("requested") - VarGet("newships"));
+        ENDIF
+      ENDIF
+      //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+    ENDWATCH
+
+    State Wait
+        INIT
+        ENDINIT
+        WATCH
+          IFONCE(MsgReceived("LaunchMoreFighters"))
+            Launch();
+            JUMP Launching;
+          ENDIFONCE
+        ENDWATCH
+    ENDSTATE
+
+    State Launching
+        INIT
+        ENDINIT
+        WATCH
+          IF(TeamFinishedLaunching()=TRUE)
+            JUMP Guard;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    State Guard
+        INIT
+          ShipsClear(SHIPS_VictemProtFightersC1a);
+          ShipsClear(SHIPS_NearProtFightersC1a);
+          ShipsClear(SHIPS_DamVictemProtFightersC1a);
+          ShipsClear(SHIPS_DamNearProtFightersC1a);
+          Guard(TEAMSHIPS_TuranicCarrier1);
+        ENDINIT
+        WATCH
+          IF ((UnderAttackElsewhere(TEAM_TuranicCarrier1, SHIPS_VictemProtFightersC1a)>0)
+            OR (FindEnemiesNearTeam(SHIPS_NearProtFightersC1a, 15000)>0))
+            JUMP Attack;
+          ENDIF
+
+        ENDWATCH
+    ENDSTATE
+
+    State Attack
+        INIT
+          IFONCE (True)
+            MsgSendAll("MusicIsaWorldWithinItself");
+          ENDIFONCE
+        ENDINIT
+        WATCH
+          UnderAttackElsewhere (TEAM_TuranicCarrier1, SHIPS_VictemProtFightersC1a);
+          FindEnemiesNearTeam (SHIPS_NearProtFightersC1a, 10000);
+          ShipsSelectDamaged (SHIPS_DamVictemProtFightersC1a, SHIPS_VictemProtFightersC1a, 99);
+          ShipsSelectDamaged (SHIPS_DamNearProtFightersC1a, SHIPS_NearProtFightersC1a, 99);
+          IF (ShipsCount(SHIPS_DamVictemProtFightersC1a)>0)
+            Attack(SHIPS_DamVictemProtFightersC1a);
+          ELSEIF(ShipsCount(SHIPS_VictemProtFightersC1a)>0)
+            Attack(SHIPS_VictemProtFightersC1a);
+          ELSEIF(ShipsCount(SHIPS_DamNearProtFightersC1a)>0)
+            Attack(SHIPS_DamNearProtFightersC1a);
+          ELSEIF(ShipsCount(SHIPS_NearProtFightersC1a)>0)
+            Attack(SHIPS_NearProtFightersC1a);
+          ELSE
+            JUMP Guard;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+ENDFSM
+
+//ออออออออออออออออออออ     ProtFightersC1a     อออออออออออออออออออ
+
+
+//ออออออออออออออออออออ     ProtFightersC1b     อออออออออออออออออออ
+FSM ProtFightersC1b
+
+States Wait, Launching, Guard, Attack;
+    INIT
+      DockInstant (TEAM_TuranicCarrier1);
+      VarCreateSet("requested", 0);
+      VarCreateSet("needed", 0);
+      VarCreateSet("newships", 0);
+      JUMP Wait;
+    ENDINIT
+    WATCH
+      //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+      //      Replenishment
+      //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+      IF (ShipsCount(TEAMSHIPS_TuranicCarrier1)>0)
+        IF (TeamCount() + VarGet("requested") < TeamCountOriginal())
+      VarSet("needed", TeamCountOriginal() - (TeamCount() + VarGet("requested")));
+      RequestShipsOriginal(VarGet("needed"));
+          //Print("Fighters C1B Requesting");
+      VarSet("requested", VarGet("requested") + VarGet("needed"));
+        ENDIF
+
+        VarSet("newships", NewShipsAdded());
+        IF (VarGet("newships"))
+          VarSet("requested", VarGet("requested") - VarGet("newships"));
+        ENDIF
+      ENDIF
+      //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+    ENDWATCH
+
+    State Wait
+        INIT
+        ENDINIT
+        WATCH
+          IFONCE(MsgReceived("LaunchMoreFighters"))
+            Launch();
+            JUMP Launching;
+          ENDIFONCE
+        ENDWATCH
+    ENDSTATE
+
+
+    State Launching
+        INIT
+        ENDINIT
+        WATCH
+          IF(TeamFinishedLaunching()=TRUE)
+            JUMP Guard;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    State Guard
+        INIT
+          ShipsClear(SHIPS_VictemProtFightersC1b);
+          ShipsClear(SHIPS_NearProtFightersC1b);
+          ShipsClear(SHIPS_DamVictemProtFightersC1b);
+          ShipsClear(SHIPS_DamNearProtFightersC1b);
+          Guard(TEAMSHIPS_TuranicCarrier1);
+        ENDINIT
+        WATCH
+          IF ((UnderAttackElsewhere(TEAM_TuranicCarrier1, SHIPS_VictemProtFightersC1b)>0)
+            OR (FindEnemiesNearTeam(SHIPS_NearProtFightersC1b, 15000)>0))
+            JUMP Attack;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    State Attack
+        INIT
+          IFONCE (True)
+            MsgSendAll("MusicIsaWorldWithinItself");
+          ENDIFONCE
+        ENDINIT
+        WATCH
+          UnderAttackElsewhere (TEAM_TuranicCarrier1, SHIPS_VictemProtFightersC1b);
+          FindEnemiesNearTeam (SHIPS_NearProtFightersC1b, 10000);
+          ShipsSelectDamaged (SHIPS_DamVictemProtFightersC1b, SHIPS_VictemProtFightersC1b, 99);
+          ShipsSelectDamaged (SHIPS_DamNearProtFightersC1b, SHIPS_NearProtFightersC1b, 99);
+          IF (ShipsCount(SHIPS_DamVictemProtFightersC1b)>0)
+            Attack(SHIPS_DamVictemProtFightersC1b);
+          ELSEIF(ShipsCount(SHIPS_VictemProtFightersC1b)>0)
+            Attack(SHIPS_VictemProtFightersC1b);
+          ELSEIF(ShipsCount(SHIPS_DamNearProtFightersC1b)>0)
+            Attack(SHIPS_DamNearProtFightersC1b);
+          ELSEIF(ShipsCount(SHIPS_NearProtFightersC1b)>0)
+            Attack(SHIPS_NearProtFightersC1b);
+          ELSE
+            JUMP Guard;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+ENDFSM
+
+//ออออออออออออออออออออ     ProtFightersC1b     อออออออออออออออออออ
+
+
+//ออออออออออออออออออออ     ProtFightersC2a     อออออออออออออออออออ
+FSM ProtFightersC2a
+
+States Wait, Launching, Guard, Attack;
+    INIT
+      DockInstant (TEAM_TuranicCarrier2);
+      VarCreateSet("requested", 0);
+      VarCreateSet("needed", 0);
+      VarCreateSet("newships", 0);
+      JUMP Wait;
+    ENDINIT
+    WATCH
+      //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+      //      Replenishment
+      //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+      IF (ShipsCount(TEAMSHIPS_TuranicCarrier2)>0)
+        IF (TeamCount() + VarGet("requested") < TeamCountOriginal())
+      VarSet("needed", TeamCountOriginal() - (TeamCount() + VarGet("requested")));
+      RequestShipsOriginal(VarGet("needed"));
+          //Print("Fighters C2A Requesting");
+      VarSet("requested", VarGet("requested") + VarGet("needed"));
+        ENDIF
+
+        VarSet("newships", NewShipsAdded());
+        IF (VarGet("newships"))
+          VarSet("requested", VarGet("requested") - VarGet("newships"));
+        ENDIF
+      ENDIF
+      //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+    ENDWATCH
+
+    State Wait
+        INIT
+        ENDINIT
+        WATCH
+          IFONCE(MsgReceived("LaunchMoreFighters"))
+            Launch();
+            JUMP Launching;
+          ENDIFONCE
+        ENDWATCH
+    ENDSTATE
+
+
+    State Launching
+        INIT
+        ENDINIT
+        WATCH
+          IF(TeamFinishedLaunching()=TRUE)
+            JUMP Guard;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    State Guard
+        INIT
+          ShipsClear(SHIPS_VictemProtFightersC2a);
+          ShipsClear(SHIPS_NearProtFightersC2a);
+          ShipsClear(SHIPS_DamVictemProtFightersC2a);
+          ShipsClear(SHIPS_DamNearProtFightersC2a);
+          Guard(TEAMSHIPS_TuranicCarrier2);
+        ENDINIT
+        WATCH
+          IF ((UnderAttackElsewhere(TEAM_TuranicCarrier2, SHIPS_VictemProtFightersC2a)>0)
+            OR (FindEnemiesNearTeam(SHIPS_NearProtFightersC2a, 15000)>0))
+            JUMP Attack;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    State Attack
+        INIT
+          IFONCE (True)
+            MsgSendAll("MusicIsaWorldWithinItself");
+          ENDIFONCE
+        ENDINIT
+        WATCH
+          UnderAttackElsewhere (TEAM_TuranicCarrier2, SHIPS_VictemProtFightersC2a);
+          FindEnemiesNearTeam (SHIPS_NearProtFightersC2a, 10000);
+          ShipsSelectDamaged (SHIPS_DamVictemProtFightersC2a, SHIPS_VictemProtFightersC2a, 99);
+          ShipsSelectDamaged (SHIPS_DamNearProtFightersC2a, SHIPS_NearProtFightersC2a, 99);
+          IF (ShipsCount(SHIPS_DamVictemProtFightersC2a)>0)
+            Attack(SHIPS_DamVictemProtFightersC2a);
+          ELSEIF(ShipsCount(SHIPS_VictemProtFightersC2a)>0)
+            Attack(SHIPS_VictemProtFightersC2a);
+          ELSEIF(ShipsCount(SHIPS_DamNearProtFightersC2a)>0)
+            Attack(SHIPS_DamNearProtFightersC2a);
+          ELSEIF(ShipsCount(SHIPS_NearProtFightersC2a)>0)
+            Attack(SHIPS_NearProtFightersC2a);
+          ELSE
+            JUMP Guard;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+ENDFSM
+
+//ออออออออออออออออออออ     ProtFightersC2a     อออออออออออออออออออ
+
+//ออออออออออออออออออออ     ProtFightersC2b     อออออออออออออออออออ
+FSM ProtFightersC2b
+
+States Wait, Launching, Guard, Attack;
+    INIT
+      DockInstant (TEAM_TuranicCarrier2);
+      VarCreateSet("requested", 0);
+      VarCreateSet("needed", 0);
+      VarCreateSet("newships", 0);
+      JUMP Wait;
+    ENDINIT
+    WATCH
+      //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+      //      Replenishment
+      //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+      IF (ShipsCount(TEAMSHIPS_TuranicCarrier2)>0)
+        IF (TeamCount() + VarGet("requested") < TeamCountOriginal())
+      VarSet("needed", TeamCountOriginal() - (TeamCount() + VarGet("requested")));
+      RequestShipsOriginal(VarGet("needed"));
+          //Print("Fighters C1B Requesting");
+      VarSet("requested", VarGet("requested") + VarGet("needed"));
+        ENDIF
+
+        VarSet("newships", NewShipsAdded());
+        IF (VarGet("newships"))
+          VarSet("requested", VarGet("requested") - VarGet("newships"));
+        ENDIF
+      ENDIF
+      //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+    ENDWATCH
+
+    State Wait
+        INIT
+        ENDINIT
+        WATCH
+          IFONCE(MsgReceived("LaunchMoreFighters"))
+            Launch();
+            JUMP Launching;
+          ENDIFONCE
+        ENDWATCH
+    ENDSTATE
+
+
+    State Launching
+        INIT
+        ENDINIT
+        WATCH
+          IF(TeamFinishedLaunching()=TRUE)
+            JUMP Guard;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    State Guard
+        INIT
+          ShipsClear(SHIPS_VictemProtFightersC2b);
+          ShipsClear(SHIPS_NearProtFightersC2b);
+          ShipsClear(SHIPS_DamVictemProtFightersC2b);
+          ShipsClear(SHIPS_DamNearProtFightersC2b);
+          Guard(TEAMSHIPS_TuranicCarrier2);
+        ENDINIT
+        WATCH
+          IF ((UnderAttackElsewhere(TEAM_TuranicCarrier2, SHIPS_VictemProtFightersC2b)>0)
+            OR (FindEnemiesNearTeam(SHIPS_NearProtFightersC2b, 15000)>0))
+            JUMP Attack;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    State Attack
+        INIT
+          IFONCE (True)
+            MsgSendAll("MusicIsaWorldWithinItself");
+          ENDIFONCE
+        ENDINIT
+        WATCH
+          UnderAttackElsewhere (TEAM_TuranicCarrier2, SHIPS_VictemProtFightersC2b);
+          FindEnemiesNearTeam (SHIPS_NearProtFightersC2b, 10000);
+          ShipsSelectDamaged (SHIPS_DamVictemProtFightersC2b, SHIPS_VictemProtFightersC2b, 99);
+          ShipsSelectDamaged (SHIPS_DamNearProtFightersC2b, SHIPS_NearProtFightersC2b, 99);
+          IF (ShipsCount(SHIPS_DamVictemProtFightersC2b)>0)
+            Attack(SHIPS_DamVictemProtFightersC2b);
+          ELSEIF(ShipsCount(SHIPS_VictemProtFightersC2b)>0)
+            Attack(SHIPS_VictemProtFightersC2b);
+          ELSEIF(ShipsCount(SHIPS_DamNearProtFightersC2b)>0)
+            Attack(SHIPS_DamNearProtFightersC2b);
+          ELSEIF(ShipsCount(SHIPS_NearProtFightersC2b)>0)
+            Attack(SHIPS_NearProtFightersC2b);
+          ELSE
+            JUMP Guard;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+ENDFSM
+
+//ออออออออออออออออออออ     ProtFightersC2b     อออออออออออออออออออ
+
+//ออออออออออออออออออออ     ProtCorvettesC1     อออออออออออออออออออ
+FSM ProtCorvettesC1
+
+States Wait, Launching, Guard, Attack;
+    INIT
+      DockInstant (TEAM_TuranicCarrier1);
+      VarCreateSet("requested", 0);
+      VarCreateSet("needed", 0);
+      VarCreateSet("newships", 0);
+      JUMP Wait;
+    ENDINIT
+    WATCH
+      //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+      //      Replenishment
+      //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+      IF (ShipsCount(TEAMSHIPS_TuranicCarrier1)>0)
+        IF (TeamCount() + VarGet("requested") < TeamCountOriginal())
+      VarSet("needed", TeamCountOriginal() - (TeamCount() + VarGet("requested")));
+      RequestShipsOriginal(VarGet("needed"));
+      VarSet("requested", VarGet("requested") + VarGet("needed"));
+        ENDIF
+
+        VarSet("newships", NewShipsAdded());
+        IF (VarGet("newships"))
+          VarSet("requested", VarGet("requested") - VarGet("newships"));
+        ENDIF
+      ENDIF
+      //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+    ENDWATCH
+
+    State Wait
+        INIT
+        ENDINIT
+        WATCH
+          IFONCE(MsgReceived("LaunchMoreFighters"))
+            Launch();
+            JUMP Launching;
+          ENDIFONCE
+        ENDWATCH
+    ENDSTATE
+
+
+    State Launching
+        INIT
+        ENDINIT
+        WATCH
+          IF(TeamFinishedLaunching()=TRUE)
+            JUMP Guard;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    State Guard
+        INIT
+          ShipsClear(SHIPS_VictemProtCorvC1);
+          ShipsClear(SHIPS_NearProtCorvC1);
+          ShipsClear(SHIPS_StrkVictemProtCorvC1);
+          ShipsClear(SHIPS_StrkNearProtCorvC1);
+          ShipsClear(SHIPS_DamStrkVictemProtCorvC1);
+          ShipsClear(SHIPS_DamStrkNearProtCorvC1);
+          Guard(TEAMSHIPS_TuranicCarrier1);
+        ENDINIT
+        WATCH
+          IF ((UnderAttackElsewhere(TEAM_TuranicCarrier1, SHIPS_VictemProtCorvC1)>0)
+            OR (FindEnemiesNearTeam(SHIPS_NearProtCorvC1, 15000)>0))
+            JUMP Attack;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    State Attack
+        INIT
+          IFONCE (True)
+            MsgSendAll("MusicIsaWorldWithinItself");
+          ENDIFONCE
+        ENDINIT
+        WATCH
+          UnderAttackElsewhere (TEAM_TuranicCarrier1, SHIPS_VictemProtCorvC1);
+          FindEnemiesNearTeam (SHIPS_NearProtCorvC1, 10000);
+          ShipsSelectNonCapital(SHIPS_StrkVictemProtCorvC1, SHIPS_VictemProtCorvC1);
+          ShipsSelectNonCapital(SHIPS_StrkNearProtCorvC1, SHIPS_NearProtCorvC1);
+          ShipsSelectDamaged (SHIPS_DamStrkVictemProtCorvC1, SHIPS_StrkVictemProtCorvC1, 99);
+          ShipsSelectDamaged (SHIPS_DamStrkNearProtCorvC1, SHIPS_StrkNearProtCorvC1, 99);
+          IF (ShipsCount(SHIPS_DamStrkVictemProtCorvC1)>0)
+            Attack(SHIPS_DamStrkVictemProtCorvC1);
+          ELSEIF(ShipsCount(SHIPS_DamStrkNearProtCorvC1)>0)
+            Attack(SHIPS_DamStrkNearProtCorvC1);
+          ELSEIF(ShipsCount(SHIPS_StrkVictemProtCorvC1)>0)
+            Attack(SHIPS_StrkVictemProtCorvC1);
+          ELSEIF(ShipsCount(SHIPS_StrkNearProtCorvC1)>0)
+            Attack(SHIPS_StrkNearProtCorvC1);
+          ELSEIF(ShipsCount(SHIPS_VictemProtCorvC1)>0)
+            Attack(SHIPS_VictemProtCorvC1);
+          ELSEIF(ShipsCount(SHIPS_NearProtCorvC1)>0)
+            Attack(SHIPS_NearProtCorvC1);
+          ELSE
+            JUMP Guard;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+ENDFSM
+
+//ออออออออออออออออออออ     ProtCorvettesC1     อออออออออออออออออออ
+
+//ออออออออออออออออออออ     ProtCorvettesC2     อออออออออออออออออออ
+FSM ProtCorvettesC2
+
+States Wait, Launching, Guard, Attack;
+    INIT
+      DockInstant (TEAM_TuranicCarrier2);
+      VarCreateSet("requested", 0);
+      VarCreateSet("needed", 0);
+      VarCreateSet("newships", 0);
+      JUMP Wait;
+    ENDINIT
+    WATCH
+      //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+      //      Replenishment
+      //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+      IF (ShipsCount(TEAMSHIPS_TuranicCarrier2)>0)
+        IF (TeamCount() + VarGet("requested") < TeamCountOriginal())
+      VarSet("needed", TeamCountOriginal() - (TeamCount() + VarGet("requested")));
+      RequestShipsOriginal(VarGet("needed"));
+      VarSet("requested", VarGet("requested") + VarGet("needed"));
+        ENDIF
+
+        VarSet("newships", NewShipsAdded());
+        IF (VarGet("newships"))
+          VarSet("requested", VarGet("requested") - VarGet("newships"));
+        ENDIF
+      ENDIF
+      //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+    ENDWATCH
+
+    State Wait
+        INIT
+        ENDINIT
+        WATCH
+          IFONCE(MsgReceived("LaunchMoreFighters"))
+            Launch();
+            JUMP Launching;
+          ENDIFONCE
+        ENDWATCH
+    ENDSTATE
+
+    State Launching
+        INIT
+        ENDINIT
+        WATCH
+          IF(TeamFinishedLaunching()=TRUE)
+            JUMP Guard;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    State Guard
+        INIT
+          ShipsClear(SHIPS_VictemProtCorvC2);
+          ShipsClear(SHIPS_NearProtCorvC2);
+          ShipsClear(SHIPS_StrkVictemProtCorvC2);
+          ShipsClear(SHIPS_StrkNearProtCorvC2);
+          ShipsClear(SHIPS_DamStrkVictemProtCorvC2);
+          ShipsClear(SHIPS_DamStrkNearProtCorvC2);
+          Guard(TEAMSHIPS_TuranicCarrier2);
+        ENDINIT
+        WATCH
+          IF ((UnderAttackElsewhere(TEAM_TuranicCarrier2, SHIPS_VictemProtCorvC2)>0)
+            OR (FindEnemiesNearTeam(SHIPS_NearProtCorvC2, 15000)>0))
+            JUMP Attack;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    State Attack
+        INIT
+          IFONCE (True)
+            MsgSendAll("MusicIsaWorldWithinItself");
+          ENDIFONCE
+        ENDINIT
+        WATCH
+          UnderAttackElsewhere (TEAM_TuranicCarrier2, SHIPS_VictemProtCorvC2);
+          FindEnemiesNearTeam (SHIPS_NearProtCorvC2, 10000);
+          ShipsSelectNonCapital(SHIPS_StrkVictemProtCorvC2, SHIPS_VictemProtCorvC2);
+          ShipsSelectNonCapital(SHIPS_StrkNearProtCorvC2, SHIPS_NearProtCorvC2);
+          ShipsSelectDamaged (SHIPS_DamStrkVictemProtCorvC2, SHIPS_StrkVictemProtCorvC2, 99);
+          ShipsSelectDamaged (SHIPS_DamStrkNearProtCorvC2, SHIPS_StrkNearProtCorvC2, 99);
+          IF (ShipsCount(SHIPS_DamStrkVictemProtCorvC2)>0)
+            Attack(SHIPS_DamStrkVictemProtCorvC2);
+          ELSEIF(ShipsCount(SHIPS_DamStrkNearProtCorvC2)>0)
+            Attack(SHIPS_DamStrkNearProtCorvC2);
+          ELSEIF(ShipsCount(SHIPS_StrkVictemProtCorvC2)>0)
+            Attack(SHIPS_StrkVictemProtCorvC2);
+          ELSEIF(ShipsCount(SHIPS_StrkNearProtCorvC2)>0)
+            Attack(SHIPS_StrkNearProtCorvC2);
+          ELSEIF(ShipsCount(SHIPS_VictemProtCorvC2)>0)
+            Attack(SHIPS_VictemProtCorvC2);
+          ELSEIF(ShipsCount(SHIPS_NearProtCorvC2)>0)
+            Attack(SHIPS_NearProtCorvC2);
+          ELSE
+            JUMP Guard;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+ENDFSM
+
+//ออออออออออออออออออออ     ProtCorvettesC2     อออออออออออออออออออ
+
+//----------------------------------------------------------------------
+
+//ออออออออออออออออออออ     AttackFighters1     อออออออออออออออออออ
+FSM AttackFighters1
+
+States Wait, Launching, Attack, Done;
+    INIT
+      DockInstant (TEAM_TuranicCarrier1);
+      JUMP Wait;
+    ENDINIT
+    WATCH
+      IFONCE (TeamCount()<1);
+        JUMP Done;
+      ENDIFONCE
+    ENDWATCH
+
+    State Wait
+        INIT
+        ENDINIT
+        WATCH
+          IFONCE(MsgReceived("LaunchYourFighters"))
+            Launch();
+            JUMP Launching;
+          ENDIFONCE
+        ENDWATCH
+    ENDSTATE
+
+
+    State Launching
+        INIT
+        ENDINIT
+        WATCH
+          IF(TeamFinishedLaunching()=TRUE)
+            JUMP Attack;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+
+    State Attack
+        INIT
+          IFONCE (True)
+            MsgSendAll("MusicIsaWorldWithinItself");
+          ENDIFONCE
+        ENDINIT
+        WATCH
+          FindEnemiesInside(VOLUME_WorldSphere, SHIPS_VictemsAF1, 1000);
+          FindEnemiesNearTeam (SHIPS_NearAF1, 10000);
+          ShipsSelectDamaged(SHIPS_DamVictemsAF1, SHIPS_VictemsAF1, 99);
+          ShipsSelectIndex(SHIPS_IndxVictemsAF1, SHIPS_VictemsAF1, 0);
+          IF (ShipsCount(SHIPS_NearAF1)>0)
+            Attack(SHIPS_NearAF1);
+          ELSEIF (ShipsCount(SHIPS_DamVictemsAF1)>0)
+            Attack(SHIPS_DamVictemsAF1);
+          ELSEIF(ShipsCount(SHIPS_IndxVictemsAF1)>0)
+            Attack(SHIPS_IndxVictemsAF1);
+          ELSEIF(ShipsCount(SHIPS_VictemsAF1)>0)
+            Attack(SHIPS_VictemsAF1);
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    State Done
+        INIT
+        ENDINIT
+        WATCH
+        ENDWATCH
+    ENDSTATE
+ENDFSM
+
+//ออออออออออออออออออออ     AttackFighters1     อออออออออออออออออออ
+
+//ออออออออออออออออออออ     AttackFighters2     อออออออออออออออออออ
+FSM AttackFighters2
+
+States Wait, Launching, Attack, Done;
+    INIT
+      DockInstant (TEAM_TuranicCarrier2);
+      JUMP Wait;
+    ENDINIT
+    WATCH
+      IFONCE (TeamCount()<1);
+        JUMP Done;
+      ENDIFONCE
+    ENDWATCH
+
+    State Wait
+        INIT
+        ENDINIT
+        WATCH
+          IFONCE(MsgReceived("LaunchYourFighters"))
+            Launch();
+            JUMP Launching;
+          ENDIFONCE
+        ENDWATCH
+    ENDSTATE
+
+    State Launching
+        INIT
+        ENDINIT
+        WATCH
+          IF(TeamFinishedLaunching()=TRUE)
+            JUMP Attack;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    State Attack
+        INIT
+          IFONCE (True)
+            MsgSendAll("MusicIsaWorldWithinItself");
+          ENDIFONCE
+        ENDINIT
+        WATCH
+          FindEnemiesInside(VOLUME_WorldSphere, SHIPS_VictemsAF2, 1000);
+          ShipsSelectDamaged(SHIPS_DamVictemsAF2, SHIPS_VictemsAF2, 99);
+          ShipsSelectIndex(SHIPS_IndxVictemsAF2, SHIPS_VictemsAF2, 0);
+          FindEnemiesNearTeam (SHIPS_NearAF2, 10000);
+
+          IF (ShipsCount(SHIPS_NearAF2)>0)
+            Attack(SHIPS_NearAF2);
+          ELSEIF (ShipsCount(SHIPS_DamVictemsAF2)>0)
+            Attack(SHIPS_DamVictemsAF2);
+          ELSEIF(ShipsCount(SHIPS_IndxVictemsAF2)>0)
+            Attack(SHIPS_IndxVictemsAF2);
+          ELSEIF(ShipsCount(SHIPS_VictemsAF2)>0)
+            Attack(SHIPS_VictemsAF2);
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    State Done
+        INIT
+        ENDINIT
+        WATCH
+        ENDWATCH
+    ENDSTATE
+ENDFSM
+
+//ออออออออออออออออออออ     AttackFighters2     อออออออออออออออออออ
+
+//ออออออออออออออออออออ    AttackMslCorvettes1   อออออออออออออออออออ
+FSM AttackMslCorvettes1
+
+States Wait, Launching, Attack, Done;
+    INIT
+      DockInstant (TEAM_TuranicCarrier1);
+      JUMP Wait;
+    ENDINIT
+    WATCH
+      IFONCE (TeamCount()<1);
+        JUMP Done;
+      ENDIFONCE
+    ENDWATCH
+
+    State Wait
+        INIT
+        ENDINIT
+        WATCH
+          IFONCE(MsgReceived("LaunchYourFighters"))
+            Launch();
+            JUMP Launching;
+          ENDIFONCE
+        ENDWATCH
+    ENDSTATE
+
+
+    State Launching
+        INIT
+        ENDINIT
+        WATCH
+          IF(TeamFinishedLaunching()=TRUE)
+            JUMP Attack;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    State Attack
+        INIT
+          IFONCE (True)
+            MsgSendAll("MusicIsaWorldWithinItself");
+          ENDIFONCE
+        ENDINIT
+        WATCH
+          FindEnemiesInside(VOLUME_WorldSphere, SHIPS_VictemsMc1, 1000);
+          ShipsSelectNonCapital(SHIPS_StrkVictemsMc1, SHIPS_VictemsMc1);
+          ShipsSelectDamaged(SHIPS_DamStrkVictemsMc1, SHIPS_StrkVictemsMc1, 99);
+          ShipsSelectDamaged(SHIPS_DamVictemsMc1, SHIPS_VictemsMc1, 99);
+          ShipsSelectIndex(SHIPS_IndxVictemsMc1, SHIPS_VictemsMc1, 0);
+          FindEnemiesNearTeam (SHIPS_NearAMC1, 10000);
+
+          IF (ShipsCount(SHIPS_NearAMC1)>0)
+            Attack(SHIPS_NearAMC1);
+          ELSEIF (ShipsCount(SHIPS_DamStrkVictemsMc1)>0)
+            Attack(SHIPS_DamStrkVictemsMc1);
+          ELSEIF (ShipsCount(SHIPS_StrkVictemsMc1)>0)
+            Attack(SHIPS_StrkVictemsMc1);
+          ELSEIF (ShipsCount(SHIPS_DamVictemsMc1)>0)
+            Attack(SHIPS_DamVictemsMc1);
+          ELSEIF(ShipsCount(SHIPS_IndxVictemsMc1)>0)
+            Attack(SHIPS_IndxVictemsMc1);
+          ELSEIF(ShipsCount(SHIPS_VictemsMc1)>0)
+            Attack(SHIPS_VictemsMc1);
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    State Done
+        INIT
+        ENDINIT
+        WATCH
+        ENDWATCH
+    ENDSTATE
+ENDFSM
+//ออออออออออออออออออออ     AttackMslCorvettes1     อออออออออออออออออออ
+
+//ออออออออออออออออออออ    AttackMslCorvettes2   อออออออออออออออออออ
+FSM AttackMslCorvettes2
+
+States Wait, Launching, Attack, Done;
+    INIT
+      DockInstant (TEAM_TuranicCarrier2);
+      JUMP Wait;
+    ENDINIT
+    WATCH
+      IFONCE (TeamCount()<1);
+        JUMP Done;
+      ENDIFONCE
+    ENDWATCH
+
+    State Wait
+        INIT
+        ENDINIT
+        WATCH
+          IFONCE(MsgReceived("LaunchYourFighters"))
+            Launch();
+            JUMP Launching;
+          ENDIFONCE
+        ENDWATCH
+    ENDSTATE
+
+    State Launching
+        INIT
+        ENDINIT
+        WATCH
+          IF(TeamFinishedLaunching()=TRUE)
+            JUMP Attack;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    State Attack
+        INIT
+          IFONCE (True)
+            MsgSendAll("MusicIsaWorldWithinItself");
+          ENDIFONCE
+        ENDINIT
+        WATCH
+          FindEnemiesInside(VOLUME_WorldSphere, SHIPS_VictemsMc2, 1000);
+          ShipsSelectNonCapital(SHIPS_StrkVictemsMc2, SHIPS_VictemsMc2);
+          ShipsSelectDamaged(SHIPS_DamStrkVictemsMc2, SHIPS_StrkVictemsMc2, 99);
+          ShipsSelectDamaged(SHIPS_DamVictemsMc2, SHIPS_VictemsMc2, 99);
+          ShipsSelectIndex(SHIPS_IndxVictemsMc2, SHIPS_VictemsMc2, 0);
+          FindEnemiesNearTeam (SHIPS_NearAMC1, 10000);
+
+          IF (ShipsCount(SHIPS_NearAMC1)>0)
+            Attack(SHIPS_NearAMC1);
+          ELSEIF (ShipsCount(SHIPS_DamStrkVictemsMc2)>0)
+            Attack(SHIPS_DamStrkVictemsMc2);
+          ELSEIF (ShipsCount(SHIPS_StrkVictemsMc2)>0)
+            Attack(SHIPS_StrkVictemsMc2);
+          ELSEIF (ShipsCount(SHIPS_DamVictemsMc2)>0)
+            Attack(SHIPS_DamVictemsMc2);
+          ELSEIF(ShipsCount(SHIPS_IndxVictemsMc2)>0)
+            Attack(SHIPS_IndxVictemsMc2);
+          ELSEIF(ShipsCount(SHIPS_VictemsMc2)>0)
+            Attack(SHIPS_VictemsMc2);
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    State Done
+        INIT
+        ENDINIT
+        WATCH
+        ENDWATCH
+    ENDSTATE
+ENDFSM
+//ออออออออออออออออออออ     AttackMslCorvettes2     อออออออออออออออออออ
+
+//ออออออออออออออออออออ     ResourceHaters     อออออออออออออออออออ
+FSM ResourceHaters
+
+States Wait, Attack, Done;
+    INIT
+      TeamHyperSpaceOut();
+      JUMP Wait;
+    ENDINIT
+    WATCH
+      IFONCE (TeamCount()<1);
+        JUMP Done;
+      ENDIFONCE
+    ENDWATCH
+
+    State Wait
+        INIT
+        ENDINIT
+        WATCH
+          IFONCE(RUsEnemyCollected()>300)
+            TeamHyperSpaceIn(POINT_HaterPoint);
+            JUMP Attack;
+          ENDIFONCE
+        ENDWATCH
+    ENDSTATE
+
+    State Attack
+        INIT
+          IFONCE (True)
+            MsgSendAll("MusicIsaWorldWithinItself");
+          ENDIFONCE
+        ENDINIT
+        WATCH
+          FindEnemiesInside(VOLUME_WorldSphere, SHIPS_VictemsHaters, 1000);
+          ShipsSelectType(SHIPS_HatedResourcers, SHIPS_VictemsHaters, "ResourceCollector");
+          ShipsSelectType(SHIPS_HatedController, SHIPS_VictemsHaters, "ResourceController");
+
+          ShipsSelectNonCapital(SHIPS_HatedStrk, SHIPS_VictemsHaters);
+          IF (ShipsCount(SHIPS_HatedResourcers)>0)
+            Attack(SHIPS_HatedResourcers);
+          ELSEIF (ShipsCount(SHIPS_HatedController)>0)
+            Attack(SHIPS_HatedController);
+          ELSEIF(ShipsCount(SHIPS_HatedStrk)>0)
+            Attack(SHIPS_HatedStrk);
+          ELSEIF(ShipsCount(SHIPS_VictemsHaters)>0)
+            Attack(SHIPS_VictemsHaters);
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    State Done
+        INIT
+        ENDINIT
+        WATCH
+        ENDWATCH
+    ENDSTATE
+ENDFSM
+
+//ออออออออออออออออออออ     ResourceHaters     อออออออออออออออออออ
+
+//----------------------------------------------------------------------
+
+//ออออออออออออออออออออ     PDefenseS     อออออออออออออออออออ
+FSM PDefenseS
+    States Attack, Wait;
+
+    INIT
+      TeamAttributesBitSet(ATTRIBUTES_SMColorInvisible);
+      Jump Wait;
+    ENDINIT
+    WATCH
+    ENDWATCH
+
+    STATE Wait
+      INIT
+        ShipsClear(SHIPS_SYerDead);
+      ENDINIT
+      WATCH
+        FindEnemiesInside(VOLUME_DefenceRange, SHIPS_SYerDead, 1000);
+        IF (ShipsCount(SHIPS_SYerDead)>0)
+          JUMP Attack;
+        ENDIF
+      ENDWATCH
+    ENDSTATE
+
+    STATE Attack
+      INIT
+        IFONCE (True)
+          MsgSendAll("MusicIsaWorldWithinItself");
+        ENDIFONCE
+      ENDINIT
+      WATCH
+        FindEnemiesInside(VOLUME_DefenceRange, SHIPS_SYerDead, 1000);
+        ShipsSelectDamaged(SHIPS_DamSYerDead, SHIPS_SYerDead, 99);
+        ShipsSelectNonCapital(SHIPS_StrkSYerDead, SHIPS_SYerDead);
+        ShipsSelectIndex(SHIPS_IndxSYerDead, SHIPS_SYerDead, 0);
+
+          IF (ShipsCount(SHIPS_DamSYerDead)>0)
+            Attack(SHIPS_DamSYerDead);
+          ELSEIF(ShipsCount(SHIPS_StrkSYerDead)>0)
+            Attack(SHIPS_StrkSYerDead);
+          ELSEIF(ShipsCount(SHIPS_IndxSYerDead)>0)
+            Attack(SHIPS_IndxSYerDead);
+          ELSE
+            JUMP Wait;
+          ENDIF
+      ENDWATCH
+    ENDSTATE
+ENDFSM
+//ออออออออออออออออออออ     PDefenseS     อออออออออออออออออออ
+
+//ออออออออออออออออออออ     PDefenseL     อออออออออออออออออออ
+FSM PDefenseL
+    States Attack, Wait;
+
+    INIT
+      TeamAttributesBitSet(ATTRIBUTES_SMColorInvisible);
+      Jump Wait;
+    ENDINIT
+    WATCH
+    ENDWATCH
+
+    STATE Wait
+      INIT
+      ENDINIT
+      WATCH
+        FindEnemiesInside(VOLUME_DefenceRange, SHIPS_LYerDead, 1000);
+        IF (ShipsCount(SHIPS_LYerDead)>0)
+          JUMP Attack;
+        ENDIF
+      ENDWATCH
+    ENDSTATE
+
+    STATE Attack
+      INIT
+        IFONCE (True)
+          MsgSendAll("MusicIsaWorldWithinItself");
+        ENDIFONCE
+      ENDINIT
+      WATCH
+        FindEnemiesInside(VOLUME_DefenceRange, SHIPS_LYerDead, 1000);
+        ShipsSelectDamaged(SHIPS_DamLYerDead, SHIPS_LYerDead, 99);
+        ShipsSelectNonCapital(SHIPS_StrkLYerDead, SHIPS_LYerDead);
+        ShipsSelectIndex(SHIPS_IndxLYerDead, SHIPS_LYerDead, 0);
+        IF (ShipsCount(SHIPS_DamLYerDead)>0)
+          Attack(SHIPS_DamLYerDead);
+        ELSEIF(ShipsCount(SHIPS_StrkLYerDead)>0)
+          Attack(SHIPS_StrkLYerDead);
+        ELSEIF(ShipsCount(SHIPS_IndxLYerDead)>0)
+          Attack(SHIPS_IndxLYerDead);
+        ELSE
+          JUMP Wait;
+        ENDIF
+      ENDWATCH
+    ENDSTATE
+ENDFSM
+//ออออออออออออออออออออ     PDefenseL     อออออออออออออออออออ
+
+
+//----------------------------------------------------------------------
+
+//ออออออออออออออออออออ     Turanic Carrier 1    อออออออออออออออออออ
+FSM TuranicCarrier1
+    States Wait, HeadForTheHills, Choose, MovinRightAlong ;
+
+    INIT
+      Jump Wait;
+    ENDINIT
+    WATCH
+    ENDWATCH
+
+        STATE Wait //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+            INIT
+                TimerCreateSetStart("WaitForDocking", 2);
+            ENDINIT
+            WATCH
+                IF (TimerExpiredDestroy("WaitForDocking"))
+                    TeamHyperspaceOut();
+                ENDIF
+              IFONCE(MsgReceived("ComeOnDown"))
+                TeamHyperspaceIn(POINT_Carrier1In);
+                Jump HeadForTheHills;
+              ENDIFONCE
+            ENDWATCH
+        ENDSTATE
+
+        STATE HeadForTheHills //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+            INIT
+              //Use this value to tune mission speed
+              TeamVelocityMaxSet(185);
+              MoveTo(POINT_PathPoint1);
+            ENDINIT
+
+            WATCH
+              IFONCE(NearBy(POINT_PathPoint1, 500))
+                MsgSendAll("PlayFakeNIS");
+                Jump Choose;
+              ENDIFONCE
+            ENDWATCH
+        ENDSTATE
+
+        STATE Choose //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+          INIT
+            VarDestroy("WhichPath");
+            VarCreateSet("WhichPath", (Random (1, 6)));
+          ENDINIT
+          WATCH
+            IF (VarGet("WhichPath")=1)
+              VarCreateSet("G_MyPath", 1);
+              PatrolPath(PATH_TuranicCarrier1);
+              JUMP MovinRightAlong;
+            ELSEIF (VarGet("WhichPath")=2)
+              VarCreateSet("G_MyPath", 2);
+              PatrolPath(PATH_TuranicCarrier2);
+              JUMP MovinRightAlong;
+            ELSEIF (VarGet("WhichPath")=3)
+              VarCreateSet("G_MyPath", 3);
+              PatrolPath(PATH_TuranicCarrier3);
+              JUMP MovinRightAlong;
+            ELSEIF (VarGet("WhichPath")=4)
+              VarCreateSet("G_MyPath", 4);
+              PatrolPath(PATH_TuranicCarrier4);
+              JUMP MovinRightAlong;
+            ELSEIF (VarGet("WhichPath")=5)
+              VarCreateSet("G_MyPath", 5);
+              PatrolPath(PATH_TuranicCarrier5);
+              JUMP MovinRightAlong;
+            ELSEIF (VarGet("WhichPath")=6)
+              VarCreateSet("G_MyPath", 6);
+              PatrolPath(PATH_TuranicCarrier6);
+              JUMP MovinRightAlong;
+            ENDIF
+          ENDWATCH
+        ENDSTATE
+
+        STATE MovinRightAlong //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+            INIT
+            ENDINIT
+
+            WATCH
+              IFONCE (PathNextPoint()=0)
+                MoveTo(POINT_LoosePoint);
+              ENDIFONCE
+
+              IFONCE(NearBy(POINT_LoosePoint, 1200))
+                MsgSendAll("WeMadeItHere");
+              ENDIFONCE
+            ENDWATCH
+        ENDSTATE
+ENDFSM TuranicCarrier1
+//ออออออออออออออออออออ     Turanic Carrier 1     อออออออออออออออออออ
+
+
+
+//ออออออออออออออออออออ     Turanic Carrier 2    อออออออออออออออออออ
+FSM TuranicCarrier2
+    States Wait, HeadForTheHills, Choose, MovinRightAlong ;
+
+    INIT
+      Jump Wait;
+    ENDINIT
+    WATCH
+    ENDWATCH
+
+        STATE Wait //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+            INIT
+                TimerCreateSetStart("WaitForDocking", 2);
+            ENDINIT
+            WATCH
+                IF (TimerExpiredDestroy("WaitForDocking"))
+                    TeamHyperspaceOut();
+                ENDIF
+              IFONCE(MsgReceived("ComeOnDown"))
+                TeamHyperspaceIn(POINT_Carrier2In);
+                Jump HeadForTheHills;
+              ENDIFONCE
+            ENDWATCH
+        ENDSTATE
+
+        STATE HeadForTheHills //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+            INIT
+              //Use this value to tune mission speed
+              TeamVelocityMaxSet(180);
+              MoveTo(POINT_PathPoint2);
+            ENDINIT
+
+            WATCH
+              IFONCE(NearBy(POINT_PathPoint2, 1000))
+                MsgSendAll("PlayFakeNIS");
+                Jump Choose;
+              ENDIFONCE
+            ENDWATCH
+        ENDSTATE
+
+        STATE Choose //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+          INIT
+            VarDestroy("WhichPath");
+            VarCreateSet("WhichPath", (Random (1, 6)));
+          ENDINIT
+          WATCH
+            IF (VarGet("WhichPath")=1)
+              IF (VarGet("G_MyPath")=1)
+                JUMP Choose;
+              ELSE
+                PatrolPath(PATH_TuranicCarrier1);
+                JUMP MovinRightAlong;
+              ENDIF
+            ELSEIF (VarGet("WhichPath")=2)
+              IF (VarGet("G_MyPath")=2)
+                JUMP Choose;
+              ELSE
+                PatrolPath(PATH_TuranicCarrier2);
+                JUMP MovinRightAlong;
+              ENDIF
+            ELSEIF (VarGet("WhichPath")=3)
+              IF (VarGet("G_MyPath")=3)
+                JUMP Choose;
+              ELSE
+                PatrolPath(PATH_TuranicCarrier3);
+                JUMP MovinRightAlong;
+              ENDIF
+            ELSEIF (VarGet("WhichPath")=4)
+              IF (VarGet("G_MyPath")=4)
+                JUMP Choose;
+              ELSE
+                PatrolPath(PATH_TuranicCarrier4);
+                JUMP MovinRightAlong;
+              ENDIF
+            ELSEIF (VarGet("WhichPath")=5)
+              IF (VarGet("G_MyPath")=5)
+                JUMP Choose;
+              ELSE
+                PatrolPath(PATH_TuranicCarrier5);
+                JUMP MovinRightAlong;
+              ENDIF
+            ELSEIF (VarGet("WhichPath")=6)
+              IF (VarGet("G_MyPath")=6)
+                JUMP Choose;
+              ELSE
+                PatrolPath(PATH_TuranicCarrier6);
+                JUMP MovinRightAlong;
+              ENDIF
+            ENDIF
+          ENDWATCH
+        ENDSTATE
+
+        STATE MovinRightAlong //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+            INIT
+            ENDINIT
+
+            WATCH
+              IFONCE (PathNextPoint()=0)
+                MoveTo(POINT_LoosePoint);
+              ENDIFONCE
+
+              IFONCE(NearBy(POINT_LoosePoint, 1200))
+                MsgSendAll("WeMadeItHere");
+              ENDIFONCE
+            ENDWATCH
+        ENDSTATE
+ENDFSM TuranicCarrier2
+//ออออออออออออออออออออ     Turanic Carrier 2     อออออออออออออออออออ
+
+//----------------------------------------------------------------------
+//----------------------------------------------------------------------
+
+
+//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//              Global Stuff
+//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+
+INIT
+
+        //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        //      State Machine Creation
+        //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+    FSMCreate(MissionFlow, TEAM_DummyTeam);
+
+    FSMCreate(TuranicCarrier1, TEAM_TuranicCarrier1);
+    FSMCreate(TuranicCarrier2, TEAM_TuranicCarrier2);
+
+    FSMCreate(TuranicFrigs1, TEAM_TuranicFrigs1);
+    FSMCreate(TuranicFrigs2, TEAM_TuranicFrigs2);
+
+    FSMCreate(ProtFightersC1a, TEAM_ProtFightersC1a);
+    FSMCreate(ProtFightersC1b, TEAM_ProtFightersC1b);
+    FSMCreate(ProtFightersC2a, TEAM_ProtFightersC2a);
+    FSMCreate(ProtFightersC2b, TEAM_ProtFightersC2b);
+
+    FSMCreate(ProtCorvettesC1, TEAM_ProtCorvettesC1);
+    FSMCreate(ProtCorvettesC2, TEAM_ProtCorvettesC2);
+
+    FSMCreate(AttackFighters1, TEAM_AttackFighters1);
+    FSMCreate(AttackFighters2, TEAM_AttackFighters2);
+    FSMCreate(AttackMslCorvettes1, TEAM_AttackMslCorvettes1);
+    FSMCreate(AttackMslCorvettes2, TEAM_AttackMslCorvettes2);
+    FSMCreate(ResourceHaters, TEAM_ResourceHaters);
+
+    FSMCreate(PDefenseS, TEAM_PDefenseS1);
+    FSMCreate(PDefenseS, TEAM_PDefenseS2);
+    FSMCreate(PDefenseS, TEAM_PDefenseS3);
+    FSMCreate(PDefenseS, TEAM_PDefenseS4);
+    FSMCreate(PDefenseS, TEAM_PDefenseS5);
+    FSMCreate(PDefenseS, TEAM_PDefenseS6);
+    FSMCreate(PDefenseS, TEAM_PDefenseS7);
+    FSMCreate(PDefenseS, TEAM_PDefenseS8);
+    FSMCreate(PDefenseS, TEAM_PDefenseS9);
+
+    FSMCreate(PDefenseS, TEAM_PDefenseS10);
+    FSMCreate(PDefenseS, TEAM_PDefenseS11);
+    FSMCreate(PDefenseS, TEAM_PDefenseS12);
+    FSMCreate(PDefenseS, TEAM_PDefenseS13);
+    FSMCreate(PDefenseS, TEAM_PDefenseS14);
+    FSMCreate(PDefenseS, TEAM_PDefenseS15);
+    FSMCreate(PDefenseS, TEAM_PDefenseS16);
+    FSMCreate(PDefenseS, TEAM_PDefenseS17);
+    FSMCreate(PDefenseS, TEAM_PDefenseS18);
+
+    FSMCreate(PDefenseS, TEAM_PDefenseS21);
+    FSMCreate(PDefenseS, TEAM_PDefenseS22);
+    FSMCreate(PDefenseS, TEAM_PDefenseS23);
+    FSMCreate(PDefenseS, TEAM_PDefenseS24);
+    FSMCreate(PDefenseS, TEAM_PDefenseS25);
+    FSMCreate(PDefenseS, TEAM_PDefenseS26);
+    FSMCreate(PDefenseS, TEAM_PDefenseS27);
+    FSMCreate(PDefenseS, TEAM_PDefenseS28);
+    FSMCreate(PDefenseS, TEAM_PDefenseS29);
+
+    FSMCreate(PDefenseS, TEAM_PDefenseS30);
+    FSMCreate(PDefenseS, TEAM_PDefenseS31);
+    FSMCreate(PDefenseS, TEAM_PDefenseS32);
+    FSMCreate(PDefenseS, TEAM_PDefenseS33);
+    FSMCreate(PDefenseS, TEAM_PDefenseS34);
+    FSMCreate(PDefenseS, TEAM_PDefenseS35);
+    FSMCreate(PDefenseS, TEAM_PDefenseS36);
+    FSMCreate(PDefenseS, TEAM_PDefenseS37);
+    FSMCreate(PDefenseS, TEAM_PDefenseS38);
+
+    FSMCreate(PDefenseS, TEAM_PDefenseS41);
+    FSMCreate(PDefenseS, TEAM_PDefenseS42);
+    FSMCreate(PDefenseS, TEAM_PDefenseS43);
+    FSMCreate(PDefenseS, TEAM_PDefenseS44);
+    FSMCreate(PDefenseS, TEAM_PDefenseS45);
+    FSMCreate(PDefenseS, TEAM_PDefenseS46);
+    FSMCreate(PDefenseS, TEAM_PDefenseS47);
+    FSMCreate(PDefenseS, TEAM_PDefenseS48);
+    FSMCreate(PDefenseS, TEAM_PDefenseS49);
+
+    FSMCreate(PDefenseS, TEAM_PDefenseS50);
+    FSMCreate(PDefenseS, TEAM_PDefenseS51);
+    FSMCreate(PDefenseS, TEAM_PDefenseS52);
+    FSMCreate(PDefenseS, TEAM_PDefenseS53);
+    FSMCreate(PDefenseS, TEAM_PDefenseS54);
+    FSMCreate(PDefenseS, TEAM_PDefenseS55);
+    FSMCreate(PDefenseS, TEAM_PDefenseS56);
+    FSMCreate(PDefenseS, TEAM_PDefenseS57);
+    FSMCreate(PDefenseS, TEAM_PDefenseS58);
+
+    FSMCreate(PDefenseL, TEAM_PDefenseL1);
+    FSMCreate(PDefenseL, TEAM_PDefenseL2);
+    FSMCreate(PDefenseL, TEAM_PDefenseL3);
+    FSMCreate(PDefenseL, TEAM_PDefenseL4);
+    FSMCreate(PDefenseL, TEAM_PDefenseL5);
+    FSMCreate(PDefenseL, TEAM_PDefenseL6);
+    FSMCreate(PDefenseL, TEAM_PDefenseL7);
+    FSMCreate(PDefenseL, TEAM_PDefenseL8);
+    FSMCreate(PDefenseL, TEAM_PDefenseL9);
+
+    FSMCreate(PDefenseL, TEAM_PDefenseL10);
+    FSMCreate(PDefenseL, TEAM_PDefenseL11);
+    FSMCreate(PDefenseL, TEAM_PDefenseL12);
+    FSMCreate(PDefenseL, TEAM_PDefenseL13);
+    FSMCreate(PDefenseL, TEAM_PDefenseL14);
+    FSMCreate(PDefenseL, TEAM_PDefenseL15);
+    FSMCreate(PDefenseL, TEAM_PDefenseL16);
+    FSMCreate(PDefenseL, TEAM_PDefenseL17);
+    FSMCreate(PDefenseL, TEAM_PDefenseL18);
+
+    FSMCreate(PDefenseL, TEAM_PDefenseL21);
+    FSMCreate(PDefenseL, TEAM_PDefenseL22);
+    FSMCreate(PDefenseL, TEAM_PDefenseL23);
+    FSMCreate(PDefenseL, TEAM_PDefenseL24);
+    FSMCreate(PDefenseL, TEAM_PDefenseL25);
+    FSMCreate(PDefenseL, TEAM_PDefenseL26);
+    FSMCreate(PDefenseL, TEAM_PDefenseL27);
+    FSMCreate(PDefenseL, TEAM_PDefenseL28);
+    FSMCreate(PDefenseL, TEAM_PDefenseL29);
+
+    FSMCreate(PDefenseL, TEAM_PDefenseL30);
+    FSMCreate(PDefenseL, TEAM_PDefenseL31);
+    FSMCreate(PDefenseL, TEAM_PDefenseL32);
+    FSMCreate(PDefenseL, TEAM_PDefenseL33);
+    FSMCreate(PDefenseL, TEAM_PDefenseL34);
+    FSMCreate(PDefenseL, TEAM_PDefenseL35);
+    FSMCreate(PDefenseL, TEAM_PDefenseL36);
+    FSMCreate(PDefenseL, TEAM_PDefenseL37);
+    FSMCreate(PDefenseL, TEAM_PDefenseL38);
+
+    FSMCreate(PDefenseL, TEAM_PDefenseL41);
+    FSMCreate(PDefenseL, TEAM_PDefenseL42);
+    FSMCreate(PDefenseL, TEAM_PDefenseL43);
+    FSMCreate(PDefenseL, TEAM_PDefenseL44);
+    FSMCreate(PDefenseL, TEAM_PDefenseL45);
+    FSMCreate(PDefenseL, TEAM_PDefenseL46);
+    FSMCreate(PDefenseL, TEAM_PDefenseL47);
+    FSMCreate(PDefenseL, TEAM_PDefenseL48);
+    FSMCreate(PDefenseL, TEAM_PDefenseL49);
+
+    FSMCreate(PDefenseL, TEAM_PDefenseL50);
+    FSMCreate(PDefenseL, TEAM_PDefenseL51);
+    FSMCreate(PDefenseL, TEAM_PDefenseL52);
+    FSMCreate(PDefenseL, TEAM_PDefenseL53);
+    FSMCreate(PDefenseL, TEAM_PDefenseL54);
+    FSMCreate(PDefenseL, TEAM_PDefenseL55);
+    FSMCreate(PDefenseL, TEAM_PDefenseL56);
+    FSMCreate(PDefenseL, TEAM_PDefenseL57);
+    FSMCreate(PDefenseL, TEAM_PDefenseL58);
+        //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+
+        //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        //      technology
+        //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+
+       //IF((TechGetResearch("IonWeapons")) OR (TechGet("IonWeapons")))
+       //  VarCreateSet("G_WeGetPlaz", TRUE);
+       //ELSEIF((TechGetResearch ("PlasmaWeapons")) OR (TechGet ("PlasmaWeapons")))
+       //  VarCreateSet("G_WeGetIonz", TRUE);
+       //ENDIF
+
+        //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        //      Misc/Variable/Timer Creation
+        //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        SaveLevel (10, LSTRING_Savegame);
+        //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+
+ENDINIT
+WATCH
+
+        IFONCE (TRUE)
+            LocationCard(10000, LSTRING_LocationCard);
+        ENDIFONCE
+
+        //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        //      mission objectives
+        //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+
+        IFONCE ((ShipsCount(TEAMSHIPS_TuranicCarrier1)<1) AND (ShipsCount(TEAMSHIPS_TuranicCarrier2)<1))
+          MusicStop(B01_TuranicRaidersLong);
+          VarCreateSet("G_ByeByeLove", TRUE);
+          ObjectiveSet("DestroyEnemyCarriers", TRUE);
+          ObjectiveCreate("Hyperspace", LSTRING_Hyperspace, LSTRING_Hyperspace);
+        ENDIFONCE
+
+
+        //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        //      technology
+        //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+
+
+        // MISSION 01 Tech stuff: //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        // if player researches Fighter drive, allow Fighter chassis
+        IF ((TechGet ("MassDrive1Kt")) AND (VarGet ("SetTechOnce1") = FALSE))
+                TechSetResearch ("Chassis1");
+                VarCreateSet ("SetTechOnce1", TRUE);
+        ENDIF
+
+        // if player researches Corvette drive, allow Corvette chassis
+        IF ((TechGet ("MassDrive10Kt")) AND (VarGet ("SetTechOnce2") = FALSE))
+                TechSetResearch ("Chassis2");
+                VarCreateSet ("SetTechOnce2", TRUE);
+        ENDIF
+
+        // MISSION 02 Tech stuff: //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        // if player researches capital ship drive, give capital ship chassis
+        IF ((TechGet ("MassDrive100Kt")) AND (VarGet ("SetCapitalChassis") = FALSE))
+                TechSetResearch ("Chassis3");
+                VarSet ("SetCapitalChassis", TRUE);
+        ENDIF
+
+        // if player researches Corvette chassis, allow Heavy Corvette upgrade
+        IF ((TechGet ("Chassis2")) AND (VarGet ("SetMediumGuns") = FALSE))
+                TechSetResearch ("MediumGuns");
+                VarCreateSet ("SetMediumGuns", TRUE);
+        ENDIF
+
+
+        //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        IFONCE (TRUE)
+          TimerCreateSetStart ("G_PlayIonOrPlasmaEvent", 20);
+        ENDIFONCE
+
+
+        //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        // MISSION 05 Tech stuff: //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        // if the player comes into the mission with Ion Cannons (fully researched or not), they are allowed to research Plasma Bombs
+        // if the player comes into the mission with plasma bombs (fully researched or not), AND they have researched the Cap Ship Chassis, they are allowed to research Ion Weapons
+        IFONCE (TimerExpiredDestroy("G_PlayIonOrPlasmaEvent"))
+            IF((TechGetResearch("IonWeapons")) OR (TechGet("IonWeapons")))
+              VarCreateSet("G_WeGetPlaz", TRUE);
+              TechSetResearch ("PlasmaWeapons");
+            ELSEIF((TechGetResearch ("PlasmaWeapons")) OR (TechGet ("PlasmaWeapons")))
+              VarCreateSet("G_WeGetIonz", TRUE);
+              TechSetResearch ("IonWeapons");
+            ENDIF
+        ENDIFONCE
+
+ENDWATCH
+
+

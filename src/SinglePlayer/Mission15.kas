@@ -1,0 +1,821 @@
+//
+//  MISSION14 - Headshot asteroid
+//
+
+#include "speechevent.h"
+#include "CommandDefs.h"
+#include "soundmusic.h"
+
+// ---could be from "Subtitle.h" if it didn't include so much extra....
+#define STA_FleetCommand        0
+#define STA_FleetIntel          4
+
+// ----local defines ----
+// Distance to seek for next opponents
+#define DISTANCETOGUARD 20000
+// Base time for countdown (could be modified according to player's fleet capacity)
+#define BASECNTDNTIME   390
+
+//=========================================
+//------------ MACROS ---------------------
+//=========================================
+
+// ---vvv---
+// Tells Capital ships to do a moveattack, others to do a regular attack
+// Ships to attack is the "enemyShips" variable
+// No returns, must be in statement block area
+
+#define AttackOrMoveAttack( enemyShips ) Attack(enemyShips);
+//  IF( ShipsSelectCapital(SHIPS_Evaluate,THISTEAMSHIPS)>0 ) \
+//      MoveAttack(enemyShips); \
+//  ELSE \
+//      Attack(enemyShips); \
+//  ENDIF
+// ---^^^---
+
+// ---vvv---
+// Finds ships inside the "HeadshotPathArea" volume.
+// Returns number found (0 or more) and ships that are in the area are passed in
+// "SHIPS_Evaluate"
+// Don't forget a semicolon if not using in an expression
+
+#define FindShipsInPath(shipList) FindEnemiesInside( VOLUME_HeadshotPathArea, shipList, 5000 )
+// ---^^^---
+
+// ---vvv---
+// Routine to establish the new attack list and start attacking it
+// No returns, must be in a statement block.
+// CANNOT have a semicolon behind it (ends with an "ENDIF")
+
+#define AttackNewShips( newShipsList ) \
+        ShipsSelectIndex( newShipsList, newShipsList, 0 ); \
+        AttackOrMoveAttack( newShipsList )
+// ---^^^---
+
+// ---vvv---
+// Routine to establish the new HARASS list and start attacking it
+// No returns, must be in a statement block.
+// CANNOT have a semicolon behind it (ends with an "ENDIF"
+
+#define BotherNewShips( newShipsList ) AttackNewShips( newShipsList )
+// ---^^^---
+
+// ---vvv---
+// Adds ships to the "ToAttack" list and jumps to the Retaliate state
+// No returns, must be in a statement block.
+
+#define RetaliateNow(shipsList) \
+        AttackOrMoveAttack(shipsList) \
+        JUMP Retaliate
+// ---^^^---
+
+
+LOCALIZATION //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    LSTRING_Location
+        "CHAPEL PERILOUS"
+        "Chapelle des Périls"
+        "Gefahr im Verzug"
+		"CAPILLA DEL PELIGRO"
+		"CHAPEL PERILOUS"
+
+
+    LSTRING_LevelName
+        "15 - Chapel Perilous"
+        "15 - Chapelle des Périls"
+        "15 - Gefahr im Verzug"
+		"15 - Capilla del peligro"
+		"15 - Chapel Perilous"
+
+    LSTRING_Objective1
+        "Destroy the object"
+        "Destruction de l'objet"
+        "Das Objekt zerstören."
+        "Destruir el objeto"
+		"Distruggi l'oggetto"
+
+    LSTRING_Hyperspace
+        "                HYPERSPACE"
+        "                HYPERESPACE"
+        "        HYPERRAUMSPRUNG"
+		"                HIPERESPACIO"
+		" 				IPERSPAZIO"
+
+    //LSTRING_HyperspaceInterrupted
+    //    "Hyperspace interrupted."
+    //    "French version of Fleet Command Event goes here"
+    //    "German version of Fleet Command Event goes here"
+    //
+    //LSTRING_FleetIntelIntro1
+    //    "Shutting down the inhibitor field has alerted the enemy to our presence."
+    //    "La neutralisation du champ inhibiteur a averti l'ennemi de notre présence."
+    //    "Die Abschaltung des Inhibitionsfeldes hat den Feind auf unsere Anwesenheit aufmerksam gemacht."
+    //
+    //LSTRING_FleetIntelIntro2
+    //    "We are on a collision course with a very large object.  It appears to have escorts."
+    //    "Nous sommes sur une trajectoire de collision avec un énorme objet, en apparence accompagné."
+    //    "Wir befinden uns auf Kollisionskurs mit einem sehr großen Objekt. Es scheint nicht allein zu sein."
+    //
+    //LSTRING_FleetIntelIntro3
+    //    "It must be destoyed before it impacts the Mothership."
+    //    "Il faut l'anéantir avant qu'il y ait impact avec le Vaisseau Mère"
+    //    "Es muss vernichtet werden, bevor es mit dem Mutterschiff kollidiert."
+    //
+    //LSTRING_Warn20min
+    //    "Impact in twenty minutes."
+    //    "Impact dans vingt minutes"
+    //    "Einschlag in zwanzig Minuten."
+    //
+    //LSTRING_Warn15min
+    //    "Impact in fifteen minutes."
+    //    "Impact dans quinze minutes."
+    //    "Einschlag in fünfzehn Minuten."
+    //
+    //LSTRING_Warn10min
+    //    "Impact in ten minutes"
+    //    "Impact dans dix minutes"
+    //    "Einschlag in zehn Minuten."
+    //
+    //LSTRING_Warn5min
+    //    "Impact in five minutes."
+    //    "Impact dans cinq minutes"
+    //    "Einschlag in fünf Minuten."
+    //
+    //LSTRING_Warn4min
+    //    "Impact in four minutes."
+    //    "Impact dans quatre minutes."
+    //    "Einschlag in vier Minuten."
+    //
+    //LSTRING_Warn3min
+    //    "Impact in three minutes."
+    //    "Impact dans trois minutes."
+    //    "Einschlag in drei Minuten."
+    //
+    //LSTRING_Warn2min
+    //    "Impact in two minutes."
+    //    "Impact dans deux minutes."
+    //    "Einschlag in zwei Minuten."
+    //
+    //LSTRING_Warn1min
+    //    "Impact in one minute."
+    //    "Impact dans une minute."
+    //    "Einschlag in einer Minute."
+    //
+    //LSTRING_Warn30sec
+    //    "Impact in 30 seconds."
+    //    "Impact dans trente secondes."
+    //    "Einschlag in 30 Sekunden."
+    //
+    //LSTRING_Warn10sec
+    //    "Impact in 10 seconds."
+    //    "Impact dans dix secondes."
+    //    "Einschlag in 10 Sekunden."
+    //
+    //LSTRING_Warn5sec
+    //    "Impact in 5 seconds."
+    //    "Impact dans cinq secondes."
+    //    "Einschlag in 5 Sekunden."
+    //
+    //LSTRING_Warn4sec
+    //    "Impact in 4 seconds."
+    //    "Impact dans quatre secondes."
+    //    "Einschlag in 4 Sekunden."
+    //
+    //LSTRING_Warn3sec
+    //    "Impact in 3 seconds."
+    //    "Impact dans trois secondes."
+    //    "Einschlag in 3 Sekunden."
+    //
+    //LSTRING_Warn2sec
+    //    "Impact in 2 seconds."
+    //    "Impact dans deux secondes."
+    //    "Einschlag in 2 Sekunden."
+    //
+    //LSTRING_ImpactWarn
+    //    "Impact."
+    //    "Impact."
+    //    "... Einschlag."
+    //
+    //LSTRING_Successful
+    //    "Hyperspace Drives are available"
+    //    "French version of Fleet intel goes here"
+    //    "Hypersprung-Aggregate sind verfügbar"
+ENDL //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+//
+// Special case FSM, so we don't do anything if we are dead
+//
+FSM Dead
+    INIT
+        IF ( TeamCount() > 0 )
+            EnableAllAIFeatures();
+            TeamGiveToAI();
+        ENDIF
+    ENDINIT
+    WATCH
+    ENDWATCH
+ENDFSM Dead
+
+
+//
+//  Events FSM to handle playback of countdown, initial Fleet Intel/Command events, etc.
+//
+FSM Events
+    STATES PreNIS, PlayNIS, FIIntro1, FIIntroLBXIn, FIIntro2,
+           FIIntroLBXOut, Countdown, EvaluateWinner;
+
+    INIT
+//      MusicPlay(AMB_Mission15);
+//  07/01/99 SA - shouldn't have to call the ambient track here, it should be handle by the game code
+        JUMP PreNIS;
+    ENDINIT
+    WATCH
+        IFONCE ( ShipsCount(SHIPS_EnemyMShip) == 0 )
+            JUMP EvaluateWinner;
+        ENDIFONCE
+
+        IFONCE ( MsgReceived("HeadShotDestroyed") )
+            ObjectiveSet("DestroyObject", TRUE);
+            JUMP EvaluateWinner;
+        ENDIFONCE
+    ENDWATCH
+
+    // Give the NIS a few seconds to start, then check for it
+    STATE PreNIS
+        INIT
+            TimerCreateSetStart("LocationTimer",19);
+        ENDINIT
+        WATCH
+            IFONCE ( TimerRemaining( "LocationTimer" ) = 16 )
+                LocationCard( 5000, LSTRING_Location );
+            ENDIFONCE
+
+            // "Hyperspace has been interrupted" ...yadayadayada
+            IFONCE ( TimerRemaining( "LocationTimer" ) = 13 )
+                SpeechEvent(M15_Fleet_HyperspaceInterrupted, STA_FleetCommand );
+            ENDIFONCE
+
+            IFONCE ( TimerRemaining( "LocationTimer" ) == 6 )
+                MusicStop(2);
+            ENDIFONCE
+
+            IFONCE ( TimerRemaining( "LocationTimer" ) == 4 )
+                wideScreenIn( 90 );
+            ENDIFONCE
+
+            IFONCE ( TimerExpiredDestroy( "LocationTimer" ) )
+                JUMP PlayNIS;
+            ENDIFONCE
+        ENDWATCH
+    ENDSTATE PreNIS
+
+    //--------------------------------------------------------
+    // Play the NIS
+    //--------------------------------------------------------
+    STATE PlayNIS
+        INIT
+            VarCreateSet("G_PlayNis", 9);
+            TimerCreate("HoldForIntel");
+            VarCreateSet("FinishedNIS", FALSE);
+        ENDINIT
+        WATCH
+            IFONCE ( VarGet("G_Nis9Complete") )
+                TimerSet( "HoldForIntel", 7 );
+                TimerStart( "HoldForIntel" );
+                VarSet("FinishedNIS", TRUE);
+            ENDIFONCE
+
+            IF ( TimerExpired( "HoldForIntel" ) AND VarGet("FinishedNIS") )
+                TimerDestroy("HoldForIntel");
+                JUMP FIIntro1;
+            ENDIF
+        ENDWATCH
+    ENDSTATE PlayNIS
+
+    //--------------------------------------------------------
+    // This State displays the first Fleet Intel event
+    // and passes control to FIIntro2
+    //--------------------------------------------------------
+    STATE FIIntro1
+        INIT
+            IF ( RaceOfHuman() == 0 )
+                SpeechEvent(M15_Intel_AlertedKushan, 0);
+            ELSE
+                SpeechEvent(M15_Intel_AlertedTaiidan, 0);
+            ENDIF
+
+            // Timers to hold for next IntroEvents
+            TimerCreate( "HoldForSM" );
+        ENDINIT
+        WATCH
+            VarDestroy("IntelEvent");
+            VarCreateSet("IntelEvent", IntelEventEnded());
+
+            IFONCE (VarGet("IntelEvent"))
+                TimerSet( "HoldForSM", 5 );
+                TimerStart( "HoldForSM" );
+            ENDIFONCE
+
+            IF ( TimerExpiredDestroy( "HoldForSM" ) )
+                JUMP FIIntroLBXIn;
+            ENDIF
+        ENDWATCH
+    ENDSTATE FIIntro1
+
+    //-------------------------------------------------------
+    // Letterbox in and enter sensors manager
+    //-------------------------------------------------------
+    STATE FIIntroLBXIn
+        INIT
+            PauseOtherKAS();
+            wideScreenIn(90);       // three second letterbox in
+            TimerCreateSetStart( "LetterboxInTimer", 4);
+        ENDINIT
+        WATCH
+            // Enter the SM and pause player universe
+            IF ( TimerRemaining ("LetterboxInTimer") = 2 )
+                OpenSensors( 120000 );
+                PauseUniverse();
+            ENDIF
+
+            // After brief pause, go on to Second event
+            IF ( TimerExpiredDestroy( "LetterboxInTimer" ) )
+                JUMP FIIntro2;
+            ENDIF
+        ENDWATCH
+    ENDSTATE FIIntroLBXIn
+
+    //--------------------------------------------------------
+    // This State displays the second Fleet Intel event,
+    // and passes control to FIIntro3
+    // Also responsible for pinging the HSAsteroid
+    //--------------------------------------------------------
+    STATE FIIntro2
+        INIT
+            SpeechEvent(M15_Intel_DestroyHeadshot, 0);
+            TimerCreateSetStart ( "PingHeadshot", 1 );
+            VarCreateSet("PingedHeadshot", FALSE);
+        ENDINIT
+        WATCH
+            VarDestroy("IntelEvent");
+            VarCreateSet("IntelEvent", IntelEventEnded());
+
+            IF ( VarGet("IntelEvent") = 2 )
+                IF ( VarGet("PingedHeadshot") = FALSE )
+                    TimerDestroy("PingHeadshot");
+                    PingAddShips( TEAMSHIPS_Headshot, "HeadshotAsteroidPing");
+                ELSE
+                    TutRemovePointer( "HeadshotPointer" );
+                ENDIF
+                ObjectiveCreate("DestroyObject", LSTRING_Objective1, LSTRING_Objective1);
+                JUMP FIIntroLBXOut;
+            ELSEIF ( VarGet("IntelEvent") )
+                TutRemovePointer( "HeadshotPointer" );
+                ObjectiveCreate("DestroyObject", LSTRING_Objective1, LSTRING_Objective1);
+                JUMP FIIntroLBXOut;
+            ENDIF
+
+            // Ping the Headshot Asteroid
+            IFONCE ( TimerExpiredDestroy( "PingHeadshot" ) )
+                PingAddShips( TEAMSHIPS_Headshot, "HeadshotAsteroidPing");
+                TutSetPointerTargetShipSelection( "HeadshotPointer", TEAMSHIPS_Headshot );
+                VarSet("PingedHeadshot", TRUE);
+            ENDIFONCE
+        ENDWATCH
+    ENDSTATE FIIntro2
+
+    STATE FIIntroLBXOut
+        INIT
+                TimerCreateSetStart( "LetterboxOutTimer", 5 );
+        ENDINIT
+        WATCH
+            IFONCE ( TimerRemaining( "LetterboxOutTimer" ) == 4 )
+                UnpauseUniverse();
+                CloseSensors( TRUE );
+                wideScreenOut(30);
+                UnpauseOtherKAS();
+            ENDIFONCE
+
+            IF ( TimerExpiredDestroy( "LetterboxOutTimer" ) )
+                JUMP Countdown;
+            ENDIF
+        ENDWATCH
+    ENDSTATE FIIntroLBXOut
+
+    //--------------------------------------------------------
+    // Start the horribly impending countdown to destruction....
+    //--------------------------------------------------------
+    STATE Countdown
+        INIT
+            TimerCreateSetStart("EndofLevel", VarGet("G_CountdownTime") );
+            MsgSendAll( "StartedCountdown" );
+            VarSet("G_HeadshotDestroyed", FALSE);
+        ENDINIT
+        WATCH
+            IF (TimerRemaining("EndofLevel")=1200 AND VarGet("G_HeadshotDestroyed") = FALSE )
+               SpeechEvent(M15_Intel_ImpactIn20,0);
+            ENDIF
+
+            IF (TimerRemaining("EndofLevel")=900 AND VarGet("G_HeadshotDestroyed") = FALSE )
+               SpeechEvent(M15_Intel_ImpactIn15,0);
+            ENDIF
+
+            IF (TimerRemaining("EndofLevel")=600 AND VarGet("G_HeadshotDestroyed") = FALSE)
+               SpeechEvent(M15_Intel_ImpactIn10,0);
+            ENDIF
+
+            IF (TimerRemaining("EndofLevel")=300 AND VarGet("G_HeadshotDestroyed") = FALSE)
+               SpeechEvent(M15_Intel_ImpactIn5,0);
+            ENDIF
+
+            IF (TimerRemaining("EndofLevel")=240 AND VarGet("G_HeadshotDestroyed") = FALSE)
+               SpeechEvent(M15_Intel_ImpactIn4,0);
+            ENDIF
+
+            IF (TimerRemaining("EndofLevel")=180 AND VarGet("G_HeadshotDestroyed") = FALSE)
+               SpeechEvent(M15_Intel_ImpactIn3,0);
+            ENDIF
+
+            IF (TimerRemaining("EndofLevel")=120 AND VarGet("G_HeadshotDestroyed") = FALSE)
+               SpeechEvent(M15_Intel_ImpactIn2,0);
+            ENDIF
+
+            IF (TimerRemaining("EndofLevel")=60 AND VarGet("G_HeadshotDestroyed") = FALSE)
+               SpeechEvent(M15_Intel_ImpactIn1,0);
+            ENDIF
+
+            IF (TimerRemaining("EndofLevel")=30 AND VarGet("G_HeadshotDestroyed") = FALSE)
+               SpeechEvent(M15_Intel_ImpactIn30secs,0);
+            ENDIF
+
+            IF (TimerRemaining("EndofLevel")=10 AND VarGet("G_HeadshotDestroyed") = FALSE)
+               SpeechEvent(M15_Intel_ImpactIn10secs,0);
+            ENDIF
+
+            IF (TimerRemaining("EndofLevel")=5 AND VarGet("G_HeadshotDestroyed") = FALSE)
+               SpeechEvent(M15_Fleet_StandbyForImpact, 0);
+            ENDIF
+
+            //--------------------------------
+            // User failed to destroy asteroid
+            // Maybe they're dead now
+            //--------------------------------
+            IF (TimerExpiredDestroy("EndofLevel"))
+                JUMP EvaluateWinner;
+            ENDIF
+        ENDWATCH
+    ENDSTATE Countdown
+
+    //----------------------
+    // Evaluate who won
+    //----------------------
+    STATE EvaluateWinner
+        INIT
+            TimerCreateSetStart( "WonAndDone", 12 );
+        ENDINIT
+        WATCH
+            IFONCE ( VarGet("G_HeadshotDestroyed") == TRUE )
+                ObjectiveSet("DestroyObject", TRUE);
+            ENDIFONCE
+
+            IF ( ShipsCount(SHIPS_EnemyMShip) == 0 )
+                ObjectivesDestroyAll();
+                MissionFailed();
+                FSMCREATE( Dead, THISTEAM );
+            ENDIF
+
+            IFONCE ( TimerExpiredDestroy("WonAndDone") )
+                ObjectiveCreate ("Hyperspace", LSTRING_Hyperspace, LSTRING_Hyperspace);
+                SpeechEvent(M15_Intel_HyperspaceReady, 0);
+            ENDIFONCE
+        ENDWATCH
+    ENDSTATE EvaluateWinner
+ENDFSM Events
+
+//**********************************************
+// Headshot FSM to handle the Headshot Asteroid
+//**********************************************
+FSM HeadShot
+    STATES Moving;
+
+    INIT
+    ENDINIT
+    WATCH
+        IF ( MsgReceived("StartedCountdown") )
+            JUMP Moving;
+        ENDIF
+
+        // Check to see if the headshot asteroid has been destroyed
+        IFONCE ( TeamCount() == 0 )
+            MsgSendAll( "HeadShotDestroyed" );
+            VarSet( "G_HeadshotDestroyed", TRUE );
+            Stop();
+
+            // Headshot Asteroid is destroyed, stop the battle music
+            MusicStop(2);
+//          MusicPlay(AMB_Mission15);
+//  07/01/99 SA - shouldn't have to call the ambient track here, it should be handle by the game code
+            FSMCREATE( Dead, THISTEAM );
+        ENDIFONCE
+    ENDWATCH
+
+    // Evaluate WTF happens during the Headshot moving
+    // (only checks health and starts the headshot moving right now)
+    STATE Moving
+        INIT
+            // Find out how far away the enemy's mothership is
+
+            ShipsClear( SHIPS_Mothership );
+            IF ( FindEnemyShipsOfType( SHIPS_Mothership, "Mothership" ) = 0 )
+                MissionFailed();
+                FSMCREATE( Dead, THISTEAM );
+            ENDIF
+            VarSet("G_Dist2MShip", FindDistance( THISTEAMSPOINT, SHIPSPOINT_Mothership ) - 1500 );
+                                    // this is the size of MShips and HSAsteriods radii
+
+            // Make The Headshot take (countdown) seconds to hit mothership
+
+            TeamVelocityMaxSet( VarGet("G_Dist2MShip") / VarGet("G_CountdownTime") );
+                                            // ^- distance to travel(m) / required time(s)
+
+            MoveTo(POINT_TowardsPoint);
+        ENDINIT
+        WATCH
+
+            // *** Start the Battle Music!!!  ***
+            IFONCE ( UnderAttack( SHIPS_FirstAttackingShips ) > 0 )
+                MusicStop(0);
+                MusicPlay(B02_TuranicRaidersShort);
+            ENDIFONCE
+        ENDWATCH
+    ENDSTATE Moving
+ENDFSM HeadShot
+
+
+//****************************************
+//              Here is the protecting fleet.
+//****************************************
+FSM Protection
+    STATES Guarding, KillMShip, Retaliate;
+
+    INIT
+        JUMP Guarding;
+    ENDINIT
+    WATCH
+        IFONCE ( MsgReceived("HeadShotDestroyed") )
+            JUMP KillMShip;
+        ENDIFONCE
+
+        IFONCE ( TeamCount() == 0 )
+            FSMCREATE( Dead, THISTEAM );
+        ENDIFONCE
+    ENDWATCH
+
+    // *** This is for when there is essentially nothing to do ***
+    STATE Guarding
+        INIT
+            // Guard formations
+            IF ( ThisTeamIs( TEAM_DefendersGuard ) )
+                FormationWall();
+            ELSE
+                FormationBroad();
+            ENDIF
+            TacticsNeutral();
+
+            // Guard Ships
+            Guard( TEAMSHIPS_HeadShot );
+        ENDINIT
+        WATCH
+            // *** Go into retaliation state if we are attacked, headshot is attacked,
+            // *** or a ship enters the Headshot Asteroid's path, or a ship gets too close.
+            ShipsClear(SHIPS_Evaluate);
+            IF (   UnderAttack( SHIPS_Evaluate ) > 0
+                || UnderAttackElsewhere( TEAM_Headshot, SHIPS_Evaluate ) > 0
+                || FindEnemiesNearby( SHIPS_Evaluate, DISTANCETOGUARD ) > 0
+                || FindShipsInPath( SHIPS_Evaluate ) > 0 )
+
+                RetaliateNow(SHIPS_Evaluate);
+            ENDIF
+        ENDWATCH
+    ENDSTATE Guarding
+
+    // ** Someone is asking for an ass-kickin' **
+    STATE Retaliate
+        INIT
+        ENDINIT
+        WATCH
+            ShipsClear( SHIPS_Evaluate );
+            // Order of precedence....
+            IF ( ShipsOrder(THISTEAMSHIPS) != COMMAND_ATTACK )
+                IF (   UnderAttack( SHIPS_Evaluate ) > 0
+                    || UnderAttackElsewhere( TEAM_HeadShot, SHIPS_Evaluate ) > 0
+                    || FindEnemiesNearby(SHIPS_Evaluate, DISTANCETOGUARD) > 0
+                    || FindShipsInPath( SHIPS_Evaluate ) > 0 )
+
+                    AttackNewShips( SHIPS_Evaluate )
+                ELSE
+                    JUMP Guarding;
+                ENDIF
+            ENDIF
+
+            // Modify tactics based on Team's health
+            IF ( TeamHealthAverage() < 40 )
+                TacticsEvasive();
+            ELSEIF ( TeamHealthAverage() < 75 )
+                TacticsNeutral();
+            ELSE
+                TacticsAggressive();
+            ENDIF
+        ENDWATCH
+    ENDSTATE Retaliate
+
+    STATE KillMShip
+        INIT
+            IF ( ShipsCount(SHIPS_EnemyMShip) == 0 )
+                FSMCREATE( Dead, THISTEAM );
+            ENDIF
+        ENDINIT
+        WATCH
+            IF ( ShipsOrder(THISTEAMSHIPS) != COMMAND_ATTACK )
+                TacticsAggressive();
+
+                IF ( ShipsSelectNonCapital(SHIPS_Evaluate,THISTEAMSHIPS)>0)
+                    KamikazeEveryone(SHIPS_EnemyMShip);
+                ELSE
+                    Attack(SHIPS_EnemyMShip);
+                ENDIF
+            ELSEIF ( ShipsSelectCapital(SHIPS_Evaluate, THISTEAMSHIPS) > 0 )
+                MoveAttack( SHIPS_EnemyMShip );
+            //ELSE
+            //    AttackFlank( SHIPS_EnemyMShip );
+            ENDIF
+        ENDWATCH
+    ENDSTATE KillMShip
+ENDFSM Protection
+
+// ***************************************
+//        Harrassers (also guards)
+// ***************************************
+
+FSM Harrass
+    STATES Bother, KillMShip, Guard;
+
+    INIT
+        TacticsEvasive();
+        JUMP Bother;
+    ENDINIT
+    WATCH
+        IFONCE ( MsgReceived("HeadShotDestroyed") )
+            JUMP KillMShip;
+        ENDIFONCE
+
+        IFONCE ( TeamCount() == 0 )
+            FSMCREATE( Dead, THISTEAM );
+        ENDIFONCE
+    ENDWATCH
+
+    STATE Bother
+        INIT
+            IF ( ShipsSelectCapital( SHIPS_Evaluate, THISTEAMSHIPS ) > 0 )
+                FormationWall();
+            ELSE
+                FormationClaw();
+            ENDIF
+            AttackHarass();
+        ENDINIT
+        WATCH
+            ShipsClear( SHIPS_HEval );
+            IF ( ShipsOrder(THISTEAMSHIPS) != COMMAND_ATTACK )
+                ShipsClear( SHIPS_HEval );
+
+                IF ( UnderAttack( SHIPS_HEval ) > 0
+                    || UnderAttackElsewhere( TEAM_HeadShot, SHIPS_HEval ) > 0
+                    || FindEnemiesNearTeam( SHIPS_HEval, DISTANCETOGUARD ) > 0
+                    || FindShipsInPath( SHIPS_HEval ) > 0 )
+
+                    BotherNewShips( SHIPS_HEval )
+                ELSE
+                    JUMP Guard;
+                ENDIF
+            ENDIF
+        ENDWATCH
+    ENDSTATE Bother
+
+    STATE Guard
+        INIT
+            Guard( TEAMSHIPS_HeadShot );
+        ENDINIT
+        WATCH
+            ShipsClear( SHIPS_HEval );
+            IF ( UnderAttack( SHIPS_HEval ) > 0
+                || UnderAttackElsewhere( TEAM_HeadShot, SHIPS_HEval ) > 0
+                || FindEnemiesNearTeam( SHIPS_HEval, DISTANCETOGUARD ) > 0
+                || FindShipsInPath( SHIPS_HEval) > 0 )
+
+                BotherNewShips( SHIPS_HEval );
+                JUMP Bother;
+            ENDIF
+        ENDWATCH
+    ENDSTATE Guard
+
+    STATE KillMShip
+        INIT
+            IF ( ShipsCount(SHIPS_EnemyMShip) == 0 )
+                FSMCREATE( Dead, THISTEAM );
+            ENDIF
+        ENDINIT
+        WATCH
+            IF ( ShipsOrder(THISTEAMSHIPS) != COMMAND_ATTACK )
+                TacticsAggressive();
+
+                IF ( ShipsSelectNonCapital(SHIPS_Evaluate,THISTEAMSHIPS)>0)
+                    KamikazeEveryone(SHIPS_EnemyMShip);
+                ELSE
+                    Attack(SHIPS_EnemyMShip);
+                ENDIF
+            ELSEIF ( ShipsSelectCapital(SHIPS_Evaluate, THISTEAMSHIPS) > 0 )
+                MoveAttack( SHIPS_EnemyMShip );
+            //ELSE
+            //    AttackFlank( SHIPS_EnemyMShip );
+            ENDIF
+        ENDWATCH
+    ENDSTATE KillMShip
+ENDFSM Harrass
+
+// A wait until the mission starts timing, then pass the teams to their FSM
+
+FSM WaitForCountDown
+    INIT
+    ENDINIT
+    WATCH
+        IF ( MsgReceived("StartedCountdown") )
+            // -- The Guarding Teams --
+            IF (    ThisTeamIs( TEAM_Destroyers )
+                    || ThisTeamIs( TEAM_FrigatesGuard )
+                    || ThisTeamIs( TEAM_DefendersGuard )
+                    || ThisTeamIs( TEAM_CorvetteGuard ) )
+                FSMCREATE( Protection, THISTEAM );
+
+            // -- The Harassment Teams --
+            ELSEIF ( ThisTeamIs( TEAM_FrgHarrass )
+                    || ThisTeamIs( TEAM_InterceptorsHarrass )
+                    || ThisTeamIs( TEAM_CorvetteHarass ) )
+                FSMCREATE( Harrass, THISTEAM );
+            ENDIF
+        ENDIF
+    ENDWATCH
+ENDFSM WaitForCountDown
+
+
+// ********** Global *************
+INIT
+    // Create the global variables
+    VarCreateSet("G_HeadshotDestroyed", FALSE);         // Headshot dead yet?
+    VarCreateSet("G_CountdownTime", BASECNTDNTIME );    // Length of countdown in seconds (7 minutes)
+    VarCreateSet("G_Dist2MShip", 0);                    // starting distance to mothership from HS Asteriod
+
+    FSMCREATE (Events, TEAM_Events);
+
+    FSMCREATE (HeadShot, TEAM_HeadShot);
+    FSMCREATE (WaitForCountDown, TEAM_Destroyers);
+    FSMCREATE (WaitForCountDown, TEAM_FrigatesGuard);
+    FSMCREATE (WaitForCountDown, TEAM_DefendersGuard);
+    FSMCREATE (WaitForCountDown, TEAM_FrgHarrass);
+    FSMCREATE (WaitForCountDown, TEAM_InterceptorsHarrass);
+    FSMCREATE (WaitForCountDown, TEAM_CorvetteGuard);
+    FSMCREATE (WaitForCountDown, TEAM_CorvetteHarass);
+
+    // This is to get the Enemy's Mothership pointer
+    ShipsClear(SHIPS_EnemyMShip);
+    FindEnemyShipsOfType( SHIPS_EnemyMShip, "Mothership" );
+
+    // Save the level
+    SaveLevel(15, LSTRING_LevelName);
+ENDINIT
+WATCH
+    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+    //      technology
+    //  snipped from Mission02.kas on 13-Apr-1999
+
+    // if player researches Corvette drive, allow Corvette chassis
+    // (Build: Light Corvette)
+    IFONCE (TechGet ("MassDrive10Kt"))
+        TechSetResearch ("Chassis2");
+    ENDIFONCE
+
+    // if player researches Corvette chassis, allow Heavy Corvette upgrade
+    // (Build: Heavy Corvette)
+    IF ((TechGet ("Chassis2")) AND (VarGet ("SetMediumGuns") = FALSE))
+        TechSetResearch ("MediumGuns");
+        VarCreateSet ("SetMediumGuns", TRUE);
+    ENDIF
+
+    // MISSION 01 Tech stuff:
+    // if player researches Fighter chassis, allow Corvette Drive
+    // (Build: Repair Corvette)
+    IFONCE (TechGet ("Chassis1"))
+        TechSetResearch ("MassDrive10Kt");
+    ENDIFONCE
+
+    //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+ENDWATCH
+//**** End of Global ****

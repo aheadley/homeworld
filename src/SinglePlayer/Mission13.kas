@@ -1,0 +1,1631 @@
+//                                                             //
+//                                                             //
+//                                                             //
+//              Mission 13 - Graveyard Mission                 //
+//                                                             //
+//                                                             //
+//-------------------------------------------------------------//
+#include "..\\Game\\speechevent.h"
+
+
+    LOCALIZATION //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+            LSTRING_Savegame
+                "13 - The Karos Graveyard"
+                "13 - Le Cimetière de Karos"
+                "13 – Der Friedhof von Karros"
+                "13 - El cementerio de Karos"
+				"13 - Il cimitero di Karos"
+
+            LSTRING_LocationCard
+                "The Karos Graveyard - The Shining Hinterlands"
+                "Cimetière de Karos - Arrière-pays des Lumières"
+                "Der Friedhof von Karros – Das leuchtende Hinterland"
+                "El cementerio de Karos - El interior brillante"
+				"Il cimitero di Karos - il Territorio Splendente"
+
+            LSTRING_Objective1
+                "Dock Strike Craft With Communications Relay"
+                "Amarrage de l'Unité légère avec le Relais de Communications"
+                "Kampfschiff an Kommunikationsrelais andocken."
+                "Acoplar nave de ataque a relé de comunicaciones"
+				"Attracca con la nave d'assalto al ripetitore di comunicazione"
+
+            LSTRING_HyperSpaceEnabled
+                "Hyperspace Enabled."
+                "Hyperespace actif."
+                "Hypersprung-Aggregat eingeschaltet."
+                "Hiperespacio activado."
+				"Iperspazio attivato."
+
+            LSTRING_Hyperspace
+                "                HYPERSPACE"
+                "                HYPERESPACE"
+                "        HYPERRAUMSPRUNG"
+                "                    HIPERESPACIO"
+				"					IPERSPAZIO"
+
+    ENDL //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+#include "utilities.kash"
+#include "attributes.h"
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ      Mission Flow     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+FSM MissionFlow
+
+    States Intro, ComTransIn, ComFocus, ComOpenSensors, Autoguns, CloakingTech, BigGuns, FICom, FIComPING, FIComPointer, ComTransOut, LostTransIn, LostOpenSensors, FILost, FILostPointer,LostTransOut, TeleporterTransIn, TeleporterOpenSensors, FITeleporter, FITeleporterPointer, TeleporterTransOut, FindMissing, MissingTransIn, FIMissing, ImInTransIn, ImIn, Farewell, TimeToGo, AlmostDone, Done;
+
+    INIT
+      TimerCreateSetStart("FuckTimer", 1);
+    ENDINIT
+    WATCH
+      IFONCE (TimerExpiredDestroy("FuckTimer"))
+        Jump Intro;
+      ENDIFONCE
+    ENDWATCH
+
+    STATE Intro   //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+            SpeechEvent(M13_Fleet_HyperspaceDisengaged, 0);
+            TimerCreateSetStart ("FIGetOnWithItTimer", 8);
+        ENDINIT
+        WATCH
+            IF (TimerExpiredDestroy ("FIGetOnWithItTimer"))
+              Jump ComTransIn;
+            ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE ComTransIn  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          IF (VarGet("G_CLICK_EstablishCommunicationsLink"))
+            WideScreenIn(30);
+          ELSE
+            WideScreenIn(90);
+          ENDIF
+          Jump ComOpenSensors;
+        ENDINIT
+
+        WATCH
+        ENDWATCH
+    ENDSTATE
+
+    STATE ComOpenSensors //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+         INIT
+           TimerCreateSetStart ("FIOpenSensorsTimer", 4);
+         ENDINIT
+         WATCH
+           IF (TimerExpiredDestroy ("FIOpenSensorsTimer"))
+             OpenSensors (TRUE);
+             PauseUniverse();
+             Jump FICom;
+           ENDIF
+         ENDWATCH
+    ENDSTATE
+
+    STATE ComFocus //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+         INIT
+           TimerCreateSetStart ("FIFocusTimer", 2);
+         ENDINIT
+         WATCH
+           IF (TimerExpiredDestroy ("FIFocusTimer"))
+             SoundEvent(262);
+             TutCameraFocus(TEAMSHIPS_JunkyardHQ);
+             //TutCameraFocus(TEAMSHIPS_JunkyardHQ);
+             Jump FICom;
+           ENDIF
+         ENDWATCH
+    ENDSTATE
+
+    STATE FICom  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+            SpeechEvent(M13_Intel_CommunicationRelay, 0);
+            //SubtitleSimulate(0, 6000, LSTRING_FiIntro);
+            ObjectiveCreate("EstablishCommunicationsLink", LSTRING_Objective1, LSTRING_Objective1);
+            TimerCreateSetStart("FISeTimer", 1);
+        ENDINIT
+        WATCH
+           IF (TimerExpiredDestroy ("FISeTimer"))
+            Jump FIComPING;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE FIComPING //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          PingAddShips(TEAMSHIPS_JunkyardHQ, "JunkyardHQ");
+          TimerCreateSetStart ("FIComPINGTimer", 1);
+        ENDINIT
+        WATCH
+          IF (IntelEventEnded())
+            Jump FIComPointer;
+          ENDIF
+
+          IF (TimerExpiredDestroy ("FIComPINGTimer"))
+             Jump FIComPointer;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE FIComPointer //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          TutSetPointerTargetShip("JunkyardHQPOINTER", TEAMSHIPS_JunkyardHQ);
+          TimerCreateSetStart ("FIComPINGTimer", 3);
+        ENDINIT
+        WATCH
+          IF (VarGet("G_CLICK_EstablishCommunicationsLink"))
+            IF (IntelEventEnded())
+              WideScreenOut(30);
+              Jump AlmostDone;
+            ENDIF
+          ELSEIF ((IntelEventEnded()) OR (TimerExpiredDestroy ("FIComPINGTimer")))
+             Jump ComTransOut;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE ComTransOut      //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          SoundEvent(262);
+          TutCameraFocusCancel();
+          TutCameraFocusCancel();
+          WideScreenOut(60);
+          TimerCreateSetStart("TimerTransOut", 1);
+        ENDINIT
+
+        WATCH
+          IF (TimerExpiredDestroy ("TimerTransOut"))
+             Jump AlmostDone;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE LostTransIn  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+            wideScreenIn(90);
+            Jump LostOpenSensors;
+        ENDINIT
+        WATCH
+        ENDWATCH
+    ENDSTATE
+
+    STATE LostOpenSensors //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+         INIT
+           TimerCreateSetStart ("FIOpenSensorsTimer", 1);
+         ENDINIT
+         WATCH
+           IF (TimerExpiredDestroy ("FIOpenSensorsTimer"))
+             OpenSensors (TRUE);
+             PauseUniverse();
+             Jump FILost;
+           ENDIF
+         ENDWATCH
+    ENDSTATE
+
+    STATE FILost  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          SpeechEvent(M13_Intel_CapShipLost, 0);
+          //SubtitleSimulate(0, 6000, LSTRING_FiLost);
+          TimerCreateSetStart("FISeTimer", 1);
+        ENDINIT
+
+        WATCH
+          IF ((IntelEventEnded()) OR (TimerExpiredDestroy ("FISeTimer")))
+            Jump FILostPointer;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE FILostPointer //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          TutSetPointerTargetShip("LastHerePOINTER", TEAMSHIPS_JYDTeam);
+          TimerCreateSetStart ("FILostPINGTimer", 6);
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy ("FILostPINGTimer"))
+             Jump LostTransOut;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE LostTransOut      //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+            wideScreenOut(60);
+            TimerCreateSetStart("TimerTransOut", 1);
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy ("TimerTransOut"))
+             Jump AlmostDone;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE TeleporterTransIn  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+            WideScreenIn(90);
+            Jump TeleporterOpenSensors;
+        ENDINIT
+        WATCH
+        ENDWATCH
+    ENDSTATE
+
+    STATE TeleporterOpenSensors //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+         INIT
+              TimerCreateSetStart ("FIOpenSensorsTimer", 1);
+         ENDINIT
+         WATCH
+           IF (TimerExpiredDestroy ("FIOpenSensorsTimer"))
+             OpenSensors (TRUE);
+             PauseUniverse();
+             Jump FITeleporter;
+           ENDIF
+         ENDWATCH
+    ENDSTATE
+
+    STATE FITeleporter  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+            SpeechEvent(M13_Intel_HyperspaceSignature, 0);
+            TimerCreateSetStart("FISeTimer", 1);
+        ENDINIT
+
+        WATCH
+            IF (IntelEventEnded())
+              Jump FITeleporterPointer;
+            ENDIF
+            IF (TimerExpiredDestroy ("FISeTimer"))
+              Jump FITeleporterPointer;
+            ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE FITeleporterPointer //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          TutSetPointerTargetAIVolume("TeleporterPOINTER1", VOLUME_TeleportTrigger1);
+          TutSetPointerTargetAIVolume("TeleporterPOINTER2", VOLUME_TeleportTrigger2);
+          TutSetPointerTargetAIVolume("TeleporterPOINTER3", VOLUME_TeleportTrigger3);
+          TutSetPointerTargetAIVolume("TeleporterPOINTER4", VOLUME_TeleportTrigger4);
+          TutSetPointerTargetAIVolume("TeleporterPOINTER5", VOLUME_TeleportTrigger5);
+          TutSetPointerTargetAIVolume("TeleporterPOINTER6", VOLUME_TeleportTrigger6);
+          TutSetPointerTargetAIVolume("TeleporterPOINTER7", VOLUME_TeleportTrigger7);
+          TutSetPointerTargetAIVolume("TeleporterPOINTER8", VOLUME_TeleportTrigger8);
+          TimerCreateSetStart ("FITeleporterPINGTimer", 6);
+        ENDINIT
+        WATCH
+          IF (IntelEventEnded())
+            //WideScreenOut(30);
+            Jump TeleporterTransOut;
+          ENDIF
+          IF (TimerExpiredDestroy ("FITeleporterPINGTimer"))
+             Jump TeleporterTransOut;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+
+    STATE TeleporterTransOut      //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+            wideScreenOut(60);
+            TimerCreateSetStart("TimerTransOut", 1);
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy ("TimerTransOut"))
+             Jump AlmostDone;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE FindMissing      //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          IF (ShipsSelectIndex(SHIPS_LeadGone, SHIPS_GoneShips, (VarGet("Missing"))))
+            IF (RenderedShips(SHIPS_LeadGone, 3))
+              JUMP MissingTransIn;
+            ELSE
+              VarInc("Missing");
+              Jump FindMissing;
+            ENDIF
+          ELSE
+            JUMP Done;
+          ENDIF
+        ENDINIT
+        WATCH
+        ENDWATCH
+    ENDSTATE
+
+    STATE MissingTransIn      //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+            WideScreenIn(90);
+            TimerCreateSetStart("TimerTransOut", 4);
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy ("TimerTransOut"))
+             //ShipsSelectIndex(SHIPS_GoneShips,SHIPS_LeadGone, 0);
+             SoundEvent(262);
+             TutCameraFocus(SHIPS_LeadGone);
+             TutCameraFocus(SHIPS_LeadGone);
+             Jump FIMissing;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE FIMissing  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          SpeechEvent(M13_Intel_FoundMissingShip, 0);
+        ENDINIT
+        WATCH
+          IF (IntelEventEnded());
+            SoundEvent(262);
+            TutCameraFocusCancel();
+            TutCameraFocusCancel();
+            WideScreenOut(30);
+            Jump Done;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE ImInTransIn      //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+            WideScreenIn(90);
+            TimerCreateSetStart("TimerTransOut", 6);
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy ("TimerTransOut"))
+             SoundEvent(262);
+             TutCameraFocus(TEAMSHIPS_JunkyardHQ);
+             TutCameraFocus(TEAMSHIPS_JunkyardHQ);
+             Jump ImIn;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE ImIn //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+      INIT
+        FindShipsNearPoint(SHIPS_Temp, TEAMSPOINT_JunkyardHQ, 3000);
+        ShipsSelectEnemy(SHIPS_Docker, SHIPS_Temp);
+        SpeechEventShips(SHIPS_Docker, M13_All_CommLinkEstablished,0);
+        TimerCreateSetStart("OldInAndOut", 5);
+      ENDINIT
+      WATCH
+        IFONCE (TimerExpiredDestroy ("OldInAndOut"))
+          Jump Farewell;
+        ENDIFONCE
+      ENDWATCH
+    ENDSTATE  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+    STATE Farewell  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          SoundEvent(262);
+          TutCameraFocus(TEAMSHIPS_Defector);
+          TutCameraFocus(TEAMSHIPS_Defector);
+          IF (RaceOfHuman()=0)
+            SpeechEvent(M13_Defector_ResistanceInformedKushan, 0);
+          ELSEIF (RaceOfHuman()=1)
+            SpeechEvent(M13_Defector_ResistanceInformedTaiidan, 0);
+          ENDIF
+        ENDINIT
+        WATCH
+          IFONCE (IntelEventEnded())
+            SpeechEvent(M13_Defector_CoordinatesTransfered, 0);
+            TimerCreateSetStart("FISeTimer", 6);
+          ENDIFONCE
+          IF (TimerExpiredDestroy("FISeTimer"))
+            MsgSendAll("GetGoneYou");
+            Jump TimeToGo;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE TimeToGo  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+            SpeechEvent(M13_Intel_HyperspaceEnabled, 0);
+            TimerCreateSetStart("FISeTimer", 4);
+        ENDINIT
+        WATCH
+            IF (TimerExpiredDestroy ("FISeTimer"))
+              ObjectiveSet("EstablishCommunicationsLink",TRUE);
+              ObjectiveCreate("Hyperspace", LSTRING_Hyperspace, LSTRING_Hyperspace);
+              WideScreenOut(60);
+              Jump Done;
+            ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE BigGuns  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          SpeechEvent(M14_Intel_ResearchHeavyGuns, 0);
+        ENDINIT
+        WATCH
+          IF (IntelEventEnded())
+            JUMP Done;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+    STATE CloakingTech  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          SpeechEvent(M10_Intel_ResearchCloakGen, 0);
+        ENDINIT
+        WATCH
+          IF (IntelEventEnded())
+            JUMP Done;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+    STATE Autoguns  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          SpeechEvent(M13_Intel_GraveyardDefended, 0);
+        ENDINIT
+        WATCH
+          IF (IntelEventEnded())
+            JUMP Done;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+    STATE AlmostDone  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          TutRemoveAllPointers ();
+          UnpauseUniverse();
+          CloseSensors (TRUE);
+          Jump Done;
+        ENDINIT
+
+        WATCH
+        ENDWATCH
+   ENDSTATE
+
+   STATE Done  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          VarDestroy("G_CLICK_EstablishCommunicationsLink");
+        ENDINIT
+
+        WATCH
+          //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+          //First Teleport taken by JYD
+          IFONCE (MsgReceived("CominForYou"))
+            TimerCreateSetStart("CominForYouTimer", 2);
+            //Jump TeleporterTransIn;
+          ENDIFONCE
+
+          IFONCE (TimerExpiredDestroy("CominForYouTimer"))
+            Jump TeleporterTransIn;
+          ENDIFONCE
+          //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+          //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+          //First ship taken by JYD
+          IFONCE (MsgReceived("StoleMyFirstShip"))
+            TimerCreateSetStart("StoleMyFirstShipTimer", 5);
+          ENDIFONCE
+
+          IFONCE (TimerExpiredDestroy("StoleMyFirstShipTimer"))
+            Jump LostTransIn;
+          ENDIFONCE
+          //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+          //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+          //Don't know how to trigger this yet
+          IFONCE (MsgReceived("FoundShip"))
+            VarCreateSet("Missing", 0);
+            Jump FindMissing;
+          ENDIFONCE
+
+          //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+          //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+          //Timer Triggers it
+          IFONCE (MsgReceived("BigGuns"))
+            Jump BigGuns;
+          ENDIFONCE
+          //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+          //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+          //Timer Triggers it
+          IFONCE (MsgReceived("CloakingTech"))
+            Jump CloakingTech;
+          ENDIFONCE
+          //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+          //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+          IFONCE (VarGet("G_AutoGuns")=TRUE)
+            JUMP Autoguns;
+            //SpeechEvent(M13_Intel_GraveyardDefended, 0);
+          ENDIFONCE
+          //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+          //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+          IFONCE (Varget("G_DockedWJydHQ")=TRUE)
+            Jump ImInTransIn;
+          ENDIFONCE
+          //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+// Check to see if user has re-initiated briefing.
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+          IF (VarGet("G_CLICK_EstablishCommunicationsLink"))
+            Jump ComTransIn;
+          ENDIF
+
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+// END Check to see if user has re-initiated briefing.
+//ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        ENDWATCH
+   ENDSTATE Done
+
+ENDFSM MissionFlow
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ      End Mission Flow     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     Defector     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+FSM Defector
+
+States PreWait, Waiting, Leaving;
+
+INIT
+  TeamAttributesBitSet(ATTRIBUTES_StartInHS);
+  TeamAttributesBitSet(ATTRIBUTES_Defector);
+  TeamHyperspaceOut();
+  //TeamAttributesBitSet(ATTRIBUTES_SMColorGreen);
+  ShipsSetNonRetaliation(ThisTeamShips);
+  //TimerCreateSetStart("HITimer",1);
+  JUMP PreWait;
+ENDINIT
+WATCH
+ENDWATCH
+
+    State PreWait
+        INIT
+        ENDINIT
+        WATCH
+         JUMP Waiting;
+        ENDWATCH
+    ENDSTATE
+
+    State Waiting
+        INIT
+          TeamHyperspaceIn (POINT_DefectorPoint);
+        ENDINIT
+        WATCH
+          //IFONCE (TimerExpiredDestroy("HITimer"))
+          //  TeamHyperspaceIn (POINT_DefectorPoint);
+          //ENDIFONCE
+          IFONCE (MsgReceived("GetGoneYou"))
+            JUMP Leaving;
+          ENDIFONCE
+        ENDWATCH
+     ENDSTATE
+
+    State Leaving
+        INIT
+          TeamHyperspaceOut();
+        ENDINIT
+        WATCH
+        ENDWATCH
+     ENDSTATE
+ENDFSM
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ  END   Defector     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     JydHq     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+FSM JydHq
+
+States Waiting, Attack;
+
+INIT
+  TeamAttributesBitSet(ATTRIBUTES_SMColorYellow);
+  ShipsSetNonRetaliation(ThisTeamShips);
+  JUMP Waiting;
+ENDINIT
+WATCH
+ENDWATCH
+
+    State Waiting
+        INIT
+        ENDINIT
+        WATCH
+        ENDWATCH
+     ENDSTATE
+
+    State Attack
+        INIT
+        ENDINIT
+        WATCH
+        ENDWATCH
+     ENDSTATE
+ENDFSM
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ  END   JydHq     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     JunkYardDawg     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+FSM JYDTeam
+
+STATES Waiting, Wants2Snatch, ChooseWho, UseGate1, UseGate2, UseGate3, UseGate4, UseGate5, UseGate6, UseGate7,  UseGate8, UseGate0, Snatching, Snatched, HyperspaceDelay, ChooseDump, DumpGate1, DumpGate2, DumpGate3, DumpGate4, DumpGate5, DumpGate6, DumpGate7, DumpGate8;
+
+    INIT
+      VarCreate("Nearest2Enemy");
+      VarCreate("Nearest2Dawg");
+      JUMP Waiting;
+    ENDINIT
+    WATCH
+      //Falko waz here
+      //This macro sets the variables "DistToX", the
+      //distance between CapsInYard and TeleporterX
+      SetDistVars(SHIPSPOINT_SnatchVictem)
+
+      //sets Teleporter1 as Nearest2Enemy
+      VarCreateSet("MinDist", VarGet("DistTo1"));
+      VarCreateSet("Nearest2Enemy", 1);
+
+      //these macros test every DistToX against the distance
+      //to Nearest2Enemy
+      //if one is nearer, it becomes Nearest2Enemy
+      MinDist("DistTo2", 2)
+      MinDist("DistTo3", 3)
+      MinDist("DistTo4", 4)
+      MinDist("DistTo5", 5)
+      MinDist("DistTo6", 6)
+      MinDist("DistTo7", 7)
+      MinDist("DistTo8", 8)
+
+
+    ENDWATCH
+
+    STATE Waiting
+        INIT
+          IF (ShipsCount(SHIPS_SnatchVictem)<1)
+            PatrolPath(PATH_DawgPatrol);
+          ENDIF
+          ShipsClear(SHIPS_DawgSeesYou);
+          ShipsClear(SHIPS_CapsInYard);
+          ShipsClear(SHIPS_SnatchVictem);
+        ENDINIT
+        WATCH
+
+          FindEnemiesInside(VOLUME_DawgGuardArea, SHIPS_DawgSeesYou, 1000);
+          ShipsSelectType (SHIPS_ResourcingVictems, SHIPS_DawgSeesYou, "ResourceCollector");
+          ShipsSelectCapital(SHIPS_CapsInYard, SHIPS_DawgSeesYou);
+
+          IF (ShipsSelectClass(SHIPS_PotSnatchVictem, SHIPS_CapsInYard, "CLASS_HeavyCruiser")>0)
+          ELSEIF (ShipsSelectClass(SHIPS_PotSnatchVictem, SHIPS_CapsInYard, "CLASS_Carrier")>0)
+          ELSEIF (ShipsSelectClass(SHIPS_PotSnatchVictem, SHIPS_CapsInYard, "CLASS_Destroyer")>0)
+          ELSEIF (ShipsSelectClass(SHIPS_PotSnatchVictem, SHIPS_CapsInYard, "CLASS_Frigate")>0)
+          ELSEIF (ShipsAdd(SHIPS_PotSnatchVictem, SHIPS_ResourcingVictems)>0)
+          ENDIF
+
+          ShipsSelectIndex(SHIPS_SnatchVictem, SHIPS_PotSnatchVictem, 0);
+          //ShipsAdd(SHIPS_GoneShips, SHIPS_SnatchVictem);
+          IF (ShipsCount(SHIPS_SnatchVictem)>0)
+            JUMP Wants2Snatch;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE Wants2Snatch
+        INIT
+          GateMoveToNearest();
+        ENDINIT
+        WATCH
+          IF (GateShipsOutNearest(ThisTeamShips)=True)
+           TimerCreateSetStart("GateTimer", 12);
+           JUMP ChooseWho;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE ChooseWho
+        INIT
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy("GateTimer"))
+            IF (VarGet("Nearest2Enemy")=1)
+              //VarSet("Nearest2Enemy", -1);
+              JUMP UseGate1;
+            ELSEIF (VarGet("Nearest2Enemy")=2)
+              JUMP UseGate2;
+            ELSEIF (VarGet("Nearest2Enemy")=3)
+              JUMP UseGate3;
+            ELSEIF (VarGet("Nearest2Enemy")=4)
+              JUMP UseGate4;
+            ELSEIF (VarGet("Nearest2Enemy")=5)
+              JUMP UseGate5;
+            ELSEIF (VarGet("Nearest2Enemy")=6)
+              JUMP UseGate6;
+            ELSEIF (VarGet("Nearest2Enemy")=7)
+              JUMP UseGate7;
+            ELSEIF (VarGet("Nearest2Enemy")=8)
+              JUMP UseGate8;
+            ELSEIF (VarGet("Nearest2Enemy")=0)
+              JUMP UseGate0;
+            ENDIF
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+   STATE UseGate1  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+         //Code here could check to see if anyone is close to the teleporter and go back to 'Choose' if there is.
+         GateShipsIn(ThisTeamShips, POINT_GATETeleportOutPoint1);
+         //JUMP Snatching;
+        ENDINIT
+
+        WATCH
+
+          IF (NearBy(POINT_GATETeleportOutPoint1, 500))
+           JUMP Snatching;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+   STATE UseGate2  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+         //Code here could check to see if anyone is close to the teleporter and go back to 'Choose' if there is.
+         GateShipsIn(ThisTeamShips, POINT_GATETeleportOutPoint2);
+         //JUMP Snatching;
+        ENDINIT
+
+        WATCH
+          IF (NearBy(POINT_GATETeleportOutPoint2, 500))
+           JUMP Snatching;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+   STATE UseGate3  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+         //Code here could check to see if anyone is close to the teleporter and go back to 'Choose' if there is.
+         GateShipsIn(ThisTeamShips, POINT_GATETeleportOutPoint3);
+         //JUMP Snatching;
+        ENDINIT
+
+        WATCH
+          IF (NearBy(POINT_GATETeleportOutPoint3, 500))
+           JUMP Snatching;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+   STATE UseGate4  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+         //Code here could check to see if anyone is close to the teleporter and go back to 'Choose' if there is.
+         GateShipsIn(ThisTeamShips, POINT_GATETeleportOutPoint4);
+         //JUMP Snatching;
+        ENDINIT
+
+        WATCH
+          IF (NearBy(POINT_GATETeleportOutPoint4, 500))
+           JUMP Snatching;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+   STATE UseGate5  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+         //Code here could check to see if anyone is close to the teleporter and go back to 'Choose' if there is.
+         GateShipsIn(ThisTeamShips, POINT_GATETeleportOutPoint5);
+         //JUMP Snatching;
+        ENDINIT
+
+        WATCH
+          IF (NearBy(POINT_GATETeleportOutPoint5, 500))
+           JUMP Snatching;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+   STATE UseGate6  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+         //Code here could check to see if anyone is close to the teleporter and go back to 'Choose' if there is.
+         GateShipsIn(ThisTeamShips, POINT_GATETeleportOutPoint6);
+         //JUMP Snatching;
+        ENDINIT
+
+        WATCH
+          IF (NearBy(POINT_GATETeleportOutPoint6, 500))
+           JUMP Snatching;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+
+   STATE UseGate7  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+         //Code here could check to see if anyone is close to the teleporter and go back to 'Choose' if there is.
+         GateShipsIn(ThisTeamShips, POINT_GATETeleportOutPoint7);
+         //JUMP Snatching;
+        ENDINIT
+
+        WATCH
+          IF (NearBy(POINT_GATETeleportOutPoint7, 500))
+           JUMP Snatching;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+   STATE UseGate8  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+         //Code here could check to see if anyone is close to the teleporter and go back to 'Choose' if there is.
+         GateShipsIn(ThisTeamShips, POINT_GATETeleportOutPoint8);
+         //JUMP Snatching;
+        ENDINIT
+
+        WATCH
+          IF (NearBy(POINT_GATETeleportOutPoint8, 500))
+           JUMP Snatching;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+   STATE UseGate0  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+         //Code here could check to see if anyone is close to the teleporter and go back to 'Choose' if there is.
+         GateShipsIn(ThisTeamShips, POINT_GATETeleportOutPoint0);
+         //JUMP Snatching;
+        ENDINIT
+
+        WATCH
+          IF (NearBy(POINT_GATETeleportOutPoint0, 500))
+           JUMP Snatching;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+    STATE Snatching
+        INIT
+          ShipsClear(SHIPS_DawgTarget);
+          ShipsSelectIndex(SHIPS_DawgTarget, SHIPS_SnatchVictem, 0);
+          AttackSpecial(SHIPS_DawgTarget);
+          //ShipsAdd(SHIPS_GoneShips, SHIPS_SnatchVictem);
+          //Tells Fleet intel to play LSTRING_FiFirstTeleport
+          IFONCE (TRUE)
+            MsgSendAll("CominForYou");
+          ENDIFONCE
+        ENDINIT
+        WATCH
+          IF (VarGet("G_DawgHasBone") OR VarGet("DawgHasBone"))
+            //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            //Plays the "lost a capitolship " message
+            IFONCE (TRUE)
+              MsgSendAll("StoleMyFirstShip");
+            ENDIFONCE
+            //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            Vardestroy ("G_DawgHasBone");
+            ShipsAttributesBitSet(SHIPS_DawgTarget,ATTRIBUTES_SMColorInvisible);
+            JUMP Snatched;
+          ENDIF
+
+          IF ((ShipsCount(SHIPS_SnatchVictem)<1) OR  (ShipsOrder(THISTEAMSHIPS)=0))
+            JUMP Waiting;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE Snatched
+        INIT
+          GateMoveToNearest();
+        ENDINIT
+        WATCH
+          IF (GateShipsOutNearest(ThisTeamShips)=True)
+             //GateShipsOutNearest(SHIPS_DawgTarget);
+             JUMP HyperspaceDelay;
+          ENDIF
+
+          IF ((ShipsCount(SHIPS_SnatchVictem)<1) OR  (ShipsOrder(THISTEAMSHIPS)=0))
+            JUMP Waiting;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE HyperspaceDelay
+        INIT
+          TimerCreateSetStart("HyperspaceTimer", 8);
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy("HyperspaceTimer"))
+            JUMP ChooseDump;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE ChooseDump
+        INIT
+          VarDestroy("WhereDump");
+          VarCreateSet("WhereDump", (Random (1, 8)));
+        ENDINIT
+        WATCH
+          IF (VarGet("WhereDump")=1)
+               JUMP DumpGate1;
+          ELSEIF (VarGet("WhereDump")=2)
+              JUMP DumpGate2;
+          ELSEIF (VarGet("WhereDump")=3)
+             JUMP DumpGate3;
+          ELSEIF (VarGet("WhereDump")=4)
+             JUMP DumpGate4;
+          ELSEIF (VarGet("WhereDump")=5)
+             JUMP DumpGate5;
+          ELSEIF (VarGet("WhereDump")=6)
+             JUMP DumpGate6;
+          ELSEIF (VarGet("WhereDump")=7)
+             JUMP DumpGate7;
+          ELSEIF (VarGet("WhereDump")=8)
+             JUMP DumpGate8;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+   STATE DumpGate1  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          GateShipsIn(ThisTeamShips, POINT_GATETeleportOutPoint1);
+          GateShipsIn(SHIPS_DawgTarget, POINT_GATETeleportOutPoint1);
+          VarCreateSet("WhatDumpPoint",  (Random (1, 4)));
+
+          IF (VarGet("WhatDumpPoint")=1)
+            MoveTo(POINT_DumpPoint1a);
+          ELSEIF (VarGet("WhatDumpPoint")=2)
+            MoveTo(POINT_DumpPoint1b);
+          ELSEIF (VarGet("WhatDumpPoint")=3)
+            MoveTo(POINT_DumpPoint1c);
+          ELSEIF (VarGet("WhatDumpPoint")=4)
+            MoveTo(POINT_DumpPoint1d);
+          ENDIF
+        ENDINIT
+
+        WATCH
+          IF ((NearBy(POINT_DumpPoint1a, 1200)) OR
+             (NearBy(POINT_DumpPoint1b, 1200)) OR
+             (NearBy(POINT_DumpPoint1c, 1200)) OR
+             (NearBy(POINT_DumpPoint1d, 1200)))
+             TargetDrop();
+             ShipsAdd(SHIPS_GoneShips, SHIPS_SnatchVictem);
+             ResetShipRenderFlags (SHIPS_GoneShips);
+             ShipsClear(SHIPS_SnatchVictem);
+             JUMP Waiting;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+
+   STATE DumpGate2  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          GateShipsIn(ThisTeamShips, POINT_GATETeleportOutPoint2);
+          GateShipsIn(SHIPS_DawgTarget, POINT_GATETeleportOutPoint2);
+          VarCreateSet("WhatDumpPoint",  (Random (1, 4)));
+
+          IF (VarGet("WhatDumpPoint")=1)
+            MoveTo(POINT_DumpPoint2a);
+          ELSEIF (VarGet("WhatDumpPoint")=2)
+            MoveTo(POINT_DumpPoint2b);TimerCreateSetStart("GateTimer", 12);
+          ELSEIF (VarGet("WhatDumpPoint")=3)
+            MoveTo(POINT_DumpPoint2c);
+          ELSEIF (VarGet("WhatDumpPoint")=4)
+            MoveTo(POINT_DumpPoint2d);
+          ENDIF
+        ENDINIT
+
+        WATCH
+          IF ((NearBy(POINT_DumpPoint2a, 1200)) OR
+             (NearBy(POINT_DumpPoint2b, 1200)) OR
+             (NearBy(POINT_DumpPoint2c, 1200)) OR
+             (NearBy(POINT_DumpPoint2d, 1200)))
+             TargetDrop();
+             ShipsAdd(SHIPS_GoneShips, SHIPS_SnatchVictem);
+             ResetShipRenderFlags (SHIPS_GoneShips);
+             ShipsClear(SHIPS_SnatchVictem);
+             JUMP Waiting;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+   STATE DumpGate3  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          GateShipsIn(ThisTeamShips, POINT_GATETeleportOutPoint3);
+          GateShipsIn(SHIPS_DawgTarget, POINT_GATETeleportOutPoint3);
+          VarCreateSet("WhatDumpPoint",  (Random (1, 4)));
+
+          IF (VarGet("WhatDumpPoint")=1)
+            MoveTo(POINT_DumpPoint3a);
+          ELSEIF (VarGet("WhatDumpPoint")=2)
+            MoveTo(POINT_DumpPoint3b);
+          ELSEIF (VarGet("WhatDumpPoint")=3)
+            MoveTo(POINT_DumpPoint3c);
+          ELSEIF (VarGet("WhatDumpPoint")=4)
+            MoveTo(POINT_DumpPoint3d);
+          ENDIF
+        ENDINIT
+
+        WATCH
+          IF ((NearBy(POINT_DumpPoint3a, 1200)) OR
+             (NearBy(POINT_DumpPoint3b, 1200)) OR
+             (NearBy(POINT_DumpPoint3c, 1200)) OR
+             (NearBy(POINT_DumpPoint3d, 1200)))
+             TargetDrop();
+             ShipsAdd(SHIPS_GoneShips, SHIPS_SnatchVictem);
+             ResetShipRenderFlags (SHIPS_GoneShips);
+             ShipsClear(SHIPS_SnatchVictem);
+             JUMP Waiting;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+
+   STATE DumpGate4  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          GateShipsIn(ThisTeamShips, POINT_GATETeleportOutPoint4);
+          GateShipsIn(SHIPS_DawgTarget, POINT_GATETeleportOutPoint4);
+          VarCreateSet("WhatDumpPoint",  (Random (1, 4)));
+
+          IF (VarGet("WhatDumpPoint")=1)
+            MoveTo(POINT_DumpPoint4a);
+          ELSEIF (VarGet("WhatDumpPoint")=2)
+            MoveTo(POINT_DumpPoint4b);
+          ELSEIF (VarGet("WhatDumpPoint")=3)
+            MoveTo(POINT_DumpPoint4c);
+          ELSEIF (VarGet("WhatDumpPoint")=4)
+            MoveTo(POINT_DumpPoint4d);
+          ENDIF
+        ENDINIT
+
+        WATCH
+          IF ((NearBy(POINT_DumpPoint4a, 1200)) OR
+             (NearBy(POINT_DumpPoint4b, 1200)) OR
+             (NearBy(POINT_DumpPoint4c, 1200)) OR
+             (NearBy(POINT_DumpPoint4d, 1200)))
+             TargetDrop();
+             ShipsAdd(SHIPS_GoneShips, SHIPS_SnatchVictem);
+             ResetShipRenderFlags (SHIPS_GoneShips);
+             ShipsClear(SHIPS_SnatchVictem);
+             JUMP Waiting;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+
+   STATE DumpGate5  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          GateShipsIn(ThisTeamShips, POINT_GATETeleportOutPoint5);
+          GateShipsIn(SHIPS_DawgTarget, POINT_GATETeleportOutPoint5);
+          VarCreateSet("WhatDumpPoint",  (Random (1, 4)));
+
+          IF (VarGet("WhatDumpPoint")=1)
+            MoveTo(POINT_DumpPoint5a);
+          ELSEIF (VarGet("WhatDumpPoint")=2)
+            MoveTo(POINT_DumpPoint5b);
+          ELSEIF (VarGet("WhatDumpPoint")=3)
+            MoveTo(POINT_DumpPoint5c);
+          ELSEIF (VarGet("WhatDumpPoint")=4)
+            MoveTo(POINT_DumpPoint5d);
+          ENDIF
+        ENDINIT
+
+        WATCH
+          IF ((NearBy(POINT_DumpPoint5a, 1200)) OR
+             (NearBy(POINT_DumpPoint5b, 1200)) OR
+             (NearBy(POINT_DumpPoint5c, 1200)) OR
+             (NearBy(POINT_DumpPoint5d, 1200)))
+             TargetDrop();
+             ShipsAdd(SHIPS_GoneShips, SHIPS_SnatchVictem);
+             ResetShipRenderFlags (SHIPS_GoneShips);
+             ShipsClear(SHIPS_SnatchVictem);
+             JUMP Waiting;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+
+   STATE DumpGate6  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          GateShipsIn(ThisTeamShips, POINT_GATETeleportOutPoint6);
+          GateShipsIn(SHIPS_DawgTarget, POINT_GATETeleportOutPoint6);
+          VarCreateSet("WhatDumpPoint",  (Random (1, 4)));
+
+          IF (VarGet("WhatDumpPoint")=1)
+            MoveTo(POINT_DumpPoint6a);
+          ELSEIF (VarGet("WhatDumpPoint")=2)
+            MoveTo(POINT_DumpPoint6b);
+          ELSEIF (VarGet("WhatDumpPoint")=3)
+            MoveTo(POINT_DumpPoint6c);
+          ELSEIF (VarGet("WhatDumpPoint")=4)
+            MoveTo(POINT_DumpPoint6d);
+          ENDIF
+        ENDINIT
+
+        WATCH
+          IF ((NearBy(POINT_DumpPoint6a, 1200)) OR
+             (NearBy(POINT_DumpPoint6b, 1200)) OR
+             (NearBy(POINT_DumpPoint6c, 1200)) OR
+             (NearBy(POINT_DumpPoint6d, 1200)))
+             TargetDrop();
+             ShipsAdd(SHIPS_GoneShips, SHIPS_SnatchVictem);
+             ResetShipRenderFlags (SHIPS_GoneShips);
+             ShipsClear(SHIPS_SnatchVictem);
+             JUMP Waiting;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+
+   STATE DumpGate7  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          GateShipsIn(ThisTeamShips, POINT_GATETeleportOutPoint7);
+          GateShipsIn(SHIPS_DawgTarget, POINT_GATETeleportOutPoint7);
+          VarCreateSet("WhatDumpPoint",  (Random (1, 4)));
+
+          IF (VarGet("WhatDumpPoint")=1)
+            MoveTo(POINT_DumpPoint7a);
+          ELSEIF (VarGet("WhatDumpPoint")=2)
+            MoveTo(POINT_DumpPoint7b);
+          ELSEIF (VarGet("WhatDumpPoint")=3)
+            MoveTo(POINT_DumpPoint7c);
+          ELSEIF (VarGet("WhatDumpPoint")=4)
+            MoveTo(POINT_DumpPoint7d);
+          ENDIF
+        ENDINIT
+
+        WATCH
+          IF ((NearBy(POINT_DumpPoint7a, 1200)) OR
+             (NearBy(POINT_DumpPoint7b, 1200)) OR
+             (NearBy(POINT_DumpPoint7c, 1200)) OR
+             (NearBy(POINT_DumpPoint7d, 1200)))
+             TargetDrop();
+             ShipsAdd(SHIPS_GoneShips, SHIPS_SnatchVictem);
+             ResetShipRenderFlags (SHIPS_GoneShips);
+             ShipsClear(SHIPS_SnatchVictem);
+             JUMP Waiting;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+
+   STATE DumpGate8  //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+          GateShipsIn(ThisTeamShips, POINT_GATETeleportOutPoint8);
+          GateShipsIn(SHIPS_DawgTarget, POINT_GATETeleportOutPoint8);
+          VarCreateSet("WhatDumpPoint",  (Random (1, 4)));
+
+          IF (VarGet("WhatDumpPoint")=1)
+            MoveTo(POINT_DumpPoint8a);
+          ELSEIF (VarGet("WhatDumpPoint")=2)
+            MoveTo(POINT_DumpPoint8b);
+          ELSEIF (VarGet("WhatDumpPoint")=3)
+            MoveTo(POINT_DumpPoint8c);
+          ELSEIF (VarGet("WhatDumpPoint")=4)
+            MoveTo(POINT_DumpPoint8d);
+          ENDIF
+        ENDINIT
+
+        WATCH
+          IF ((NearBy(POINT_DumpPoint8a, 1200)) OR
+             (NearBy(POINT_DumpPoint8b, 1200)) OR
+             (NearBy(POINT_DumpPoint8c, 1200)) OR
+             (NearBy(POINT_DumpPoint8d, 1200)))
+             TargetDrop();
+             ShipsAdd(SHIPS_GoneShips, SHIPS_SnatchVictem);
+             ShipsClear(SHIPS_SnatchVictem);
+             ResetShipRenderFlags (SHIPS_GoneShips);
+             JUMP Waiting;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+ENDFSM
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     JunkYardDawg     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     LGuns     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+FSM LGuns
+
+States Waiting, Attack, Dead;
+
+INIT
+
+  TeamAttributesBitSet(ATTRIBUTES_SMColorInvisible);
+  JUMP Waiting;
+ENDINIT
+WATCH
+  IFONCE (TeamCount()<1)
+    JUMP Dead;
+  ENDIFONCE
+  ShipsClear (SHIPS_NearGuns);
+  ShipsClear (SHIPS_InjuredNearGuns);
+  ShipsClear (SHIPS_CapsNearGuns);
+ENDWATCH
+
+    State Waiting
+        INIT
+        ENDINIT
+        WATCH
+          IF (VarGet("G_GunTimer")= 0)
+            IF (FindEnemiesNearTeam(SHIPS_NearGuns, 9000)>0)
+              JUMP Attack;
+            ENDIF
+          ENDIF
+        ENDWATCH
+     ENDSTATE
+
+    State Dead
+        INIT
+        ENDINIT
+        WATCH
+        ENDWATCH
+     ENDSTATE
+
+    State Attack
+        INIT
+            FindEnemiesNearTeam(SHIPS_NearGuns, 9000);
+            ShipsSelectCapital(SHIPS_CapsNearGuns, SHIPS_NearGuns);
+            ShipsSelectDamaged(SHIPS_InjuredNearGuns, SHIPS_NearGuns, 99);
+            IF (ShipsCount(SHIPS_CapsNearGuns)>0)
+              Attack(SHIPS_CapsNearGuns);
+            ELSEIF (ShipsCount(SHIPS_InjuredNearGuns)>0)
+              Attack(SHIPS_InjuredNearGuns);
+            ELSEIF (ShipsCount(SHIPS_NearGuns)>0)
+              Attack(SHIPS_NearGuns);
+            ELSEIF (ShipsCount(SHIPS_NearGuns)<1)
+              JUMP Waiting;
+            ENDIF
+
+        ENDINIT
+        WATCH
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+          IFONCE (NOT (VarGet("G_AutoGuns")=TRUE))
+            VarCreateSet("G_AutoGuns", TRUE);
+            //SpeechEvent(M13_Intel_GraveyardDefended, 0);
+          ENDIFONCE
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+            FindEnemiesNearTeam(SHIPS_NearGuns, 9000);
+            ShipsSelectCapital(SHIPS_CapsNearGuns, SHIPS_NearGuns);
+            ShipsSelectDamaged(SHIPS_InjuredNearGuns, SHIPS_NearGuns, 99);
+
+            IF (ShipsCount(SHIPS_NearGuns)<1)
+              JUMP Waiting;
+            ELSEIF ((ShipsCount(SHIPS_CapsNearGuns)<1) AND (ShipsCount(SHIPS_NearGuns)>0))
+              JUMP Attack;
+            ELSEIF ((ShipsCount(SHIPS_InjuredNearGuns)>0) AND (ShipsCount(SHIPS_NearGuns)>0))
+              JUMP Attack;
+            ELSEIF (ShipsCount(SHIPS_NearGuns)>0)
+              JUMP Attack;
+            ENDIF
+
+        ENDWATCH
+     ENDSTATE
+ENDFSM
+
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ  END   LGuns     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     SGuns     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+FSM SGuns
+
+States Waiting, Attack, Dead;
+
+INIT
+  TeamAttributesBitSet(ATTRIBUTES_SMColorInvisible);
+  JUMP Waiting;
+ENDINIT
+WATCH
+  IFONCE (TeamCount()<1)
+    JUMP Dead;
+  ENDIFONCE
+  ShipsClear (SHIPS_sNearGuns);
+  ShipsClear (SHIPS_sInjuredNearGuns);
+  ShipsClear (SHIPS_sStrikeNearGuns);
+ENDWATCH
+
+    State Waiting
+        INIT
+        ENDINIT
+        WATCH
+          IF (VarGet("G_GunTimer")=1)
+            IF (FindEnemiesNearTeam(SHIPS_sNearGuns, 9000)>0)
+              JUMP Attack;
+            ENDIF
+          ENDIF
+        ENDWATCH
+     ENDSTATE
+
+    State Attack
+        INIT
+          FindEnemiesNearTeam(SHIPS_sNearGuns, 9000);
+          ShipsSelectDamaged(SHIPS_sInjuredNearGuns, SHIPS_sNearGuns, 99);
+          ShipsSelectNonCapital(SHIPS_sStrikeNearGuns, SHIPS_sNearGuns);
+
+          IF (ShipsCount(SHIPS_sStrikeNearGuns)>0)
+            Attack(SHIPS_sStrikeNearGuns);
+          ELSEIF (ShipsCount(SHIPS_sInjuredNearGuns)>0)
+            Attack(SHIPS_sInjuredNearGuns);
+          ELSEIF (ShipsCount(SHIPS_sNearGuns)>0)
+            Attack(SHIPS_sNearGuns);
+          ELSEIF (ShipsCount(SHIPS_sNearGuns)<1)
+            JUMP Waiting;
+          ENDIF
+        ENDINIT
+        WATCH
+          //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+          IFONCE (NOT (VarGet("G_AutoGuns")=TRUE))
+            VarCreateSet("G_AutoGuns", TRUE);
+            //SpeechEvent(M13_Intel_GraveyardDefended, 0);
+          ENDIFONCE
+          //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+            FindEnemiesNearTeam(SHIPS_sNearGuns, 9000);
+            ShipsSelectDamaged(SHIPS_sInjuredNearGuns, SHIPS_sNearGuns, 99);
+            ShipsSelectNonCapital(SHIPS_sStrikeNearGuns, SHIPS_sNearGuns);
+            IF (ShipsCount(SHIPS_sNearGuns)<1)
+              JUMP Waiting;
+            ELSEIF ((ShipsCount(SHIPS_sStrikeNearGuns)<1) AND (ShipsCount(SHIPS_sNearGuns)>0))
+              JUMP Attack;
+            ELSEIF ((ShipsCount(SHIPS_sInjuredNearGuns)>0) AND (ShipsCount(SHIPS_sNearGuns)>0))
+              JUMP Attack;
+            ELSEIF (ShipsCount(SHIPS_sNearGuns)>0)
+              JUMP Attack;
+            ELSEIF (ShipsCount(SHIPS_sNearGuns)<1)
+              JUMP Waiting;
+            ENDIF
+        ENDWATCH
+     ENDSTATE
+
+
+    State Dead
+        INIT
+        ENDINIT
+        WATCH
+        ENDWATCH
+     ENDSTATE
+ENDFSM
+
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ  END   SGuns     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     Prox     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+FSM Prox
+
+    States Wait;
+
+    INIT
+      TeamAttributesBitSet(ATTRIBUTES_SMColorInvisible);
+      Jump Wait;
+    ENDINIT
+    WATCH
+    ENDWATCH
+
+    STATE Wait
+      INIT
+      ENDINIT
+      WATCH
+      ENDWATCH
+    ENDSTATE
+ENDFSM
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     Prox     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//              Global Stuff
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+INIT
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      State Machine Creation
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+FSMCreate(Defector, TEAM_Defector);
+FSMCreate(JYDTeam, TEAM_JYDTeam);
+FSMCreate(JydHq, TEAM_JunkyardHQ);
+FSMCreate(LGuns, TEAM_LGun1);
+FSMCreate(LGuns, TEAM_LGun2);
+FSMCreate(LGuns, TEAM_LGun3);
+FSMCreate(LGuns, TEAM_LGun4);
+FSMCreate(LGuns, TEAM_LGun5);
+FSMCreate(LGuns, TEAM_LGun6);
+FSMCreate(LGuns, TEAM_LGun7);
+FSMCreate(LGuns, TEAM_LGun8);
+FSMCreate(LGuns, TEAM_LGun9);
+FSMCreate(LGuns, TEAM_LGun10);
+FSMCreate(LGuns, TEAM_LGun11);
+FSMCreate(LGuns, TEAM_LGun12);
+FSMCreate(LGuns, TEAM_LGun13);
+FSMCreate(LGuns, TEAM_LGun14);
+FSMCreate(LGuns, TEAM_LGun15);
+FSMCreate(LGuns, TEAM_LGun16);
+FSMCreate(LGuns, TEAM_LGun17);
+FSMCreate(LGuns, TEAM_LGun18);
+FSMCreate(LGuns, TEAM_LGun19);
+FSMCreate(LGuns, TEAM_LGun20);
+FSMCreate(LGuns, TEAM_LGun21);
+FSMCreate(LGuns, TEAM_LGun22);
+FSMCreate(LGuns, TEAM_LGun23);
+FSMCreate(LGuns, TEAM_LGun24);
+FSMCreate(LGuns, TEAM_LGun25);
+FSMCreate(LGuns, TEAM_LGun26);
+FSMCreate(LGuns, TEAM_LGun27);
+FSMCreate(LGuns, TEAM_LGun28);
+FSMCreate(LGuns, TEAM_LGun29);
+FSMCreate(LGuns, TEAM_LGun30);
+FSMCreate(LGuns, TEAM_LGun31);
+FSMCreate(LGuns, TEAM_LGun32);
+
+
+FSMCreate(SGuns, TEAM_SGun1);
+FSMCreate(SGuns, TEAM_SGun2);
+FSMCreate(SGuns, TEAM_SGun3);
+FSMCreate(SGuns, TEAM_SGun4);
+FSMCreate(SGuns, TEAM_SGun5);
+FSMCreate(SGuns, TEAM_SGun6);
+FSMCreate(SGuns, TEAM_SGun7);
+FSMCreate(SGuns, TEAM_SGun8);
+FSMCreate(SGuns, TEAM_SGun9);
+FSMCreate(SGuns, TEAM_SGun10);
+
+FSMCreate(SGuns, TEAM_SGun11);
+FSMCreate(SGuns, TEAM_SGun12);
+FSMCreate(SGuns, TEAM_SGun13);
+FSMCreate(SGuns, TEAM_SGun14);
+FSMCreate(SGuns, TEAM_SGun15);
+FSMCreate(SGuns, TEAM_SGun16);
+FSMCreate(SGuns, TEAM_SGun17);
+FSMCreate(SGuns, TEAM_SGun18);
+FSMCreate(SGuns, TEAM_SGun19);
+FSMCreate(SGuns, TEAM_SGun20);
+
+FSMCreate(SGuns, TEAM_SGun21);
+FSMCreate(SGuns, TEAM_SGun22);
+FSMCreate(SGuns, TEAM_SGun23);
+FSMCreate(SGuns, TEAM_SGun24);
+FSMCreate(SGuns, TEAM_SGun25);
+FSMCreate(SGuns, TEAM_SGun26);
+FSMCreate(SGuns, TEAM_SGun27);
+FSMCreate(SGuns, TEAM_SGun28);
+FSMCreate(SGuns, TEAM_SGun29);
+FSMCreate(SGuns, TEAM_SGun30);
+
+FSMCreate(SGuns, TEAM_SGun31);
+FSMCreate(SGuns, TEAM_SGun32);
+FSMCreate(SGuns, TEAM_SGun33);
+FSMCreate(SGuns, TEAM_SGun34);
+FSMCreate(SGuns, TEAM_SGun35);
+FSMCreate(SGuns, TEAM_SGun36);
+FSMCreate(SGuns, TEAM_SGun37);
+FSMCreate(SGuns, TEAM_SGun38);
+FSMCreate(SGuns, TEAM_SGun39);
+FSMCreate(SGuns, TEAM_SGun40);
+
+
+FSMCreate(SGuns, TEAM_SGun41);
+FSMCreate(SGuns, TEAM_SGun42);
+FSMCreate(SGuns, TEAM_SGun43);
+FSMCreate(SGuns, TEAM_SGun44);
+FSMCreate(SGuns, TEAM_SGun45);
+FSMCreate(SGuns, TEAM_SGun46);
+FSMCreate(SGuns, TEAM_SGun47);
+FSMCreate(SGuns, TEAM_SGun48);
+FSMCreate(SGuns, TEAM_SGun49);
+FSMCreate(SGuns, TEAM_SGun50);
+FSMCreate(SGuns, TEAM_SGun51);
+FSMCreate(SGuns, TEAM_SGun52);
+FSMCreate(SGuns, TEAM_SGun53);
+FSMCreate(SGuns, TEAM_SGun54);
+FSMCreate(SGuns, TEAM_SGun55);
+FSMCreate(SGuns, TEAM_SGun56);
+FSMCreate(SGuns, TEAM_SGun57);
+FSMCreate(SGuns, TEAM_SGun58);
+FSMCreate(SGuns, TEAM_SGun59);
+FSMCreate(SGuns, TEAM_SGun60);
+
+FSMCreate(SGuns, TEAM_SGun61);
+FSMCreate(SGuns, TEAM_SGun62);
+FSMCreate(SGuns, TEAM_SGun63);
+FSMCreate(SGuns, TEAM_SGun64);
+FSMCreate(SGuns, TEAM_SGun65);
+
+
+FSMCreate(Prox, TEAM_Prox1);
+FSMCreate(MissionFlow, TEAM_DummyTeam);
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      technology
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        //TechSetResearch ("MineLayerTech");
+        //TechSetResearch ("CloakGeneratorTech");
+
+
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      mission objectives
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      Variable/Timer Creation
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        VarCreateSet("G_TeleporterInUse", False);
+        VarCreateSet("G_ThisTeleporterIs", -1);
+        VarCreateSet("G_GunTimer", 0);
+        TimerCreateSetStart("BigGunTimer", (Random (30, 90)));
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+//**** temporary
+//PingAddShips(TEAMSHIPS_JYDTeam, "jyd");
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        SaveLevel (13, LSTRING_Savegame);
+        LocationCard(10000, LSTRING_LocationCard);
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+ENDINIT
+
+WATCH
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      Miscillany
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //ResetShipRenderFlags (SHIPS_GoneShips);
+        IFONCE (RenderedShips (SHIPS_GoneShips, 3))
+          MsgSendAll("FoundShip");
+        ENDIFONCE
+
+        IFONCE ((ShipsCount(TEAMSHIPS_JunkyardHQ)<1) AND (ObjectiveGet("EstablishCommunicationsLink")=FALSE))
+          MissionFailed();
+        ENDIFONCE
+
+        IFONCE (ShipsCount(TEAMSHIPS_Defector)<1)
+          MissionFailed();
+        ENDIFONCE
+
+
+
+        IF (VarGet("G_GunTimer")=0)
+          VarSet("G_GunTimer", 1);
+        ELSE
+          VarSet("G_GunTimer", 0);
+        ENDIF
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      technology
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        //Big Gun Tech
+        IFONCE (TimerExpiredDestroy("BigGunTimer"))
+           TechSetResearch ("HeavyGuns");
+           MsgSendAll("BigGuns");
+           TimerCreateSetStart("CloakingTimer", (Random (90, 240)));
+        ENDIFONCE
+
+        //Cloaking Tech
+        IFONCE (TimerExpiredDestroy("CloakingTimer"))
+           TechSetResearch ("CloakGeneratorTech");
+           MsgSendAll("CloakingTech");
+        ENDIFONCE
+
+
+        // MISSION 02 Tech stuff: //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        // if player researches Corvette drive, allow Corvette chassis                  // (Build: Light Corvette)
+        IFONCE (TechGet ("MassDrive10Kt"))
+                TechSetResearch ("Chassis2");
+        ENDIFONCE
+
+        // if player researches Corvette chassis, allow Heavy Corvette upgrade            // (Build: Heavy Corvette)
+        IF ((TechGet ("Chassis2")) AND (VarGet ("SetMediumGuns") = FALSE))
+                TechSetResearch ("MediumGuns");
+                VarCreateSet ("SetMediumGuns", TRUE);
+        ENDIF
+
+        // MISSION 01 Tech stuff: //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        // if player researches Fighter chassis, allow Corvette Drive                   // (Build: Repair Corvette)
+        IFONCE (TechGet ("Chassis1"))
+                TechSetResearch ("MassDrive10Kt");
+        ENDIFONCE
+
+ENDWATCH
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ  END   Global     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+

@@ -1,0 +1,1982 @@
+//----------------------------------------------------------------------//
+//                                                                      //
+//        Mission10 - Research Station - SuperNova Battle               //
+//                                                                      //
+//----------------------------------------------------------------------//
+#include "..\\Game\\speechevent.h"
+#include "..\\Game\\soundmusic.h"
+
+    LOCALIZATION //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+
+            LSTRING_Savegame
+                "10 - Super Nova Station"
+                "10 - Station Super Nova"
+                "10 – Supernova-Station"
+                "10 - Estaci๓n Supernova"
+				"10 - La stazione Super Nova"
+
+            LSTRING_LocationCard
+                "Super Nova Research Station"
+                "Station de Recherche Super Nova"
+                "Supernova-Forschungsstation"
+                "Estaci๓n de investigaci๓n Supernova"
+				"Stazione di ricerca Super Nova"
+
+            LSTRING_Objective1
+                "Destroy Research Outpost"
+                "Station de Recherche Super Nova"
+                "Supernova-Forschungsstation zerst๖ren"
+                "Destruir puesto de investigaci๓n"
+				"Distruggi l'avamposto di ricerca"
+
+            LSTRING_Objective2
+                "Destroy all defense forces"
+                "Destruction totalit้ des forces defensives "
+                "Alle Verteidigungsstreitkrไfte eliminieren."
+                "Destruir todas las fuerzas defensivas"
+				"Distruggi tutte le forze di difesa"
+
+            LSTRING_Objective3
+                "Destroy Enemy Carrier"
+                "Destruction transporteur ennemi"
+                "Gegnerisches Trไgerschiff zerst๖ren."
+                "Destruir portanaves enemigo"
+				"Distruggi il Trasporto nemico"
+
+            LSTRING_Hyperspace
+                "                HYPERSPACE"
+                "                HYPERESPACE"
+                "        HYPERRAUMSPRUNG"
+                "                    HIPERESPACIO"
+				"					IPERSPAZIO"
+    ENDL //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+
+
+
+
+//ออออออออออออออออออออ      Mission Flow     อออออออออออออออออออ
+FSM MissionFlow
+
+    States Intro, NisIntro, ClickRad, ResourceBetter, ResearchMineLayer, ResearchMineLayerTransIn,  ResearchSensors,  FIRad, FIRad2, FIRadPING, FIRadPointer, FIRadPointer2, RadTransOut, SafeTransIn, SafeOpenSensors, FISafe, FISafePointer1, FISafePointer2, FISafePointer3, FISafePointer4, FISafePointer5, FISafePointerStation, SafeTransOut, NISing, ATimeToKill, StopTransIn, StopFocusFI, AlmostDone, Done;
+
+    INIT
+      TimerCreateSetStart("FuckTimer", 2);
+    ENDINIT
+
+    WATCH
+      IFONCE (TimerExpiredDestroy("FuckTimer"))
+        Jump Intro;
+      ENDIFONCE
+    ENDWATCH
+
+    STATE Intro   //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          SpeechEvent(M10_Fleet_HyperspaceSuccesful, 0);
+        ENDINIT
+        WATCH
+          IF (IntelEventEnded())
+           Jump NisIntro;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+//-----------------------------------------------
+//Opening NIS
+//-----------------------------------------------
+
+
+    STATE NisIntro   //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          WideScreenIn(90);
+          TimerCreateSetStart("FuckTimer",3);
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy("FuckTimer"))
+            Jump NISing;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+   STATE NISing      //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          FindShipsInside (VOLUME_ResearchStationVolume, SHIPS_HideTemp);
+          ShipsSelectFriendly (SHIPS_FriendlyHideTemp, SHIPS_HideTemp);
+          ShipsRemove (SHIPS_FriendlyHideTemp, TEAMSHIPS_ResearchStation);
+          HideShips(SHIPS_FriendlyHideTemp);
+          ShipsAdd(SHIPS_NisCentreShip, TEAMSHIPS_ResearchStation);
+          PauseUniverse();
+          VarCreateSet("G_PlayNis", 6);
+          ForceFISensors();
+        ENDINIT
+        WATCH
+            IF (VarGet("G_Nis6Complete"))
+              UnHideShips(SHIPS_FriendlyHideTemp);
+              ResetShipRenderFlags (TEAMSHIPS_ResearchStation);
+              PingAddShips(TEAMSHIPS_ResearchStation, "Research Station");
+              //OpenSensors (TRUE);
+              Jump FIRadPING;
+            ENDIF
+        ENDWATCH
+   ENDSTATE
+
+
+//-----------------------------------------------
+//Radiation Warning
+//-----------------------------------------------
+
+    STATE FIRadPING //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          SpeechEvent(M10_Intel_DestroyOutpost, 0);
+
+          IFONCE (TRUE)
+            ObjectiveCreate("DestroyResearchOutpost", LSTRING_Objective1, LSTRING_Objective1);
+          ENDIFONCE
+          TimerCreateSetStart ("FIRadPINGTimer", 1);
+        ENDINIT
+        WATCH
+          VarDestroy ("IntelEvent");
+          VarCreateSet("IntelEvent", IntelEventEnded());
+          IF (VarGet("IntelEvent") = 2)
+            TutRemoveAllPointers ();
+            WideScreenOut (30);
+            Jump AlmostDone;
+          ELSEIF (TimerExpiredDestroy ("FIRadPINGTimer"))
+            Jump FIRadPointer;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE FIRadPointer //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          TutSetPointerTargetShip("ResearchStationPOINTER", TEAMSHIPS_ResearchStation);
+          IF (VarGet("G_CLICK_DestroyResearchOutpost"))
+            TimerCreateSetStart ("FIRadPINGTimer", 3);
+          ELSE
+            TimerCreateSetStart ("FIRadPINGTimer", 7);
+          ENDIF
+        ENDINIT
+        WATCH
+          VarDestroy ("IntelEvent");
+          VarCreateSet("IntelEvent", IntelEventEnded());
+          IF (VarGet("IntelEvent") = 2)
+            TutRemoveAllPointers ();
+            WideScreenOut(30);
+            Jump AlmostDone;
+          ELSEIF (TimerExpiredDestroy ("FIRadPINGTimer"))
+            IF (VarGet("G_CLICK_DestroyResearchOutpost"))
+              WideScreenOut(30);
+              Jump AlmostDone;
+            ELSE
+             Jump FIRad;
+            ENDIF
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE FIRad  //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          TutRemoveAllPointers ();
+          UnPauseUniverse();
+          CloseSensors (TRUE);
+          SoundEvent(262);
+          TutCameraFocusCancel();
+          TutCameraFocusCancel();
+          SpeechEvent(M10_Fleet_Supernova, 0);
+        ENDINIT
+        WATCH
+          IF (IntelEventEnded())
+            Jump FIRad2;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE FIRad2  //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+            SpeechEvent(M10_Intel_StikeCraftVulnerable, 0);
+        ENDINIT
+        WATCH
+            IF (IntelEventEnded())
+              Jump Done;
+            ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE ClickRad //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+         INIT
+            WideScreenIn(30);
+            TimerCreateSetStart ("FIOpenSensorsTimer", 1);
+         ENDINIT
+         WATCH
+           IF (TimerExpiredDestroy ("FIOpenSensorsTimer"))
+             OpenSensors (TRUE);
+             PauseUniverse();
+             Jump FIRadPING;
+           ENDIF
+         ENDWATCH
+    ENDSTATE
+
+//-----------------------------------------------
+//Research Sensors
+//-----------------------------------------------
+
+    STATE ResearchSensors        //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          SpeechEvent(M10_Intel_ResearchProximitySensor, 0);
+          VarCreateSet("G_GotProx", TRUE);
+        ENDINIT
+        WATCH
+          IF (IntelEventEnded())
+            Jump AlmostDone;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+
+//-----------------------------------------------
+//Safe Route to Research Station
+//-----------------------------------------------
+
+    STATE SafeTransIn  //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          wideScreenIn(90);
+          Jump SafeOpenSensors;
+        ENDINIT
+        WATCH
+        ENDWATCH
+    ENDSTATE
+
+    STATE SafeOpenSensors //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+         INIT
+           TimerCreateSetStart ("FISafeOpenSensorsTimer", 1);
+         ENDINIT
+         WATCH
+             VarDestroy ("IntelEvent");
+             VarCreateSet("IntelEvent", IntelEventEnded());
+             IF (TimerExpiredDestroy ("FISafeOpenSensorsTimer"))
+                OpenSensors (TRUE);
+                PauseUniverse();
+                Jump FISafe;
+             ELSEIF (VarGet("IntelEvent")=2)
+               WideScreenOut(30);
+               Jump AlmostDone;
+             ENDIF
+         ENDWATCH
+    ENDSTATE
+
+    STATE FISafe  //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+            SpeechEvent (M10_Intel_UseViensForProtection, 0);
+            TimerCreateSetStart("FISafeTimer", 4);
+        ENDINIT
+        WATCH
+          VarDestroy ("IntelEvent");
+          VarCreateSet("IntelEvent", IntelEventEnded());
+          IF (TimerExpiredDestroy ("FISafeTimer"))
+             Jump FISafePointer1;
+          ELSEIF (VarGet("IntelEvent")=2)
+             WideScreenOut(30);
+             Jump AlmostDone;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE FISafePointer1 //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          TutSetPointerTargetAIVolume("RSRoutePointerPOINTER", VOLUME_HighZone3);
+          TimerCreateSetStart ("FISafePointTimer", 1);
+        ENDINIT
+        WATCH
+          VarDestroy ("IntelEvent");
+          VarCreateSet("IntelEvent", IntelEventEnded());
+          IF (TimerExpiredDestroy ("FISafePointTimer"))
+             TutRemoveAllPointers ();
+             Jump FISafePointer2;
+          ELSEIF (VarGet("IntelEvent")=2)
+             WideScreenOut(30);
+             Jump AlmostDone;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE FISafePointer2 //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          TutSetPointerTargetAIVolume("RSRoutePointerPOINTER", VOLUME_HighZone5a);
+          TimerCreateSetStart ("FISafePointTimer", 1);
+        ENDINIT
+        WATCH
+          VarDestroy ("IntelEvent");
+          VarCreateSet("IntelEvent", IntelEventEnded());
+          IF (TimerExpiredDestroy ("FISafePointTimer"))
+             TutRemoveAllPointers();
+             Jump FISafePointer3;
+          ELSEIF (VarGet("IntelEvent")=2)
+             WideScreenOut(30);
+             Jump AlmostDone;
+          ENDIF
+
+        ENDWATCH
+   ENDSTATE
+
+   STATE FISafePointer3 //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          TutSetPointerTargetAIVolume("RSRoutePointerPOINTER", VOLUME_HighZone6);
+          TimerCreateSetStart ("FISafePointTimer", 1);
+        ENDINIT
+        WATCH
+          VarDestroy ("IntelEvent");
+          VarCreateSet("IntelEvent", IntelEventEnded());
+          IF (TimerExpiredDestroy ("FISafePointTimer"))
+             TutRemoveAllPointers ();
+             Jump FISafePointer4;
+          ELSEIF (VarGet("IntelEvent")=2)
+             WideScreenOut(30);
+             Jump AlmostDone;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+   STATE FISafePointer4 //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          TutSetPointerTargetAIVolume("RSRoutePointerPOINTER", VOLUME_HighZone8);
+          TimerCreateSetStart ("FISafePointTimer", 1);
+        ENDINIT
+        WATCH
+          VarDestroy ("IntelEvent");
+          VarCreateSet("IntelEvent", IntelEventEnded());
+          IF (TimerExpiredDestroy ("FISafePointTimer"))
+             TutRemoveAllPointers ();
+             Jump FISafePointer5;
+          ELSEIF (VarGet("IntelEvent")=2)
+             WideScreenOut(30);
+             Jump AlmostDone;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+   STATE FISafePointer5 //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          TutSetPointerTargetAIVolume("RSRoutePointerPOINTER", VOLUME_HighZone10);
+          TimerCreateSetStart ("FISafePointTimer", 1);
+        ENDINIT
+        WATCH
+          VarDestroy ("IntelEvent");
+          VarCreateSet("IntelEvent", IntelEventEnded());
+          IF (TimerExpiredDestroy ("FISafePointTimer"))
+             TutRemoveAllPointers ();
+             Jump FISafePointerStation;
+          ELSEIF (VarGet("IntelEvent")=2)
+             WideScreenOut(30);
+             Jump AlmostDone;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+   STATE FISafePointerStation //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          TutSetPointerTargetShip("ResearchStationPOINTER", TEAMSHIPS_ResearchStation);
+          TimerCreateSetStart ("FISafePointTimer", 2);
+        ENDINIT
+        WATCH
+          VarDestroy ("IntelEvent");
+          VarCreateSet("IntelEvent", IntelEventEnded());
+          IF (TimerExpiredDestroy ("FISafePointTimer"))
+             Jump SafeTransOut;
+          ELSEIF (VarGet("IntelEvent")=2)
+             WideScreenOut(30);
+             Jump AlmostDone;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+    STATE SafeTransOut      //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+            wideScreenOut(60);
+            TimerCreateSetStart("TimerSafeTransOut", 1);
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy ("TimerSafeTransOut"))
+             Jump AlmostDone;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+//-----------------------------------------------
+//Stop The Retreating Carrier
+//-----------------------------------------------
+
+    STATE StopTransIn  //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+            WideScreenIn(90);
+            TimerCreateSetStart("FuckTimer", 3);
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy("FuckTimer"))
+            SoundEvent(262);
+            TutCameraFocus(TEAMSHIPS_EliteCarrier);
+            TutCameraFocus(TEAMSHIPS_EliteCarrier);
+            Jump StopFocusFI;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    STATE StopFocusFI  //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          IF (RaceOfHuman()=0)
+            SpeechEvent(M10_Intel_DestroyCarrierKushan, 0);
+          ELSEIF (RaceOfHuman()=1)
+            SpeechEvent(M10_Intel_DestroyCarrierTaiidan, 0);
+          ENDIF
+            ObjectiveCreate("DestroyEnemyCarrier", LSTRING_Objective3, LSTRING_Objective3);
+            PingAddShips(TEAMSHIPS_EliteCarrier, "EscapingCarrier");
+            TimerCreateSetStart("FIStopTimer", 3);
+        ENDINIT
+        WATCH
+            IF (TimerExpiredDestroy ("FIStopTimer"))
+              WideScreenOut(45);
+              SoundEvent(262);
+              TutCameraFocusCancel();
+              TutCameraFocusCancel();
+              Jump Done;
+            ENDIF
+        ENDWATCH
+    ENDSTATE
+
+//-----------------------------------------------
+//Destroy Defense Forces
+//-----------------------------------------------
+
+   STATE ATimeToKill        //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          SpeechEvent(M10_Intel_DestroyDefenseForce, 0);
+          MsgSendAll("WereOuttaHere");
+          TimerCreateSetStart("G_TimerForNikki", (Random(30,50)));
+          ObjectiveCreate("DestroyDefenceForces", LSTRING_Objective2, LSTRING_Objective2);
+        ENDINIT
+        WATCH
+          IF (IntelEventEnded())
+            MusicPlay(B04_EvilEmpire);
+            Jump Done;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+//-----------------------------------------------
+//Resource Better
+//-----------------------------------------------
+
+   STATE ResourceBetter        //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          SpeechEvent(M10_Intel_DeployController, 0);
+        ENDINIT
+
+        WATCH
+          IF (IntelEventEnded())
+            Jump Done;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+//-----------------------------------------------
+//Research Minelayer
+//-----------------------------------------------
+
+   STATE ResearchMineLayerTransIn        //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          wideScreenIn(45);
+          TimerCreateSetStart("MineTimer",2);
+        ENDINIT
+
+        WATCH
+          IF (TimerExpiredDestroy("MineTimer"))
+             DisablePlayer(TRUE);
+             SoundEvent(262);
+             TutCameraFocus(TEAMSHIPS_MineLayingTeam2);
+             TutCameraFocus(TEAMSHIPS_MineLayingTeam2);
+             Jump ResearchMineLayer;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+   STATE ResearchMineLayer        //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          SpeechEvent(M10_Intel_ResearchMinlayer, 0);
+          VarCreateSet("G_MiningTheField", TRUE);
+        ENDINIT
+
+        WATCH
+          IF (IntelEventEnded())
+            WideScreenOut(45);
+            SoundEvent(262);
+            TutCameraFocusCancel();
+            TutCameraFocusCancel();
+            DisablePlayer(FALSE);
+            Jump AlmostDone;
+          ENDIF
+        ENDWATCH
+   ENDSTATE
+
+   STATE AlmostDone  //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          TutRemoveAllPointers ();
+          UnpauseUniverse();
+          CloseSensors (TRUE);
+          Jump Done;
+        ENDINIT
+
+        WATCH
+        ENDWATCH
+   ENDSTATE
+
+   STATE Done  //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        INIT
+          VarDestroy("G_CLICK_DestroyResearchOutpost");
+          VarDestroy("G_CLICK_DestroyEnemyCarrier");
+          VarDestroy("G_CLICK_DestroyDefenceForces");
+        ENDINIT
+
+        WATCH
+          IFONCE (TRUE)
+            JUMP ResearchSensors;
+          ENDIFONCE
+
+          IFONCE (ShipsCount(SHIPS_PlayerDamaged)>0)
+            JUMP SafeTransIn;
+          ENDIFONCE
+
+          IFONCE (FindEnemiesInside(VOLUME_ResearchStationVolume, SHIPS_FuckShips, 1000))
+             JUMP ATimeToKill;
+          ENDIFONCE
+
+          IFONCE (MsgReceived("HelpMeOutHere"))
+            JUMP StopTransIn;
+          ENDIFONCE
+
+          IFONCE (TimerExpiredDestroy("G_MinesAreLaid"));
+            JUMP ResearchMineLayerTransIn;
+          ENDIFONCE
+
+//ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+// Check to see if user has re-initiated briefing.
+//ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+          IF (VarGet("G_CLICK_DestroyResearchOutpost"))
+            Jump ClickRad;
+          ENDIF
+
+          IF(VarGet("G_CLICK_DestroyEnemyCarrier"))
+             Jump StopTransIn;
+          ENDIF
+
+          IF (VarGet("G_CLICK_DestroyDefenceForces"))
+           Jump ATimeToKill;
+          ENDIF
+//ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+// END Check to see if user has re-initiated briefing.
+//ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        ENDWATCH
+   ENDSTATE Done
+ENDFSM MissionFlow
+//ออออออออออออออออออออ      End Mission Flow     อออออออออออออออออออ
+
+
+//----------------------------------------------------------------------
+
+
+//ออออออออออออออออออออ     EliteCarrier     อออออออออออออออออออ
+FSM EliteCarrier
+    States WaitState, TakeOffState, SolongSucker, ItsOver;
+
+    INIT
+      VarCreateSet("G_HelpMeOutHere", 0);
+      Jump WaitState;
+    ENDINIT
+    WATCH
+      UnderAttack(SHIPS_AttackCarrier);
+      IF ((ShipsCount(SHIPS_AttackCarrier)>0) OR (TimerExpired("G_TimerForNikki")))
+        MsgSendAll("HelpMeOutHere");
+        VarSet("G_HelpMeOutHere", 1);
+      ELSEIF (ShipsCount(SHIPS_AttackCarrier)<1)
+        VarSet("G_HelpMeOutHere", 0);
+      ENDIF
+    ENDWATCH
+
+        STATE WaitState //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+            INIT
+            ENDINIT
+            WATCH
+              IF (MsgReceived("WereOuttaHere"))
+                Jump TakeOffState;
+              ENDIF
+            ENDWATCH
+        ENDSTATE  //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+
+        STATE TakeOffState //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+            INIT
+              PatrolPath(PATH_CarrierFuckOffRoute1);
+            ENDINIT
+            WATCH
+              IF (PathNextPoint()=0)
+                MoveTo(POINT_YouLose);
+                 //MsgSendAll("HelpMeOutHere");
+                JUMP SolongSucker;
+              ENDIF
+            ENDWATCH
+        ENDSTATE  //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+
+        STATE SolongSucker //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+            INIT
+            ENDINIT
+            WATCH
+              IF (Nearby(POINT_YouLose, 1000))
+                JUMP ItsOver;
+              ENDIF
+            ENDWATCH
+        ENDSTATE  //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+
+        STATE ItsOver //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+            INIT
+              SoundEvent(262);
+              TutCameraFocus(TEAMSHIPS_EliteCarrier);
+              TutCameraFocus(TEAMSHIPS_EliteCarrier);
+              TeamHyperSpaceOut();
+              MissionFailed();
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE  //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+ENDFSM EliteCarrier
+//ออออออออออออออออออออ     EliteCarrier     อออออออออออออออออออ
+
+//ออออออออออออออออออออ     AttackBomberTeam     อออออออออออออออออออ
+FSM AttackBomberTeam
+
+    States Attack, Docking;
+        INIT
+          DockInstant(TEAM_EliteCarrier);
+          JUMP Docking;
+        ENDINIT
+        WATCH
+        ENDWATCH
+
+        STATE Attack
+            INIT
+              Launch();
+            ENDINIT
+            WATCH
+              //ออออออออออออออออออออ
+              ShipsClear (SHIPS_AttCarrier);
+              ShipsClear (SHIPS_CapsAttCarrier);
+              ShipsClear (SHIPS_DamagedCapsAttCarrier);
+              ShipsClear(SHIPS_NearAb);
+              ShipsClear(SHIPS_StrkNearAb);
+              ShipsClear(SHIPS_InjuredNearAb);
+
+              UnderAttackElsewhere(TEAM_EliteCarrier, SHIPS_AttCarrier);
+              ShipsSelectCapital(SHIPS_CapsAttCarrier, SHIPS_AttCarrier);
+              ShipsSelectDamaged(SHIPS_DamagedCapsAttCarrier, SHIPS_CapsAttCarrier, 99);
+
+              FindEnemiesNearTeam(SHIPS_NearAb, 15000);
+              ShipsSelectCapital(SHIPS_CapsNearAb, SHIPS_NearAb);
+              ShipsSelectDamaged(SHIPS_InjuredNearAb, SHIPS_NearAb, 99);
+
+              IF (ShipsCount(SHIPS_DamagedCapsAttCarrier)>0)
+                Attack(SHIPS_DamagedCapsAttCarrier);
+              ELSEIF (ShipsCount(SHIPS_CapsAttCarrier)>0)
+                Attack(SHIPS_CapsAttCarrier);
+              ELSEIF (ShipsCount(SHIPS_AttCarrier)>0)
+                Attack(SHIPS_AttCarrier);
+              ELSEIF (ShipsCount(SHIPS_CapsNearAb)>0)
+                Attack(SHIPS_CapsNearAb);
+              ELSEIF (ShipsCount(SHIPS_InjuredNearAb)>0)
+                Attack(SHIPS_InjuredNearAb);
+              ELSEIF (ShipsCount(SHIPS_NearAb)>0)
+                Attack(SHIPS_NearAb);
+              ELSEIF ((ShipsCount(SHIPS_AttCarrier)<1)  AND (ShipsCount(SHIPS_NearAb)<1) AND (ShipsCount(TEAMSHIPS_EliteCarrier)>0))
+                JUMP Docking;
+              ENDIF
+              //ออออออออออออออออออออ
+             ENDWATCH
+        ENDSTATE
+
+        State Docking
+            INIT
+                DockStay(TEAM_EliteCarrier);
+            ENDINIT
+            WATCH
+                IF (VarGet("G_HelpMeOutHere")=1)
+                  JUMP Attack;
+                ENDIF
+            ENDWATCH
+        ENDSTATE
+ENDFSM
+//ออออออออออออออออออออ     AttackBomberTeam     อออออออออออออออออออ
+
+//ออออออออออออออออออออ     MultigunCorvetteTeam     อออออออออออออออออออ
+FSM MultigunCorvetteTeam
+    States Attack, Docking;
+        INIT
+          DockInstant(TEAM_EliteCarrier);
+          JUMP Docking;
+        ENDINIT
+        WATCH
+        ENDWATCH
+
+        STATE Attack
+          INIT
+            Launch();
+          ENDINIT
+          WATCH
+            //ออออออออออออออออออออ
+            ShipsClear (SHIPS_AttackingCarrier);
+            ShipsClear (SHIPS_StrkAttackingCarrier);
+            ShipsClear (SHIPS_DamagedStrkAttackingCarrier);
+            ShipsClear(SHIPS_NearMg);
+            ShipsClear(SHIPS_StrkNearMg);
+            ShipsClear(SHIPS_InjuredNearMg);
+
+            UnderAttackElsewhere(TEAM_EliteCarrier, SHIPS_AttackingCarrier);
+            ShipsSelectNonCapital(SHIPS_StrkAttackingCarrier, SHIPS_AttackingCarrier);
+            ShipsSelectDamaged(SHIPS_DamagedStrkAttackingCarrier, SHIPS_StrkAttackingCarrier, 99);
+
+            FindEnemiesNearTeam(SHIPS_NearMg, 15000);
+            ShipsSelectNonCapital(SHIPS_StrkNearMg, SHIPS_NearMg);
+            ShipsSelectDamaged(SHIPS_InjuredNearMg, SHIPS_NearMg, 99);
+
+            IF (ShipsCount(SHIPS_DamagedStrkAttackingCarrier)>0)
+              Attack(SHIPS_DamagedStrkAttackingCarrier);
+            ELSEIF (ShipsCount(SHIPS_StrkAttackingCarrier)>0)
+              Attack(SHIPS_StrkAttackingCarrier);
+            ELSEIF (ShipsCount(SHIPS_AttackingCarrier)>0)
+              Attack(SHIPS_AttackingCarrier);
+            ELSEIF (ShipsCount(SHIPS_StrkNearMg)>0)
+              Attack(SHIPS_StrkNearMg);
+            ELSEIF (ShipsCount(SHIPS_InjuredNearMg)>0)
+              Attack(SHIPS_InjuredNearMg);
+            ELSEIF (ShipsCount(SHIPS_NearMg)>0)
+              Attack(SHIPS_NearMg);
+            ELSEIF ((ShipsCount(SHIPS_AttackingCarrier)<1)  AND (ShipsCount(SHIPS_NearMg)<1) AND (ShipsCount(TEAMSHIPS_EliteCarrier)>0))
+              JUMP Docking;
+            ENDIF
+            //ออออออออออออออออออออ
+          ENDWATCH
+        ENDSTATE
+
+        State Docking
+            INIT
+              DockStay(TEAM_EliteCarrier);
+            ENDINIT
+            WATCH
+              IF (VarGet("G_HelpMeOutHere")=1)
+                JUMP Attack;
+              ENDIF
+            ENDWATCH
+        ENDSTATE
+ENDFSM
+//ออออออออออออออออออออ     MultigunCorvetteTeam     อออออออออออออออออออ
+
+//----------------------------------------------------------------------
+
+//ออออออออออออออออออออ     CarrierTeam     อออออออออออออออออออ
+FSM CarrierTeam
+
+States Wait, Guard;
+
+INIT
+  JUMP Wait;
+ENDINIT
+
+WATCH
+ENDWATCH
+
+    State Wait
+        INIT
+          ShipsAdd(SHIPS_CGuardTemp, SHIPS_RDamaged);
+          ShipsRemove(SHIPS_CGuardTemp, THISTEAMSHIPS);
+          IF ((ShipsCount(SHIPS_CGuardTemp))<(ShipsCount(SHIPS_RDamaged)))
+            MoveTo(POINT_CarrierPoint);
+          ENDIF
+        ENDINIT
+        WATCH
+          IF (FindEnemiesNearTeam(SHIPS_WantMyCarrier, 15000)>0)
+            JUMP Guard;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    State Guard
+        INIT
+        ENDINIT
+        WATCH
+          FindEnemiesNearTeam(SHIPS_WantMyCarrier, 15000);
+          ShipsSelectCapital(SHIPS_CapsWantMyCarrier, SHIPS_WantMyCarrier);
+          ShipsSelectNonCapital(SHIPS_StrkWantMyCarrier, SHIPS_WantMyCarrier);
+          ShipsSelectDamaged(SHIPS_DamStrkWantMyCarrier, SHIPS_StrkWantMyCarrier, 99);
+          ShipsSelectDamaged(SHIPS_DamCapsWantMyCarrier, SHIPS_CapsWantMyCarrier, 99);
+          IF (ShipsCount(SHIPS_DamCapsWantMyCarrier)>0)
+            Attack(SHIPS_DamCapsWantMyCarrier);
+          ELSEIF   ((ShipsCount(SHIPS_DamCapsWantMyCarrier)<1) AND (ShipsCount(SHIPS_CapsWantMyCarrier)>0))
+            Attack(SHIPS_CapsWantMyCarrier);
+          ELSEIF   ((ShipsCount(SHIPS_CapsWantMyCarrier)<1) AND (ShipsCount(SHIPS_DamStrkWantMyCarrier)>0))
+            Attack(SHIPS_DamStrkWantMyCarrier);
+          ELSEIF   ((ShipsCount(SHIPS_DamStrkWantMyCarrier)<1) AND (ShipsCount(SHIPS_StrkWantMyCarrier)>0))
+            Attack(SHIPS_StrkWantMyCarrier);
+          ELSEIF (ShipsCount(SHIPS_WantMyCarrier)<1)
+            JUMP Wait;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+ENDFSM
+
+//ออออออออออออออออออออ     CarrierTeam     อออออออออออออออออออ
+
+//ออออออออออออออออออออ     CarrierGuardTeam     อออออออออออออออออออ
+
+FSM CarrierGuardTeam
+
+    States Guard, Wait;
+        INIT
+            JUMP Wait;
+        ENDINIT
+        WATCH
+        ENDWATCH
+
+
+    State Wait
+        INIT
+          ShipsAdd(SHIPS_CGuardTemp, SHIPS_RDamaged);
+          ShipsRemove(SHIPS_CGuardTemp, THISTEAMSHIPS);
+          IF ((ShipsCount(SHIPS_CGuardTemp))<(ShipsCount(SHIPS_RDamaged)))
+            MoveTo(POINT_CarrierPoint);
+          ENDIF
+        ENDINIT
+        WATCH
+          IF (FindEnemiesNearTeam(SHIPS_WantMyCarrier, 15000)>0)
+            JUMP Guard;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    State Guard
+        INIT
+
+        ENDINIT
+        WATCH
+          FindEnemiesNearTeam(SHIPS_WantMyCarrier, 15000);
+          ShipsSelectCapital(SHIPS_CapsWantMyCarrier, SHIPS_WantMyCarrier);
+          ShipsSelectNonCapital(SHIPS_StrkWantMyCarrier, SHIPS_WantMyCarrier);
+          ShipsSelectDamaged(SHIPS_DamStrkWantMyCarrier, SHIPS_StrkWantMyCarrier, 99);
+          ShipsSelectDamaged(SHIPS_DamCapsWantMyCarrier, SHIPS_CapsWantMyCarrier, 99);
+          IF (ShipsCount(SHIPS_DamCapsWantMyCarrier)>0)
+            Attack(SHIPS_DamCapsWantMyCarrier);
+          ELSEIF   ((ShipsCount(SHIPS_DamCapsWantMyCarrier)<1) AND (ShipsCount(SHIPS_CapsWantMyCarrier)>0))
+            Attack(SHIPS_CapsWantMyCarrier);
+          ELSEIF   ((ShipsCount(SHIPS_CapsWantMyCarrier)<1) AND (ShipsCount(SHIPS_DamStrkWantMyCarrier)>0))
+            Attack(SHIPS_DamStrkWantMyCarrier);
+          ELSEIF   ((ShipsCount(SHIPS_DamStrkWantMyCarrier)<1) AND (ShipsCount(SHIPS_StrkWantMyCarrier)>0))
+            Attack(SHIPS_StrkWantMyCarrier);
+          ELSEIF (ShipsCount(SHIPS_WantMyCarrier)<1)
+            JUMP Wait;
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+ENDFSM
+
+//ออออออออออออออออออออ     CarrierGuardTeam     อออออออออออออออออออ
+
+//----------------------------------------------------------------------
+
+//ออออออออออออออออออออ     MineLayingTeam1     อออออออออออออออออออ
+FSM MineLayingTeam1
+States Move1, Laying1, Move2, Laying2, Move3, Laying3;
+
+    INIT
+      JUMP Move1;
+    ENDINIT
+    WATCH
+    ENDWATCH
+
+     State Move1
+        INIT
+          MoveTo(POINT_MinePoint1);
+        ENDINIT
+        WATCH
+          IF (Nearby(POINT_MinePoint1, 500))
+            JUMP Laying1;
+          ENDIF
+        ENDWATCH
+     ENDSTATE
+
+     State Laying1
+        INIT
+          SpecialToggle ();
+          TimerCreateSetStart("MineTimer",120);
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy("MineTimer"))
+            TimerCreateSetStart("1MineExpiryTimer", 900);
+            JUMP Move2;
+          ENDIF
+        ENDWATCH
+     ENDSTATE
+
+     State Move2
+        INIT
+          MoveTo(POINT_MinePoint2);
+        ENDINIT
+        WATCH
+          IF (Nearby(POINT_MinePoint2, 500))
+            JUMP Laying2;
+          ENDIF
+        ENDWATCH
+     ENDSTATE
+
+     State Laying2
+        INIT
+          SpecialToggle ();
+          TimerCreateSetStart("G_MinesAreLaid", 10);
+          TimerCreateSetStart("MineTimer",120);
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy("MineTimer"))
+            JUMP Move3;
+          ENDIF
+        ENDWATCH
+     ENDSTATE
+
+     State Move3
+        INIT
+          MoveTo (POINT_MinePoint3);
+        ENDINIT
+        WATCH
+          IF (Nearby(POINT_MinePoint3, 500))
+            JUMP Laying3;
+          ENDIF
+        ENDWATCH
+     ENDSTATE
+
+     State Laying3
+        INIT
+          SpecialToggle ();
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy("1MineExpiryTimer"))
+            JUMP Move1;
+          ENDIF
+        ENDWATCH
+     ENDSTATE
+ENDFSM
+//ออออออออออออออออออออ     MineLayingTeam1     อออออออออออออออออออ
+
+
+//ออออออออออออออออออออ     MineLayingTeam2     อออออออออออออออออออ
+
+FSM MineLayingTeam2
+States Move4, Laying4, Move5, Laying5, Move6, Laying6;
+
+    INIT
+      JUMP Move4;
+    ENDINIT
+    WATCH
+    ENDWATCH
+
+     State Move4
+        INIT
+          MoveTo (POINT_MinePoint4);
+        ENDINIT
+        WATCH
+          IF (Nearby(POINT_MinePoint4, 500))
+            JUMP Laying4;
+          ENDIF
+        ENDWATCH
+     ENDSTATE
+
+     State Laying4
+        INIT
+          SpecialToggle ();
+          TimerCreateSetStart("MineTimer",120);
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy("MineTimer"))
+            TimerCreateSetStart("2MineExpiryTimer", 900);
+            JUMP Move5;
+          ENDIF
+        ENDWATCH
+     ENDSTATE
+
+     State Move5
+        INIT
+          MoveTo (POINT_MinePoint5);
+        ENDINIT
+        WATCH
+          IF (Nearby(POINT_MinePoint5, 500))
+            JUMP Laying5;
+          ENDIF
+        ENDWATCH
+     ENDSTATE
+
+     State Laying5
+        INIT
+          SpecialToggle ();
+          TimerCreateSetStart("MineTimer",120);
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy("MineTimer"))
+            JUMP Move5;
+          ENDIF
+        ENDWATCH
+     ENDSTATE
+
+
+     State Move6
+        INIT
+          MoveTo(POINT_MinePoint6);
+        ENDINIT
+        WATCH
+          IF (Nearby(POINT_MinePoint6, 500))
+            JUMP Laying6;
+          ENDIF
+        ENDWATCH
+     ENDSTATE
+
+     State Laying6
+        INIT
+          SpecialToggle ();
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy("2MineExpiryTimer"))
+            JUMP Move4;
+          ENDIF
+        ENDWATCH
+     ENDSTATE
+ENDFSM
+//ออออออออออออออออออออ     MineLayingTeam2     อออออออออออออออออออ
+
+
+//ออออออออออออออออออออ     MineLayingTeam3     อออออออออออออออออออ
+FSM MineLayingTeam3
+States Move7, Laying7, Move8, Laying8, Move9, Laying9, Move10, Laying10;
+
+    INIT
+      JUMP Move7;
+    ENDINIT
+    WATCH
+    ENDWATCH
+
+     State Move7
+        INIT
+          MoveTo (POINT_MinePoint7);
+        ENDINIT
+        WATCH
+          IF (Nearby(POINT_MinePoint7, 500))
+            JUMP Laying7;
+          ENDIF
+        ENDWATCH
+     ENDSTATE
+
+     State Laying7
+        INIT
+          SpecialToggle ();
+          TimerCreateSetStart ("MineTimer",120);
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy("MineTimer"))
+            TimerCreateSetStart ("3MineExpiryTimer", 900);
+            JUMP Move8;
+          ENDIF
+        ENDWATCH
+     ENDSTATE
+
+     State Move8
+        INIT
+          MoveTo (POINT_MinePoint8);
+        ENDINIT
+        WATCH
+          IF (Nearby(POINT_MinePoint8, 500))
+            JUMP Laying8;
+          ENDIF
+        ENDWATCH
+     ENDSTATE
+
+     State Laying8
+        INIT
+          SpecialToggle ();
+          TimerCreateSetStart("MineTimer",120);
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy("MineTimer"))
+            JUMP Move9;
+          ENDIF
+        ENDWATCH
+     ENDSTATE
+
+     State Move9
+        INIT
+          MoveTo(POINT_MinePoint9);
+        ENDINIT
+        WATCH
+          IF (Nearby(POINT_MinePoint9, 500))
+            JUMP Laying9;
+          ENDIF
+        ENDWATCH
+     ENDSTATE
+
+     State Laying9
+        INIT
+          SpecialToggle ();
+          TimerCreateSetStart("MineTimer",120);
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy("MineTimer"))
+            JUMP Move10;
+          ENDIF
+        ENDWATCH
+     ENDSTATE
+
+     State Move10
+        INIT
+          MoveTo(POINT_MinePoint10);
+        ENDINIT
+        WATCH
+          IF (Nearby(POINT_MinePoint10, 500))
+            JUMP Laying10;
+          ENDIF
+        ENDWATCH
+     ENDSTATE
+
+     State Laying10
+        INIT
+          SpecialToggle ();
+        ENDINIT
+        WATCH
+          IF (TimerExpiredDestroy("3MineExpiryTimer"))
+            JUMP Move7;
+          ENDIF
+        ENDWATCH
+     ENDSTATE
+ENDFSM
+//ออออออออออออออออออออ     MineLayingTeam3     อออออออออออออออออออ
+
+//ออออออออออออออออออออ     HeavyCorvettes     อออออออออออออออออออ
+FSM HeavyCorvettes
+States Waiting, Attack;
+
+    INIT
+      JUMP Waiting;
+    ENDINIT
+    WATCH
+    ENDWATCH
+
+        STATE Attack
+          INIT
+          ENDINIT
+          WATCH
+            FindEnemiesNearTeam(SHIPS_GettingHammered, 20000);
+            ShipsRemove(SHIPS_GettingHammered, SHIPS_RDamaged);
+            UnderAttack(SHIPS_AttHCs);
+            ShipsAdd(SHIPS_GettingHammered, SHIPS_AttHCs);
+            ShipsSelectNonCapital(SHIPS_StrkGettingHammered, SHIPS_GettingHammered);
+            IF(ShipsCount(SHIPS_StrkGettingHammered)>0)
+              ShipsSelectDamaged(SHIPS_DamagedStrkGettingHammered, SHIPS_StrkGettingHammered, 99);
+              IF(ShipsCount(SHIPS_DamagedStrkGettingHammered)>0)
+                Attack(SHIPS_DamagedStrkGettingHammered);
+              ELSE
+                Attack(SHIPS_StrkGettingHammered);
+              ENDIF
+            ELSEIF (ShipsCount(SHIPS_GettingHammered)>0)
+              Attack(SHIPS_GettingHammered);
+            ELSE
+              Jump Waiting;
+            ENDIF
+          ENDWATCH
+        ENDSTATE
+
+        State Waiting
+          INIT
+            ShipsAdd(SHIPS_HCorvTemp, SHIPS_RDamaged);
+            ShipsRemove(SHIPS_HCorvTemp, THISTEAMSHIPS);
+            IF ((ShipsCount(SHIPS_HCorvTemp))<(ShipsCount(SHIPS_RDamaged)))
+              MoveTo(VOLUMEPOINT_HighZone5);
+            ENDIF
+          ENDINIT
+          WATCH
+            FindEnemiesNearTeam(SHIPS_GettingHammered, 15000);
+            IF (ShipsCount(SHIPS_GettingHammered)>0)
+              JUMP Attack;
+            ENDIF
+          ENDWATCH
+        ENDSTATE
+ENDFSM
+//ออออออออออออออออออออ     HeavyCorvettes     อออออออออออออออออออ
+
+
+//ออออออออออออออออออออ     HeavyInterceptorTeam   อออออออออออออออออออ
+FSM HeavyInterceptorTeam
+
+    States Attack, Waiting;
+        INIT
+          JUMP Waiting;
+        ENDINIT
+        WATCH
+        ENDWATCH
+
+        STATE Attack
+            INIT
+            ENDINIT
+            WATCH
+              FindEnemiesNearTeam(SHIPS_GettingMined, 20000);
+              ShipsRemove(SHIPS_GettingMined, SHIPS_RDamaged);
+              UnderAttack(SHIPS_AttHIs);
+              ShipsAdd(SHIPS_GettingMined, SHIPS_AttHIs);
+              ShipsSelectCapital(SHIPS_CapsGettingMined, SHIPS_GettingMined);
+              IF (ShipsCount(SHIPS_CapsGettingMined)>0)
+                ShipsSelectDamaged(SHIPS_DamagedCapsGettingMined, SHIPS_CapsGettingMined, 99);
+                IF  (ShipsCount(SHIPS_DamagedCapsGettingMined)>0)
+                  Attack(SHIPS_DamagedCapsGettingMined);
+                ELSE
+                  Attack(SHIPS_CapsGettingMined);
+                ENDIF
+              ELSEIF (ShipsCount(SHIPS_GettingMined)>0)
+                Attack(SHIPS_GettingMined);
+              ELSE
+                Jump Waiting;
+              ENDIF
+            ENDWATCH
+        ENDSTATE
+
+        State Waiting
+            INIT
+              ShipsAdd(SHIPS_HInteceptTemp, SHIPS_RDamaged);
+              ShipsRemove(SHIPS_HInteceptTemp, THISTEAMSHIPS);
+              IF ((ShipsCount(SHIPS_HInteceptTemp))<(ShipsCount(SHIPS_RDamaged)))
+              //IF (NOT PointInside(VOLUME_HighZone4, TEAMSPOINT_HeavyInterceptorTeam))
+                MoveTo(VOLUMEPOINT_HighZone5);
+              ENDIF
+            ENDINIT
+            WATCH
+              FindEnemiesNearTeam(SHIPS_GettingMined, 15000);
+              IF (ShipsCount(SHIPS_GettingMined)>0)
+                JUMP Attack;
+              ENDIF
+            ENDWATCH
+        ENDSTATE
+ENDFSM
+//ออออออออออออออออออออ     HeavyInterceptorTeam     อออออออออออออออออออ
+
+
+//----------------------------------------------------------------------
+
+
+//ออออออออออออออออออออ     ResearchStation     อออออออออออออออออออ
+FSM ResearchStation
+
+    States Nothing;
+        INIT
+          VarCreateSet("G_ProtectMe", FALSE);
+          JUMP Nothing;
+        ENDINIT
+        WATCH
+        ENDWATCH
+
+    State Nothing
+        INIT
+        ENDINIT
+        WATCH
+          IF ((FindEnemiesNearTeam(SHIPS_PlayerAttacking, 15000)>0) AND  (VarGet("G_ProtectMe")=FALSE))
+            VarSet("G_ProtectMe", TRUE);
+          ELSEIF  ((FindEnemiesNearTeam(SHIPS_PlayerAttacking, 15000)<1) AND (VarGet("G_ProtectMe")=TRUE))
+            VarSet("G_ProtectMe", FALSE);
+          ENDIF
+        ENDWATCH
+    ENDSTATE
+ENDFSM
+//ออออออออออออออออออออ     ResearchStation     อออออออออออออออออออ
+
+
+//ออออออออออออออออออออ     DefenseFighterTeam     อออออออออออออออออออ
+FSM DefenseFighterTeam
+
+    States Attacking, Sitting, Dead;
+        INIT
+          TeamVelocityMaxSet (0);
+          JUMP Sitting;
+        ENDINIT
+        WATCH
+          IF (TeamCount()<1)
+            JUMP Dead;
+          ENDIF
+        ENDWATCH
+
+        STATE Sitting
+            INIT
+              Stop();
+            ENDINIT
+            WATCH
+              IF (ShipsCount(SHIPS_StationDefTargets)>0)
+                JUMP Attacking;
+              ENDIF
+            ENDWATCH
+        ENDSTATE
+
+        STATE Attacking
+            INIT
+            ENDINIT
+            WATCH
+              ShipsClear (SHIPS_AttackingRS);
+              ShipsClear (SHIPS_InjuredAttackingRS);
+
+              ShipsSelectNearby (SHIPS_AttackingRS, SHIPS_StationDefTargets, THISTEAMSPOINT, 6500);
+              ShipsSelectDamaged(SHIPS_InjuredAttackingRS, SHIPS_AttackingRS, 99);
+
+              IF (ShipsCount(SHIPS_InjuredAttackingRS)>0)
+                Attack(SHIPS_InjuredAttackingRS);
+              ELSEIF (ShipsCount(SHIPS_AttackingRS)>0)
+                Attack(SHIPS_AttackingRS);
+              ELSEIF (ShipsCount(SHIPS_AttackingRS)<1)
+                JUMP Sitting;
+              ENDIF
+            ENDWATCH
+        ENDSTATE
+
+        State Dead
+          INIT
+          ENDINIT
+          WATCH
+          ENDWATCH
+        ENDSTATE
+ENDFSM
+//ออออออออออออออออออออ     DefenseFighterTeam     อออออออออออออออออออ
+
+
+//ออออออออออออออออออออ     StationDefFrig     อออออออออออออออออออ
+FSM StationDefFrig
+
+    States Attacking, Waiting;
+
+    INIT
+      JUMP Waiting;
+    ENDINIT
+    WATCH
+    ENDWATCH
+
+        STATE Waiting
+            INIT
+
+              IF(ThisTeamIs(TEAM_StationDefFrig1))
+                MoveTo(POINT_FrigPoint1);
+              ELSEIF(ThisTeamIs(TEAM_StationDefFrig2))
+                MoveTo(POINT_FrigPoint2);
+              ELSEIF(ThisTeamIs(TEAM_StationDefFrig3))
+                MoveTo(POINT_FrigPoint3);
+              ELSEIF(ThisTeamIs(TEAM_StationDefFrig4))
+                MoveTo(POINT_FrigPoint4);
+              ELSEIF(ThisTeamIs(TEAM_StationDefFrig5))
+                MoveTo(POINT_FrigPoint5);
+              ENDIF
+            ENDINIT
+            WATCH
+              IF (ShipsCount(SHIPS_StationDefTargets)>0)
+                JUMP Attacking;
+              ENDIF
+            ENDWATCH
+        ENDSTATE
+
+        STATE Attacking
+            INIT
+
+            ENDINIT
+            WATCH
+              ShipsClear(SHIPS_AttackingRS);
+              ShipsClear(SHIPS_InjuredAttackingRS);
+              ShipsClear(SHIPS_NearFrigs);
+              ShipsClear(SHIPS_InjuredNearFrigs);
+
+              UnderAttackElsewhere(TEAM_ResearchStation, SHIPS_AttackingRS);
+              ShipsSelectNearby (SHIPS_NearFrigs, SHIPS_StationDefTargets, THISTEAMSPOINT, 7000);
+              ShipsSelectDamaged(SHIPS_InjuredAttackingRS, SHIPS_AttackingRS, 99);
+              ShipsSelectDamaged(SHIPS_InjuredNearFrigs, SHIPS_NearFrigs, 99);
+
+              IF (ShipsCount(SHIPS_InjuredAttackingRS)>0)
+                Attack(SHIPS_InjuredAttackingRS);
+              ELSEIF (ShipsCount(SHIPS_AttackingRS)>0)
+                Attack(SHIPS_AttackingRS);
+              ELSEIF (ShipsCount(SHIPS_InjuredNearFrigs)>0)
+                Attack(SHIPS_InjuredNearFrigs);
+              ELSEIF (ShipsCount(SHIPS_NearFrigs)>0)
+                Attack(SHIPS_NearFrigs);
+              ELSE
+                JUMP Waiting;
+              ENDIF
+            ENDWATCH
+        ENDSTATE
+
+ENDFSM
+//ออออออออออออออออออออ     StationDefFrig     อออออออออออออออออออ
+
+
+//----------------------------------------------------------------------
+
+
+//ออออออออออออออออออออ     MiddleAmbushTeam     อออออออออออออออออออ
+FSM MiddleAmbushTeam
+
+
+States Waitin, Attack, GoingToWork;
+
+INIT
+  JUMP Waitin;
+ENDINIT
+WATCH
+ENDWATCH
+
+    State Waitin
+        INIT
+          MoveTo(POINT_MidRouteGuard);
+        ENDINIT
+        WATCH
+          IF (VarGet("G_ProtectMe")=TRUE)
+            JUMP GoingToWork;
+          ENDIF
+          IF (FindEnemiesNearTeam(SHIPS_GoinMid, 12500)>0)
+            JUMP Attack;
+          ENDIF
+        ENDWATCH
+     ENDSTATE
+
+    State Attack
+        INIT
+        ENDINIT
+        WATCH
+            FindEnemiesNearTeam(SHIPS_GoinMid, 10000);
+            ShipsSelectDamaged(SHIPS_InjuredGoinMid, SHIPS_GoinMid, 99);
+            IF (ShipsCount(SHIPS_InjuredGoinMid)>0)
+              Attack(SHIPS_InjuredGoinMid);
+            ELSEIF (ShipsCount(SHIPS_GoinMid)>0)
+              Attack(SHIPS_GoinMid);
+            ELSEIF (ShipsCount(SHIPS_GoinMid)<1)
+              JUMP Waitin;
+            ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    State GoingToWork
+        INIT
+          Attack(SHIPS_PlayerAttacking);
+        ENDINIT
+        WATCH
+          IF (VarGet("G_ProtectMe")=FALSE)
+            JUMP Waitin;
+          ENDIF
+        ENDWATCH
+     ENDSTATE
+ENDFSM
+//ออออออออออออออออออออ     MiddleAmbushTeam     อออออออออออออออออออ
+
+//ออออออออออออออออออออ     LowPathGuard     อออออออออออออออออออ
+FSM LowPathGuard
+
+States Waitin, Attack, GoingToWork;
+
+INIT
+  JUMP Waitin;
+ENDINIT
+WATCH
+ENDWATCH
+
+    State Waitin
+        INIT
+          MoveTo(POINT_LowRouteGuard);
+        ENDINIT
+        WATCH
+          IF (VarGet("G_ProtectMe")=TRUE)
+            JUMP GoingToWork;
+          ENDIF
+          IF (FindEnemiesNearTeam(SHIPS_GoinLow, 12500)>0)
+            JUMP Attack;
+          ENDIF
+        ENDWATCH
+     ENDSTATE
+
+    State Attack
+        INIT
+        ENDINIT
+        WATCH
+            FindEnemiesNearTeam(SHIPS_GoinLow, 10000);
+            ShipsSelectDamaged(SHIPS_InjuredGoinLow, SHIPS_GoinLow, 99);
+            IF (ShipsCount(SHIPS_InjuredGoinLow)>0)
+              Attack(SHIPS_InjuredGoinLow);
+            ELSEIF (ShipsCount(SHIPS_GoinLow)>0)
+              Attack(SHIPS_GoinLow);
+            ELSEIF (ShipsCount(SHIPS_GoinLow)<1)
+              JUMP Waitin;
+            ENDIF
+        ENDWATCH
+    ENDSTATE
+
+    State GoingToWork
+        INIT
+          Attack(SHIPS_PlayerAttacking);
+        ENDINIT
+        WATCH
+          IF (VarGet("G_ProtectMe")=FALSE)
+            JUMP Waitin;
+          ENDIF
+        ENDWATCH
+     ENDSTATE
+ENDFSM
+
+
+//ออออออออออออออออออออ     LowPathGuard     อออออออออออออออออออ
+
+
+//----------------------------------------------------------------------
+//----------------------------------------------------------------------
+
+
+//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//              Global Stuff
+//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+//ออออออออออออออออออออออออออออออออออออออออออออออออออออออออออออ
+
+INIT
+
+//ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+//      State Machine Creation
+//ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+
+    FSMCreate(EliteCarrier, TEAM_EliteCarrier);
+    FSMCreate(AttackBomberTeam, TEAM_AttackBomberTeam);
+    FSMCreate(MultigunCorvetteTeam, TEAM_MultigunCorvetteTeam);
+
+    FSMCreate(CarrierTeam, TEAM_CarrierTeam);
+    FSMCreate(CarrierGuardTeam, TEAM_CarrierGuardTeam);
+
+    FSMCreate(MiddleAmbushTeam, TEAM_MiddleAmbushTeam);
+
+    FSMCreate(HeavyInterceptorTeam, TEAM_HeavyInterceptorTeam);
+    FSMCreate(MineLayingTeam1, TEAM_MineLayingTeam1);
+    FSMCreate(MineLayingTeam2, TEAM_MineLayingTeam2);
+    FSMCreate(MineLayingTeam3, TEAM_MineLayingTeam3);
+    FSMCreate(HeavyCorvettes, TEAM_HeavyCorvettes);
+
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam1);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam2);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam3);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam4);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam5);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam6);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam7);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam8);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam9);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam10);
+
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam11);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam12);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam13);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam14);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam15);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam16);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam17);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam18);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam19);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam20);
+
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam21);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam22);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam23);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam24);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam25);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam26);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam27);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam28);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam29);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam30);
+
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam31);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam32);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam33);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam34);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam35);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam36);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam37);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam38);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam39);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam40);
+
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam41);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam42);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam43);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam44);
+    FSMCreate(DefenseFighterTeam, TEAM_DefenseFighterTeam45);
+
+    FSMCreate(ResearchStation, TEAM_ResearchStation);
+    FSMCreate(StationDefFrig, TEAM_StationDefFrig1);
+    FSMCreate(StationDefFrig, TEAM_StationDefFrig2);
+    FSMCreate(StationDefFrig, TEAM_StationDefFrig3);
+    FSMCreate(StationDefFrig, TEAM_StationDefFrig4);
+    FSMCreate(StationDefFrig, TEAM_StationDefFrig5);
+
+    FSMCreate(LowPathGuard, TEAM_LowPathGuard);
+    FSMCreate(MissionFlow, TEAM_DummyTeam);
+//ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+
+
+
+//ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+//      technology
+//ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+
+        //TechSetResearch ("MissileWeapons");
+        //TechSetResearch ("ProximityDetector");
+//ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+
+//ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+//      Variable/Timer Creation
+//ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        VarCreateSet("RadDam", 0);
+//ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+
+
+//ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        SaveLevel (10, LSTRING_Savegame);
+        LocationCard(10000, LSTRING_LocationCard);
+//ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+
+ENDINIT
+WATCH
+
+        //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        //      Ship Selection
+        //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        FindShipsInside (VOLUME_WorldVolume, SHIPS_AllShips);
+        ShipsSelectEnemy (SHIPS_PlayersFleet, SHIPS_AllShips);
+        ShipsSelectFriendly (SHIPS_BadShips ,SHIPS_AllShips);
+
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam1);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam2);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam3);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam4);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam5);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam6);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam7);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam8);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam9);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam10);
+
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam11);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam12);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam13);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam14);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam15);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam16);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam17);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam18);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam19);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam20);
+
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam21);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam22);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam23);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam24);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam25);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam26);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam27);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam28);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam29);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam30);
+
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam31);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam32);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam33);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam34);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam35);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam36);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam37);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam38);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam39);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam40);
+
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam41);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam42);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam43);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam44);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_DefenseFighterTeam45);
+
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_StationDefFrig1);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_StationDefFrig2);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_StationDefFrig3);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_StationDefFrig4);
+        ShipsAdd(SHIPS_DefendStation, TEAMSHIPS_StationDefFrig5);
+
+//ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+// Ships Selection for station defforces
+//ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+
+FindEnemiesInside(VOLUME_ResearchStationDefense, SHIPS_StationDefTargets, 2000);
+
+//ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+
+
+//ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+//      mission objectives
+//ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+
+    IFONCE (ShipsCount(TEAMSHIPS_ResearchStation)<1)
+      ObjectiveSet("DestroyResearchOutpost", TRUE);
+      MusicStop(B04_EvilEmpire);
+    ENDIFONCE
+
+    IFONCE (ShipsCount(SHIPS_DefendStation)<1)
+      ObjectiveSet("DestroyDefenceForces", TRUE);
+    ENDIFONCE
+
+    IFONCE (ShipsCount(TEAMSHIPS_EliteCarrier)<1)
+      PingRemove("EscapingCarrier");
+      ObjectiveSet("DestroyEnemyCarrier", TRUE);
+    ENDIFONCE
+
+    IFONCE ((ObjectiveGet("DestroyResearchOutpost")=TRUE) AND (ObjectiveGet("DestroyDefenceForces")=TRUE) AND (ObjectiveGet("DestroyEnemyCarrier")=TRUE))
+      //SubtitleSimulate(0, 8000, LSTRING_YoureDone);
+      SpeechEvent(M10_Intel_HyperspaceReady, 0);
+      ObjectiveCreate("Hyperspace", LSTRING_Hyperspace, LSTRING_Hyperspace);
+    ENDIFONCE
+//ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+
+
+//ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+//      Radiation Damage
+//ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+
+    VarInc("RadDam");
+    IF (VarGet("RadDam")=4)
+        //PingRemove("DamagedShips");
+        ShipsClear(SHIPS_CapsDamaged);
+        ShipsClear(SHIPS_StrkDamaged);
+        ShipsClear(SHIPS_Damaged);
+        ShipsClear(SHIPS_RDamaged);
+        FindShipsInside(VOLUME_WorldVolume, SHIPS_Damaged);
+        FindShipsInside (VOLUME_Safe1, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_Safe2, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_Safe3, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_Safe4, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_Safe5, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_Safe6, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_Safe7, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_Safe8, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_Safe9, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_BottomSafe1, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_BottomSafe2, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_BottomSafe3, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_BottomSafe4, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_BottomSafe5, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_BottomSafe6, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_BottomSafe7, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_BottomSafe8, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_BottomSafe9, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_BottomSafe10, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_BottomSafe11, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_BottomSafe12, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_BottomSafe13, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_BottomSafe14, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_BottomSafe15, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_BottomSafe16, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_BottomSafe17, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_ResearchStationVolume, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_StationZone1, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_StationZone2, SHIPS_Exclude);
+        ShipsRemove(SHIPS_All, SHIPS_Exclude);
+        FindShipsInside (VOLUME_StationZone3, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_StationZone4, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_StationZone5, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+
+        FindShipsInside (VOLUME_StationZone6, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+
+        FindShipsInside (VOLUME_StationZone7, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+
+        FindShipsInside (VOLUME_LowZone1, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_LowZone2, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_LowZone3, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_LowZone4, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_LowZone5, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_LowZone6, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_LowZone7, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_LowZone8, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_LowZone9, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_LowZone10, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_LowZone11, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_LowZone12, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_LowZone13, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_LowZone14, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_LowZone15, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_LowZone16, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_LowZone17, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_LowZone18, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_LowZone19, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_LowZone20, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_LowZone21, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_LowZone22, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_LowZone23, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+
+        FindShipsInside (VOLUME_SideSafe1, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_SideSafe2, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_SideSafe3, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_SideSafe4, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_SideSafe5, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_SideSafe6, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_SideSafe7, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_SideSafe8, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+
+        FindShipsInside (VOLUME_HighZone1, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_HighZone2, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_HighZone3, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_HighZone4, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_HighZone5, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_HighZone5a, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_HighZone6, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_HighZone7, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_HighZone8, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_HighZone9, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_HighZone10, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_HighZone11, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_HighZone12, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+        FindShipsInside (VOLUME_HighZone13, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+
+        FindShipsInside (VOLUME_AloneSafe1, SHIPS_Exclude);
+        ShipsRemove(SHIPS_Damaged, SHIPS_Exclude);
+
+        //ShipsAdd(SHIPS_RDamaged, SHIPS_Damaged);
+        ShipsSelectType (SHIPS_ResourcersTemp, SHIPS_Damaged, "ResourceCollector");
+
+        ShipsSelectCapital(SHIPS_CapsDamaged, SHIPS_Damaged);
+        ShipsSelectNonCapital(SHIPS_StrkDamaged, SHIPS_Damaged);
+        ShipsRemove(SHIPS_StrkDamaged, SHIPS_ResourcersTemp);
+        ShipsAdd(SHIPS_CapsDamaged, SHIPS_ResourcersTemp);
+        ForceCombatStatus(SHIPS_Damaged, TRUE);
+        ShipsDamage(SHIPS_CapsDamaged,  (Random (180, 220)));
+        ShipsDamage(SHIPS_StrkDamaged,  (Random (50, 80)));
+        SpawnEffect(SHIPS_CapsDamaged, "damageRadiation.ebg", 4);//last parameter is how often this is called (seconds)
+        SpawnEffect(SHIPS_StrkDamaged, "damageRadiation.ebg", 4);
+
+        ShipsSelectEnemy (SHIPS_PlayerDamaged, SHIPS_Damaged);
+        VarSet("RadDam", 0);
+     ENDIF
+        //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        //      END Radiation Damage
+        //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+
+
+        //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        //      technology
+        //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+
+        //MineLayerTech
+        IFONCE (VarGet("G_MiningTheField"))
+          TechSetResearch("MineLayerTech");
+        ENDIFONCE
+
+        //Proximity sensors
+        IFONCE (VarGet("G_GotProx"))
+         TechSetResearch ("ProximityDetector");
+        ENDIFONCE
+
+
+
+        // MISSION 02 Tech stuff: //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        // if player researches Corvette drive, allow Corvette chassis                  // (Build: Light Corvette)
+        IFONCE (TechGet ("MassDrive10Kt"))
+                TechSetResearch ("Chassis2");
+        ENDIFONCE
+
+        // if player researches Corvette chassis, allow Heavy Corvette upgrade            // (Build: Heavy Corvette)
+        IF ((TechGet ("Chassis2")) AND (VarGet ("SetMediumGuns") = FALSE))
+                TechSetResearch ("MediumGuns");
+                VarCreateSet ("SetMediumGuns", TRUE);
+        ENDIF
+
+        // MISSION 01 Tech stuff: //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+        // if player researches Fighter chassis, allow Corvette Drive                   // (Build: Repair Corvette)
+        IFONCE (TechGet ("Chassis1"))
+                TechSetResearch ("MassDrive10Kt");
+        ENDIFONCE
+        //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
+
+ENDWATCH
+
+

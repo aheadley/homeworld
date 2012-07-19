@@ -1,0 +1,323 @@
+#
+# Object files from the Win32 directory
+#
+OBJS += main.obj
+OBJS += debugwnd.obj
+OBJS += utility.obj
+OBJS += mouse.obj
+OBJS += prim2d.obj
+OBJS += prim3d.obj
+OBJS += render.obj
+OBJS += mainrgn.obj
+OBJS += font.obj
+OBJS += soundlow.obj
+OBJS += queue.obj
+OBJS += trails.obj
+OBJS += light.obj
+OBJS += wave.obj
+OBJS += texreg.obj
+OBJS += smixer.obj
+OBJS += fqcodec.obj
+OBJS += mixfft.obj
+OBJS += dct.obj
+OBJS += sstream.obj
+OBJS += fqeffect.obj
+OBJS += fquant.obj
+OBJS += titanInterface.obj
+OBJS += titan.obj
+OBJS += TitanPacketMsg.obj
+OBJS += ClientCDKey.obj
+OBJS += glcaps.obj
+OBJS += rglu.obj
+OBJS += screenshot.obj
+OBJS += TimeoutTimer.obj
+OBJS += ddraw.obj
+OBJS += gldll.obj
+OBJS += rinit.obj
+OBJS += avi.obj
+OBJS += Subtitle.obj
+OBJS += sstglide.obj
+OBJS += PlugScreen.obj
+OBJS += md52.obj
+OBJS += bink.obj
+OBJS += glcompat.obj
+OBJS += dxdraw.obj
+
+#
+# !!! LinkStart comes after the Win32 directory so that we can change the leakstring and have the same CRC
+#
+
+
+#
+# Object files from the Src\SinglePlayer and Src\Tutorials directories
+# (some of the later Game source files rely
+#  on these being generated, so these should come first)
+#
+OBJS += Mission01.obj
+OBJS += Mission02.obj
+OBJS += Mission03.obj
+OBJS += Mission04.obj
+OBJS += Mission05.obj
+OBJS += Mission05_OEM.obj
+OBJS += Mission06.obj
+OBJS += Mission07.obj
+OBJS += Mission08.obj
+OBJS += Mission09.obj
+OBJS += Mission10.obj
+OBJS += Mission11.obj
+OBJS += Mission12.obj
+OBJS += Mission13.obj
+OBJS += Mission14.obj
+OBJS += Mission15.obj
+OBJS += Mission16.obj
+OBJS += Tutorial1.obj
+
+#
+# Object files from the Game directory
+#
+
+# Game directory files that don't effect determinism of network game
+
+OBJS += key.obj
+OBJS += debug.obj
+OBJS += file.obj
+OBJS += bigfile.obj
+OBJS += task.obj
+OBJS += linkedlist.obj
+OBJS += uicontrols.obj
+OBJS += region.obj
+OBJS += FeFlow.obj
+OBJS += SoundEvent.obj
+OBJS += SoundEventPlay.obj
+OBJS += SoundEventStop.obj
+OBJS += SpeechEvent.obj
+OBJS += b-spline.obj
+OBJS += NIS.obj
+OBJS += singleplayer.obj
+OBJS += FeReg.obj
+OBJS += MultiplayerGame.obj
+OBJS += MultiplayerLANGame.obj
+OBJS += shader.obj
+OBJS += Titannet.obj
+OBJS += Captaincy.obj
+OBJS += transformer.obj
+OBJS += autodownloadmap.obj
+OBJS += ProfileTimers.obj
+OBJS += LagPrint.obj
+OBJS += KeyBindings.obj
+
+# Link Start
+OBJS += LinkStart.obj
+
+# Game directory files that effect determinism of network game
+
+OBJS += crates.obj
+OBJS += bounties.obj
+OBJS += ping.obj
+OBJS += battle.obj
+OBJS += vector.obj
+OBJS += matrix.obj
+OBJS += memory.obj
+OBJS += physics.obj
+OBJS += universe.obj
+OBJS += camera.obj
+OBJS += star3d.obj
+OBJS += mesh.obj
+OBJS += meshanim.obj
+OBJS += statscript.obj
+OBJS += aitrack.obj
+OBJS += aiship.obj
+OBJS += gun.obj
+OBJS += select.obj
+OBJS += cameracommand.obj
+OBJS += commandlayer.obj
+OBJS += twiddle.obj
+OBJS += ConsMgr.obj
+OBJS += TradeMgr.obj
+OBJS += mex.obj
+OBJS += LOD.obj
+OBJS += tweak.obj
+OBJS += commandwrap.obj
+OBJS += globals.obj
+OBJS += commandnetwork.obj
+OBJS += netcheck.obj
+OBJS += undo.obj
+OBJS += fontreg.obj
+OBJS += tactical.obj
+OBJS += fastmath.obj
+OBJS += objtypes.obj
+OBJS += collision.obj
+OBJS += univupdate.obj
+OBJS += taskbar.obj
+OBJS += sensors.obj
+OBJS += attack.obj
+OBJS += levelload.obj
+OBJS += colpick.obj
+OBJS += ScenPick.obj
+OBJS += Color.obj
+OBJS += Teams.obj
+OBJS += shipselect.obj
+OBJS += formation.obj
+OBJS += flightman.obj
+OBJS += scroller.obj
+OBJS += randy.obj
+OBJS += particle.obj
+OBJS += etg.obj
+OBJS += eval.obj
+OBJS += dock.obj
+OBJS += NAVLights.obj
+OBJS += crc32.obj
+OBJS += rescollect.obj
+OBJS += clouds.obj
+OBJS += blobs.obj
+OBJS += nebulae.obj
+OBJS += aiplayer.obj
+OBJS += aifleetman.obj
+OBJS += airesourceman.obj
+OBJS += aiattackman.obj
+OBJS += aidefenseman.obj
+OBJS += aiteam.obj
+OBJS += aivar.obj
+OBJS += aievents.obj
+OBJS += aihandler.obj
+OBJS += aiorders.obj
+OBJS += aimoves.obj
+OBJS += aiutilities.obj
+OBJS += stats.obj
+OBJS += pieplate.obj
+OBJS += clipper.obj
+OBJS += btg.obj
+OBJS += Strings.obj
+OBJS += launchMgr.obj
+OBJS += demo.obj
+OBJS += researchapi.obj
+OBJS += researchgui.obj
+OBJS += tactics.obj
+OBJS += InfoOverlay.obj
+OBJS += horserace.obj
+OBJS += chatting.obj
+OBJS += KAS.obj
+OBJS += KASFunc.obj
+OBJS += ChannelFSM.obj
+OBJS += Timer.obj
+OBJS += hs.obj
+OBJS += GamePick.obj
+OBJS += GameChat.obj
+OBJS += SaveGame.obj
+OBJS += Volume.obj
+OBJS += shipview.obj
+OBJS += alliance.obj
+OBJS += damage.obj
+OBJS += tutor.obj
+OBJS += madLinkIn.obj
+OBJS += Objectives.obj
+OBJS += clamp.obj
+OBJS += autolod.obj
+OBJS += hash.obj
+OBJS += BitIO.obj
+OBJS += LZSS.obj
+OBJS += options.obj
+OBJS += bmp.obj
+OBJS += knitransform.obj
+OBJS += animatic.obj
+OBJS += tracking.obj
+
+#
+# Object files from the Ships directory
+#
+OBJS += ResourceCollector.obj
+OBJS += Carrier.obj
+OBJS += StandardFrigate.obj
+OBJS += LightCorvette.obj
+OBJS += HeavyCorvette.obj
+OBJS += MissileDestroyer.obj
+OBJS += HeavyCruiser.obj
+OBJS += AdvanceSupportFrigate.obj
+OBJS += DDDFrigate.obj
+OBJS += DFGFrigate.obj
+OBJS += ResourceController.obj
+OBJS += RepairCorvette.obj
+OBJS += MultiGunCorvette.obj
+OBJS += Mothership.obj
+OBJS += DefaultShip.obj
+OBJS += SalCapCorvette.obj
+OBJS += IonCannonFrigate.obj
+OBJS += MinelayerCorvette.obj
+OBJS += GenericInterceptor.obj
+OBJS += GenericDefender.obj
+OBJS += StandardDestroyer.obj
+OBJS += Probe.obj
+OBJS += ProximitySensor.obj
+OBJS += ResearchShip.obj
+OBJS += SensorArray.obj
+OBJS += GravWellGenerator.obj
+OBJS += CloakGenerator.obj
+OBJS += Drone.obj
+OBJS += DefenseFighter.obj
+OBJS += P1StandardCorvette.obj
+OBJS += P1IonArrayFrigate.obj
+OBJS += P1MissileCorvette.obj
+OBJS += P1Mothership.obj
+OBJS += P2Mothership.obj
+OBJS += P2MultiBeamFrigate.obj
+OBJS += P2FuelPod.obj
+OBJS += P2AdvanceSwarmer.obj
+OBJS += P2Swarmer.obj
+OBJS += FloatingCity.obj
+OBJS += P3StandardShip.obj
+
+OBJS += LinkEnd.obj
+
+#
+# Object files from the JPG directory
+#
+
+OBJS += INTERFCE.obj
+OBJS += JCAPIMIN.obj
+OBJS += JCAPISTD.obj
+OBJS += JCCOEFCT.obj
+OBJS += JCCOLOR.obj
+OBJS += JCDCTMGR.obj
+OBJS += JCHUFF.obj
+OBJS += JCINIT.obj
+OBJS += JCMAINCT.obj
+OBJS += JCMARKER.obj
+OBJS += JCMASTER.obj
+OBJS += JCOMAPI.obj
+OBJS += JCPARAM.obj
+OBJS += JCPHUFF.obj
+OBJS += JCPREPCT.obj
+OBJS += JCSAMPLE.obj
+OBJS += JCTRANS.obj
+OBJS += JDAPIMIN.obj
+OBJS += JDAPISTD.obj
+OBJS += JDATADST.obj
+OBJS += JDATASRC.obj
+OBJS += JDCOEFCT.obj
+OBJS += JDCOLOR.obj
+OBJS += JDDCTMGR.obj
+OBJS += JDHUFF.obj
+OBJS += JDINPUT.obj
+OBJS += JDMAINCT.obj
+OBJS += JDMARKER.obj
+OBJS += JDMASTER.obj
+OBJS += JDMERGE.obj
+OBJS += JDPHUFF.obj
+OBJS += JDPOSTCT.obj
+OBJS += JDSAMPLE.obj
+OBJS += JDTRANS.obj
+OBJS += JERROR.obj
+OBJS += JFDCTFLT.obj
+OBJS += JFDCTFST.obj
+OBJS += JFDCTINT.obj
+OBJS += JIDCTFLT.obj
+OBJS += JIDCTFST.obj
+OBJS += JIDCTINT.obj
+OBJS += JIDCTRED.obj
+OBJS += JMEMMGR.obj
+OBJS += JMEMNOBS.obj
+OBJS += JQUANT1.obj
+OBJS += JQUANT2.obj
+OBJS += JUTILS.obj
+
+

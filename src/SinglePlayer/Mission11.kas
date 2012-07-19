@@ -1,0 +1,1044 @@
+//
+//  MISSION11 - Battle against P3 (help the Traders)
+//
+#include "..\\Game\\speechevent.h"
+#include "..\\Game\\soundmusic.h"
+#include "attributes.h"
+
+
+    LOCALIZATION //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+            LSTRING_Savegame
+                "11 - Tenhauser Gate"
+                "11 - Porte de Tenhauser"
+                "11 - Tenhauser-Tor"
+                "11 - Puerta de Tannhauser"
+				"11 - Il Portale di Tenhauser"
+
+            LSTRING_LocationCard
+                "TENHAUSER GATE"
+                "PORTE DE TENHAUSER"
+                "TENHAUSER-TOR"
+                "PUERTA DE TANNHAUSER"
+				"IL PORTALE DI TENHAUSER"
+
+            LSTRING_FIDestroyTaiidanTASKBAR
+                "Destroy the Taiidan fleet"
+                "Destruction flotte Taiidan"
+                "Die Taiidan-Flotte vernichten."
+                "Destruir la flota taiidana"
+				"Distruggi la flotta dei Taiidan"
+
+            LSTRING_FIDestroyKushanTASKBAR
+                "Destroy the Kushan fleet"
+                "Destruction flotte Kushan"
+                "Die Kushan-Flotte vernichten."
+                "Destruir la flota kushana"
+				"Distruggi la flotta dei Kushan"
+
+            LSTRING_Hyperspace
+                "                      HYPERSPACE"
+                "                      HYPERESPACE"
+                "           HYPERRAUMSPRUNG"
+                "                    HIPERESPACIO"
+				"					IPERSPAZIO"
+
+    ENDL //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     FleetIntel     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+FSM FleetIntel
+        States FCIntro,
+
+               FIDefendTraders,
+
+               FIResearchSuperHeavy,
+
+               TradersThanks, TradersFirstWarning, FICeaseFire, TradersTellPlayer, TradersPlayN08,
+
+               TradersCouncilComin,
+
+               FIEngageHyperdrive,
+
+               FIIdle;
+
+        INIT
+                Jump FIIdle;                                        // Go immediately to FIIdle
+        ENDINIT
+        WATCH
+        ENDWATCH
+
+
+        STATE FCIntro //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent ( M11_Fleet_HyperspaceDisengaged, 0);       // Hyperdrive disengaged.  The Bentusi are here.  They're in distress.
+                    //SoundEvent (4000);                                  // #define Exp_DestProjectileLarge
+                    //SubtitleSimulate (0, 4000, LSTRING_FCIntro);        // Hyperdrive disengaged.  The Bentusi are here.  They're in distress.
+                    //TimerCreateSetStart ("FCIntroENDTimer", 8);
+            ENDINIT
+            WATCH
+                    //IF (TimerExpiredDestroy ("FCIntroENDTimer"))
+                    IF (IntelEventEnded ())
+                            VarCreateSet ("G_FCDoneRasping", TRUE);
+                            Jump FIIdle;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FCIntro //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+
+
+        STATE FIDefendTraders //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    IF (RaceOfHuman () = 0)                                             // If the player is Kushan
+                            SpeechEvent (M11_Intel_DestroyEnemyKushan, 0);              // The Bentusi must be protected.  Draw the Taiidan fleet away and destroy them.
+                            //SoundEvent (4000);                                          // #define Exp_DestProjectileLarge
+                            //SubtitleSimulate (4, 4000, LSTRING_FIDestroyTaiidan);       // The Bentusi must be protected.  Draw the Taiidan fleet away and destroy them.
+                    ELSEIF (RaceOfHuman () = 1)                                         // If the player is Taiidan
+                            SpeechEvent ( M11_Intel_DestroyEnemyTaiidan, 0);            // The Bentusi must be protected.  Draw the Kushan fleet away and destroy them.
+                            //SoundEvent (4000);                                          // #define Exp_DestProjectileLarge
+                            //SubtitleSimulate (4, 4000, LSTRING_FIDestroyKushan);        // The Bentusi must be protected.  Draw the Kushan fleet away and destroy them.
+                    ENDIF
+            ENDINIT
+            WATCH
+                    IF (IntelEventEnded ())
+                            IFONCE (TRUE)
+                                    VarCreateSet ("G_CreateObjectiveNow", TRUE);
+                            ENDIFONCE
+                            VarDestroy ("G_CLICK_DestroyFleet");
+                            Jump FIIdle;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIDefendTraders //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+
+
+
+
+
+        STATE FIResearchSuperHeavy //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M11_Intel_ResearchSuperHeavy, 0);            // Research Division reports it is now equipped for Super Heavy Chassis technology.  We advise commencing research immediately.
+            ENDINIT
+            WATCH
+                    IF (IntelEventEnded ())
+                            Jump FIIdle;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIResearchSuperHeavy //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+
+        STATE TradersThanks //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M11_Traders_BetusiInDebt, 0);                  // For the first time in Memory, the Bentusi are in the debt of another.
+                    //SoundEvent (4000);                                          // #define Exp_DestProjectileLarge
+                    //SubtitleSimulate (5, 4000, LSTRING_TradersThanks);          // For the first time in Memory, the Bentusi are in the debt of another.
+            ENDINIT
+            WATCH
+                    IF (IntelEventEnded ())
+                            IFONCE (TRUE)
+                                    VarCreateSet ("G_PlayN08Now", TRUE);
+                            ENDIFONCE
+                            Jump FIIdle;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE TradersThanks //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE TradersFirstWarning //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M04_Traders_StopAttackNow, 0);      // The Bentusi wish only to trade and make contact.  Your attack is unwarranted and ill-advised.  Stop now.
+            ENDINIT
+            WATCH
+                    IF (IntelEventEnded ())
+                            Jump FICeaseFire;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE TradersFirstWarning //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FICeaseFire //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M04_Intel_CeaseFire, 0);           //  Recommend immediate cease-fire.
+                    TimerCreateSetStart ("G_GivePlayerTimeToWithdrawAttack", 12);
+            ENDINIT
+            WATCH
+                    IF ( (VarGet ("G_PlayerHasAttackedTraders") = FALSE) AND (TimerExpiredDestroy ("G_GivePlayerTimeToWithdrawAttack")) )
+                            Jump FIIdle;
+                    ENDIF
+
+                    IF ( (VarGet ("G_PlayerHasAttackedTraders") = TRUE) AND (TimerExpiredDestroy ("G_GivePlayerTimeToWithdrawAttack")) )
+                            Jump TradersTellPlayer;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FICeaseFire //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE TradersTellPlayer //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M04_Traders_KickAss, 0);           //  You insist on conflict.  This is most unfortunate.
+            ENDINIT
+            WATCH
+                    IF (IntelEventEnded ())
+                            VarCreateSet ("G_TradersObliteratePlayer", TRUE);
+                    ENDIF
+            ENDWATCH
+        ENDSTATE TradersTellPlayer //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE TradersPlayN08 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    VarCreateSet ("G_PlayNis", 8);
+                    VarCreateSet ("G_N08IsPlaying", TRUE);
+                    HideShips (TEAMSHIPS_Traders);
+                    Jump FIIdle;
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE TradersPlayN08 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+
+
+
+
+        STATE TradersCouncilComin //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M11_Traders_ReachHomeworld, 0);                    // Reach your Homeworld.  Establish your claim.  We will summon the Council.
+                    //SoundEvent (4000);                                          // #define Exp_DestProjectileLarge
+                    //SubtitleSimulate (5, 4000, LSTRING_TradersCouncilComin);          // Reach your Homeworld.  Establish your claim.  We will summon the Council.
+            ENDINIT
+            WATCH
+                    IF (IntelEventEnded ())
+                            IFONCE (TRUE)
+                                    VarCreateSet ("G_TradersGoNow", TRUE);
+                                    TimerCreateSetStart ("PlayFinalEvent", 12);
+                            ENDIFONCE
+                            Jump FIIdle;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE TradersCouncilComin //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+
+
+
+
+        STATE FIEngageHyperdrive //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M11_Intel_EngageHyperdrive, 0);                    // Engage Hyperdrive.
+                    //SoundEvent (4000);                                              // #define Exp_DestProjectileLarge
+                    //SubtitleSimulate (4, 4000, LSTRING_FIEngageHyperdrive);         // Engage Hyperdrive.
+                    IFONCE (TRUE)
+                            VarCreateSet ("G_MissionComplete", TRUE);
+                    ENDIFONCE
+            ENDINIT
+            WATCH
+                    IF (IntelEventEnded ())
+                            Jump FIIdle;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIEngageHyperdrive //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+
+
+
+
+
+
+        STATE FIIdle //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+            ENDINIT
+            WATCH
+                    // FIRST TIME watches
+
+                    // play the Fleet Command intro event 5 seconds after you enter the level
+                    IFONCE (TimerExpiredDestroy ("G_FCHyperspaceSuccessful"))
+                            Jump FCIntro;
+                    ENDIFONCE
+
+                    // after N07 has played, play the Fleet Intel event telling you to kick some Taiidani ass
+                    IFONCE (TimerExpiredDestroy ("G_FIDefendTraders"))
+                            Jump FIDefendTraders;
+                    ENDIFONCE
+
+                    // if the timer to play the Super Heavy Chassis tech event is up, play the event
+                    IFONCE ( (VarGet ("G_GivePlayerSuperHeavy") = TRUE) AND (VarGet ("G_N07IsPlaying") = FALSE) AND (VarGet ("G_N08IsPlaying") = FALSE) )
+                            Jump FIResearchSuperHeavy;
+                    ENDIFONCE
+
+                    // when they are in position, play the Traders 'thanks' event
+                    IFONCE (VarGet ("G_TradersInPosition") = TRUE)
+                            Jump TradersThanks;
+                    ENDIFONCE
+
+                    // if the player attacks the Traders, give them the warning and a chance to withdraw
+                    IF (VarGet ("G_PlayerHasAttackedTraders") = TRUE)
+                            Jump TradersFirstWarning;
+                    ENDIF
+
+                    // when the Traders have moved in front of the player's Mothership, start the widescreen to play N08
+                    IFONCE (VarGet ("G_PlayN08Now") = TRUE)
+                            TimerCreateSetStart ("WideScreenInBeforeNIS2", 3);
+                            wideScreenIn(90);                                   //90 frames == 3 seconds
+                            VarCreateSet("G_PlayedN08", TRUE);
+                    ENDIFONCE
+
+                    // N08 - after the widescreen is done, play the NIS
+                    IF (TimerExpiredDestroy("WideScreenInBeforeNIS2"))
+                            Jump TradersPlayN08;
+                    ENDIF
+
+                    // after N08 has played, play the Traders event telling you they will summon the council
+                    IFONCE (TimerExpiredDestroy ("G_TradersTalk"))
+                            //UnhideShips(TEAMSHIPS_Traders);
+                            Jump TradersCouncilComin;
+                    ENDIFONCE
+
+                    // after the Traders are gone, play the final FI events
+                    IFONCE (TimerExpiredDestroy ("PlayFinalEvent"))
+                            Jump FIEngageHyperdrive;
+                    ENDIFONCE
+
+
+
+
+
+                    // REPLAYING event watches
+
+                    // FLEET INTEL event - send probe to Khar-Selim
+                    IF (VarGet ("G_CLICK_DestroyFleet"))
+                            Jump FIDefendTraders;
+                    ENDIF
+
+            ENDWATCH
+        ENDSTATE FIIdle //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+ENDFSM FleetIntel
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     FleetIntel     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+
+
+
+
+
+
+
+
+
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     Traders     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+  FSM Traders
+    States Flounder, FlyUpToPlayer, UnderAttackWatch, TradersObliteratePlayer, WaitToHyperspace, HyperspaceOut, NullState;
+
+    INIT
+            TeamAttributesSet(ATTRIBUTES_Defector);
+            TeamHealthSet (43);                                     // Tradership is heavily damaged after the fight with the Taiidan
+            TraderGUIDisable (TRUE);
+            TeamMakeCrazy (TRUE);
+            Jump Flounder;
+    ENDINIT
+    WATCH
+            IFONCE (VarGet ("G_Nis7Complete") = TRUE)
+                    TeamHealthSet (33);
+            ENDIFONCE
+
+            // Keep him alive at 25% until the timer runs out
+            IFONCE (TeamHealthAverage () < 25)
+                    TimerCreateSetStart ("KeepTraderShipAlive", 90);
+            ENDIFONCE
+            IF ( (TeamHealthAverage () < 25) AND (TimerRemaining ("KeepTraderShipAlive") > 0) )
+                    TeamHealthSet (25);
+            ENDIF
+
+            // Keep the Traders at whatever health they're at while the NIS is playing
+            // First assign the health at the beginning of an NIS to a variable
+            IFONCE (VarGet ("G_N08IsPlaying") = TRUE)
+                    VarCreateSet ("CurrentTraderHealth", TeamHealthAverage ());
+                    VarCreateSet ("KeepBentusiAliveForever", TRUE);
+            ENDIFONCE
+
+            // then set their health to that variable while the NIS is playing
+            IF (VarGet ("KeepBentusiAliveForever") = TRUE)
+                    TeamHealthSet (VarGet ("CurrentTraderHealth"));
+            ENDIF
+    ENDWATCH
+  
+  
+    STATE Flounder //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT                                                        // Tradership is wounded, so it flounders around (lists?)
+                TeamMakeCrazy (TRUE);
+        ENDINIT
+        WATCH
+                IF (NOT UnderAttack (SHIPS_Null929292))
+                        TeamMakeCrazy (FALSE);
+                ENDIF
+                IF (ObjectiveGet ("DestroyFleet") = TRUE)
+                        TeamMakeCrazy (FALSE);
+                        Jump FlyUpToPlayer;
+                ENDIF
+        ENDWATCH
+    ENDSTATE Flounder //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+    STATE FlyUpToPlayer //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+                PatrolPath (PATH_TraderPath);
+        ENDINIT
+        WATCH
+                IFONCE (PathNextPoint () = 0)
+                        VarCreateSet ("G_TradersInPosition", TRUE);
+                        Jump WaitToHyperspace;
+                ENDIFONCE
+
+                // if the player stupidly attacks the Traders, give them the warning
+                IF (UnderAttack (SHIPS_Null87238923))
+                        VarCreateSet ("G_PlayerHasAttackedTraders", TRUE);
+                        Jump UnderAttackWatch;
+                ENDIF
+        ENDWATCH
+    ENDSTATE FlyUpToPlayer //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+    STATE UnderAttackWatch //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+        ENDINIT
+        WATCH
+                IF (VarGet ("G_TradersObliteratePlayer") = TRUE)
+                        Jump TradersObliteratePlayer;
+                ENDIF
+
+                IF (NOT UnderAttack (SHIPS_Null8723487238))
+                        VarDestroy ("G_PlayerHasAttackedTraders");
+                        IF (VarGet ("G_TradersInPosition") = TRUE)
+                                Jump WaitToHyperspace;
+                        ELSE
+                                Jump FlyUpToPlayer;
+                        ENDIF
+                ENDIF
+
+        ENDWATCH
+    ENDSTATE UnderAttackWatch //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+    STATE TradersObliteratePlayer //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+                VarCreateSet ("CurrentTraderHealth", TeamHealthAverage ());
+
+                FindEnemiesInside (VOLUME_MothershipSphere, SHIPS_PlayerFleet, 1000);
+                IF (ShipsSelectClass (SHIPS_TraderTargets, SHIPS_PlayerFleet, "CLASS_Destroyer"))
+                ELSEIF (ShipsSelectClass (SHIPS_TraderTargets, SHIPS_PlayerFleet, "CLASS_Frigate"))
+                ELSEIF (ShipsSelectClass (SHIPS_TraderTargets, SHIPS_PlayerFleet, "CLASS_Mothership"))
+                ELSE
+                        ShipsAdd (SHIPS_TraderTargets, SHIPS_PlayerFleet);
+                ENDIF
+
+                IF (ShipsCount (SHIPS_TraderTargets) > 0)
+                        Attack (SHIPS_TraderTargets);
+                ENDIF
+        ENDINIT
+        WATCH
+                // keep the Traders alive
+                TeamHealthSet (VarGet ("CurrentTraderHealth"));
+
+                // if the ships you're attacking die OR you stop attacking for some reason, jump back into this state to kill the rest of the baddies
+                IF ( (ShipsCount (SHIPS_TraderTargets) = 0) OR (ShipsOrder (TEAMSHIPS_Traders) != 2) )
+                        Jump TradersObliteratePlayer;
+                ENDIF
+
+        ENDWATCH
+    ENDSTATE TradersObliteratePlayer //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+    STATE WaitToHyperspace //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+        ENDINIT
+        WATCH
+                // if the player stupidly attacks the Traders, give them the warning
+                IF (UnderAttack (SHIPS_Null87238923))
+                        VarCreateSet ("G_PlayerHasAttackedTraders", TRUE);
+                        Jump UnderAttackWatch;
+                ENDIF
+
+                IF (VarGet ("G_TradersGoNow") =TRUE)
+                        Jump HyperspaceOut;
+                ENDIF
+        ENDWATCH
+    ENDSTATE WaitToHyperspace //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+    STATE HyperspaceOut //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+                TeamHyperspaceOut ();
+                Jump NullState;
+        ENDINIT
+        WATCH
+        ENDWATCH
+    ENDSTATE HyperspaceOut //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+    STATE NullState //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+        ENDINIT
+        WATCH
+        ENDWATCH
+    ENDSTATE NullState //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  
+
+
+  
+  ENDFSM Traders
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     Traders     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+
+
+
+
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     Cruiser     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+  FSM Cruiser
+    States AttackTraders, DefendYourself, AttackPlayerMothership, NullState;
+
+    INIT
+            Jump AttackTraders;
+    ENDINIT
+    WATCH
+            IFONCE (ObjectiveGet ("DestroyFleet") = TRUE)
+                    Jump NullState;
+            ENDIFONCE
+    ENDWATCH
+  
+  
+    STATE AttackTraders //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+                MoveAttack (TEAMSHIPS_Traders);
+                //FindEnemiesNearTeam (SHIPS_Traders, 15000);
+                //MoveAttack (SHIPS_Traders);
+        ENDINIT
+        WATCH
+                // if you're under attack, defend yourself
+                IF (ThisTeamIs (TEAM_Cruiser))
+                        IF (UnderAttack (SHIPS_CruiserUnderAttack))
+                                ShipsSelectClass (SHIPS_Mothership, SHIPS_CruiserUnderAttack, "CLASS_Mothership");       // Select the Mothership
+                                ShipsRemove (SHIPS_CruiserUnderAttack, SHIPS_Mothership);                                // And filter it out
+                                IF (ShipsCount (SHIPS_CruiserUnderAttack) > 0)
+                                        Jump DefendYourself;
+                                ENDIF
+                        ENDIF
+                ELSEIF (ThisTeamIs (TEAM_Destroyers))
+                        IF (UnderAttack (SHIPS_DestroyersUnderAttack))
+                                ShipsSelectClass (SHIPS_Mothership, SHIPS_DestroyersUnderAttack, "CLASS_Mothership");       // Select the Mothership
+                                ShipsRemove (SHIPS_DestroyersUnderAttack, SHIPS_Mothership);                                // And filter it out
+                                IF (ShipsCount (SHIPS_DestroyersUnderAttack) > 0)
+                                        Jump DefendYourself;
+                                ENDIF
+                        ENDIF
+                ELSEIF (ThisTeamIs (TEAM_IonCannonFrigates))
+                        IF (UnderAttack (SHIPS_IonFrigUnderAttack))
+                                ShipsSelectClass (SHIPS_Mothership, SHIPS_IonFrigUnderAttack, "CLASS_Mothership");       // Select the Mothership
+                                ShipsRemove (SHIPS_IonFrigUnderAttack, SHIPS_Mothership);                                // And filter it out
+                                IF (ShipsCount (SHIPS_IonFrigUnderAttack) > 0)
+                                        Jump DefendYourself;
+                                ENDIF
+                        ENDIF
+                ENDIF
+
+                // if some Salvage Corvettes show up, jump to the DefendYourself state to kill them
+                IF (ThisTeamIs (TEAM_Cruiser))
+                        IF (FindEnemiesNearTeam (SHIPS_CruiserL00kingForSCs, 15000))
+                                ShipsSelectType (SHIPS_CruiserFoundSomeSCs, SHIPS_CruiserL00kingForSCs, "SalCapCorvette");
+                                IF ( (ShipsCount (SHIPS_CruiserFoundSomeSCs) > 0) AND (ShipsOrder (SHIPS_CruiserFoundSomeSCs) = 7) )
+                                        Jump DefendYourself;
+                                ENDIF
+                        ENDIF
+                ELSEIF (ThisTeamIs (TEAM_Destroyers))
+                        IF (FindEnemiesNearTeam (SHIPS_DestroyersL00kingForSCs, 15000))
+                                ShipsSelectType (SHIPS_DestroyersFoundSomeSCs, SHIPS_DestroyersL00kingForSCs, "SalCapCorvette");
+                                IF ( (ShipsCount (SHIPS_DestroyersFoundSomeSCs) > 0) AND (ShipsOrder (SHIPS_DestroyersFoundSomeSCs) = 7) )
+                                        Jump DefendYourself;
+                                ENDIF
+                        ENDIF
+                ELSEIF (ThisTeamIs (TEAM_IonCannonFrigates))
+                        IF (FindEnemiesNearTeam (SHIPS_IonFrigL00kingForSCs, 15000))
+                                ShipsSelectType (SHIPS_IonFrigFoundSomeSCs, SHIPS_IonFrigL00kingForSCs, "SalCapCorvette");
+                                IF ( (ShipsCount (SHIPS_IonFrigFoundSomeSCs) > 0) AND (ShipsOrder (SHIPS_IonFrigFoundSomeSCs) = 7) )
+                                        Jump DefendYourself;
+                                ENDIF
+                        ENDIF
+                ENDIF
+        ENDWATCH
+    ENDSTATE AttackTraders //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        STATE DefendYourself //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    IF (ThisTeamIs (TEAM_Cruiser))
+                            IF (ShipsSelectType (SHIPS_CruiserNearbyTargets, SHIPS_CruiserUnderAttack, "SalCapCorvette"))
+                            ELSEIF (ShipsSelectType (SHIPS_CruiserNearbyTargets, SHIPS_CruiserFoundSomeSCs, "SalCapCorvette"))
+                            ELSEIF (ShipsSelectClass (SHIPS_CruiserNearbyTargets, SHIPS_CruiserUnderAttack, "CLASS_Corvette"))
+                            ELSEIF (ShipsSelectClass (SHIPS_CruiserNearbyTargets, SHIPS_CruiserUnderAttack, "CLASS_Frigate"))
+                            ELSEIF (ShipsSelectClass (SHIPS_CruiserNearbyTargets, SHIPS_CruiserUnderAttack, "CLASS_Fighter"))
+                            ELSE
+                                    ShipsAdd (SHIPS_CruiserNearbyTargets, SHIPS_CruiserUnderAttack);
+                            ENDIF
+
+                            IF (ShipsCount (SHIPS_CruiserNearbyTargets) > 0)
+                                    Attack (SHIPS_CruiserNearbyTargets);
+                            ELSE
+                                    Jump AttackPlayerMothership;
+                            ENDIF
+                    ELSEIF (ThisTeamIs (TEAM_Destroyers))
+                            IF (ShipsSelectType (SHIPS_DestroyersNearbyTargets, SHIPS_DestroyersUnderAttack, "SalCapCorvette"))
+                            ELSEIF (ShipsSelectType (SHIPS_DestroyersNearbyTargets, SHIPS_DestroyersFoundSomeSCs, "SalCapCorvette"))
+                            ELSEIF (ShipsSelectClass (SHIPS_DestroyersNearbyTargets, SHIPS_DestroyersUnderAttack, "CLASS_Corvette"))
+                            ELSEIF (ShipsSelectClass (SHIPS_DestroyersNearbyTargets, SHIPS_DestroyersUnderAttack, "CLASS_Frigate"))
+                            ELSEIF (ShipsSelectClass (SHIPS_DestroyersNearbyTargets, SHIPS_DestroyersUnderAttack, "CLASS_Fighter"))
+                            ELSE
+                                    ShipsAdd (SHIPS_DestroyersNearbyTargets, SHIPS_DestroyersUnderAttack);
+                            ENDIF
+
+                            IF (ShipsCount (SHIPS_DestroyersNearbyTargets) > 0)
+                                    Attack (SHIPS_DestroyersNearbyTargets);
+                            ELSE
+                                    Jump AttackPlayerMothership;
+                            ENDIF
+                    ELSEIF (ThisTeamIs (TEAM_IonCannonFrigates))
+                            IF (ShipsSelectType (SHIPS_IonFrigNearbyTargets, SHIPS_IonFrigUnderAttack, "SalCapCorvette"))
+                            ELSEIF (ShipsSelectType (SHIPS_IonFrigNearbyTargets, SHIPS_IonFrigFoundSomeSCs, "SalCapCorvette"))
+                            ELSEIF (ShipsSelectClass (SHIPS_IonFrigNearbyTargets, SHIPS_IonFrigUnderAttack, "CLASS_Corvette"))
+                            ELSEIF (ShipsSelectClass (SHIPS_IonFrigNearbyTargets, SHIPS_IonFrigUnderAttack, "CLASS_Frigate"))
+                            ELSEIF (ShipsSelectClass (SHIPS_IonFrigNearbyTargets, SHIPS_IonFrigUnderAttack, "CLASS_Fighter"))
+                            ELSE
+                                    ShipsAdd (SHIPS_IonFrigNearbyTargets, SHIPS_IonFrigUnderAttack);
+                            ENDIF
+
+                            IF (ShipsCount (SHIPS_IonFrigNearbyTargets) > 0)
+                                    Attack (SHIPS_IonFrigNearbyTargets);
+                            ELSE
+                                    Jump AttackPlayerMothership;
+                            ENDIF
+                    ENDIF
+            ENDINIT
+            WATCH
+                    // if the ships you're attacking die OR you stop attacking for some reason, jump back into this state to kill the rest of the baddies
+                    IF (ThisTeamIs (TEAM_Cruiser))
+                            IF ( (ShipsCount (SHIPS_CruiserNearbyTargets) = 0) OR (ShipsOrder (TEAMSHIPS_Cruiser) != 2) )
+                                    Jump DefendYourself;
+                            ENDIF
+                    ELSEIF (ThisTeamIs (TEAM_Destroyers))
+                            IF ( (ShipsCount (SHIPS_DestroyersNearbyTargets) = 0) OR (ShipsOrder (TEAMSHIPS_Destroyers) != 2) )
+                                    Jump DefendYourself;
+                            ENDIF
+                    ELSEIF (ThisTeamIs (TEAM_IonCannonFrigates))
+                            IF ( (ShipsCount (SHIPS_IonFrigNearbyTargets) = 0) OR (ShipsOrder (TEAMSHIPS_IonCannonFrigates) != 2) )
+                                    Jump DefendYourself;
+                            ENDIF
+                    ENDIF
+
+                    // if some Salvage Corvettes show up, jump back into this state to kill them
+                    IF (ThisTeamIs (TEAM_Cruiser))
+                            IF (FindEnemiesNearTeam (SHIPS_CruiserL00kingForSCs, 15000))
+                                    ShipsSelectType (SHIPS_CruiserFoundSomeSCs, SHIPS_CruiserL00kingForSCs, "SalCapCorvette");
+                                    IF ( (ShipsCount (SHIPS_CruiserFoundSomeSCs) > 0) AND (ShipsOrder (SHIPS_CruiserFoundSomeSCs) = 7) )
+                                            Jump DefendYourself;
+                                    ENDIF
+                            ENDIF
+                    ELSEIF (ThisTeamIs (TEAM_Destroyers))
+                            IF (FindEnemiesNearTeam (SHIPS_DestroyersL00kingForSCs, 15000))
+                                    ShipsSelectType (SHIPS_DestroyersFoundSomeSCs, SHIPS_DestroyersL00kingForSCs, "SalCapCorvette");
+                                    IF ( (ShipsCount (SHIPS_DestroyersFoundSomeSCs) > 0) AND (ShipsOrder (SHIPS_DestroyersFoundSomeSCs) = 7) )
+                                            Jump DefendYourself;
+                                    ENDIF
+                            ENDIF
+                    ELSEIF (ThisTeamIs (TEAM_IonCannonFrigates))
+                            IF (FindEnemiesNearTeam (SHIPS_IonFrigL00kingForSCs, 15000))
+                                    ShipsSelectType (SHIPS_IonFrigFoundSomeSCs, SHIPS_IonFrigL00kingForSCs, "SalCapCorvette");
+                                    IF ( (ShipsCount (SHIPS_IonFrigFoundSomeSCs) > 0) AND (ShipsOrder (SHIPS_IonFrigFoundSomeSCs) = 7) )
+                                            Jump DefendYourself;
+                                    ENDIF
+                            ENDIF
+                    ENDIF
+            ENDWATCH
+        ENDSTATE DefendYourself //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+    STATE AttackPlayerMothership //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+                MoveAttack (SHIPS_PlayerMothership);
+        ENDINIT
+        WATCH
+                // if you're under attack, defend yourself
+                IF (ThisTeamIs (TEAM_Cruiser))
+                        IF (UnderAttack (SHIPS_CruiserUnderAttack))
+                                ShipsSelectClass (SHIPS_Mothership, SHIPS_CruiserUnderAttack, "CLASS_Mothership");       // Select the Mothership
+                                ShipsRemove (SHIPS_CruiserUnderAttack, SHIPS_Mothership);                                // And filter it out
+                                IF (ShipsCount (SHIPS_CruiserUnderAttack) > 0)
+                                        Jump DefendYourself;
+                                ENDIF
+                        ENDIF
+                ELSEIF (ThisTeamIs (TEAM_Destroyers))
+                        IF (UnderAttack (SHIPS_DestroyersUnderAttack))
+                                ShipsSelectClass (SHIPS_Mothership, SHIPS_DestroyersUnderAttack, "CLASS_Mothership");       // Select the Mothership
+                                ShipsRemove (SHIPS_DestroyersUnderAttack, SHIPS_Mothership);                                // And filter it out
+                                IF (ShipsCount (SHIPS_DestroyersUnderAttack) > 0)
+                                        Jump DefendYourself;
+                                ENDIF
+                        ENDIF
+                ELSEIF (ThisTeamIs (TEAM_IonCannonFrigates))
+                        IF (UnderAttack (SHIPS_IonFrigUnderAttack))
+                                ShipsSelectClass (SHIPS_Mothership, SHIPS_IonFrigUnderAttack, "CLASS_Mothership");       // Select the Mothership
+                                ShipsRemove (SHIPS_IonFrigUnderAttack, SHIPS_Mothership);                                // And filter it out
+                                IF (ShipsCount (SHIPS_IonFrigUnderAttack) > 0)
+                                        Jump DefendYourself;
+                                ENDIF
+                        ENDIF
+                ENDIF
+
+                // if some Salvage Corvettes show up, jump to the DefendYourself state to kill them
+                IF (ThisTeamIs (TEAM_Cruiser))
+                        IF (FindEnemiesNearTeam (SHIPS_CruiserL00kingForSCs, 15000))
+                                ShipsSelectType (SHIPS_CruiserFoundSomeSCs, SHIPS_CruiserL00kingForSCs, "SalCapCorvette");
+                                IF ( (ShipsCount (SHIPS_CruiserFoundSomeSCs) > 0) AND (ShipsOrder (SHIPS_CruiserFoundSomeSCs) = 7) )
+                                        Jump DefendYourself;
+                                ENDIF
+                        ENDIF
+                ELSEIF (ThisTeamIs (TEAM_Destroyers))
+                        IF (FindEnemiesNearTeam (SHIPS_DestroyersL00kingForSCs, 15000))
+                                ShipsSelectType (SHIPS_DestroyersFoundSomeSCs, SHIPS_DestroyersL00kingForSCs, "SalCapCorvette");
+                                IF ( (ShipsCount (SHIPS_DestroyersFoundSomeSCs) > 0) AND (ShipsOrder (SHIPS_DestroyersFoundSomeSCs) = 7) )
+                                        Jump DefendYourself;
+                                ENDIF
+                        ENDIF
+                ELSEIF (ThisTeamIs (TEAM_IonCannonFrigates))
+                        IF (FindEnemiesNearTeam (SHIPS_IonFrigL00kingForSCs, 15000))
+                                ShipsSelectType (SHIPS_IonFrigFoundSomeSCs, SHIPS_IonFrigL00kingForSCs, "SalCapCorvette");
+                                IF ( (ShipsCount (SHIPS_IonFrigFoundSomeSCs) > 0) AND (ShipsOrder (SHIPS_IonFrigFoundSomeSCs) = 7) )
+                                        Jump DefendYourself;
+                                ENDIF
+                        ENDIF
+                ENDIF
+        ENDWATCH
+    ENDSTATE AttackPlayerMothership //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+    STATE NullState //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        INIT
+        ENDINIT
+        WATCH
+        ENDWATCH
+    ENDSTATE NullState //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+  
+  
+  ENDFSM Cruiser
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     Cruiser     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+
+
+
+
+
+//ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ     Global Stuff     ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
+INIT
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      FSM creates
+        //
+
+        FSMCreate (FleetIntel, TEAM_FleetIntel);                    // FSM used only for displaying Fleet Intel events; bound to a dummy ship in the MM
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      technology
+        //
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+        // save the level!
+        SaveLevel (11, LSTRING_Savegame);
+
+
+ENDINIT
+
+WATCH
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      location card
+        //
+
+        IFONCE (TRUE)
+                TimerCreateSetStart ("LocationCardTimer", 1);
+        ENDIFONCE
+
+        IF (TimerExpiredDestroy ("LocationCardTimer"))
+                LocationCard (5000, LSTRING_LocationCard);
+        ENDIF
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      fleet intel
+        //
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      in-game events
+        //
+
+
+        // When you come out of hyperspace, start a timer to trigger an in-game Fleet Command event which talks about the jump
+        IFONCE (TRUE)
+                TimerCreateSetStart ("G_FCHyperspaceSuccessful", 5);
+        ENDIFONCE
+
+        // after N07 plays, set a timer to play the Fleet Intel event telling you to defend the Traders
+        IFONCE (VarGet ("G_Nis7Complete") = TRUE)
+                VarSet ("G_N07IsPlaying", FALSE);
+                MusicPlay (B04_EvilEmpire);
+                TimerCreateSetStart ("CreateNISTeamsTimer", 1);
+                TimerCreateSetStart ("G_FIDefendTraders", 4);
+        ENDIFONCE
+
+        // after N08 plays, set a timer to play the Traders event
+        IFONCE (VarGet ("G_Nis8Complete") = TRUE)
+                VarSet ("G_N08IsPlaying", FALSE);
+                UnhideShips(TEAMSHIPS_Traders);
+                TimerCreateSetStart ("G_TradersTalk", 6);
+        ENDIFONCE
+
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      FSM creates
+        //
+
+        IFONCE (TimerExpiredDestroy ("CreateNISTeamsTimer"))
+                FSMCreate (Traders, TEAM_Traders);
+                FSMCreate (Cruiser, TEAM_Cruiser);
+                //FSMCreate (Destroyers, TEAM_Destroyers);
+                //FSMCreate (AssaultFrigates, TEAM_AssaultFrigates);
+                //FSMCreate (IonCannonFrigates, TEAM_IonCannonFrigates);
+
+                // HACK - for now assign everyone to the same FSM
+                FSMCreate (Cruiser, TEAM_Destroyers);
+                //FSMCreate (Cruiser, TEAM_AssaultFrigates);
+                FSMCreate (Cruiser, TEAM_IonCannonFrigates);
+        ENDIFONCE
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      NIS's
+        //
+
+
+        // When Fleet Command is done her rasping, start the widescreen to play N07
+        IFONCE (VarGet ("G_FCDoneRasping") = TRUE)
+                TimerCreateSetStart ("WideScreenInBeforeNIS", 4);
+                wideScreenIn(90);                                   //90 frames == 3 seconds
+                VarCreateSet("G_PlayedN07", TRUE);
+        ENDIFONCE
+
+        // N07 - after the widescreen is done, play the NIS
+        IF (TimerExpiredDestroy("WideScreenInBeforeNIS"))
+                VarCreateSet ("G_PlayNis", 7);
+                VarCreateSet ("G_N07IsPlaying", TRUE);
+                //TimerCreateSetStart ("CreateNISTeamsTimer", 3);
+        ENDIF
+
+
+
+
+//      // TEMPORARY - if the player has a heavy cruiser, set a timer to play N07
+//      IFONCE (FindEnemyShipsOfType(SHIPS_Stuff, "HeavyCruiser"))
+//              TimerCreateSetStart ("PlayN07Timer", 10);
+//      ENDIFONCE
+//
+//      // when the timer is up, play N07
+//      IFONCE (TimerExpiredDestroy ("PlayN07Timer"))
+//              VarCreateSet ("G_PlayNis", 7);
+//      ENDIFONCE
+//
+//      // TEMPORARY - when N07 is complete, set a timer to play N08
+//      IFONCE (VarGet ("G_Nis7Complete"))
+//              TimerCreateSetStart ("PlayN08Timer", 10);
+//      ENDIFONCE
+//
+//      // when the timer is up, play N08
+//      IFONCE (TimerExpiredDestroy ("PlayN08Timer"))
+//              VarCreateSet ("G_PlayNis", 8);
+//      ENDIFONCE
+//
+//
+//      //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      mission objectives
+        //
+
+        IFONCE (VarGet ("G_CreateObjectiveNow") = TRUE)
+                IF (RaceOfHuman () = 0)                             // Player is Kushan
+                        ObjectiveCreate ("DestroyFleet", LSTRING_FIDestroyTaiidanTASKBAR, LSTRING_FIDestroyTaiidanTASKBAR);
+                ELSEIF (RaceOfHuman () = 1)                         // Player is Taiidan
+                        ObjectiveCreate ("DestroyFleet", LSTRING_FIDestroyKushanTASKBAR, LSTRING_FIDestroyKushanTASKBAR);
+                ENDIF
+        ENDIFONCE
+
+        // if all the Taiidan ships are dead, the "DestroyFleet" objective is met
+        IF (VarGet ("G_Nis7Complete") = TRUE)
+                IFONCE ( (ShipsCount (TEAMSHIPS_Cruiser) = 0) AND
+                         (ShipsCount (TEAMSHIPS_Destroyers) = 0) AND
+                         (ShipsCount (TEAMSHIPS_IonCannonFrigates) = 0) )
+                        ObjectiveSet ("DestroyFleet", TRUE);
+                        MusicStop (4);
+                ENDIFONCE
+        ENDIF
+
+        // create the HYPERSPACE objective
+        IF (VarGet ("G_MissionComplete") =TRUE)
+                ObjectiveCreate ("Hyperspace", LSTRING_Hyperspace, LSTRING_Hyperspace);
+        ENDIF
+
+
+        // if the Trader ship dies, the mission is over
+        IF (VarGet ("G_Nis7Complete") = TRUE)
+                IFONCE (ShipsCount (TEAMSHIPS_Traders) = 0)
+                        MissionFailed ();
+                ENDIFONCE
+        ENDIF
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      AI stuffs
+        //
+
+        // find everyone inside the world (for use in many places throughout the script)
+        FindEnemiesInside (VOLUME_WorldSphere, SHIPS_Everyone, 3000);
+        ShipsSelectClass (SHIPS_PlayerMothership, SHIPS_Everyone, "CLASS_Mothership");        // Then filter their asses
+        VarCreateSet ("EveryoneSHIPS", ShipsCount (SHIPS_Everyone));
+        VarCreateSet ("MothershipSHIPS", ShipsCount (SHIPS_PlayerMothership));
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      technology
+        //
+
+
+        IFONCE (TRUE)
+                TimerCreateSetStart ("G_PlayTechEvent", Random (95, 105));
+        ENDIFONCE
+
+        // MISSION 11 Tech stuff: //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        // if the player doesn't have super heavy chassis (because they didn't get it off the Traders in M09)
+        IFONCE ( (NOT TechGet ("RepairTech")) AND (TimerExpiredDestroy ("G_PlayTechEvent")) )
+                TechSetResearch ("RepairTech");
+                VarCreateSet ("G_GivePlayerSuperHeavy", TRUE);
+        ENDIFONCE
+
+
+
+
+        // MISSION 02 Tech stuff: //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        // if player researches Corvette drive, allow Corvette chassis                  // (Build: Light Corvette)
+        IFONCE (TechGet ("MassDrive10Kt"))
+                TechSetResearch ("Chassis2");
+        ENDIFONCE
+
+        // if player researches Corvette chassis, allow Heavy Corvette upgrade          // (Build: Heavy Corvette)
+        IF ((TechGet ("Chassis2")) AND (VarGet ("SetMediumGuns") = FALSE))
+                TechSetResearch ("MediumGuns");
+                VarCreateSet ("SetMediumGuns", TRUE);
+        ENDIF
+
+        // MISSION 01 Tech stuff: //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        // if player researches Fighter chassis, allow Corvette Drive                   // (Build: Repair Corvette)
+        IFONCE (TechGet ("Chassis1"))
+                TechSetResearch ("MassDrive10Kt");
+        ENDIFONCE
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+ENDWATCH
+//ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ     Global Stuff     ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ

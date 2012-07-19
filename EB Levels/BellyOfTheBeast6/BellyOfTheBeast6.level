@@ -1,0 +1,44 @@
+; MissionMan script, Monday, Aug 23 1999, 12:27:15 PM
+; Copyright (c) 1998-99, Relic Entertainment Inc.
+; Multiplayer Level: BellyOfTheBeast6
+; Info: Rings of Plazmodeus (2-7)
+
+[Rings of Plazmodeus (2-7)]
+
+MissionSphere    -1,?,ResourceSphere,0.0,0.0,0.0,30000.0,0.0,ResourceSphere_1.missphere,?
+MissionSphere    1,R1,Mothership,47689.0,75044.0,-20602.0,30000.0,0.0,Mothership_1.missphere,0
+MissionSphere    0,R1,Mothership,47689.0,75044.0,-20602.0,30000.0,0.0,Mothership_0.missphere,0
+Resources    Asteroid,-349043.4,-448445.5,325044.0,Cylinder,AsteroidDust.dist,15,8000.0,55000.0,25.1,35.1,0,?
+Resources    Asteroid,-391066.6,-477080.0,348409.9,Cylinder,AsteroidDust.dist,9,8000.0,55000.0,24.5,32.7,0,?
+Resources    Asteroid,-434978.5,-504020.3,371849.9,Cylinder,AsteroidDust.dist,7,8000.0,55000.0,24.0,32.2,0,?
+Resources    Asteroid,-478479.7,-529964.8,393572.6,Cylinder,AsteroidDust.dist,5,8000.0,55000.0,23.6,29.4,0,?
+Resources    Asteroid,-522865.3,-554504.6,414510.1,Cylinder,AsteroidDust.dist,3,8000.0,55000.0,22.5,28.8,0,?
+Resources    Asteroid,-567629.8,-578922.9,435009.6,Cylinder,AsteroidDust.dist,2,8000.0,55000.0,20.6,27.5,0,?
+Resources    Asteroid,-613497.6,-602507.3,453856.8,Cylinder,AsteroidDust.dist,1,6000.0,55000.0,19.2,27.2,0,?
+MissionSphere    2,R1,Mothership,47689.0,75044.0,-20602.0,30000.0,0.0,Mothership_2.missphere,0
+MissionSphere    3,R1,Mothership,47689.0,75044.0,-20602.0,30000.0,0.0,Mothership_3.missphere,0
+MissionSphere    4,R1,Mothership,47689.0,75044.0,-20602.0,30000.0,0.0,Mothership_4.missphere,0
+MissionSphere    5,R1,Mothership,47689.0,75044.0,-20602.0,30000.0,0.0,Mothership_5.missphere,0
+
+Lighting    high_orbit.HSF, 15
+Background    high_orbit.btg, 90
+smDepthCueRadius    50000
+smDepthCueStartRadius    20000
+smCircleBorder    150000
+smZoomMax    300000
+smZoomMin    30000
+smInitialDistance    75000
+smUniverseSizeX    250000
+smUniverseSizeZ    250000
+smUniverseSizeY    250000
+ExcludeShips    P1,All
+ExcludeShips    P2,All
+ExcludeShips    P3,All
+ExcludeShips    Traders,All
+ExcludeShips    R1,LightDefender
+ExcludeShips    R2,LightDefender
+ExcludeShips    R1,HeadShotAsteroid
+ExcludeShips    R2,HeadShotAsteroid
+ExcludeDerelict    ALL
+IncludeDerelict    Crate
+SongNumber    -1

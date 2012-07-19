@@ -1,0 +1,58 @@
+Description     The ancients knew that despoilers would battle savagely over the bountiful riches of their beloved rings, so they left them defended!
+Description
+Description     Settings: default.
+
+Font            Arial_b12.hff
+Color           255, 200, 0
+DropShadow      Yes
+
+
+; DEFAULT SETTINGS:
+type.flag                      BIT1     ; destroy mothership
+type.flagNeeded                BIT1     ; FLAG: destroy mothership
+
+;type.flag                      BIT2     ; capture capital ship
+type.flagNeeded                BIT2     ; FLAG: capture capital ship
+
+type.flag                      BIT3     ; research
+type.flagNeeded                BIT3     ; FLAG: research
+
+;BIT4 = bounties - Obselete!
+
+type.flag                      BIT5     ; enable harvesting
+type.flagNeeded                BIT5     ; FLAG: enable harvesting
+
+;type.flag                      BIT6     ; resouce injections
+type.flagNeeded                BIT6     ; FLAG: resource injections
+
+;type.flag                      BIT7     ; resouce lump sum
+type.flagNeeded                BIT7     ; FLAG: resource lump sum
+
+;BIT8 = password protected - only let the user change this
+
+type.flag                      BIT9     ; unit caps
+type.flagNeeded                BIT9     ; FLAG: unit caps
+
+type.flag                      BIT10    ; fuel burn
+type.flagNeeded                BIT10    ; FLAG: fuel burn
+
+type.flag                      BIT11    ; allied victory
+type.flagNeeded                BIT11    ; FLAG: allied victory
+
+type.flag                      BIT12    ; crates
+type.flagNeeded                BIT12    ; FLAG: crates
+
+;type.flag                      BIT13    ; carrier only
+;type.flagNeeded                BIT13    ; FLAG: carrier only
+
+type.flag                      BIT14    ; hyperspace
+type.flagNeeded                BIT14    ; FLAG: hyperspace
+
+type.numComputers              0
+type.startingFleet             1
+type.bountySize                3        ; turn off bounties (3 = off)
+type.startingResources         1
+;type.resourceInjectionInterval 14400
+;type.resourceInjectionsAmount  2000
+;type.resourceLumpSumTime       19200
+;type.resourceLumpSumAmount     2000

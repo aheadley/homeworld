@@ -1,0 +1,4027 @@
+//
+//  MISSION16 - Final Battle
+//
+//
+
+
+    LOCALIZATION //ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
+
+        LSTRING_LCLocationCard
+            "&H &I &I &G &A &R &A"
+            "&H &I &I &G &A &R &A"
+            "&H &I &I &G &A &R &A"
+            "&H &I &I &G &A &R &A"
+            "&H &I &I &G &A &R &A"
+
+        LSTRING_FIKaranMindControlled
+            "We've lost Karan.  Fleet Command is gone.  Emergency biotech teams are working to keep her alive."
+            "Nous avons perdu Karan. Il n'y a plus d'AmirautÈ. Les Èquipes d'urgence de biotechniciens se tuent ‡ la maintenir en vie."
+            "Wir haben Karan verloren. Das Flottenkommando steht nicht mehr zur Verf¸gung. Notfall-Teams der Biotech-Abteilung versuchen, sie am Leben zu erhalten."
+            "Hemos perdido Karan. El mando de la flota ha desaparecido. Los equipos biotÈcnicos de emergencia intentan mantenerla con vida."
+			"Abbiamo perso Karan, il comando della flotta Ë stato distrutto. Delle squadre biotecnologiche d'emergenza stanno cercando di tenerla in vita."
+
+        LSTRING_FIOhBoyHereWeGoR1
+            "The collision asteroid must have served its purpose as a delay tactic.  There is a large number of Taiidan ships located here.\n\nA Mothership-class vessel is among them.\n\nAll of these forces must be destroyed.  Good luck."
+            "Le choc avec l'asteroÔde devait Ítre efficace comme moyen dilatoire. Un nombre important de vaisseaux Taiidan est basÈ ici.\n\nEt parmi eux une unitÈ de type Vaisseau MËre.\n\nCes forces doivent Ítre dÈtruites dans leur intÈgralitÈ. Bonne chance."
+            "Der Kollisionsasteroid d¸rfte seinen Zweck als Hinhaltetaktik erf¸llt haben. Es befinden sich viele Taiidan-Schiffe an dieser Stelle.\n\nDarunter ist auch ein Schiff der Mutterschiff-Klasse.\n\nDiese Streitkr‰fte m¸ssen ausnahmslos alle vernichtet werden. Viel Gl¸ck."
+            "El asteroide ha cumplido su misiÛn como t·ctica de distracciÛn. Hay muchas naves taiidanas aquÌ.\n\nEntre ellas hay una de la clase Nave nodriza.\n\nEs necesario destruir todas sus fuerzas. °Suerte!"
+			"L'asteroide Ë servito ai nostri nemici per prendere tempo. C'Ë una grossa flotta di Taiidan in zona.\n\nComprende anche una Nave Madre.\n\nDevi distruggere tutte le forze nemiche, buona fortuna."
+
+        LSTRING_FIOhBoyHereWeGoR2
+            "The collision asteroid must have served its purpose as a delay tactic.  There is a large number of Kushan ships located here.\n\nA Mothership-class vessel is among them.\n\nAll of these forces must be destroyed.  Good luck."
+            "Le choc avec l'asteroÔde devait Ítre efficace comme moyen dilatoire. Un nombre important de vaisseaux Kushan est basÈ ici.\n\nEt parmi eux une unitÈ de type Vaisseau MËre.\n\nCes forces doivent Ítre dÈtruites dans leur intÈgralitÈ. Bonne chance."
+            "Der Kollisionsasteroid d¸rfte seinen Zweck als Hinhaltetaktik erf¸llt haben. Es befinden sich viele Kushan-Schiffe an dieser Stelle.\n\nDarunter ist auch ein Schiff der Mutterschiff-Klasse.\n\nDiese Streitkr‰fte m¸ssen ausnahmslos alle vernichtet werden. Viel Gl¸ck."
+            "El asteroide ha cumplido su misiÛn como t·ctica de distracciÛn. Hay muchas naves kushanas aquÌ.\n\nEntre ellas hay una de la clase Nave nodriza.\n\nEs necesario destruir todas sus fuerzas. °Suerte!"
+			"L'asteroide Ë servito ai nostri nemici per prendere tempo. C'Ë una grossa flotta di Kushan in zona.\n\nComprende anche una Nave Madre.\n\nDevi distruggere tutte le forze nemiche, buona fortuna."
+
+        LSTRING_FIReinforcements
+            "Enemy reinforcements emerging from hyperspace."
+            "Des renforts ennemis surgissent de l' hyperespace."
+            "Feindliche Verst‰rkung aus dem Hyperraum eingetroffen."
+            "El enemigo recibe refuerzos desde el hiperespacio."
+			"Dei rinforzi nemici sono appena usciti dall'Iperspazio."
+
+        LSTRING_FIOverwhelmed
+            "Another fleet is coming out of Hyperspace right on top of us.  We are being overwhelmed!"
+            "Une nouvelle flotte sort de l'Hyperespace juste au-dessus de nous. Nous sommes submergÈs !"
+            "Direkt vor uns kommt eine weitere Flotte aus dem Hyperraum. Wir sind hoffnungslos in Unterzahl!"
+            "Otra flota est· saliendo del hiperespacio justo encima de nosotros. Nos superan en n˙mero."
+			"Una nuova flotta Ë uscita dall'Iperspazio proprio di fronte a noi. Sono troppi!"
+
+        LSTRING_DEYayImHereButHurtR1
+            "This is Captain Elson.  We have been battling reinforcement fleets to get here and have lost many ships already.\n\nThe Emperor's flagship is here.  Together we can defeat him and the Taiidan fleet.  I am placing squadrons Cor and Jasah under your command."
+            "Ici le Capitaine Elson. Nous avons d˚ nous battre contre les flottes de renfort pour arriver ici et nous avons perdu de nombreux vaisseaux.\n\nLe vaisseau-amiral de l'Empereur est ici. GroupÈs, la victoire contre lui et la flotte Taiidan est ‡ notre portÈe. Je vous confie le commandement des escadrons Cor et Jasah."
+            "Hier spricht Captain Elson. Wir haben uns mit Verst‰rkungsflotten herumgeschlagen, um hierher zu gelangen, und bereits viele Schiffe verloren.\n\nDas Flaggschiff des Imperators ist hier. Gemeinsam kˆnnen wir sowohl ihn als auch die Taiidan-Flotte vernichten. Ich unterstelle die Geschwader Cor und Jasah eurem Kommando."
+            "AquÌ el Capit·n Elson. Hemos combatido contra flotas de refuerzo para llegar hasta aquÌ y ya hemos perdido muchas naves.\n\nLa nave insignia del Emperador est· aquÌ. Juntos lo derrotaremos, a Èl y a la flota taiidana. Pongo los escuadrones Cor y Jasah bajo tu mando."
+			"Parla il Capitano Elson: abbiamo dovuto combattere con i rinforzi nemici per arrivare qui, e abbiamo gi‡ subito molte perdite.\n\nL'Ammiraglia dell'Imperatore Ë qui: insieme potremo distruggerla, e anche la flotta di Taiidan. Sto trasferendo sotto il tuo comando gli squadroni Cor e Jasah."
+
+        LSTRING_DEYayImHereButHurtR2
+            "This is Captain Elson.  We have been battling reinforcement fleets to get here and have lost many ships already.\n\nThe Emperor's flagship is here.  Together we can defeat him and the Kushan fleet.  I am placing squadrons Cor and Jasah under your command."
+            "Ici le Capitaine Elson. Nous avons d˚ nous battre contre les flottes de renfort pour arriver ici et nous avons perdu de nombreux vaisseaux.\n\nLe vaisseau-amiral de l'Empereur est ici. GroupÈs, la victoire contre lui et la flotte Kushan est ‡ notre portÈe. Je vous confie le commandement des escadrons Cor et Jasah."
+            "Hier spricht Captain Elson. Wir haben uns mit Verst‰rkungsflotten herumgeschlagen, um hierher zu gelangen, und bereits viele Schiffe verloren.\n\nDas Flaggschiff des Imperators ist hier. Gemeinsam kˆnnen wir sowohl ihn als auch die Kushan-Flotte vernichten. Ich unterstelle die Geschwader Cor und Jasah eurem Kommando."
+            "AquÌ el Capit·n Elson. Hemos combatido contra flotas de refuerzo para llegar hasta aquÌ y ya hemos perdido muchas naves.\n\nLa nave insignia del Emperador est· aquÌ. Juntos lo derrotaremos, a Èl y a la flota kushana. Pongo los escuadrones Cor y Jasah bajo tu mando."
+			"Parla il Capitano Elson: abbiamo dovuto combattere con i rinforzi nemici per arrivare qui, e abbiamo gi‡ subito molte perdite.\n\nL'Ammiraglia dell'Imperatore Ë qui: insieme potremo distruggerla, e anche la flotta di Taiidan. Sto trasferendo sotto il tuo comando gli squadroni Cor e Jasah."
+
+        LSTRING_FIHereIsMothership
+            "Here is the Emperor's flagship.  It must be destroyed."
+            "Voici le vaisseau-amiral de l'Empereur. Sa destruction est impÈrative."
+            "Hier ist das Flaggschiff des Imperators. Es muss zerstˆrt werden."
+            "AquÌ est· la nave insignia del Emperador. Es necesario destruirla."
+			"Ecco l'Ammiraglia dell'Imperatore... Deve essere distrutta."
+
+        LSTRING_FCHoneyImHome
+            "...Fleet Command back online.  The Emperor is gone."
+            "ÖAmirautÈ de retour. C'est fini pour l'Empereur."
+            "... Flottenkommando ist wieder online. Der Imperator wurde vernichtet."
+            "...El mando de la flota vuelve a estar operativo. El Emperador ha desaparecido."
+			"Ö Il comando della flotta Ë di nuovo operativo. L'Imperatore Ë andato."
+
+        LSTRING_BTCouncilHere
+            "We have brought the Council.  This war is over."
+            "Le Conseil est venu avec nous. Cette guerre est terminÈe."
+            "Wir haben den Rat zusammengeholt. Dieser Krieg ist vorbei."
+            "Hemos llegado a un acuerdo. La guerra ha terminado."
+			"Abbiamo riportato il Concilio. La guerra Ë finita."
+
+
+        LSTRING_OBEradicate
+            "Eradicate Enemy Forces"
+            "…radiquer Forces Ennemies"
+            "Feindliche Streitkr‰fte vernichten"
+			"Acaba con las fuerzas enemigas"
+			"Annienta le forze nemiche"
+
+        LSTRING_OBKillMothership
+            "Destroy Emperor's Flagship"
+            "DÈtruire B‚timent de l'Empereur"
+            "Das Flaggschiff des Imperators zerstˆren"
+			"Destruye la nave insignia del Emperador"
+			"Distruggi l'ammiraglia dell'Imperatore"
+
+        LSTRING_Objective1
+            "Destroy ALL SHIPS!"
+            "DÈtruisez tous les ennemis!"
+            "ALLE SCHIFFE vernichten!"
+			"°Destruye TODAS LAS NAVES!"
+			"Distruggi TUTTE LE ASTRONAVI!!!!"
+
+        LSTRING_LevelSave
+            "16 - Hiigara"
+            "16 - Hiigara"
+            "16 - Hiigara"
+            "16 - Hiigara"
+            "16 - Hiigara"
+
+
+    ENDL //ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
+
+
+#define MASTERTEAM          TEAM_ImperialFlagship
+#define MASTERTEAMSHIPS     TEAMSHIPS_ImperialFlagship
+#include "speechevent.h"
+#include "CommandDefs.h"
+#include "AIFeatures.h"
+#include "Utilities.kash"
+#include "Attributes.h"
+//-----------------------------------------------------------------------------
+//    Name        : Events
+//    Description : Location for all the fleet intel events
+//-----------------------------------------------------------------------------
+FSM Events
+
+    States LocationCard, Wait1, LBXIn1, KaranMindControlled, OhBoyHereWeGo, EmperorsShip,
+           Reinforcements, Overwhelmed, YayImHereButHurt, HeresTheEmperor, HereIsMothership,
+           LBXIn3, LBXIn2, LBXIn4, HoneyImHome, CouncilHere, NullState;
+
+    INIT
+        VarCreateSet("AssaultDead", 0);
+        IntelEventNotEnded();
+        JUMP LocationCard;
+    ENDINIT
+    WATCH
+        IFONCE (1)
+            ToggleActor(ACTOR_FLEETCOMMAND_FLAG, FALSE);
+        ENDIFONCE
+
+        IFONCE (RenderedShips(TEAMSHIPS_AssaultCruiser1, 3))
+            MusicPlay(15);
+        ENDIFONCE
+
+        IFONCE ((VarGet("G_Assaults") == 2) || MsgReceived("BG2Attacking"))
+            TimerCreateSetStart("Defector", Random(30, 60));
+        ENDIFONCE
+
+        IF (TimerExpiredDestroy("Defector"))
+            MsgSendAll("InComesDefector");
+            MusicPlay(11);
+            JUMP Overwhelmed;
+        ENDIF
+        IF (MsgReceived("BigWave"))
+            JUMP LBXIn3;
+        ENDIF
+        IF (MsgReceived("EmperorDead"))
+            JUMP LBXIn2;
+        ENDIF
+
+        IF (MsgReceived("AllAssaultDied"))
+            VarInc("AssaultDead");
+        ENDIF
+
+        IFONCE (VarGet("AssaultDead") == 1)
+            MusicStop(4);
+        ENDIFONCE
+
+        //if both reinforcements and second assault are dead
+        IFONCE ((VarGet("AssaultDead") == 2) &&
+                (!ShipsCount(TEAMSHIPS_BG1HeavyCruiser)) &&
+                (!ShipsCount(TEAMSHIPS_BG1Destroyer1)) &&
+                (!ShipsCount(TEAMSHIPS_BG1Destroyer2)) &&
+                (!ShipsCount(TEAMSHIPS_BG1Destroyer3)) &&
+                (!ShipsCount(TEAMSHIPS_BG1Frigates)) &&
+                (!ShipsCount(TEAMSHIPS_BG1IonFrigates)) &&
+                (!ShipsCount(TEAMSHIPS_BG2HeavyCruiser)) &&
+                (!ShipsCount(TEAMSHIPS_BG2Frigates)) &&
+                (!ShipsCount(TEAMSHIPS_BG2IonFrigates)))
+            MusicStop(4);
+            JUMP LBXIn4;
+        ENDIFONCE
+
+        IF (ShipsCount(TEAMSHIPS_ImperialFlagship))
+                IF (VarGet("G_CLICK_Eradicate"))
+                    VarDestroy("G_CLICK_Eradicate");
+                    VarCreateSet("Replay", TRUE);
+                    OpenSensors(100000);
+                    PauseUniverse();
+                    JUMP OhBoyHereWeGo;
+                ELSEIF (VarGet("G_CLICK_Flagship"))
+                    VarDestroy("G_CLICK_Flagship");
+                    VarCreateSet("Replay", TRUE);
+                    OpenSensors(100000);
+                    PauseUniverse();
+                    JUMP HereIsMothership;
+                ENDIF
+         ENDIF
+    ENDWATCH
+
+//    "The Warrior Noo we meet again"
+//    "You have come too far for your own good"
+//    "Prepare to Die"
+//     buknaked
+//     dino
+//     robb
+        //---------------------------
+        // Events: LocationCard
+        // Wait a little for location card
+        STATE LocationCard
+            INIT
+                TimerCreateSetStart("LocationCardTimer", 2);
+            ENDINIT
+            WATCH
+                IF (TimerExpiredDestroy("LocationCardTimer"))
+                    LocationCard(5000, LSTRING_LCLocationCard);
+                    JUMP Wait1;
+                ENDIF
+            ENDWATCH
+        ENDSTATE LocationCard
+
+        //---------------------------
+        // Events: Wait1
+        // Wait a little while everything launches
+        STATE Wait1
+            INIT
+                TimerCreateSetStart("Launching", 8);
+            ENDINIT
+            WATCH
+                IF (TimerExpiredDestroy("Launching"))
+                    JUMP KaranMindControlled;
+                ENDIF
+            ENDWATCH
+        ENDSTATE Wait1
+
+        //---------------------------
+        // Events: LBXIn1
+        // Letterbox come in...
+        // Note this LBX event is skipped now
+        STATE LBXIn1
+            INIT
+                wideScreenIn(90);
+                TimerCreateSetStart("LBXTimer", 3);
+            ENDINIT
+            WATCH
+                IF ((TimerRemaining("LBXTimer") == 0))
+                    OpenSensors(100000);
+                    PauseUniverse();
+                    JUMP KaranMindControlled;
+                ENDIF
+            ENDWATCH
+        ENDSTATE LBXIn1
+
+
+        //---------------------------
+        // Events: KaranMindControlled
+        // Karan's gone!  Oh my god!
+        STATE KaranMindControlled
+            INIT
+                SpeechEvent(M16_Intel_LostKaran, 0);
+//                SubtitleSimulate(1, 7000, LSTRING_FIKaranMindControlled);
+                ObjectiveCreate("Eradicate", LSTRING_OBEradicate, LSTRING_FIKaranMindControlled);
+            ENDINIT
+            WATCH
+                IF (IntelEventEnded())
+                    wideScreenIn(90);
+                    TimerCreateSetStart("LBX", 3);
+                ENDIF
+                IF (TimerExpiredDestroy("LBX"))
+                    OpenSensors(100000);
+                    PauseUniverse();
+                    JUMP OhBoyHereWeGo;
+                ENDIF
+            ENDWATCH
+        ENDSTATE KaranMindControlled
+
+
+        //---------------------------
+        // Events: OhBoyHereWeGo
+        // Time to some major ass kicken
+        STATE OhBoyHereWeGo
+            INIT
+                IF (RaceOfHuman())
+                    SpeechEvent(M16_Intel_CollisionAsteroidTaiidan, 0);
+//                    SubtitleSimulate(1, 7000, LSTRING_FIOhBoyHereWeGoR2);
+                ELSE
+                    SpeechEvent(M16_Intel_CollisionAsteroidKushan, 0);
+//                    SubtitleSimulate(1, 7000, LSTRING_FIOhBoyHereWeGoR1);
+                ENDIF
+            ENDINIT
+            WATCH
+                VarCreateSet("IntelEvent", IntelEventEnded());
+                IF (VarGet("IntelEvent") == 2)
+                    UnPauseUniverse();
+                    IF (!VarGet("Replay"))
+                        wideScreenOut(30);
+                    ELSE
+                        VarDestroy("Replay");
+                    ENDIF
+                    CloseSensors(TRUE);
+                    JUMP NullState;
+                ELSEIF (VarGet("IntelEvent"))
+                    JUMP EmperorsShip;
+                ENDIF
+            ENDWATCH
+        ENDSTATE OhBoyHereWeGo
+
+        //---------------------------
+        // Events: EmperorsShip
+        // FI talks about the Emperors Ship being among the baddies
+        STATE EmperorsShip
+            INIT
+                SpeechEvent(M16_Intel_EmperorsShip, 0);
+                TutSetPointerTargetShip("Flag", TEAMSHIPS_ImperialFlagShip);
+            ENDINIT
+            WATCH
+                IF (IntelEventEnded())
+                    TutRemoveAllPointers();
+                    UnPauseUniverse();
+                    IF (!VarGet("Replay"))
+                        wideScreenOut(30);
+                    ELSE
+                        VarDestroy("Replay");
+                    ENDIF
+                    CloseSensors(TRUE);
+                    JUMP NullState;
+                ENDIF
+            ENDWATCH
+        ENDSTATE EmperorsShip
+
+
+        //---------------------------
+        // Events: LBXIn3
+        // Letterbox come in...
+        STATE LBXIn3
+            INIT
+                wideScreenIn(90);
+                TimerCreateSetStart("LBXTimer", 3);
+            ENDINIT
+            WATCH
+                IF ((TimerRemaining("LBXTimer") == 0))
+                    OpenSensors(120000);
+                    PauseUniverse();
+                    JUMP Reinforcements;
+                ENDIF
+            ENDWATCH
+        ENDSTATE LBXIn3
+
+
+        //---------------------------
+        // Events: Reinforcements
+        // More Ships! Agh!
+        STATE Reinforcements
+            INIT
+                SpeechEvent(M16_Intel_EnemyReinforcements, 0);
+//                SubtitleSimulate(1, 7000, LSTRING_FIReinforcements);
+                TutSetPointerTargetShip("Reinforcements", SHIPS_Reinforcements);
+            ENDINIT
+            WATCH
+                VarCreateSet("Intel", IntelEventEnded());
+                IF (VarGet("Intel") == 1)
+                    TimerCreateSetStart("Sinkin", 3);
+                ELSEIF (TimerExpiredDestroy("Sinkin") ||
+                        (VarGet("Intel") == 2))
+                    CloseSensors(TRUE);
+                    UnPauseUniverse();
+                    wideScreenOut(30);
+                    TutRemoveAllPointers();
+                    VarDestroy("Intel");
+                    JUMP NullState;
+                ENDIF
+            ENDWATCH
+        ENDSTATE Reinforcements
+
+
+        //---------------------------
+        // Events: Overwhelmed
+        // Too Many!  Too Many!!!
+        STATE Overwhelmed
+            INIT
+                SpeechEvent(M16_Intel_AnotherFleet, 0);
+//                SubtitleSimulate(1, 7000, LSTRING_FIOverwhelmed);
+            ENDINIT
+            WATCH
+                IF (IntelEventEnded())
+                    JUMP YayImHereButHurt;
+                ENDIF
+            ENDWATCH
+        ENDSTATE Overwhelmed
+
+
+        //---------------------------
+        // Events: YayImHereButHurt
+        // Defector comes to save the day
+        STATE YayImHereButHurt
+            INIT
+                IntelEventNotEnded();
+                SoundEvent(262);
+                SpeechEvent(M16_Defector_CaptainElson, 0);
+            ENDINIT
+            WATCH
+                IF (IntelEventEnded())
+                    JUMP HeresTheEmperor;
+                ENDIF
+            ENDWATCH
+        ENDSTATE YayImHereButHurt
+
+        //---------------------------
+        // Events: HeresTheEmperor
+        // Defector tells the player where the emperor is
+        STATE HeresTheEmperor
+            INIT
+                IF (RaceOfHuman())
+                    SpeechEvent(M16_Defector_EmperorTaiidan, 0);
+                ELSE
+                    SpeechEvent(M16_Defector_EmperorKushan, 0);
+                ENDIF
+                TimerCreateSetStart("LBX", 3);
+                TimerCreateSetStart("Focus", 7);
+                TimerCreateSetStart("Cor", 8);
+                TimerCreateSetStart("Jassah", 9);
+            ENDINIT
+            WATCH
+                IF (TimerExpiredDestroy("LBX"))
+                    WideScreenIn(90);
+                ENDIF
+                IF (TimerExpiredDestroy("Focus"))
+                    ShipsAdd(SHIPS_Focus, TEAMSHIPS_DefectorFrigates);
+                    ShipsAdd(SHIPS_Focus, TEAMSHIPS_DefectorMissileDestroyers);
+                    TutCameraFocus(SHIPS_Focus);
+                ENDIF
+                IF (TimerExpiredDestroy("Cor"))
+                    tutSetPointerTargetShip("Cor", TEAMSHIPS_DefectorFrigates);
+                    //MsgSend(TEAM_DefectorFrigates, "GiveOver");                   // Commented out by edaly, new message below:
+                    VarCreateSet("G_GiveOverFrigates", TRUE);
+                ENDIF
+                IF (TimerExpiredDestroy("Jassah"))
+                    tutSetPointerTargetShip("Jassah", TEAMSHIPS_DefectorMissileDestroyers);
+                    //MsgSend(TEAM_DefectorMissileDestroyers, "GiveOver");
+                    VarCreateSet("G_GiveOverMissile", TRUE);
+                ENDIF
+                IF (IntelEventEnded())
+                    IF (!VarGet("G_GiveOverFrigates"))
+                        VarCreateSet("G_GiveOverFrigates", TRUE);
+                    ENDIF
+                    IF (!VarGet("G_GiveOverMissile"))
+                        VarCreateSet("G_GiveOverMissile", TRUE);
+                    ENDIF
+                    TutCameraFocusCancel();
+                    widescreenOut(90);
+                    tutRemoveAllPointers();
+                    JUMP NullState;
+                ENDIF
+            ENDWATCH
+        ENDSTATE HeresTheEmperor
+
+
+        //---------------------------
+        // Events: LBXIn4
+        // Letterbox in...
+        STATE LBXIn4
+            INIT
+                TimerCreateSetStart("LBXTimer", 12);
+            ENDINIT
+            WATCH
+                IF ((TimerRemaining("LBXTimer") == 3))
+                    WideScreenIn(90);
+                ENDIF
+                IF ((TimerRemaining("LBXTimer") == 0))
+                    PauseUniverse();
+                    OpenSensors(100000);
+                    JUMP HereIsMothership;
+                ENDIF
+            ENDWATCH
+        ENDSTATE LBXIn4
+
+
+        //---------------------------
+        // Events: HereIsMothership
+        // Points out where the enemy mothership is
+        STATE HereIsMothership
+            INIT
+                SpeechEvent(M16_Intel_DestroyFlagship, 0);
+//                SubtitleSimulate(1, 7000, LSTRING_FIHereIsMothership);
+                ObjectiveCreate("Flagship", LSTRING_OBKillMothership, LSTRING_FIHereIsMothership);
+                TutSetPointerTargetShip("Flag", TEAMSHIPS_ImperialFlagShip);
+                PingAddShips(TEAMSHIPS_ImperialFlagShip, "Moship");
+            ENDINIT
+            WATCH
+                IF (IntelEventEnded())
+                    CloseSensors(TRUE);
+                    UnPauseUniverse();
+                    IF (!VarGet("Replay"))
+                        WideScreenOut(30);
+                    ELSE
+                        VarDestroy("Replay");
+                    ENDIF
+                    TutRemoveAllPointers();
+                    JUMP NullState;
+                ENDIF
+            ENDWATCH
+        ENDSTATE HereIsMothership
+
+
+        //---------------------------
+        // Events: LBXIn2
+        // Letterbox come in...
+        STATE LBXIn2
+            INIT
+                TimerCreateSetStart("LBXTimer", 12);
+            ENDINIT
+            WATCH
+                IF ((TimerRemaining("LBXTimer") == 3))
+                    WideScreenIn(90);
+                ENDIF
+                IF ((TimerRemaining("LBXTimer") == 0))
+                    JUMP HoneyImHome;
+                ENDIF
+            ENDWATCH
+        ENDSTATE LBXIn2
+
+
+        //---------------------------
+        // Events: HoneyImHome
+        // Fleet command is back online
+        STATE HoneyImHome
+            INIT
+                ToggleActor(ACTOR_FLEETCOMMAND_FLAG, TRUE);
+                SpeechEvent(M16_Fleet_BackOnline, 0);
+                PingRemove("Moship");
+//                SubtitleSimulate(1, 7000, LSTRING_FCHoneyImHome);
+            ENDINIT
+            WATCH
+                IF (IntelEventEnded())
+                    MsgSendAll("CouncilComeOnIn");
+                    TimerCreateSetStart("CouncilFocusTimer1", 5);
+                    TimerCreateSetStart("CouncilFocusTimer2", 16);
+                    TimerCreateSetStart("CouncilSpeak", 10);
+                    TimerCreateSetStart("CouncilTimer", 20);
+                ENDIF
+
+                IF (TimerExpiredDestroy("CouncilFocusTimer1"))
+                    TutCameraFocusFar(TEAMSHIPS_Council3);
+                    DisablePlayer(TRUE);
+                ENDIF
+
+                IF (TimerExpiredDestroy("CouncilSpeak"))
+                    JUMP CouncilHere;
+                ENDIF
+            ENDWATCH
+        ENDSTATE HoneyImHome
+
+
+        //---------------------------
+        // Events: CouncilHere
+        // The council arrives to look at the dust settling
+        STATE CouncilHere
+            INIT
+                SpeechEvent(M16_Traders_BroughtTheCouncil, 0);
+//                SubtitleSimulate(1, 7000, LSTRING_BTCouncilHere);
+            ENDINIT
+            WATCH
+                IF (TimerExpiredDestroy("CouncilFocusTimer2"))
+                    ShipsAdd(SHIPS_CouncilFocus, TEAMSHIPS_Council3);
+                    ShipsAdd(SHIPS_CouncilFocus, TEAMSHIPS_Council9);
+                    TutCameraFocusFar(SHIPS_CouncilFocus);
+                ENDIF
+
+                IF (TimerExpiredDestroy("CouncilTimer"))
+                    ShipsAdd(SHIPS_Council, TEAMSHIPS_Council1);
+                    ShipsAdd(SHIPS_Council, TEAMSHIPS_Council2);
+                    ShipsAdd(SHIPS_Council, TEAMSHIPS_Council3);
+                    ShipsAdd(SHIPS_Council, TEAMSHIPS_Council4);
+                    ShipsAdd(SHIPS_Council, TEAMSHIPS_Council5);
+                    ShipsAdd(SHIPS_Council, TEAMSHIPS_Council6);
+                    ShipsAdd(SHIPS_Council, TEAMSHIPS_Council7);
+                    ShipsAdd(SHIPS_Council, TEAMSHIPS_Council8);
+                    ShipsAdd(SHIPS_Council, TEAMSHIPS_Council9);
+                    TutCameraFocusFar(SHIPS_Council);
+                ENDIF
+                IF (IntelEventEnded())
+                    TimerCreateSetStart("MissionCompleteTimer", 14);
+                    TimerCreateSetStart("FadeOut", 9);
+                ENDIF
+                IF (TimerExpiredDestroy("FadeOut"))
+                    FadeToWhite();
+                ENDIF
+                IF (TimerExpiredDestroy("MissionCompleteTimer"))
+                    HoldHyperspaceWindow(FALSE);
+                    DisablePlayer(FALSE);
+                    MissionCompleted();
+                    JUMP NullState;
+                ENDIF
+            ENDWATCH
+        ENDSTATE CouncilHere
+
+
+        //---------------------------
+        // Events: NullState
+        // Nothing happens here
+        STATE NullState
+            INIT
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE NullState
+
+ENDFSM Events
+
+
+//=============================================================================
+//    Utility FSMs
+//=============================================================================
+//-----------------------------------------------------------------------------
+//    Name        : GiveToAI
+//    Description : Gives the team over to the computer player
+//-----------------------------------------------------------------------------
+FSM GiveToAI
+
+    States Give, Given;
+
+    INIT
+        JUMP Give;
+    ENDINIT
+    WATCH
+        IFONCE (TeamCount() == 0)
+            JUMP Given;
+        ENDIFONCE
+    ENDWATCH
+
+        //---------------------------
+        // GiveToAI: Give
+        // Gives the ship to the AI
+        STATE Give
+            INIT
+                TeamGiveToAI();
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE Give
+
+        //---------------------------
+        // GiveToAI: Given
+        // Nothing happens here
+        STATE Given
+            INIT
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE Given
+
+ENDFSM GiveToAI
+
+//-----------------------------------------------------------------------------
+//    Name        : Council
+//    Description : Council hyperspacing in stuff
+//-----------------------------------------------------------------------------
+FSM Council
+
+    States SetDelays, HyperspaceOut, HyperspaceIn, NullState;
+
+    INIT
+        TeamAttributesSet(ATTRIBUTES_Defector);
+        TeamAttributesSet(ATTRIBUTES_StartInHS);
+        JUMP HyperspaceOut;
+    ENDINIT
+    WATCH
+        IFONCE (TeamCount() == 0)
+            //We shall judge in the end
+            JUMP NullState;
+        ENDIFONCE
+    ENDWATCH
+
+        //---------------------------
+        // Council: HyperspaceOut
+        // Team hyperspaces out
+        STATE HyperspaceOut
+            INIT
+                TeamHyperspaceOut();
+            ENDINIT
+            WATCH
+                IF (MsgReceived("CouncilComeOnIn"))
+                    JUMP SetDelays;
+                ENDIF
+            ENDWATCH
+        ENDSTATE HyperspaceOut
+
+        //---------------------------
+        // Council: SetDelays
+        // Sets the Delays for hyperspacing in
+        STATE SetDelays
+            INIT
+                IF (ThisTeamIs(TEAM_Council3))
+                    TimerCreateSetStart("Delay", 1);
+                ELSEIF (ThisTeamIs(TEAM_Council9))
+                    TimerCreateSetStart("Delay", 13);
+                ELSE
+                    TimerCreateSetStart("Delay", Random(16,19));
+                ENDIF
+            ENDINIT
+            WATCH
+                IF (TimerExpiredDestroy("Delay"))
+                    JUMP HyperspaceIn;
+                ENDIF
+            ENDWATCH
+        ENDSTATE SetDelays
+
+        //---------------------------
+        // Council: HyperspaceIn
+        // Council hyperspaces in
+        STATE HyperspaceIn
+            INIT
+                IF (!(ThisTeamIs(TEAM_Council3) || ThisTeamIs(TEAM_Council9)))
+                    HoldHyperspaceWindow(TRUE);
+                ENDIF
+                TeamHyperspaceIn(THISTEAMSPOINT);
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE HyperspaceIn
+
+
+        //---------------------------
+        // Council: NullState
+        // Nothing happens here
+        STATE NullState
+            INIT
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE NullState
+
+ENDFSM Council
+
+//-----------------------------------------------------------------------------
+//    Name        : Resource
+//    Description : Resources and stuff
+//-----------------------------------------------------------------------------
+FSM Resource
+
+    States MoveToResourcePoint, Resource, Replenish;
+
+    INIT
+        JUMP MoveToResourcePoint;
+    ENDINIT
+    WATCH
+        IFONCE (TeamCount() == 0)
+            //I'm just a worker!  I'm just a civilian!
+            JUMP Replenish;
+        ENDIFONCE
+    ENDWATCH
+
+        //---------------------------
+        // Resource: MoveToResourcePoint
+        // Moves to the resource starting point
+        STATE MoveToResourcePoint
+            INIT
+                IF (!VarGet("G_ResourcePoint"))
+                    VarCreateSet("G_ResourcePoint", Random(1,2));
+                ENDIF
+                IF (VarGet("G_ResourcePoint") == 1)
+                    MoveTo(POINT_ImpPortRes);
+                ELSE
+                    MoveTo(POINT_ImpSBRes);
+                ENDIF
+            ENDINIT
+            WATCH
+                IF (((VarGet("G_ResourcePoint") == 1) &&
+                      Nearby(POINT_ImpPortRes, 10000)) ||
+                    ((VarGet("G_ResourcePoint") == 2) &&
+                      Nearby(POINT_ImpSBRes, 10000)))
+                    JUMP Resource;
+                ENDIF
+            ENDWATCH
+        ENDSTATE MoveToResourcePoint
+
+        //---------------------------
+        // Resource: Resource
+        // Resource
+        STATE Resource
+            INIT
+                TacticsAggressive();
+                Harvest();
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE Resource
+
+        //---------------------------
+        // Resource: Replenish
+        // Replenishes the resource ships
+        STATE Replenish
+            INIT
+                RequestShipsOriginal(100);
+            ENDINIT
+            WATCH
+                IF (TeamCount() == 2)
+                    JUMP Resource;
+                ENDIF
+            ENDWATCH
+        ENDSTATE Replenish
+
+ENDFSM Resource
+
+//-----------------------------------------------------------------------------
+//    Name        : Support
+//    Description : Supports the HonourGuard Heavy Cruisers then the Mothership
+//-----------------------------------------------------------------------------
+FSM Support
+
+    States SupportHCs, SupportMothership, NullState;
+
+    INIT
+        JUMP SupportHCs;
+    ENDINIT
+    WATCH
+        IFONCE (TeamCount() == 0)
+            //I'm just a worker!  I'm just a civilian!
+            JUMP NullState;
+        ENDIFONCE
+    ENDWATCH
+
+        //---------------------------
+        // Support: SupportHCs
+        // Supports the Heavy Cruisers
+        STATE SupportHCs
+            INIT
+                IF (ThisTeamIs(TEAM_HonourGuardSupport1))
+                    AttackSpecial(TEAMSHIPS_HonourGuardHC1);
+                ELSEIF (ThisTeamIs(TEAM_HonourGuardSupport2))
+                    AttackSpecial(TEAMSHIPS_HonourGuardHC2);
+                ELSEIF (ThisTeamIs(TEAM_HonourGuardSupport3))
+                    AttackSpecial(TEAMSHIPS_HonourGuardHC3);
+                ENDIF
+            ENDINIT
+            WATCH
+                // if the mothership asks for help,
+                // or the team this support ship is supporting dies
+                IF (MsgReceived("HelpMe") ||
+                    ((ThisTeamIs(TEAM_HonourGuardSupport1) &&
+                      (!ShipsCount(TEAMSHIPS_HonourGuardHC1))) ||
+                     (ThisTeamIs(TEAM_HonourGuardSupport2) &&
+                      (!ShipsCount(TEAMSHIPS_HonourGuardHC2))) ||
+                     (ThisTeamIs(TEAM_HonourGuardSupport3) &&
+                      (!ShipsCount(TEAMSHIPS_HonourGuardHC3)))))
+                    JUMP SupportMothership;
+                ENDIF
+            ENDWATCH
+        ENDSTATE SupportHCs
+
+        //---------------------------
+        // Support: SupportMothership
+        // Supports the Imperial Mothership
+        STATE SupportMothership
+            INIT
+                AttackSpecial(TEAMSHIPS_ImperialFlagship);
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE SupportMothership
+
+        //---------------------------
+        // Support: NullState
+        // Nothing happens here...
+        STATE NullState
+            INIT
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE NullState
+
+
+ENDFSM Support
+
+//=============================================================================
+//    Defense Teams:
+//=============================================================================
+//-----------------------------------------------------------------------------
+//    Name        : Mining
+//    Description : Lays mines all over the map
+//-----------------------------------------------------------------------------
+FSM Mining
+
+    States Wait, MinePoints, MinePort, MineSB, MineField1, MineField2, WaitForMove,
+           Align, LayMines, NullState;
+
+    INIT
+        VarCreateSet("MinePoint", 0);
+        JUMP Wait;
+    ENDINIT
+    WATCH
+        IFONCE (TeamCount() == 0)
+            //I said I'd kill you last.  I lied.
+            JUMP NullState;
+        ENDIFONCE
+    ENDWATCH
+
+        //---------------------------
+        // Mining: Wait
+        // Waits for word from the Master to start mining
+        STATE Wait
+            INIT
+                //temporary
+                TimerCreateSetStart("MineTimer", 60);
+            ENDINIT
+            WATCH
+                IF (TimerExpiredDestroy("MineTimer"))
+                    JUMP MinePoints;
+                ENDIF
+
+                IF (MsgReceived("Mine"))
+                    JUMP MinePoints;
+                ENDIF
+            ENDWATCH
+        ENDSTATE Wait
+
+        //---------------------------
+        // Mining: MinePoints
+        // Splits the mining teams into the proper mining points,
+        // and starts a' minin'
+        STATE MinePoints
+            INIT
+                IF (ThisTeamIs(TEAM_PortMineLayer))
+                    JUMP MinePort;
+                ELSEIF (ThisTeamIs(TEAM_SBMineLayer))
+                    JUMP MineSB;
+                ELSEIF (ThisTeamIs(TEAM_FieldMineLayer1))
+                    JUMP MineField1;
+                ELSEIF (ThisTeamIs(TEAM_FieldMineLayer2))
+                    JUMP MineField2;
+                ENDIF
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE MinePoints
+
+        //---------------------------
+        // Mining: MinePort
+        // Mines the port side of the map
+        STATE MinePort
+            INIT
+                VarSet("MinePoint", Random(1,7));
+                IF (VarGet("MinePoint") == 1)
+                    MoveTo(POINT_PortDustMine1);
+                ELSEIF (VarGet("MinePoint") == 2)
+                    MoveTo(POINT_PortDustMine2);
+                ELSEIF (VarGet("MinePoint") == 3)
+                    MoveTo(POINT_PortDustMine3);
+                ELSEIF (VarGet("MinePoint") == 4)
+                    MoveTo(POINT_PortDustMine4);
+                ELSEIF (VarGet("MinePoint") == 5)
+                    MoveTo(POINT_PortDustMine5);
+                ELSEIF (VarGet("MinePoint") == 6)
+                    MoveTo(POINT_PortDustMine6);
+                ELSEIF (VarGet("MinePoint") == 7)
+                    MoveTo(POINT_PortDustMine7);
+                ENDIF
+            ENDINIT
+            WATCH
+                JUMP WaitForMove;
+            ENDWATCH
+        ENDSTATE MinePort
+
+
+        //---------------------------
+        // Mining: MineSB
+        // Mines the starboard side of the map
+        STATE MineSB
+            INIT
+                VarSet("MinePoint", Random(1,7));
+                IF (VarGet("MinePoint") == 1)
+                    MoveTo(POINT_SBDustMine1);
+                ELSEIF (VarGet("MinePoint") == 2)
+                    MoveTo(POINT_SBDustMine2);
+                ELSEIF (VarGet("MinePoint") == 3)
+                    MoveTo(POINT_SBDustMine3);
+                ELSEIF (VarGet("MinePoint") == 4)
+                    MoveTo(POINT_SBDustMine4);
+                ELSEIF (VarGet("MinePoint") == 5)
+                    MoveTo(POINT_SBDustMine5);
+                ELSEIF (VarGet("MinePoint") == 6)
+                    MoveTo(POINT_SBDustMine6);
+                ELSEIF (VarGet("MinePoint") == 7)
+                    MoveTo(POINT_SBDustMine7);
+                ENDIF
+            ENDINIT
+            WATCH
+                JUMP WaitForMove;
+            ENDWATCH
+        ENDSTATE MineSB
+
+        //---------------------------
+        // Mining: MineField1
+        // Mines the area around FieldMineLayer1
+        STATE MineField1
+            INIT
+                VarSet("MinePoint", Random(1,11));
+                IF (VarGet("MinePoint") == 1)
+                    MoveTo(POINT_MinePoint1);
+                ELSEIF (VarGet("MinePoint") == 2)
+                    MoveTo(POINT_MinePoint3);
+                ELSEIF (VarGet("MinePoint") == 3)
+                    MoveTo(POINT_MinePoint4);
+                ELSEIF (VarGet("MinePoint") == 4)
+                    MoveTo(POINT_MinePoint8);
+                ELSEIF (VarGet("MinePoint") == 5)
+                    MoveTo(POINT_MinePoint9);
+                ELSEIF (VarGet("MinePoint") == 6)
+                    MoveTo(POINT_MinePoint10);
+                ELSEIF (VarGet("MinePoint") == 7)
+                    MoveTo(POINT_MinePoint11);
+                ELSEIF (VarGet("MinePoint") == 8)
+                    MoveTo(POINT_MinePoint12);
+                ELSEIF (VarGet("MinePoint") == 9)
+                    MoveTo(POINT_MinePoint13);
+                ELSEIF (VarGet("MinePoint") == 10)
+                    MoveTo(POINT_MinePoint14);
+                ELSEIF (VarGet("MinePoint") == 11)
+                    MoveTo(POINT_MinePoint17);
+                ENDIF
+            ENDINIT
+            WATCH
+                JUMP WaitForMove;
+            ENDWATCH
+        ENDSTATE MineField1
+
+        //---------------------------
+        // Mining: MineField2
+        // Mines the area around FieldMinelayer2
+        STATE MineField2
+            INIT
+                VarSet("MinePoint", Random(1,12));
+                IF (VarGet("MinePoint") == 1)
+                    MoveTo(POINT_MinePoint1);
+                ELSEIF (VarGet("MinePoint") == 2)
+                    MoveTo(POINT_MinePoint2);
+                ELSEIF (VarGet("MinePoint") == 3)
+                    MoveTo(POINT_MinePoint4);
+                ELSEIF (VarGet("MinePoint") == 4)
+                    MoveTo(POINT_MinePoint5);
+                ELSEIF (VarGet("MinePoint") == 5)
+                    MoveTo(POINT_MinePoint6);
+                ELSEIF (VarGet("MinePoint") == 6)
+                    MoveTo(POINT_MinePoint7);
+                ELSEIF (VarGet("MinePoint") == 7)
+                    MoveTo(POINT_MinePoint14);
+                ELSEIF (VarGet("MinePoint") == 8)
+                    MoveTo(POINT_MinePoint15);
+                ELSEIF (VarGet("MinePoint") == 9)
+                    MoveTo(POINT_MinePoint16);
+                ELSEIF (VarGet("MinePoint") == 10)
+                    MoveTo(POINT_MinePoint17);
+                ELSEIF (VarGet("MinePoint") == 11)
+                    MoveTo(POINT_MinePoint18);
+                ELSEIF (VarGet("MinePoint") == 12)
+                    MoveTo(POINT_MinePoint19);
+                ENDIF
+            ENDINIT
+            WATCH
+                JUMP WaitForMove;
+            ENDWATCH
+        ENDSTATE MineField2
+
+        //---------------------------
+        // Mining: WaitForMove
+        // Waits to get to the next mining point
+        STATE WaitForMove
+            INIT
+            ENDINIT
+            WATCH
+                IF (ShipsOrder(THISTEAMSHIPS) != COMMAND_MOVE)
+                    JUMP Align;
+                ENDIF
+            ENDWATCH
+        ENDSTATE WaitForMove
+
+        //---------------------------
+        // Mining: Align
+        // Aligns the minelayer corvette so it's facing the player
+        STATE Align
+            INIT
+                MoveTo(SHIPSPOINT_Mothership);
+                TimerCreateSetStart("MineTimer",4);
+            ENDINIT
+            WATCH
+                IF (TimerExpiredDestroy("MineTimer"))
+                    JUMP LayMines;
+                ENDIF
+            ENDWATCH
+        ENDSTATE Align
+
+
+        //---------------------------
+        // Mining: LayMines
+        // Lays mines
+        STATE LayMines
+            INIT
+                SpecialToggle();
+            ENDINIT
+            WATCH
+                IF (ShipsOrder(THISTEAMSHIPS) != COMMAND_SPECIAL)
+                    JUMP Wait;
+                ENDIF
+            ENDWATCH
+        ENDSTATE LayMines
+
+
+        //---------------------------
+        // Mining: NullState
+        // Nothing happens here
+        STATE NullState
+            INIT
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE NullState
+
+ENDFSM Mining
+//-----------------------------------------------------------------------------
+//    Name        : ProximityRoving
+//    Description : Roves around along the roving path,
+//                  when it finds an enemy fleet to latch on to, latches on.
+//-----------------------------------------------------------------------------
+FSM ProximityRoving
+
+    States StartRoving, Roam, ShadowIntruder, NullState;
+
+    INIT
+        VarCreateSet("ProximityNum", 1);
+        VarCreateSet("Waiting", FALSE);
+        JUMP StartRoving;
+    ENDINIT
+    WATCH
+        IFONCE (TeamCount() == 0)
+            //There are many of me!  We shall not be defeated!
+            JUMP NullState;
+        ENDIFONCE
+    ENDWATCH
+
+        //---------------------------
+        // ProximityRoving: StartRoving
+        // Starts the proximity sensors roving
+        STATE StartRoving
+            INIT
+                IF (ThisTeamIs(TEAM_Ps1t) && (VarGet("ProximityNum") == 1))
+                    JUMP Roam;
+                ELSEIF (ThisTeamIs(TEAM_Ps2t) && (VarGet("ProximityNum") == 2))
+                    JUMP Roam;
+                ELSEIF (ThisTeamIs(TEAM_Ps3t) && (VarGet("ProximityNum") == 3))
+                    JUMP Roam;
+                ELSEIF (ThisTeamIs(TEAM_Ps4t) && (VarGet("ProximityNum") == 4))
+                    JUMP Roam;
+                ELSEIF (ThisTeamIs(TEAM_Ps5t) && (VarGet("ProximityNum") == 5))
+                    JUMP Roam;
+                ELSEIF (ThisTeamIs(TEAM_Ps6t) && (VarGet("ProximityNum") == 6))
+                    JUMP Roam;
+                ELSEIF (ThisTeamIs(TEAM_Ps7t) && (VarGet("ProximityNum") == 7))
+                    JUMP Roam;
+                ELSEIF (ThisTeamIs(TEAM_Ps8t) && (VarGet("ProximityNum") == 8))
+                    JUMP Roam;
+                ENDIF
+
+                TimerCreateSetStart("ProximityDelay", 60);
+            ENDINIT
+            WATCH
+                IF (TimerExpiredDestroy("ProximityDelay"))
+                    VarInc("ProximityNum");
+                    JUMP StartRoving;
+                ENDIF
+            ENDWATCH
+        ENDSTATE StartRoving
+
+        //---------------------------
+        // ProximityRoving: Roam
+        // Starts the proximity sensors roaming
+        STATE Roam
+            INIT
+                PatrolPath(PATH_ProximityPath);
+            ENDINIT
+            WATCH
+                IF (!PathNextPoint())
+                    JUMP Roam;
+                ENDIF
+
+                IF (FindEnemiesNearTeam(SHIPS_Intruders, 20000))
+                    IF (IntrudersWorthWhile(SHIPS_Intruders))
+                        JUMP ShadowIntruder;
+                    ENDIF
+                ENDIF
+            ENDWATCH
+        ENDSTATE Roam
+
+        //---------------------------
+        // ProximityRoving: ShadowIntruder
+        // Hangs out close behind an intruder
+        STATE ShadowIntruder
+            INIT
+                IF (VarGet("Waiting"))
+                    VarSet("Waiting", FALSE);
+                ENDIF
+                TacticsEvasive();
+                MoveTo(SHIPSPOINT_Intruders);
+                TimerCreateSetStart("ShadowTimer", 20);
+            ENDINIT
+            WATCH
+                IF (!VarGet("Waiting") && Nearby(SHIPSPOINT_Intruders, 10000))
+                    Stop();
+                    VarSet("Waiting", TRUE);
+                    TimerSet("ShadowTimer", 20);
+                ENDIF
+                IF (TimerExpiredDestroy("ShadowTimer") ||
+                    (VarGet("Waiting") && Nearby(SHIPSPOINT_Intruders, 15000)))
+                    JUMP ShadowIntruder;
+                ENDIF
+            ENDWATCH
+        ENDSTATE ShadowIntruder
+
+        //---------------------------
+        // ProximityRoving: NullState
+        // Nothing happens here
+        STATE NullState
+            INIT
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE NullState
+
+ENDFSM ProximityRoving
+
+//-----------------------------------------------------------------------------
+//    Name        : TakeoutTarget
+//    Description : Takes out a specific target
+//-----------------------------------------------------------------------------
+FSM TakeoutTarget
+
+    States Dock, Wait, ChooseType, InterceptTarget, GravWellDistCheck, CloakGenDistCheck,
+           ReturnToMothership, AttackYummies, KillSelf, NullState;
+
+    INIT
+        IF (ShipsAreStrikeCraft(THISTEAMSHIPS))
+            JUMP Dock;
+        ELSE
+            JUMP Wait;
+        ENDIF
+    ENDINIT
+    WATCH
+        IFONCE (TeamCount() == 0)
+            //ACH I'M DEED!!...., DEED!!!!
+            JUMP NullState;
+        ENDIFONCE
+    ENDWATCH
+
+        //---------------------------
+        // TakeoutTarget: Dock
+        // Docks any strikecraft in TakeoutTarget
+        STATE Dock
+            INIT
+                IF (!VarGet("FirstTime"))
+                    DockInstant(MASTERTEAM);
+                    VarCreateSet("FirstTime",TRUE);
+                ELSE
+                    DockStay(MASTERTEAM);
+
+                ENDIF
+            ENDINIT
+            WATCH
+                IF (MsgReceived("Takeout"))
+                    VarCreateSet("Launching", TRUE);
+                    Launch();
+                ENDIF
+                IF (VarGet("Launching") && TeamFinishedLaunching())
+                    VarDestroy("Launching");
+                    JUMP ChooseType;
+                ENDIF
+            ENDWATCH
+        ENDSTATE Dock
+
+
+        //---------------------------
+        // TakeoutTarget: Wait
+        // Waits for word from above to do some takin' out
+        STATE Wait
+            INIT
+
+            ENDINIT
+            WATCH
+                IF (MsgReceived("Takeout"))
+                    JUMP ChooseType;
+                ENDIF
+            ENDWATCH
+        ENDSTATE Wait
+
+        //---------------------------
+        // TakeoutTarget: ChooseType
+        // Chooses the appropriate takeout target type
+        STATE ChooseType
+            INIT
+                VarCreateSet("TakeoutType", VarGet("G_TakeoutType"));
+                VarSet("G_TakeoutType", 0);
+
+                IF (ShipsCount(SHIPS_AntiFighterTarget) &&
+                    ThisTeamIsAntiFighter())
+                   JUMP InterceptTarget;
+                ELSEIF ((ShipsCount(SHIPS_SuicideTarget) ||
+                         UnderAttackElsewhere(TEAM_ImperialFlagship, SHIPS_SuicideTargets)) &&
+                        ThisTeamIsSuicideFighters())
+                   JUMP KillSelf;
+                ENDIF
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE ChooseType
+
+        //---------------------------
+        // TakeoutTarget: InterceptTarget
+        // Moves towards the target - reissues the move command repeatedly
+        STATE InterceptTarget
+            INIT
+                IF (ThisTeamIs(TEAM_AntiFighterMC1) ||
+                    ThisTeamIs(TEAM_AntiFighterMC2))
+                    Guard(TEAMSHIPS_AntiFighter1GW);
+                ELSEIF (ThisTeamIs(TEAM_SuicideFighters1) ||
+                        ThisTeamIs(TEAM_SuicideFighters2))
+//                    Guard(TEAMSHIPS_SuicideCloakGen);
+                ELSEIF (ThisTeamIS(TEAM_AntiFighter1GW))
+                    Intercept(SHIPS_AntiFighterTarget);
+                    JUMP GravWellDistCheck;
+//                ELSEIF (ThisTeamIs(TEAM_SuicideCloakGen))
+//                    Intercept(SHIPS_SuicideTarget);
+//                    JUMP CloakGenDistCheck;
+                ENDIF
+            ENDINIT
+            WATCH
+                IF (MsgReceived("Yummies"))
+                    JUMP AttackYummies;
+                ENDIF
+                IF (MsgReceived("InTheNameOfTheEmperor!"))
+                    JUMP KillSelf;
+                ENDIF
+            ENDWATCH
+        ENDSTATE InterceptTarget
+
+        //---------------------------
+        // TakeoutTarget: GravWellDistCheck
+        // Checks the distance to various ships in the target list
+        STATE GravWellDistCheck
+            INIT
+            ENDINIT
+            WATCH
+                IF (FindEnemiesNearTeam(SHIPS_GravWellYummies, 10000))
+                    IF (ShipsSelectClass(SHIPS_YummyFighters, SHIPS_GravWellYummies, "CLASS_FIGHTER") ||
+                        ShipsSelectClass(SHIPS_YummyCorvettes, SHIPS_GravWellYummies, "CLASS_CORVETTE"))
+                        ShipsClear(SHIPS_GravWellYummies);
+                        ShipsAdd(SHIPS_GravWellYummies, SHIPS_YummyFighters);
+                        ShipsAdd(SHIPS_GravWellYummies, SHIPS_YummyCorvettes);
+                        IF (!VarGet("GravWellOn"))
+                            VarCreateSet("GravWellOn", TRUE);
+                            MsgToAntiFighters("Yummies");
+                            SpecialToggle();
+                        ENDIF
+                    ELSEIF (VarGet("GravWellOn"))
+                        VarSet("GravWellOn", FALSE);
+                        SpecialToggle();
+                    ENDIF
+                ELSEIF (VarGet("GravWellOn"))
+                    VarSet("GravWellOn", FALSE);
+                    SpecialToggle();
+                ENDIF
+
+                IF (!ShipsCount(SHIPS_AntiFighterTarget) ||
+                    ShipsOrder(THISTEAMSHIPS) != COMMAND_MOVE)
+                    IF (VarGet("GravWellOn"))
+                        VarDestroy("GravWellOn");
+                        SpecialToggle();
+                    ENDIF
+                    JUMP ReturnToMothership;
+
+//*** need to find a better way to check if the move isn't working anymore
+// the intercept move issues the MoveTeam move 1 turn after the intercept being issued
+//                ELSEIF (ShipsOrder(THISTEAMSHIPS) != COMMAND_MOVE)
+//                    IF (VarGet("GravWellOn"))
+//                        VarDestroy("GravWellOn");
+//                        SpecialToggle();
+//                    ENDIF
+//                    JUMP InterceptTarget;
+                ENDIF
+            ENDWATCH
+        ENDSTATE GravWellDistCheck
+
+        //---------------------------
+        // TakeoutTarget: CloakGenDistCheck
+        // Checks the distance to the ship in the target list
+        STATE CloakGenDistCheck
+            INIT
+                VarCreateSet("CloakGenDist", 0);
+            ENDINIT
+            WATCH
+                VarSet("CloakGenDist", FindDistance(SHIPSPOINT_SuicideTarget, THISTEAMSPOINT));
+                IF (VarGet("CloakGenDist") < Random(40000, 60000))
+                    IF (VarGet("CloakGenDist") < 18000)
+                        MsgToSuicideFighters("InTheNameOfTheEmperor!");
+                        JUMP ReturnToMothership;
+                    ELSEIF (!VarGet("CloakOn"))
+                        VarCreateSet("CloakOn", TRUE);
+                        SpecialToggle();
+                    ENDIF
+                ENDIF
+//*** need to find a better way to check if the move isn't working anymore
+// the intercept move issues the MoveTeam move 1 turn after the intercept being issued
+//                IF (ShipsOrder(THISTEAMSHIPS) != COMMAND_MOVE)
+//                    JUMP InterceptTarget;
+//                ENDIF
+            ENDWATCH
+        ENDSTATE CloakGenDistCheck
+
+        //---------------------------
+        // TakeoutTarget: ReturnToMothership
+        // Job well done.  Head back to the mothership
+        STATE ReturnToMothership
+            INIT
+                FindFriendlyShipsOfType(SHIPS_MyMothership, "Mothership");
+                MoveTo(SHIPSPOINT_MyMothership);
+            ENDINIT
+            WATCH
+                IF (FindDistance(SHIPSPOINT_MyMothership, THISTEAMSPOINT) < 20000)
+                    IF (VarGet("CloakOn"))
+                        VarDestroy("CloakOn");
+                        SpecialToggle();
+                    ENDIF
+                    Stop();
+                    JUMP Wait;
+                ENDIF
+            ENDWATCH
+        ENDSTATE ReturnToMothership
+
+        //---------------------------
+        // TakeoutTarget: AttackYummies
+        // MissileDestroyer attacks the ships caught in the Well
+        STATE AttackYummies
+            INIT
+                Attack(SHIPS_Yummies);
+            ENDINIT
+            WATCH
+                IF (ShipsOrder(THISTEAMSHIPS) != COMMAND_ATTACK)
+                    IF (ShipsCount(SHIPS_Yummies))
+                        JUMP AttackYummies;
+                    ELSE
+                        JUMP InterceptTarget;
+                    ENDIF
+                ENDIF
+            ENDWATCH
+        ENDSTATE AttackYummies
+
+        //---------------------------
+        // TakeoutTarget: KillSelf
+        // Suicide fighters kill themselves
+        STATE KillSelf
+            INIT
+                IF (UnderAttackElsewhere(TEAM_ImperialFlagship, SHIPS_SuicideTargets))
+                    IF (ShipsSelectType(SHIPS_Yummies, SHIPS_SuicideTargets, "HeavyCruiser") ||
+                        ShipsSelectClass(SHIPS_Yummies, SHIPS_SuicideTargets, "CLASS_Destroyer") ||
+                        ShipsSelectClass(SHIPS_Yummies, SHIPS_SuicideTargets, "CLASS_Frigate") ||
+                        ShipsSelectClass(SHIPS_Yummies, SHIPS_SuicideTargets, "CLASS_Corvette"))
+                        Kamikaze(SHIPS_Yummies);
+                    ELSE
+                        Kamikaze(SHIPS_SuicideTargets);
+                    ENDIF
+                ELSE
+
+                ENDIF
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE KillSelf
+
+        //---------------------------
+        // TakeoutTarget: NullState
+        // Nothing happens here
+        STATE NullState
+            INIT
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE NullState
+
+ENDFSM TakeoutTarget
+
+
+//=============================================================================
+//    Assault Forces
+//=============================================================================
+//-----------------------------------------------------------------------------
+//    Name        : StrikeCraftAssault
+//    Description : Assault FSM for strike craft
+//-----------------------------------------------------------------------------
+FSM StrikeCraftAssault
+
+    States MoveToTarget, PrioritizeAttack, SurgicalAssault, FighterAnnihilation,
+           AntiFighterSupport, FighterStrike, AttackGeneral, Dock, Wait, Launch, NullState;
+
+    INIT
+        TacticsAggressive();
+        ShipsClear(SHIPS_AssaultEnemy);
+        VarCreateSet("LastCount", TeamCount());
+        IF (ThisTeamIsEliteHarrass())
+            ShipsAdd(SHIPS_AssaultEnemy, SHIPS_EliteHarrassBaddies);
+        ELSEIF (ThisTeamIsAssault())
+            ShipsAdd(SHIPS_AssaultEnemy, SHIPS_AssaultBaddies);
+            JUMP MoveToTarget;
+        ELSEIF (ThisTeamIsEliteGuard())
+            ShipsAdd(SHIPS_AssaultEnemy, SHIPS_EliteGuardBaddies);
+        ENDIF
+        VarCreateSet("LowFuel", Random(20, 30));
+        JUMP PrioritizeAttack;
+    ENDINIT
+    WATCH
+//***** Need to put more AssaultEnemies into here
+        ShipsClear(SHIPS_AssaultEnemy);
+        IF (VarGet("CloseToMothership"))
+            ShipsAdd(SHIPS_AssaultEnemy, SHIPS_MothershipSurrounding);
+        ELSEIF (ThisTeamIsEliteHarrass())
+            ShipsAdd(SHIPS_AssaultEnemy, SHIPS_EliteHarrassBaddies);
+        ELSEIF (ThisTeamIsAssault())
+            ShipsAdd(SHIPS_AssaultEnemy, SHIPS_AssaultBaddies);
+        ELSEIF (ThisTeamIsBattleGroup2())
+            ShipsAdd(SHIPS_AssaultEnemy, SHIPS_BG2Baddies);
+        ELSEIF (ThisTeamIsEliteGuard())
+            ShipsAdd(SHIPS_AssaultEnemy, SHIPS_EliteGuardBaddies);
+        ENDIF
+
+        IF (!VarGet("Docking") &&
+            ((TeamFuelLowest() < VarGet("LowFuel")) ||
+             (MsgReceived("Dock"))))
+            VarCreateSet("Docking", TRUE);
+            VarSet("LowFuel", Random(20, 30));
+            JUMP Dock;
+        ENDIF
+        IF (!VarGet("InNullState") && (TeamCount() == 0))
+            //Eeeep!
+            JUMP NullState;
+        ENDIF
+    ENDWATCH
+
+        //---------------------------
+        // StrikeCraftAssault: MoveToTarget
+        // Moves the strikecraft to the target
+        STATE MoveToTarget
+            INIT
+                //only certain teams may need this
+            ENDINIT
+            WATCH
+                IF (MsgReceived("Engage"))
+                    JUMP PrioritizeAttack;
+                ENDIF
+                IF (FindDistance(THISTEAMSPOINT, SHIPSPOINT_Mothership) < 15000)
+                    VarCreateSet("CloseToMothership", TRUE);
+                    MsgSend(THISTEAM, "Engage");
+                ENDIF
+            ENDWATCH
+        ENDSTATE MoveToTarget
+
+        //---------------------------
+        // StrikeCraftAssault: PrioritizeAttack
+        // Directs the strike craft to the appropriate target FSM
+        STATE PrioritizeAttack
+            INIT
+                TacticsAggressive();
+                IF (ShipsCountType(THISTEAMSHIPS, "AttackBomber"))
+                    IF (ThisTeamIs(TEAM_EliteHarrassBombers))
+                        JUMP SurgicalAssault;
+                    ENDIF
+                    JUMP FighterStrike;
+                ELSEIF (ShipsCountType(THISTEAMSHIPS, "HeavyCorvette"))
+                    JUMP FighterAnnihilation;
+                ELSEIF (ShipsCountType(THISTEAMSHIPS, "LightCorvette") ||
+                        ShipsCountType(THISTEAMSHIPS, "MultigunCorvette"))
+                    JUMP AntiFighterSupport;
+                ELSEIF (ShipsCountType(THISTEAMSHIPS, "HeavyInterceptor"))
+                    JUMP FighterStrike;
+                ELSE
+                    JUMP AttackGeneral;
+                ENDIF
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE PrioritizeAttack
+
+        //---------------------------
+        // StrikeCraftAssault: SurgicalAssault
+        // Takes out specific vulnerable targets
+        STATE SurgicalAssault
+            INIT
+                IF (ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "SensorArray")  ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "CloakGenerator") ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "ResourceController")||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "IonCannonFrigate")   ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "StandardFrigate")   ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "MinelayerCorvette")||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "ResourceCollector")||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "Carrier")     ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "StandardDestroyer"))
+                    IF (Random(0,1))
+                        FormationWall();
+                    ELSE
+                        FormationDelta3D();
+                    ENDIF
+                    TacticsAggressive();
+                    Attack(Ships_Targets);
+                ELSE
+//                    Print("SurgicalAssaultOutOfTargets");
+                    JUMP AttackGeneral;
+                ENDIF
+            ENDINIT
+            WATCH
+                //once one target has been eliminated, boot out of there
+                IF (ShipsOrder(THISTEAMSHIPS) != COMMAND_ATTACK)
+                    TacticsEvasive();
+                    JUMP Dock;
+//                    JUMP SurgicalAssault;
+                ENDIF
+            ENDWATCH
+        ENDSTATE SurgicalAssault
+
+        //---------------------------
+        // StrikeCraftAssault: FighterAnnihilation
+        // Burst attacks stationary targets
+        STATE FighterAnnihilation
+            INIT
+                IF (!VarGet("NumTargets"))
+                    VarCreateSet("NumTargets", Random(4,10));
+                ENDIF
+                ShipsSelectMoving(SHIPS_Moving, SHIPS_AssaultEnemy);
+                ShipsAdd(SHIPS_NotMoving, SHIPS_AssaultEnemy);
+                ShipsRemove(SHIPS_NotMoving, SHIPS_Moving);
+                IF (ShipsSelectType(SHIPS_Targets, SHIPS_NotMoving, "AttackBomber") ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_NotMoving, "HeavyDefender") ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_NotMoving, "HeavyInterceptor")   ||
+                    ShipsSelectClass(SHIPS_Targets, SHIPS_NotMoving, "CLASS_Fighter")   ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "HeavyDefender"))
+                    IF (Random(0,1))
+                        FormationBroad();
+                    ELSE
+                        FormationWall();
+                    ENDIF
+                    ShipsSelectIndex(SHIPS_SingleTarget, SHIPS_Targets, ShipsCount(SHIPS_Targets)/2);
+                    AttackSpecial(SHIPS_SingleTarget);
+                ELSEIF (ShipsSelectType(SHIPS_Targets, SHIPS_Moving, "AttackBomber") ||
+                        ShipsSelectType(SHIPS_Targets, SHIPS_Moving, "HeavyInterceptor") ||
+                        ShipsSelectClass(SHIPS_Targets, SHIPS_Moving, "CLASS_Fighter") ||
+                        ShipsSelectClass(SHIPS_Targets, SHIPS_AssaultEnemy, "CLASS_Corvette") ||
+                        ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "CLASS_Resource"))
+                    VarCreateSet("AttackedStrike", TRUE);
+                    IF (Random(0,1))
+                        FormationDelta3D();
+                    ELSE
+                        FormationClaw();
+                    ENDIF
+                    ShipsAdd(SHIPS_SingleTarget, SHIPS_Targets);
+                    Attack(SHIPS_SingleTarget);
+                ELSE
+                    TacticsEvasive();
+                    JUMP Dock;
+                ENDIF
+            ENDINIT
+            WATCH
+                IF (!ShipsCount(SHIPS_SingleTarget))
+                    VarDec("NumTargets");
+                    IF (VarGet("NumTargets"))
+                        JUMP FighterAnnihilation;
+                    ELSE
+                        TacticsEvasive();
+                        JUMP Dock;
+                    ENDIF
+                ENDIF
+            ENDWATCH
+        ENDSTATE FighterAnnihilation
+
+        //---------------------------
+        // StrikeCraftAssault: AntiFighterSupport
+        // Thins out fighters
+        STATE AntiFighterSupport
+            INIT
+                IF (ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "AttackBomber")  ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "HeavyInterceptor") ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "HeavyDefender")   ||
+                    ShipsSelectClass(SHIPS_Targets, SHIPS_AssaultEnemy, "CLASS_Fighter")   ||
+                    ShipsSelectClass(SHIPS_Targets, SHIPS_AssaultEnemy, "CLASS_Corvette")||
+                    ShipsSelectClass(SHIPS_Targets, SHIPS_AssaultEnemy, "CLASS_Resource")||
+                    ShipsSelectClass(SHIPS_Targets, SHIPS_AssaultEnemy, "CLASS_Destroyer")||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "Carrier"))
+                    Attack(Ships_Targets);
+                ELSE
+                    IF (ThisTeamIsEliteHarrass())
+                        JUMP Dock;
+                    ENDIF
+//                    Print("AntiFighterSupportOutOfTargets");
+                    JUMP AttackGeneral;
+                ENDIF
+            ENDINIT
+            WATCH
+                IF (ShipsOrder(THISTEAMSHIPS) != COMMAND_ATTACK)
+                    JUMP AntiFighterSupport;
+                ENDIF
+            ENDWATCH
+        ENDSTATE AntiFighterSupport
+
+        //---------------------------
+        // StrikeCraftAssault: FighterStrike
+        // Fighter attack
+        STATE FighterStrike
+            INIT
+                IF ((Random(0,1) && ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "HeavyDefender"))   ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "IonCannonFrigate") ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "StandardFrigate")   ||
+                    (Random(0,1) && ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "CloakGenerator")) ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "StandardDestroyer") ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "SensorArray")  ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "ProximitySensor") ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "ResourceController")||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "MinelayerCorvette")||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "ResourceCollector")||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "Carrier"))
+                    Attack(Ships_Targets);
+                ELSE
+//                    Print("SurgicalAssaultOutOfTargets");
+                    JUMP AttackGeneral;
+                ENDIF
+            ENDINIT
+            WATCH
+                IF (ShipsOrder(THISTEAMSHIPS) != COMMAND_ATTACK)
+                    JUMP FighterStrike;
+                ENDIF
+            ENDWATCH
+        ENDSTATE FighterStrike
+
+        //---------------------------
+        // StrikeCraftAssault: AttackGeneral
+        // Last in path.  Attacks anything else out there
+        STATE AttackGeneral
+            INIT
+                Attack(SHIPS_AssaultEnemy);
+            ENDINIT
+            WATCH
+                IF (ShipsOrder(THISTEAMSHIPS) != COMMAND_ATTACK)
+                    JUMP PrioritizeAttack;
+                ENDIF
+            ENDWATCH
+        ENDSTATE AttackGeneral
+
+
+#define SetThisTeams(Function, FallbackFunction)     \
+                IF (ShipsCount(TEAMSHIPS_EliteHarrassCarrier) &&     \
+                    (ThisTeamIsEliteHarrass()))                     \
+                    Function(TEAM_EliteHarrassCarrier);             \
+                ELSEIF (ShipsCount(TEAMSHIPS_EliteGuardCarrier) &&  \
+                    (ThisTeamIsEliteGuard()))                       \
+                    Function(TEAM_EliteGuardCarrier);               \
+                ELSE                                                \
+                    FallbackFunction                                \
+                ENDIF
+
+#define MasterAlive         \
+                   ((ThisTeamIsEliteHarrass() &&                                     \
+                     ShipsCount(TEAMSHIPS_EliteHarrassCarrier)) ||                   \
+                    (ThisTeamIsEliteGuard() &&                                      \
+                     ShipsCount(TEAMSHIPS_EliteGuardCarrier)) ||                    \
+                     (NOT(ThisTeamIsEliteHarrass() || ThisTeamIsEliteGuard()) &&     \
+                      Shipscount(TEAMSHIPS_ImperialFlagShip)))
+
+        //---------------------------
+        // StrikeCraftAssault: Dock
+        // Docks with the appropriate support vessel
+        STATE Dock
+            INIT
+                IF (TeamCount() < (TeamCountOriginal()/2))
+
+                    IF (ThisTeamIs(TEAM_EliteHarrassBombers))
+
+                        IF (ShipsCount(TEAMSHIPS_ABReinforce1))
+                            ReinforceTeamWithShips(THISTEAM, TEAMSHIPS_ABReinforce1);
+                            ShipsClear(TEAMSHIPS_ABReinforce1);
+                        ELSEIF (ShipsCount(TEAMSHIPS_ABReinforce2))
+                            ReinforceTeamWithShips(THISTEAM, TEAMSHIPS_ABReinforce2);
+                            ShipsClear(TEAMSHIPS_ABReinforce2);
+                        ENDIF
+
+                    ELSEIF (ThisTeamIs(TEAM_EliteHarrassCorvettes))
+
+                        IF (ShipsCount(TEAMSHIPS_HCReinforce1))
+                            ReinforceTeamWithShips(THISTEAM, TEAMSHIPS_HCReinforce1);
+                            ShipsClear(TEAMSHIPS_HCReinforce1);
+                        ENDIF
+                    ENDIF
+                ENDIF
+
+                //replenish ships
+                // didn't work because setting the team's building ship didn't last
+                // long enough to have the ships actually be built there
+//                IF (TeamCount() < VarGet("LastCount"))
+//                    IF (MasterAlive)
+//                        // request the last count of ships
+//                        SetThisTeams(BuildingTeam, ;);
+//                        RequestShipsOriginal((100 * (VarGet("LastCount") - TeamCount())) / TeamCountOriginal());
+//                        VarSet("LastCount", TeamCount());
+//                        BuildingTeam(MASTERTEAM);
+//                    ENDIF
+//                ENDIF
+
+                SetThisTeams(DockStay, DockSupport(););
+            ENDINIT
+            WATCH
+                IF (TeamDockedReadyForLaunch())
+                    VarDestroy("Docking");
+                    JUMP Wait;
+                ENDIF
+            ENDWATCH
+        ENDSTATE Dock
+
+        //---------------------------
+        // StrikeCraftAssault: Wait
+        // Strike Craft wait for launch command from carrier
+        STATE Wait
+            INIT
+                IF (ThisTeamIsEliteHarrass())
+                    MsgSend(TEAM_EliteHarrassCarrier, "Docked");
+                ENDIF
+            ENDINIT
+            WATCH
+                IF (MsgReceived("Launch"))
+                    JUMP Launch;
+                ENDIF
+            ENDWATCH
+        ENDSTATE Wait
+
+        //---------------------------
+        // StrikeCraftAssault: Launch
+        // Launches strike craft
+        STATE Launch
+            INIT
+                Launch();
+            ENDINIT
+            WATCH
+                IF (TeamFinishedLaunching())
+                    IF (ThisTeamIsEliteGuard())
+                        MsgSend(TEAM_EliteGuardCarrier, "EliteGuardLaunched");
+                    ENDIF
+                    IF (Random(0,1))
+                        FormationClaw();
+                    ELSEIF (Random(0,1))
+                        FormationWall();
+                    ELSEIF (Random(0,1))
+                        FormationDelta3D();
+                    ELSE
+                        FormationBroad();
+                    ENDIF
+                    JUMP PrioritizeAttack;
+                ENDIF
+            ENDWATCH
+        ENDSTATE Launch
+
+        //---------------------------
+        // StrikeCraftAssault: NullState
+        // Nothing happens here
+        STATE NullState
+            INIT
+                VarCreateSet("InNullState", TRUE);
+                VarDestroy("MovingToMothership");
+                VarDestroy("CloseToMothership");
+                IF (ThisTeamIsEliteHarrass())
+                    MsgSend(TEAM_EliteHarrassCarrier, "Dead");
+                ENDIF
+                IF (ThisTeamIsAssault())
+                    MsgSend(MASTERTEAM, "AssaultDead");
+                ENDIF
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE NullState
+
+ENDFSM StrikeCraftAssault
+
+//-----------------------------------------------------------------------------
+//    Name        : AssaultGeneral
+//    Description : A generic assault fsm. Prioritizes targets depending on fleet type
+//                  Currently only works for Frigate and up
+//-----------------------------------------------------------------------------
+FSM AssaultGeneral
+
+    States MoveToMothership, PrioritizeAttack, FrigateAssault, IonCannonAssault,
+           SurgicalStrikeGravWells, SurgicalStrike, MissileDestroyerAssault,
+           PrimaryDestroyerAssault, SecondaryDestroyerAssault, CruiserAssault,
+           AttackGeneral, AttackPlayersMothership, CarrierAssault, GuardMaster, NullState;
+
+    INIT
+        TacticsAggressive();
+        IF (ThisTeamIsHonourGuard())
+            JUMP GuardMaster;
+        ELSEIF (VarGet("G_AssaultingPlayer"))
+            VarDestroy("G_AssaultingPlayer");
+            VarCreateSet("AssaultingPlayer",TRUE);
+            FindEnemiesNearTeam(SHIPS_AssaultEnemy, 20000);
+            JUMP PrioritizeAttack;
+        ENDIF
+        IF (ThisTeamIsEliteHarrass())
+            ShipsDamageModifierSet(THISTEAMSHIPS, 200);
+            TeamHealthSet(200);
+        ENDIF
+        JUMP MoveToMothership;
+    ENDINIT
+    WATCH
+        ShipsClear(SHIPS_AssaultEnemy);
+        IF (VarGet("CloseToMothership"))
+            ShipsAdd(SHIPS_AssaultEnemy, SHIPS_MothershipSurrounding);
+        ELSEIF (VarGet("AssaultingPlayer"))
+            IF (TeamCount() && (!FindEnemiesNearTeam(SHIPS_AssaultEnemy, 20000)))
+//                Print("AssaultOutOfEnemies");
+                JUMP MoveToMothership;
+            ENDIF
+        ELSEIF (ThisTeamIsBattleGroup1())
+            ShipsAdd(SHIPS_AssaultEnemy, SHIPS_BG1Baddies);
+        ELSEIF (ThisTeamIsBattleGroup2())
+            ShipsAdd(SHIPS_AssaultEnemy, SHIPS_BG2BAddies);
+        ELSEIF (ThisTeamIsAssault())
+            ShipsAdd(SHIPS_AssaultEnemy, SHIPS_AssaultBaddies);
+//        ELSEIF (ThisTeamIsRearFleet())
+//            ShipsAdd(SHIPS_AssaultEnemy, SHIPS_RearBaddies);
+        ELSEIF (ThisTeamIsEliteHarrass())
+            ShipsAdd(SHIPS_AssaultEnemy, SHIPS_EliteHarrassBaddies);
+        ELSEIF (ThisTeamIsHonourGuard())
+            ShipsAdd(SHIPS_AssaultEnemy, SHIPS_HonourBaddies);
+        ENDIF
+        IF (!ShipsCount(SHIPS_AssaultEnemy))
+            FindEnemiesNearTeam(SHIPS_AssaultEnemy, 10000);
+        ENDIF
+        IF (!VarGet("InNullState") && (TeamCount() == 0))
+            //I'm generally dead, I guess
+            JUMP NullState;
+        ENDIF
+    ENDWATCH
+
+        //---------------------------
+        // AssaultGeneral: MoveToMothership
+        // Ships move towards the mothership
+        STATE MoveToMothership
+            INIT
+                TacticsNeutral();
+
+                //this will have to be moved to have a big custom formation
+                IF (!VarGet("G_AlreadyMoving"))
+                    IF (ThisTeamIs(TEAM_EliteHarrassIonFrigs) && RaceOfHuman())
+                        // for race 2, move the elite ion frigates towards the Starboard
+                        // of the enemy mothership
+                        MoveTo(POINT_KushanSBPoint);
+                    ELSE
+                        MoveTo(SHIPSPOINT_Mothership);
+                    ENDIF
+                ELSE
+                    VarDec("G_AlreadyMoving");
+                ENDIF
+                VarCreateSet("MovingToMothership", TRUE);
+            ENDINIT
+            WATCH
+                IF (MsgReceived("Engage"))
+                    VarDestroy("MovingToMothership");
+                    IF (ThisTeamIs(TEAM_AssaultCruiser1))
+                        VarInc("G_Assaults");
+                    ENDIF
+                    TacticsAggressive();
+                    JUMP PrioritizeAttack;
+                ENDIF
+
+                IF (FindDistance(THISTEAMSPOINT, SHIPSPOINT_Mothership) < 15000)
+                    VarCreateSet("CloseToMothership", TRUE);
+                    MsgSend(THISTEAM, "Engage");
+                ENDIF
+
+                IF (ShipsOrder(THISTEAMSHIPS) != COMMAND_MOVE)
+                    MoveTo(SHIPSPOINT_Mothership);
+                ENDIF
+            ENDWATCH
+        ENDSTATE MoveToMothership
+
+        //---------------------------
+        // AssaultGeneral: PrioritizeAttack
+        // Starts the team in the right state depending on its composition
+        STATE PrioritizeAttack
+            INIT
+                IF (ShipsCountType(THISTEAMSHIPS, "StandardFrigate"))
+                    JUMP FrigateAssault;
+                ELSEIF (ShipsCountType(THISTEAMSHIPS, "IonCannonFrigate"))
+                    IF (ThisTeamIs(TEAM_EliteHarrassIonFrigs))
+                        JUMP SurgicalStrikeGravWells;
+                    ENDIF
+                    JUMP IonCannonAssault;
+                ELSEIF (ShipsCountType(THISTEAMSHIPS, "MissileDestroyer"))
+                    JUMP MissileDestroyerAssault;
+                ELSEIF (ShipsCountType(THISTEAMSHIPS, "StandardDestroyer"))
+                    IF (ThisTeamIs(TEAM_BG1Destroyer1))
+                        JUMP PrimaryDestroyerAssault;
+                    ELSE
+                        JUMP SecondaryDestroyerAssault;
+                    ENDIF
+                ELSEIF (ShipsCountType(THISTEAMSHIPS, "HeavyCruiser"));
+                    IF (ThisTeamIsHonourGuard())
+                        VarCreateSet("HonourGuardCruiser", TRUE);
+                    ENDIF
+                    JUMP CruiserAssault;
+                ELSEIF (ShipsCountType(THISTEAMSHIPS, "Carrier"))
+                    JUMP CarrierAssault;
+                ENDIF
+
+                JUMP AttackGeneral;
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE PrioritizeAttack
+
+        //---------------------------
+        // AssaultGeneral: FrigateAssault
+        // Assault State for Frigates
+        STATE FrigateAssault
+            INIT
+                IF (ShipsSelectClass(SHIPS_Targets, SHIPS_AssaultEnemy, "CLASS_Corvette")  ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "IonCannonFrigate") ||
+                    ShipsSelectClass(SHIPS_Targets, SHIPS_AssaultEnemy, "CLASS_Frigate")   ||
+                    ShipsSelectClass(SHIPS_Targets, SHIPS_AssaultEnemy, "CLASS_Fighter")   ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "StandardDestroyer")||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "HeavyCruiser")     ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "MissileDestroyer") ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "Carrier")          ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "Mothership"))
+                    MoveAttackIndividual(Ships_FATargets, Ships_Targets);
+                ELSE
+//                    Print("FrigateOutOfTargets");
+                    JUMP AttackGeneral;
+                ENDIF
+            ENDINIT
+            WATCH
+//                IF (ShipsOrder(THISTEAMSHIPS) != COMMAND_ATTACK)
+                IF (!ShipsCount(Ships_FATargets))
+                    JUMP FrigateAssault;
+                ENDIF
+            ENDWATCH
+        ENDSTATE FrigateAssault
+
+        //---------------------------
+        // AssaultGeneral: SurgicalStrikeGravWells
+        // Takes out a set of gravwells
+        STATE SurgicalStrikeGravWells
+            INIT
+                IF (ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "GravWellGenerator"))
+                    VarCreateSet("AttackingGravWells", TRUE);
+                    IF (UnderAttack(SHIPS_Attackers))
+                        MoveAttackIndividual(SHIPS_GravSSTargets, SHIPS_Targets);
+                    ELSE
+                        AttackIndividual(SHIPS_GravSSTargets, SHIPS_Targets);
+                    ENDIF
+                ELSE
+                    IF (VarGet("AttackingGravWells"))
+                        //we've been attacking grav wells
+                        // so we're done
+                        VarDestroy("AttackingGravWells");
+                        JUMP GuardMaster;
+                    ELSE
+                        //never got to attack anything, so go for something else
+                        JUMP SurgicalStrike;
+                    ENDIF
+                ENDIF
+            ENDINIT
+            WATCH
+                // if the target's dead
+                IF (!ShipsCount(SHIPS_GravSSTargets))
+                    // if there's still gravwells left
+                    IF (ShipsSelectType(SHIPS_GravWells, SHIPS_AssaultEnemy, "GravWellGenerator"))
+                        // we're not done here yet.  Keep attacking GravWells
+                        JUMP SurgicalStrikeGravWells;
+                    ELSE
+                        IF (ThisTeamIs(TEAM_EliteHarrassIonFrigs))
+                            MsgSend(TEAM_EliteHarrassCarrier, "NoGravWells");
+                        ENDIF
+                        JUMP GuardMaster;
+                    ENDIF
+                ENDIF
+            ENDWATCH
+        ENDSTATE SurgicalStrikeGravWells
+
+        //---------------------------
+        // AssaultGeneral: SurgicalStrike
+        // Takes out one specific type of target
+        // NOTE: This state is not your regular looping type of strike,
+        //       It attacks one of the strike targets, then boots out of there
+        STATE SurgicalStrike
+            INIT
+                IF (!VarGet("NumTargets"))
+                    VarCreateSet("NumTargets", Random(2,5));
+                ENDIF
+                IF (ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "CloakGenerator")   ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "ResourceCollector") ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "ResourceController") ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "DDDFrigate") ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "DFGFrigate")   ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "SalCapCorvette")||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "SensorArray")     ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "CLASS_Frigate") ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "CLASS_Destroyer") ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "Mothership"))
+                    MoveAttackIndividual(SHIPS_SSTargets, SHIPS_Targets);
+                ENDIF
+            ENDINIT
+            WATCH
+                IF (!ShipsCount(SHIPS_SSTargets))
+                    VarDec("NumTargets");
+                    IF (VarGet("NumTargets"))
+                        JUMP SurgicalStrike;
+                    ELSE
+                        VarDestroy("NumTargets");
+//                        TacticsNeutral();
+                        JUMP IonCannonAssault;
+                    ENDIF
+                ENDIF
+            ENDWATCH
+        ENDSTATE SurgicalStrike
+
+        //---------------------------
+        // AssaultGeneral: IonCannonAssault
+        // Assault State for Ion Cannon Frigates
+        STATE IonCannonAssault
+            INIT
+                IF (ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "HeavyCruiser")      ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "IonCannonFrigate")  ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "StandardDestroyer") ||
+                    ShipsSelectClass(SHIPS_Targets, SHIPS_AssaultEnemy, "CLASS_Frigate")    ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "Carrier")           ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "MissileDestroyer")  ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "Mothership")        ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "CLASS_Corvette"))
+                    IFONCE (ThisTeamIs(TEAM_BG2IonFrigates))
+                        MsgSendAll("BG2Attacking");
+                    ENDIFONCE
+                    MoveAttackIndividual(SHIPS_IonTargets, SHIPS_Targets);
+                ELSE
+//                    Print("IonCannonOutOfTargets");
+                    JUMP AttackGeneral;
+                ENDIF
+            ENDINIT
+            WATCH
+//                IF (ShipsOrder(THISTEAMSHIPS) != COMMAND_ATTACK)
+//                    JUMP IonCannonAssault;
+//                ENDIF
+                IF (!ShipsCount(SHIPS_IonTargets))
+                    JUMP IonCannonAssault;
+                ENDIF
+            ENDWATCH
+        ENDSTATE IonCannonAssault
+
+
+        //---------------------------
+        // AssaultGeneral: MissileDestroyerAssault
+        // Assault State for MissileDestroyers
+        STATE MissileDestroyerAssault
+            INIT
+                IF ((!Random(0,4) && ShipsSelectType(SHIPS_MissileTargets, SHIPS_AssaultEnemy, "SalCapCorvette")) ||
+                    (!Random(0,4) && ShipsSelectType(SHIPS_MissileTargets, SHIPS_AssaultEnemy, "HeavyDefender")) ||
+                    (!Random(0,3) && ShipsSelectType(SHIPS_MissileTargets, SHIPS_AssaultEnemy, "AttackBomber")) ||
+                    (!Random(0,4) && ShipsSelectType(SHIPS_MissileTargets, SHIPS_AssaultEnemy, "HeavyInterceptor")) ||
+                    ShipsSelectClass(SHIPS_MissileTargets, SHIPS_AssaultEnemy, "CLASS_Corvette")   ||
+                    ShipsSelectClass(SHIPS_MissileTargets, SHIPS_AssaultEnemy, "CLASS_Fighter")    ||
+                    ShipsSelectType(SHIPS_MissileTargets, SHIPS_AssaultEnemy, "IonCannonFrigate")  ||
+                    ShipsSelectClass(SHIPS_MissileTargets, SHIPS_AssaultEnemy, "CLASS_Frigate")    ||
+                    ShipsSelectType(SHIPS_MissileTargets, SHIPS_AssaultEnemy, "StandardDestroyer") ||
+                    ShipsSelectType(SHIPS_MissileTargets, SHIPS_AssaultEnemy, "HeavyCruiser")      ||
+                    ShipsSelectType(SHIPS_MissileTargets, SHIPS_AssaultEnemy, "MissileDestroyer")  ||
+                    ShipsSelectType(SHIPS_MissileTargets, SHIPS_AssaultEnemy, "Carrier")           ||
+                    ShipsSelectType(SHIPS_MissileTargets, SHIPS_AssaultEnemy, "Mothership"))
+                    Attack(SHIPS_MissileTargets);
+                ELSE
+//                    Print("MissileDestroyerOutOfTargets");
+                    JUMP AttackGeneral;
+                ENDIF
+            ENDINIT
+            WATCH
+//                IF (ShipsOrder(THISTEAMSHIPS) != COMMAND_ATTACK)
+//                    JUMP MissileDestroyerAssault;
+//                ENDIF
+                IF (!ShipsCount(SHIPS_MissileTargets))
+                    JUMP MissileDestroyerAssault;
+                ENDIF
+            ENDWATCH
+        ENDSTATE MissileDestroyerAssault
+
+
+        //---------------------------
+        // AssaultGeneral: PrimaryDestroyerAssault
+        // Assault State for PrimaryDestroyers
+        STATE PrimaryDestroyerAssault
+            INIT
+                IF (ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "Mothership")        ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "HeavyCruiser")      ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "Carrier")           ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "StandardDestroyer") ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "MissileDestroyer")  ||
+                    ShipsSelectClass(SHIPS_Targets, SHIPS_AssaultEnemy, "CLASS_Frigate"))
+                    MoveAttackIndividual(SHIPS_Destroyer1Targets, SHIPS_Targets);
+                ELSE
+//                    Print("PrimaryDestroyerOutOfTargets");
+                    JUMP AttackGeneral;
+                ENDIF
+            ENDINIT
+            WATCH
+//                IF (ShipsOrder(THISTEAMSHIPS) != COMMAND_ATTACK)
+//                    JUMP PrimaryDestroyerAssault;
+//                ENDIF
+                IF (!ShipsCount(SHIPS_Destroyer1Targets))
+                    JUMP PrimaryDestroyerAssault;
+                ENDIF
+            ENDWATCH
+        ENDSTATE PrimaryDestroyerAssault
+
+        //---------------------------
+        // AssaultGeneral: SecondaryDestroyerAssault
+        // Assault State for SecondaryDestroyers
+        STATE SecondaryDestroyerAssault
+            INIT
+                IF (ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "HeavyCruiser")      ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "StandardDestroyer") ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "MissileDestroyer")  ||
+                    ShipsSelectClass(SHIPS_Targets, SHIPS_AssaultEnemy, "CLASS_Frigate")    ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "Carrier")           ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "Mothership"))
+                    MoveAttackIndividual(SHIPS_Destroyer2Targets, SHIPS_Targets);
+                ELSE
+//                    Print("SecondaryDestroyerOutOfTargets");
+                    JUMP AttackGeneral;
+                ENDIF
+            ENDINIT
+            WATCH
+//                IF (ShipsOrder(THISTEAMSHIPS) != COMMAND_ATTACK)
+//                    JUMP SecondaryDestroyerAssault;
+//                ENDIF
+                IF (!ShipsCount(SHIPS_Destoyer2Targets))
+                    JUMP SecondaryDestroyerAssault;
+                ENDIF
+            ENDWATCH
+        ENDSTATE SecondaryDestroyerAssault
+
+
+        //---------------------------
+        // AssaultGeneral: CruiserAssault
+        // Assault State for Cruisers
+        STATE CruiserAssault
+            INIT
+                IF (((!Random(0,3)) && ShipsSelectClass(SHIPS_Targets, SHIPS_AssaultEnemy, "CLASS_Frigate")) ||
+                    ((!Random(0,2)) && ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "IonCannonFrigate")) ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "Mothership")    ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "HeavyCruiser")  ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "Carrier")       ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "StandardDestroyer") ||
+                    ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "MissileDestroyer")  ||
+                    ShipsSelectClass(SHIPS_Targets, SHIPS_AssaultEnemy, "CLASS_Frigate") ||
+                    (VarGet("HonourGuardCruiser") && ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "HeavyCorvette"))  ||
+                    (VarGet("HonourGuardCruiser") && ShipsSelectType(SHIPS_Targets, SHIPS_AssaultEnemy, "HeavyDefender"))  ||
+                    (VarGet("HonourGuardCruiser") && ShipsSelectClass(SHIPS_Targets, SHIPS_AssaultEnemy, "CLASS_Corvette"))  ||
+                    (VarGet("HonourGuardCruiser") && ShipsSelectClass(SHIPS_Targets, SHIPS_AssaultEnemy, "CLASS_Fighter")))
+
+                    TimerDestroy("CruiserReissue");
+                    IF (Random(0,4))
+                        ShipsSelectIndex(SHIPS_CruiserTargets, SHIPS_Targets, 0);
+                        Attack(SHIPS_CruiserTargets);
+                    ELSE
+                        MoveAttackIndividual(SHIPS_CruiserTargets, SHIPS_Targets);
+                    ENDIF
+                ELSEIF (VarGet("HonourGuardCruiser") &&
+                        TimerExpired("CruiserReissue"))
+                    TimerDestroy("CruiserReissue");
+                    JUMP GuardMaster;
+                ELSEIF (VarGet("HonourGuardCruiser"))
+                    TimerCreateSetStart("CruiserReissue", Random(10, 15));
+                ELSE
+                    JUMP AttackGeneral;
+                ENDIF
+            ENDINIT
+            WATCH
+//                IF (ShipsOrder(THISTEAMSHIPS) != COMMAND_ATTACK)
+//                    JUMP CruiserAssault;
+//                ENDIF
+                IF (!ShipsCount(SHIPS_CruiserTargets))
+                    JUMP CruiserAssault;
+                ENDIF
+                IF (TimerExpired("CruiserReissue"))
+                    JUMP CruiserAssault;
+                ENDIF
+            ENDWATCH
+        ENDSTATE CruiserAssault
+
+        //---------------------------
+        // AssaultGeneral: AttackGeneral
+        // Last in path.  Attacks anything else out there
+        STATE AttackGeneral
+            INIT
+                IF (VarGet("MovingToMothership"))
+                    #if HW_Debug
+                        Print("I'm Moving To Mothership in Attack General");
+                    #endif
+                    JUMP MoveToMothership;
+                ENDIF
+                MoveAttackIndividual(SHIPS_AGTargets, SHIPS_AssaultEnemy);
+            ENDINIT
+            WATCH
+                IF (!ShipsCount(SHIPS_AGTargets))
+                    IF (ShipsCount(SHIPS_AssaultEnemy))
+                        JUMP AttackGeneral;
+                    ELSE
+                        JUMP AttackPlayersMothership;
+                    ENDIF
+                ENDIF
+            ENDWATCH
+        ENDSTATE AttackGeneral
+
+        //---------------------------
+        // AssaultGeneral: AttackPlayersMothership
+        // Attacks the players mothership or dies trying
+        STATE AttackPlayersMothership
+            INIT
+                AttackMothership();
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE AttackPlayersMothership
+
+
+        //---------------------------
+        // AssaultGeneral: CarrierAssault
+        // Launches fighters then stays away...
+        STATE CarrierAssault
+            INIT
+                TacticsEvasive();
+                IF (ThisTeamIs(TEAM_BG2Carrier))
+                    MsgToBattleGroup2("Launch");
+                ENDIF
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE CarrierAssault
+
+
+        //---------------------------
+        // AssaultGeneral: GuardMaster
+        // Guards the team's master
+        STATE GuardMaster
+            INIT
+                IF (ThisTeamIsEliteHarrass())
+                    Guard(TEAMSHIPS_EliteHarrassCarrier);
+                ELSEIF (ThisTeamIsHonourGuard())
+//                    IF (ThisTeamIs(TEAM_HonourGuardDefenceFrig))
+//                        ShipsAdd(SHIPS_HCs, TEAMSHIPS_HonourGuardHC1);
+//                        ShipsAdd(SHIPS_HCs, TEAMSHIPS_HonourGuardHC2);
+//                        ShipsAdd(SHIPS_HCs, TEAMSHIPS_HonourGuardHC3);
+//                        Guard(SHIPS_HCs);
+//                    ELSE
+                    GuardMothership();
+//                    ENDIF
+                ENDIF
+            ENDINIT
+            WATCH
+                IF (MsgReceived("Engage"))
+                    JUMP PrioritizeAttack;
+                ENDIF
+            ENDWATCH
+        ENDSTATE GuardMaster
+
+        //---------------------------
+        // AssaultGeneral: NullState
+        // Nothing happens here
+        STATE NullState
+            INIT
+                VarCreateSet("InNullState", TRUE);
+                VarDestroy("MovingToMothership");
+                VarDestroy("CloseToMothership");
+                IF (ThisTeamIsAssault())
+                    MsgSend(MASTERTEAM, "AssaultDead");
+                ELSEIF (ThisTeamIsHonourGuard())
+                    MsgSend(MASTERTEAM, "HonourDead");
+                ENDIF
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE NullState
+
+ENDFSM AssaultGeneral
+
+//-----------------------------------------------------------------------------
+//    Name        : AssaultTeam
+//    Description : The AssaultTeam sourced from the Mothership
+//-----------------------------------------------------------------------------
+FSM AssaultTeam
+
+#define HyperspaceAttack
+
+    States DockWithElite, WaitForLaunch, Launch, Guarding, HyperspaceOut, HyperspaceIntoPosition, OnMyWay, FuelUp,
+           Align, MoveToAssault, Replenish, NullState;
+
+    INIT
+        JUMP Guarding;
+    ENDINIT
+    WATCH
+        IFONCE (TeamCount() == 0)
+            //Mommy!  Mommy!  Where are you Mommy!
+            IF (ThisTeamIsAssault())
+                JUMP Replenish;
+            ELSE
+                JUMP NullState;
+            ENDIF
+        ENDIFONCE
+    ENDWATCH
+
+        //---------------------------
+        // AssaultTeam: Guarding
+        // Guards the area around the mothership
+        STATE Guarding
+            INIT
+                //don't do anything
+            ENDINIT
+            WATCH
+                IF (MsgReceived("ReleaseAssaultGroup"))
+                    TimerCreateSetStart("AssaultTimer", 20);
+                ENDIF
+
+                IF (TimerExpiredDestroy("AssaultTimer"))
+                    JUMP HyperspaceOut;
+                ENDIF
+
+                IF (MsgReceived("PlayerFleetOnTheWay"))
+                    JUMP MoveToAssault;
+                ENDIF
+            ENDWATCH
+        ENDSTATE Guarding
+
+
+        //---------------------------
+        // AssaultTeam: HyperspaceOut
+        // Team hyperspaces out in order to prepare for the assault
+        STATE HyperspaceOut
+            INIT
+                TeamHyperspaceOut();
+                TimerCreateSetStart("HyperspaceTimer", 12);
+            ENDINIT
+            WATCH
+                IF (TimerExpiredDestroy("HyperspaceTimer"))
+                    JUMP HyperspaceIntoPosition;
+                ENDIF
+            ENDWATCH
+        ENDSTATE HyperspaceOut
+
+
+        //---------------------------
+        // AssaultTeam: HyperspaceIntoPosition
+        // Team hyperspaces into one of the formation points
+        STATE HyperspaceIntoPosition
+            INIT
+                IF (ThisTeamIs(TEAM_AssaultTeamDestroyer1))
+                    IF (VarGet("G_FormPoint") == 1)
+                        TeamHyperspaceIn(POINT_Destroy1FormSpot1);
+                    ELSEIF (VarGet("G_FormPoint") == 2)
+                        TeamHyperspaceIn(POINT_Destroy1FormSpot2);
+                    ELSEIF (VarGet("G_FormPoint") == 3)
+                        TeamHyperspaceIn(POINT_Destroy1FormSpot3);
+                    ELSEIF (VarGet("G_FormPoint") == 4)
+                        TeamHyperspaceIn(POINT_Destroy1FormSpot4);
+                    ELSEIF (VarGet("G_FormPoint") == 5)
+                        TeamHyperspaceIn(POINT_Destroy1FormSpot5);
+                    ENDIF
+                ELSEIF (ThisTeamIs(TEAM_AssaultTeamDestroyer2))
+                    IF (VarGet("G_FormPoint") == 1)
+                        TeamHyperspaceIn(POINT_Destroy2FormSpot1);
+                    ELSEIF (VarGet("G_FormPoint") == 2)
+                        TeamHyperspaceIn(POINT_Destroy2FormSpot2);
+                    ELSEIF (VarGet("G_FormPoint") == 3)
+                        TeamHyperspaceIn(POINT_Destroy2FormSpot3);
+                    ELSEIF (VarGet("G_FormPoint") == 4)
+                        TeamHyperspaceIn(POINT_Destroy2FormSpot4);
+                    ELSEIF (VarGet("G_FormPoint") == 5)
+                        TeamHyperspaceIn(POINT_Destroy2FormSpot5);
+                    ENDIF
+                ELSEIF (ThisTeamIs(TEAM_AssaultTeamIonCannon))
+                    IF (VarGet("G_FormPoint") == 1)
+                        TeamHyperspaceIn(POINT_IonFrigFormSpot1);
+                    ELSEIF (VarGet("G_FormPoint") == 2)
+                        TeamHyperspaceIn(POINT_IonFrigFormSpot2);
+                    ELSEIF (VarGet("G_FormPoint") == 3)
+                        TeamHyperspaceIn(POINT_IonFrigFormSpot3);
+                    ELSEIF (VarGet("G_FormPoint") == 4)
+                        TeamHyperspaceIn(POINT_IonFrigFormSpot4);
+                    ELSEIF (VarGet("G_FormPoint") == 5)
+                        TeamHyperspaceIn(POINT_IonFrigFormSpot5);
+                    ENDIF
+                ELSEIF (ThisTeamIs(TEAM_AssaultTeamFrigs))
+                    IF (VarGet("G_FormPoint") == 1)
+                        TeamHyperspaceIn(POINT_FrigFormSpot1);
+                    ELSEIF (VarGet("G_FormPoint") == 2)
+                        TeamHyperspaceIn(POINT_FrigFormSpot2);
+                    ELSEIF (VarGet("G_FormPoint") == 3)
+                        TeamHyperspaceIn(POINT_FrigFormSpot3);
+                    ELSEIF (VarGet("G_FormPoint") == 4)
+                        TeamHyperspaceIn(POINT_FrigFormSpot4);
+                    ELSEIF (VarGet("G_FormPoint") == 5)
+                        TeamHyperspaceIn(POINT_FrigFormSpot5);
+                    ENDIF
+                ELSEIF (ThisTeamIs(TEAM_AssaultCruiser1))
+                    IF (VarGet("G_FormPoint") == 1)
+                        TeamHyperspaceIn(POINT_CruiserFormSpot1);
+                    ELSEIF (VarGet("G_FormPoint") == 2)
+                        TeamHyperspaceIn(POINT_CruiserFormSpot2);
+                    ELSEIF (VarGet("G_FormPoint") == 3)
+                        TeamHyperspaceIn(POINT_CruiserFormSpot3);
+                    ELSEIF (VarGet("G_FormPoint") == 4)
+                        TeamHyperspaceIn(POINT_CruiserFormSpot4);
+                    ELSEIF (VarGet("G_FormPoint") == 5)
+                        TeamHyperspaceIn(POINT_CruiserFormSpot5);
+                    ENDIF
+                ELSEIF (ThisTeamIs(TEAM_AssaultMissileDestroyer1))
+                    IF (VarGet("G_FormPoint") == 1)
+                        TeamHyperspaceIn(POINT_Corvette1FormSpot1);
+                    ELSEIF (VarGet("G_FormPoint") == 2)
+                        TeamHyperspaceIn(POINT_Corvette1FormSpot2);
+                    ELSEIF (VarGet("G_FormPoint") == 3)
+                        TeamHyperspaceIn(POINT_Corvette1FormSpot3);
+                    ELSEIF (VarGet("G_FormPoint") == 4)
+                        TeamHyperspaceIn(POINT_Corvette1FormSpot4);
+                    ELSEIF (VarGet("G_FormPoint") == 5)
+                        TeamHyperspaceIn(POINT_Corvette1FormSpot5);
+                    ENDIF
+                ELSEIF (ThisTeamIs(TEAM_AssaultMissileDestroyer2))
+                    IF (VarGet("G_FormPoint") == 1)
+                        TeamHyperspaceIn(POINT_Corvette2FormSpot1);
+                    ELSEIF (VarGet("G_FormPoint") == 2)
+                        TeamHyperspaceIn(POINT_Corvette2FormSpot2);
+                    ELSEIF (VarGet("G_FormPoint") == 3)
+                        TeamHyperspaceIn(POINT_Corvette2FormSpot3);
+                    ELSEIF (VarGet("G_FormPoint") == 4)
+                        TeamHyperspaceIn(POINT_Corvette2FormSpot4);
+                    ELSEIF (VarGet("G_FormPoint") == 5)
+                        TeamHyperspaceIn(POINT_Corvette2FormSpot5);
+                    ENDIF
+                ENDIF
+            ENDINIT
+            WATCH
+                IF (Nearby(THISTEAMSPOINT, 5000))
+                    JUMP Align;
+                ENDIF
+            ENDWATCH
+        ENDSTATE HyperspaceIntoPosition
+
+        //---------------------------
+        // AssaultTeam: Align
+        // Aligns the ships so that the formation move works properly
+        STATE Align
+            INIT
+                MsgSend(MASTERTEAM, "AssaultInPosition");
+            ENDINIT
+            WATCH
+                IF (MsgReceived("Attack"))
+                    FSMCreate(AssaultGeneral, THISTEAM);
+                ENDIF
+            ENDWATCH
+        ENDSTATE Align
+
+        //---------------------------
+        // AssaultTeam: MoveToAssault
+        // The team moves towards the players assault team
+        STATE MoveToAssault
+            INIT
+                TeamVelocityMaxSet(250);    //change every ship to be as fast as a heavy cruiser
+                Attack(SHIPS_PlayerForce); //best way to move towards a fleet
+            ENDINIT
+            WATCH
+                IF (Nearby(SHIPSPOINT_PlayerForce, 20000))
+                    TeamVelocityMaxClear();
+                    VarCreateSet("G_AssaultingPlayer", TRUE);
+                    FSMCreate(AssaultGeneral, THISTEAM);
+                ENDIF
+            ENDWATCH
+        ENDSTATE MoveToAssault
+
+
+        //---------------------------
+        // AssaultTeam: Replenish
+        // Requests ships and waits for them to arrive
+        STATE Replenish
+            INIT
+                RequestShipsOriginal(100);
+            ENDINIT
+            WATCH
+                IF (MsgReceived("PlayerFleetOnTheWay"))
+                    //ignore
+                ENDIF
+                IF (TeamCount() == TeamCountOriginal())
+                    MsgSend(MASTERTEAM, "AssaultReplenished");
+                    JUMP Guarding;
+                ENDIF
+            ENDWATCH
+        ENDSTATE Replenish
+
+        //---------------------------
+        // AssaultTeam: NullState
+        // Nothing happens here
+        STATE NullState
+            INIT
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE NullState
+
+ENDFSM AssaultTeam
+
+//-----------------------------------------------------------------------------
+//    Name        : ShadowPlayer
+//    Description : Follows what the player is doing... matching his every move
+//-----------------------------------------------------------------------------
+FSM ShadowPlayer
+
+    States Attack, TakeoutOtherTargets, NullState;
+
+    INIT
+        JUMP Attack;
+    ENDINIT
+    WATCH
+        IFONCE (TeamCount() == 0)
+            //Well..  I pay for my treachery
+            JUMP NullState;
+        ENDIFONCE
+    ENDWATCH
+
+        //---------------------------
+        // ShadowPlayer: Attack
+        // First goes through an exhaustive list of team that can be currently
+        // in battle with the player, attacking any team that is being attacked
+        // Once all of those have been gone through, the defector goes through
+        // every ship that could be attacking the player anyway, and attacks them
+        // (this is if the player is not, or unable, to attack).
+        // then, when all the teams are no longer around, jumps to the next state.
+        STATE Attack
+            INIT
+                IF (((!VarGet("AttackWithoutPlayer")) &&
+                     UnderAttackElsewhere(TEAM_AssaultCruiser1, SHIPS_MyBuddies)) &&
+                    Nearby(TEAMSPOINT_AssaultCruiser1, 20000))
+                    Attack(TEAMSHIPS_AssaultCruiser1);
+
+                ELSEIF (((!VarGet("AttackWithoutPlayer")) &&
+                         UnderAttackElsewhere(TEAM_AssaultTeamDestroyer1, SHIPS_MyBuddies)) &&
+                        Nearby(TEAMSPOINT_AssaultTeamDestroyer1, 20000))
+                    Attack(TEAMSHIPS_AssaultTeamDestroyer1);
+
+                ELSEIF (((!VarGet("AttackWithoutPlayer")) &&
+                         UnderAttackElsewhere(TEAM_AssaultMissileDestroyer1, SHIPS_MyBuddies)) &&
+                        Nearby(TEAMSPOINT_AssaultMissileDestroyer1, 20000))
+                    Attack(TEAMSHIPS_AssaultMissileDestroyer1);
+
+                ELSEIF (((!VarGet("AttackWithoutPlayer")) &&
+                         UnderAttackElsewhere(TEAM_AssaultMissileDestroyer2, SHIPS_MyBuddies)) &&
+                        Nearby(TEAMSPOINT_AssaultMissileDestroyer2, 20000))
+                    Attack(TEAMSHIPS_AssaultMissileDestroyer2);
+
+                ELSEIF (((!VarGet("AttackWithoutPlayer")) &&
+                         UnderAttackElsewhere(TEAM_AssaultTeamDestroyer2, SHIPS_MyBuddies)) &&
+                        Nearby(TEAMSPOINT_AssaultTeamDestroyer2, 20000))
+                    Attack(TEAMSHIPS_AssaultTeamDestroyer2);
+
+                ELSEIF (((!VarGet("AttackWithoutPlayer")) &&
+                         UnderAttackElsewhere(TEAM_AssaultTeamIonCannon, SHIPS_MyBuddies)) &&
+                        Nearby(TEAMSPOINT_AssaultTeamIonCannon, 20000))
+                    Attack(TEAMSHIPS_AssaultTeamIonCannon);
+
+                ELSEIF (((!VarGet("AttackWithoutPlayer")) &&
+                         UnderAttackElsewhere(TEAM_AssaultTeamFrigs, SHIPS_MyBuddies)) &&
+                        Nearby(TEAMSPOINT_AssaultTeamFrigs, 20000))
+                    Attack(TEAMSHIPS_AssaultTeamFrigs);
+
+                ELSEIF (((!VarGet("AttackWithoutPlayer")) &&
+                         UnderAttackElsewhere(TEAM_BG1HeavyCruiser, SHIPS_MyBuddies)) &&
+                        Nearby(TEAMSPOINT_BG1HeavyCruiser, 20000))
+                    Attack(TEAMSHIPS_BG1HeavyCruiser);
+
+                ELSEIF (((!VarGet("AttackWithoutPlayer")) &&
+                         UnderAttackElsewhere(TEAM_BG1Destroyer1, SHIPS_MyBuddies)) &&
+                        Nearby(TEAMSPOINT_BG1Destroyer, 20000))
+                    Attack(TEAMSHIPS_BG1Destroyer1);
+
+                ELSEIF (((!VarGet("AttackWithoutPlayer")) &&
+                         UnderAttackElsewhere(TEAM_BG1Destroyer2, SHIPS_MyBuddies)) &&
+                        Nearby(TEAMSPOINT_BG1Destroyer2, 20000))
+                    Attack(TEAMSHIPS_BG1Destroyer2);
+
+                ELSEIF (((!VarGet("AttackWithoutPlayer")) &&
+                         UnderAttackElsewhere(TEAM_BG1Destroyer3, SHIPS_MyBuddies)) &&
+                        Nearby(TEAMSPOINT_BG1Destroyer3, 20000))
+                    Attack(TEAMSHIPS_BG1Destroyer3);
+
+                ELSEIF (((!VarGet("AttackWithoutPlayer")) &&
+                         UnderAttackElsewhere(TEAM_BG1Frigates, SHIPS_MyBuddies)) &&
+                        Nearby(TEAMSPOINT_BG1Frigates, 20000))
+                    Attack(TEAMSHIPS_BG1Frigates);
+
+                ELSEIF (((!VarGet("AttackWithoutPlayer")) &&
+                         UnderAttackElsewhere(TEAM_BG1IonFrigates, SHIPS_MyBuddies)) &&
+                        Nearby(TEAMSPOINT_BG1IonFrigates, 20000))
+                    Attack(TEAMSHIPS_BG1IonFrigates);
+
+                ELSEIF (((!VarGet("AttackWithoutPlayer")) &&
+                         UnderAttackElsewhere(TEAM_BG2HeavyCruiser, SHIPS_MyBuddies)) &&
+                        Nearby(TEAMSPOINT_BG2HeavyCruiser, 20000))
+                    Attack(TEAMSHIPS_BG2HeavyCruiser);
+
+                ELSEIF (((!VarGet("AttackWithoutPlayer")) &&
+                         UnderAttackElsewhere(TEAM_BG2Frigates, SHIPS_MyBuddies)) &&
+                        Nearby(TEAMSPOINT_BG2Frigates, 20000))
+                    Attack(TEAMSHIPS_BG2Frigates);
+
+                ELSEIF (((!VarGet("AttackWithoutPlayer")) &&
+                         UnderAttackElsewhere(TEAM_BG2IonFrigates, SHIPS_MyBuddies)) &&
+                        Nearby(TEAMSPOINT_BG2IonFrigates, 20000))
+                    Attack(TEAMSHIPS_BG2IonFrigates);
+
+                ELSE
+                    IF (!VarGet("AttackWithoutPlayer"))
+                        VarCreateSet("AttackWithoutPlayer", TRUE);
+                        JUMP Attack;
+                    ENDIF
+                    JUMP TakeoutOtherTargets;
+                ENDIF
+            ENDINIT
+            WATCH
+                IF (ShipsOrder(THISTEAMSHIPS) != COMMAND_ATTACK)
+                    VarDestroy("AttackWithoutPlayer");
+                    JUMP Attack;
+                ENDIF
+            ENDWATCH
+        ENDSTATE Attack
+
+        //---------------------------
+        // ShadowPlayer: TakeoutOtherTargets
+        // Tracks the favorite ship of this team
+        STATE TakeoutOtherTargets
+            INIT
+                IF (!VarGet("G_DefectorInRearVol") &&
+                    PointInside(VOLUME_RearFleetChecker, THISTEAMSPOINT))
+                    VarCreateSet("G_DefectorInRearVol", TRUE);
+                ENDIF
+
+                IF (ShipsCount(TEAMSHIPS_EliteGuardCarrier))
+                    Attack(TEAMSHIPS_EliteGuardCarrier);
+//                ELSEIF (ShipsCount(TEAMSHIPS_ImperialResourcers1))
+//                    Attack(TEAMSHIPS_ImperialResourcers1);
+//                ELSEIF (ShipsCount(TEAMSHIPS_ImperialResourcers2))
+//                    Attack(TEAMSHIPS_ImperialResourcers2);
+                ELSE
+                    Attack(TEAMSHIPS_ImperialFlagship);
+                ENDIF
+            ENDINIT
+            WATCH
+                IF (!VarGet("G_DefectorInRearVol") &&
+                    PointInside(VOLUME_RearFleetChecker, THISTEAMSPOINT))
+                    VarCreateSet("G_DefectorInRearVol", TRUE);
+                ENDIF
+                IF (ShipsOrder(THISTEAMSHIPS) != COMMAND_ATTACK)
+                    JUMP Attack;
+                ENDIF
+            ENDWATCH
+        ENDSTATE TakeoutOtherTargets
+
+
+
+        //---------------------------
+        // ShadowPlayer: NullState
+        // Nothing happens here
+        STATE NullState
+            INIT
+                IF (ThisTeamIs(TEAM_DefectorDestroyer))
+                    IF (!ShipsCount(TEAMSHIPS_DefectorIonFrigs))
+                        VarDestroy("G_DefectorInRearVol");
+                    ENDIF
+                ELSEIF (ThisTeamIs(TEAM_DefectorIonFrigs))
+                    IF (!ShipsCount(TEAMSHIPS_DefectorDestroyer))
+                        VarDestroy("G_DefectorInRearVol");
+                    ENDIF
+                ENDIF
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE NullState
+
+ENDFSM ShadowPlayer
+
+//-----------------------------------------------------------------------------
+//    Name        : AssaultStart
+//    Description : Hyperspaces out the assault forces and waits for the attack command
+//-----------------------------------------------------------------------------
+FSM AssaultStart
+
+    States Dock, Delay, HyperspaceOut, HyperspaceInDefector,  SuperOverKillGiveOver,
+           HyperspaceIn, ChooseTask, NullState;
+
+    INIT
+        IF (ShipsSelectClass(SHIPS_Temp, THISTEAMSHIPS, "CLASS_Fighter") ||
+            ShipsSelectClass(SHIPS_Temp, THISTEAMSHIPS, "CLASS_Corvette"))
+            JUMP Dock;
+        ELSEIF (ShipsSelectType(SHIPS_Temp, THISTEAMSHIPS, "Carrier"))
+            JUMP Delay;
+        ELSE
+            JUMP HyperspaceOut;
+        ENDIF
+    ENDINIT
+    WATCH
+        IFONCE (TeamCount() == 0)
+            //I will not die!
+            JUMP NullState;
+        ENDIFONCE
+    ENDWATCH
+
+        //---------------------------
+        // AssaultStart: Dock
+        // Docks strikecraft in the assault forces
+        STATE Dock
+            INIT
+                IF (ThisTeamIs(TEAM_EliteHarrassBombers) ||
+                    ThisTeamIs(TEAM_EliteHarrassCorvettes) ||
+                    ThisTeamIs(TEAM_ABReinforce1) ||
+                    ThisTeamIs(TEAM_ABReinforce2) ||
+                    ThisTeamIs(TEAM_HCReinforce1))
+                    ShipsDamageModifierSet(THISTEAMSHIPS, 200);
+                    TeamHealthSet(200);
+                    DockInstant(TEAM_EliteHarrassCarrier);
+                ENDIF
+            ENDINIT
+            WATCH
+                IF (MsgReceived("Launch"))
+                    Launch();
+                    JUMP ChooseTask;
+                ENDIF
+            ENDWATCH
+        ENDSTATE Dock
+
+        //---------------------------
+        // AssaultStart: Delay
+        // Delays the hyperspace out for carriers and stuff
+        STATE Delay
+            INIT
+                TimerCreateSetStart("DelayStart", 2);
+            ENDINIT
+            WATCH
+                IF (TimerExpiredDestroy("DelayStart"))
+                    JUMP HyperspaceOut;
+                ENDIF
+            ENDWATCH
+        ENDSTATE Delay
+
+        //---------------------------
+        // AssaultStart: HyperspaceOut
+        // Hyperspaces assault force out
+        STATE HyperspaceOut
+            INIT
+                TeamAttributesSet(ATTRIBUTES_StartInHS);
+                TeamHyperspaceOut();
+            ENDINIT
+            WATCH
+                IF (MsgReceived("ReleaseBattleGroup1"))
+                    IF (ThisTeamIs(TEAM_BG1HeavyCruiser) ||
+                        ThisTeamIs(TEAM_BG1Destroyer1) ||
+                        ThisTeamIs(TEAM_BG1Destroyer2) ||
+                        ThisTeamIs(TEAM_BG1Destroyer3) ||
+                        ThisTeamIs(TEAM_BG1Frigates) ||
+                        ThisTeamIs(TEAM_BG1IonFrigates))
+                        JUMP HyperspaceIn;
+                    ENDIF
+                ENDIF
+                IF (MsgReceived("ReleaseBattleGroup2"))
+                    IF (ThisTeamIsBattleGroup2())
+                        JUMP HyperspaceIn;
+                    ENDIF
+                ENDIF
+                IF (MsgReceived("InComesDefector"))
+                    IF (ThisTeamIs(TEAM_DefectorMissileDestroyers) ||
+                        ThisTeamIs(TEAM_DefectorDestroyer) ||
+                        ThisTeamIs(TEAM_DefectorFrigates) ||
+                        ThisTeamIs(TEAM_DefectorIonFrigs))
+                        JUMP HyperspaceInDefector;
+                    ENDIF
+                ENDIF
+            ENDWATCH
+        ENDSTATE HyperspaceOut
+
+        //---------------------------
+        // AssaultStart: HyperspaceInDefector
+        // Defector ships hyperspace in
+        STATE HyperspaceInDefector
+            INIT
+                ShipsSetNonRetaliation(THISTEAMSHIPS);
+
+                IF (ThisTeamIs(TEAM_DefectorMissileDestroyers))
+                    TeamHyperspaceIn(POINT_DefectorCarrierIn);
+                    TimerCreateSetStart("Overkill", 60);
+                ELSEIF (ThisTeamIs(TEAM_DefectorDestroyer))
+                    TeamAttributesBitSet(ATTRIBUTES_Defector);
+                    TeamAttributesBitSet(ATTRIBUTES_SMColorYellow);
+                    ShipsDamageModifierSet(THISTEAMSHIPS, 200);
+                    TeamHealthSet(200);
+                    TeamHyperspaceIn(POINT_DefectorDestroyerIn);
+                ELSEIF (ThisTeamIs(TEAM_DefectorFrigates))
+                    TeamHyperspaceIn(POINT_DefectorFrigatesIn);
+                    TimerCreateSetStart("Overkill", 60);
+                ELSEIF (ThisTeamIs(TEAM_DefectorIonFrigs))
+                    TeamAttributesBitSet(ATTRIBUTES_Defector);
+                    TeamAttributesBitSet(ATTRIBUTES_SMColorYellow);
+                    ShipsDamageModifierSet(THISTEAMSHIPS, 200);
+                    TeamHealthSet(200);
+                    TeamHyperspaceIn(POINT_DefectorIonFrigsIn);
+                ENDIF
+            ENDINIT
+            WATCH
+                // New code for switching the Defectors over, using separate messages for each Defector team and IFONCE's - should be safer
+                IF (Nearby(THISTEAMSPOINT, 5000))
+                    IF (ThisTeamIs (TEAM_DefectorMissileDestroyers))
+                            IFONCE (VarGet("G_GiveOverMissile"))
+                                    TeamSwitchPlayerOwner();
+                                    JUMP SuperOverKillGiveOver;
+                            ENDIFONCE
+                    ELSEIF (ThisTeamIs (TEAM_DefectorFrigates))
+                            IFONCE (VarGet("G_GiveOverFrigates"))
+                                    TeamSwitchPlayerOwner();
+                                    JUMP SuperOverKillGiveOver;
+                            ENDIFONCE
+                    ELSE
+                            FSMCreate(ShadowPlayer, THISTEAM);
+                    ENDIF
+                ENDIF
+
+                // last ditch attempt at giving over the team
+                IF (TimerExpiredDestroy("Overkill"))
+                    JUMP SuperOverKillGiveOver;
+                ENDIF
+
+                // Falko's old code, commented out by edaly
+                //IF (Nearby(THISTEAMSPOINT, 5000))
+                //    IF (ThisTeamIs(TEAM_DefectorMissileDestroyers) ||
+                //        ThisTeamIs(TEAM_DefectorFrigates))
+                //        IF (MsgReceived("GiveOver"))
+                //            TeamSwitchPlayerOwner();
+                //        ENDIF
+                //    ELSE
+                //        FSMCreate(ShadowPlayer, THISTEAM);
+                //    ENDIF
+                //ENDIF
+            ENDWATCH
+        ENDSTATE HyperspaceInDefector
+
+        //---------------------------
+        // AssaultStart: SuperOverKillGiveOver
+        // Repeatedly tries to hand over the defector ships
+        STATE SuperOverKillGiveOver
+            INIT
+            ENDINIT
+            WATCH
+                IF (ShipsCount(THISTEAMSHIPS))
+                   TeamSwitchPlayerOwner();
+                ENDIF
+            ENDWATCH
+        ENDSTATE SuperOverKillGiveOver
+
+
+        //---------------------------
+        // AssaultStart: HyperspaceIn
+        // Hyperspaces the team in and chooses the right assault fsm
+        STATE HyperspaceIn
+            INIT
+                TeamHyperspaceIn(THISTEAMSPOINT);
+            ENDINIT
+            WATCH
+                IF (Nearby(THISTEAMSPOINT, 5000))
+                    IF (ThisTeamIsBattleGroup1())
+                        MsgSend(MASTERTEAM, "BG1InPosition");
+                    ELSEIF (ThisTeamIsBattleGroup2())
+                        MsgSend(MASTERTEAM, "BG2InPosition");
+                    ENDIF
+                ENDIF
+
+                IF (MsgReceived("Attack"))
+                    FSMCreate(AssaultGeneral, THISTEAM);
+                ENDIF
+            ENDWATCH
+        ENDSTATE HyperspaceIn
+
+        //---------------------------
+        // AssaultStart: ChooseTask
+        // team chooses its task
+        STATE ChooseTask
+            INIT
+            ENDINIT
+            WATCH
+                IF (TeamFinishedLaunching())
+                    FSMCreate(StrikeCraftAssault, THISTEAM);
+                ENDIF
+            ENDWATCH
+        ENDSTATE ChooseTask
+
+        //---------------------------
+        // AssaultStart: NullState
+        // Nothing happens here
+        STATE NullState
+            INIT
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE NullState
+
+ENDFSM AssaultStart
+
+//-----------------------------------------------------------------------------
+//    Name        : EliteGuard
+//    Description : Guards resource collectors and the EliteGuard carrier
+//-----------------------------------------------------------------------------
+FSM EliteGuard
+
+    States InitialDock, Launch, NullState;
+
+    INIT
+        ShipsDamageModifierSet(THISTEAMSHIPS, 200);
+        TeamHealthSet(200);
+        JUMP InitialDock;
+    ENDINIT
+    WATCH
+        IFONCE (TeamCount() == 0)
+            //Pluchrowjaorawpppaaapeoerkbwnw
+            JUMP NullState;
+        ENDIFONCE
+    ENDWATCH
+
+        //---------------------------
+        // EliteGuard: InitialDock
+        // Docks with the Elite Guard Carrier
+        STATE InitialDock
+            INIT
+                DockInstant(TEAM_EliteGuardCarrier);
+            ENDINIT
+            WATCH
+                IF (MsgReceived("Launch"))
+                    JUMP Launch;
+                ENDIF
+            ENDWATCH
+        ENDSTATE InitialDock
+
+        //---------------------------
+        // EliteGuard: Launch
+        // Launches the ships
+        STATE Launch
+            INIT
+                Launch();
+            ENDINIT
+            WATCH
+                IF (TeamFinishedLaunching())
+                    MsgSend(TEAM_EliteGuardCarrier, "EliteGuardLaunched");
+                    IF (Random(0,1))
+                        FormationClaw();
+                    ELSEIF (Random(0,1))
+                        FormationWall();
+                    ELSEIF (Random(0,1))
+                        FormationDelta3D();
+                    ELSE
+                        FormationBroad();
+                    ENDIF
+                    FSMCreate(StrikeCraftAssault, THISTEAM);
+                ENDIF
+            ENDWATCH
+        ENDSTATE Launch
+
+        //---------------------------
+        // EliteGuard: NullState
+        // Nothing happens here
+        STATE NullState
+            INIT
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE NullState
+
+ENDFSM EliteGuard
+
+//=============================================================================
+//    Control Teams
+//=============================================================================
+
+//-----------------------------------------------------------------------------
+//    Name        : EliteGuardCarrier
+//    Description : Carrier guards the Emperor's resourcers
+//-----------------------------------------------------------------------------
+FSM EliteGuardCarrier
+
+    States WaitForMessage, HyperspaceOut, HyperspaceIntoPosition, HyperspaceToResourcers,
+           GuardResourcers, SendMinions, NullState;
+
+    INIT
+        // now skip all the light corvette ferrying to just guard the resourcers
+        JUMP GuardResourcers;
+    ENDINIT
+    WATCH
+        IFONCE (TeamCount() == 0)
+            //No! Don't kill me!
+            JUMP NullState;
+        ENDIFONCE
+    ENDWATCH
+
+
+        //---------------------------
+        // EliteGuardCarrier: WaitForMessage
+        // Waits for the message from Command to ferry the assault corvettes
+        STATE WaitForMessage
+            INIT
+                VarCreateSet("MsgCounter", 0);
+            ENDINIT
+            WATCH
+//                IF (MsgReceived("ReleaseAssaultGroup"))
+//                    JUMP HyperspaceOut;
+//                ENDIF
+                IF (MsgReceived("AssaultLaunched"))
+                    VarInc("MsgCounter");
+                ENDIF
+                IF (VarGet("MsgCounter") == 2)
+                    VarDestroy("MsgCounter");
+                    VarCreateSet("ResourceGuard", TRUE);
+                    JUMP HyperspaceOut;
+                ENDIF
+            ENDWATCH
+        ENDSTATE WaitForMessage
+
+        //---------------------------
+        // EliteGuardCarrier: HyperspaceOut
+        // the name is pretty straightforward...
+        STATE HyperspaceOut
+            INIT
+                TeamHyperspaceOut();
+                TimerCreateSetStart("HyperspaceTimer", 12);
+            ENDINIT
+            WATCH
+                IF (TimerExpiredDestroy("HyperspaceTimer"))
+                    IF (VarGet("ResourceGuard"))
+                        VarDestroy("ResourceGuard");
+                        JUMP HyperspaceToResourcers;
+                    ELSE
+                        JUMP HyperspaceIntoPosition;
+                    ENDIF
+                ENDIF
+            ENDWATCH
+        ENDSTATE HyperspaceOut
+
+        //---------------------------
+        // EliteGuardCarrier: HyperspaceIntoPosition
+        // yeah
+        STATE HyperspaceIntoPosition
+            INIT
+                TeamHyperspaceIn(POINT_CarrierFormSpot);
+            ENDINIT
+            WATCH
+                IF (Nearby(THISTEAMSPOINT, 5000))
+                    MsgSend(TEAM_AssaultLCorvettes1, "Launch");
+                    MsgSend(TEAM_AssaultLCorvettes2, "Launch");
+                    JUMP WaitForMessage;
+                ENDIF
+            ENDWATCH
+        ENDSTATE HyperspaceIntoPosition
+
+
+        //---------------------------
+        // EliteGuardCarrier: HyperspaceToResourcers
+        // yeah
+        STATE HyperspaceToResourcers
+            INIT
+                FindFriendlyShipsOfType(SHIPS_MyResourcers, "ResourceCollector");
+                TeamHyperspaceIn(SHIPSPOINT_MyResourcers);
+            ENDINIT
+            WATCH
+                IF (Nearby(THISTEAMSPOINT, 5000))
+                    JUMP GuardResourcers;
+                ENDIF
+            ENDWATCH
+        ENDSTATE HyperspaceToResourcers
+
+
+        //---------------------------
+        // EliteGuardCarrier: GuardResourcers
+        // Carrier guards resources.  What else would it do!  Jeez!
+        STATE GuardResourcers
+            INIT
+                FindFriendlyShipsOfType(SHIPS_MyResourcers, "ResourceCollector");
+                Guard(SHIPS_MyResourcers);
+            ENDINIT
+            WATCH
+                IF (UnderAttackElsewhere(TEAM_ImperialResourcers1, SHIPS_EliteGuardBaddies) ||
+                    UnderAttackElsewhere(TEAM_ImperialResourcers2, SHIPS_EliteGuardBaddies) ||
+                    FindEnemiesNearTeam(SHIPS_EliteGuardBaddies, 13000) ||
+                    UnderAttack(SHIPS_EliteGuardBaddies))
+                    IF ((ShipsSelectClass(SHIPS_Test, SHIPS_EliteGuardBaddies, "CLASS_Fighter") > 5) ||
+                        (ShipsSelectClass(SHIPS_Test, SHIPS_EliteGuardBaddies, "CLASS_Corvette") > 3) ||
+                         ShipsSelectCapital(SHIPS_Test, SHIPS_EliteGuardBaddies))
+                        JUMP SendMinions;
+                    ENDIF
+                ENDIF
+//                IF (MsgReceived("ReleaseAssaultGroup"))
+//                    JUMP HyperspaceOut;
+//                ENDIF
+            ENDWATCH
+        ENDSTATE GuardResourcers
+
+        //---------------------------
+        // EliteGuardCarrier: SendMinions
+        // Sends the corvettes and bombers out to takeout enemies
+        STATE SendMinions
+            INIT
+                MsgToEliteGuard("Launch");
+                VarCreateSet("MinionCount", 0);
+            ENDINIT
+            WATCH
+                IF (MsgReceived("EliteGuardLaunched"))
+                    MsgSend(TEAM_MsgSender, "Engage");
+                    VarInc("MinionCount");
+                ENDIF
+                IF (VarGet("MinionCount") == 3)
+                    VarDestroy("MinionCount");
+                    JUMP GuardResourcers;
+                ENDIF
+            ENDWATCH
+        ENDSTATE SendMinions
+
+        //---------------------------
+        // EliteGuardCarrier: NullState
+        // Nothing happens here
+        STATE NullState
+            INIT
+            ENDINIT
+            WATCH
+                ShipsAdd(SHIPS_EliteGuardBaddies, SHIPS_RearBaddies);
+            ENDWATCH
+        ENDSTATE NullState
+
+ENDFSM EliteGuardCarrier
+
+//-----------------------------------------------------------------------------
+//    Name        : EliteHarrassCarrier
+//    Description : Carrier circles the Player's Mothership Dropping off damage
+//                  Dealing goodies
+//-----------------------------------------------------------------------------
+FSM EliteHarrassCarrier
+
+    States Approach, InitialAttack, Patrol, HarrassControl, WaitForReturn, NullState;
+
+    INIT
+        VarCreateSet("DockedOrDead", 0);
+        ShipsDamageModifierSet(THISTEAMSHIPS, 200);
+        TeamHealthSet(200);
+        // EliteHarrassCarrier attacks right away
+        JUMP Approach;
+    ENDINIT
+    WATCH
+        IFONCE (TeamCount() == 0)
+            //We kick ass!  Yeah Yeah Elite Guards!
+            JUMP NullState;
+        ENDIFONCE
+    ENDWATCH
+
+        //---------------------------
+        // EliteHarrassCarrier: Approach
+        // Heads towards the mothership
+        STATE Approach
+            INIT
+                MoveTo(SHIPSPOINT_Mothership);
+            ENDINIT
+            WATCH
+                IF (FindDistance(THISTEAMSPOINT, SHIPSPOINT_Mothership) < 20000)
+                    JUMP InitialAttack;
+                ENDIF
+            ENDWATCH
+        ENDSTATE Approach
+
+
+        //---------------------------
+        // EliteHarrassCarrier: InitialAttack
+        // Heads towards the mothership, then sends off it's load
+        STATE InitialAttack
+            INIT
+                MsgSend(TEAM_EliteHarrassIonFrigs, "Engage");
+                Stop();
+                TimerCreateSetStart("EliteAttack", 30);
+            ENDINIT
+            WATCH
+                IF (MsgReceived("NoGravWells") || TimerExpiredDestroy("EliteAttack"))
+                    ShipsAdd(SHIPS_EliteHarrassBaddies, SHIPS_Mothership);
+                    FindEnemiesNearby(SHIPS_EliteHarrassBaddies, 18000);
+                    MsgSend(TEAM_EliteHarrassBombers, "Launch");
+                    MsgSend(TEAM_EliteHarrassCorvettes, "Launch");
+                    TimerDestroy("EliteAttack");
+                    JUMP WaitForReturn;
+                ENDIF
+            ENDWATCH
+        ENDSTATE InitialAttack
+
+        //---------------------------
+        // EliteHarrassCarrier: WaitForReturn
+        // Waits for the EliteHarrass teams to come back or die
+        STATE WaitForReturn
+            INIT
+            ENDINIT
+            WATCH
+                IF (MsgReceived("Docked") || MsgReceived("Dead"))
+                    VarInc("DockedOrDead");
+                    IF (VarGet("DockedOrDead") == 2)
+                        VarSet("DockedOrDead", 0);
+                        JUMP Patrol;
+                    ENDIF
+                ENDIF
+            ENDWATCH
+        ENDSTATE WaitForReturn
+
+
+        //---------------------------
+        // EliteHarrassCarrier: Patrol
+        // Carrier moves along the patrol path
+        STATE Patrol
+            INIT
+                IF (ShipsOrder(THISTEAMSHIPS) != COMMAND_MOVE)
+                    IF (ShipsCount(SHIPS_SBDustBaddies))
+                        MoveTo(POINT_SBPoint);
+                    ELSEIF (ShipsCount(SHIPS_PortDustBaddies))
+                        MoveTo(POINT_PortPoint);
+                    ELSE
+                        PatrolPath(PATH_SBPath);
+                    ENDIF
+                ENDIF
+            ENDINIT
+            WATCH
+                IF (Nearby(POINT_SBPoint, 5000) &&
+                    ShipsCount(SHIPS_SBDustBaddies))
+                    ShipsClear(SHIPS_EliteHarrassBaddies);
+                    ShipsAdd(SHIPS_EliteHarrassBaddies, SHIPS_SBDustBaddies);
+                    MsgSend(TEAM_EliteHarrassBombers, "Launch");
+                    MsgSend(TEAM_EliteHarrassCorvettes, "Launch");
+                    JUMP WaitForReturn;
+                ENDIF
+                IF (Nearby(POINT_PortPoint, 5000) &&
+                    ShipsCount(SHIPS_PortDustBaddies))
+                    ShipsClear(SHIPS_EliteHarrassBaddies);
+                    ShipsAdd(SHIPS_EliteHarrassBaddies, SHIPS_PortDustBaddies);
+                    MsgSend(TEAM_EliteHarrassBombers, "Launch");
+                    MsgSend(TEAM_EliteHarrassCorvettes, "Launch");
+                    JUMP WaitForReturn;
+                ENDIF
+            ENDWATCH
+        ENDSTATE Patrol
+
+        //---------------------------
+        // EliteHarrassCarrier: HarrassControl
+        // Sends off Bombers and Corvettes to do the duties
+        STATE HarrassControl
+            INIT
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE HarrassControl
+
+
+        //---------------------------
+        // EliteGuardCarrier: NullState
+        // Nothing happens here
+        STATE NullState
+            INIT
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE NullState
+
+ENDFSM EliteHarrassCarrier
+
+
+//-----------------------------------------------------------------------------
+//    Name        : Master
+//    Description : Directs the entire battle
+//-----------------------------------------------------------------------------
+FSM Master
+
+    States Decreeing, AnalyseBG1Baddies, AnalyseBG2Baddies, AnalyseAssaultBaddies,
+           AnalyseRearBaddies, AnalyseSBDustBaddies, AnalysePortDustBaddies,
+           FormUpBG1, FormUpBG2, FormUpAssault, NullState;
+
+    INIT
+        VarCreateSet("BG1Delay", 0);
+        VarCreateSet("BG2Delay", 0);
+        VarCreateSet("AssaultDelay", 0);
+        VarCreateSet("AssaultReplenished", 0);
+        VarCreateSet("RearDelay", 0);
+        VarCreateSet("SBDustDelay", 0);
+        VarCreateSet("PortDustDelay", 0);
+        VarCreateset("FormAssault", 0);
+        VarCreateset("FormBG1", 0);
+        VarCreateset("FormBG2", 0);
+        VarCreateSet("G_AssaultDead", 0);
+        VarCreateSet("HonourDead", 0);
+        TimerCreateSetStart("TimerBattleGroup1", Random(500, 600));
+        TimerCreateSetStart("TimerAssaultGroup", 40);
+        TimerCreateSetStart("TimerBattleGroup2", Random(900, 1000));
+        JUMP Decreeing;
+    ENDINIT
+    WATCH
+        IF (TimerExpiredDestroy("TimerBattleGroup1"))
+            MsgToBattleGroup1("ReleaseBattleGroup1");
+            MsgSend(TEAM_Events, "BigWave");
+            VarCreateSet("BattleGroup1Attacking", TRUE);
+            ShipsAdd(SHIPS_Reinforcements, TEAMSHIPS_BG1HeavyCruiser);
+        ENDIF
+        IF (TimerExpiredDestroy("TimerBattleGroup2"))
+            MsgToBattleGroup2("ReleaseBattleGroup2");
+            MsgSend(TEAM_Events, "BigWave");
+            VarCreateSet("BattleGroup2Attacking", TRUE);
+            ShipsClear(SHIPS_Reinforcements);
+            ShipsAdd(SHIPS_Reinforcements, TEAMSHIPS_BG2IonFrigates);
+        ENDIF
+        IF (TimerExpiredDestroy("TimerAssaultGroup"))
+            VarCreateSet("G_FormPoint", Random(1,5));
+            MsgSendAll("ReleaseAssaultGroup");
+            VarCreateSet("AssaultGroupMoving", TRUE);
+        ENDIF
+        IF (MsgReceived("AssaultDead"))
+            VarInc("AssaultDead");
+            FSMCreate(AssaultTeam, TEAM_MsgSender);
+        ENDIF
+        IF (VarGet("AssaultDead") == 7)
+            VarSet("AssaultDead", 0);
+            MsgSend(TEAM_Events, "AllAssaultDied");
+        ENDIF
+        IF (MsgReceived("HonourDead"))
+            VarInc("HonourDead");
+        ENDIF
+        IF (MsgReceived("AssaultReplenished"))
+            VarInc("AssaultReplenished");
+        ENDIF
+        IFONCE (TeamHealthLowest() < 95)
+            MsgSend(TEAM_SuicideFighters1, "Takeout");
+        ENDIFONCE
+        IFONCE (TeamHealthLowest() < 75)
+            MsgSend(TEAM_SuicideFighters2, "Takeout");
+        ENDIFONCE
+        IFONCE (TeamHealthLowest() < 50)
+            MsgSend(TEAM_SuicideFighters3, "Takeout");
+        ENDIFONCE
+        IFONCE (TeamHealthLowest() < 35)
+            MsgSend(TEAM_SuicideFighters4, "Takeout");
+        ENDIFONCE
+        IFONCE (TeamCount() == 0)
+            //I am the Emperor, You cannot Kill Me
+            MsgSend(TEAM_Events, "EmperorDead");
+            JUMP NullState;
+        ENDIFONCE
+    ENDWATCH
+
+        //---------------------------
+        // Master: Decreeing
+        // Watches various volumes and pounds the player if he invades
+        STATE Decreeing
+            INIT
+            ENDINIT
+            WATCH
+                IF (!VarGet("BG1Delay") &&
+                    VarGet("BattleGroup1Attacking") &&
+                    FindEnemiesInside(VOLUME_BattleFleet1Checker, SHIPS_BG1Baddies, 5000))
+                    JUMP AnalyseBG1Baddies;
+                ENDIF
+                IF (!VarGet("BG2Delay") &&
+                    VarGet("BattleGroup2Attacking") &&
+                    FindEnemiesInside(VOLUME_BattleFleet2Checker, SHIPS_BG2Baddies, 5000))
+                    JUMP AnalyseBG2Baddies;
+                ENDIF
+                IF (!VarGet("AssaultDelay") &&
+                    FindEnemiesInside(VOLUME_AssaultFleetChecker, SHIPS_AssaultBaddies, 5000))
+                    JUMP AnalyseAssaultBaddies;
+                ENDIF
+                IF (!VarGet("RearDelay") &&
+                    (FindEnemiesInside(VOLUME_RearFleetChecker, SHIPS_RearBaddies, 5000) ||
+                     VarGet("G_DefectorInRearVol")))
+                    IF (VarGet("G_DefectorInRearVol"))
+                        ShipsAdd(SHIPS_RearBaddies, TEAMSHIPS_DefectorDestroyer);
+                        ShipsAdd(SHIPS_RearBaddies, TEAMSHIPS_DefectorIonFrigs);
+                    ENDIF
+                    JUMP AnalyseRearBaddies;
+                ENDIF
+                IF (!VarGet("SBDustDelay") &&
+                    FindEnemiesInside(VOLUME_SBDustChecker, SHIPS_SBDustBaddies, 5000))
+                    JUMP AnalyseSBDustBaddies;
+                ENDIF
+                IF (!VarGet("PortDustDelay") &&
+                    FindEnemiesInside(VOLUME_PortDustChecker, SHIPS_PortDustBaddies, 5000))
+                    JUMP AnalysePortDustBaddies;
+                ENDIF
+
+                //counts all the BG1 ships until they are in position
+                //then puts them into formation and sends them off
+                IF (MsgReceived("BG1InPosition"))
+                    VarInc("FormBG1");
+                ENDIF
+
+                IF (VarGet("FormBG1") == 6)
+                    JUMP FormUpBG1;
+                ENDIF
+
+                //counts all the BG2 ships until they are in position
+                //then puts them into formation and sends them off
+                IF (MsgReceived("BG2InPosition"))
+                    VarInc("FormBG2");
+                ENDIF
+
+                IF (VarGet("FormBG2") == 4)
+                    JUMP FormUpBG2;
+                ENDIF
+
+                //counts all the Assault ships until they are in position
+                //then puts them into formation and sends them off
+                IF (MsgReceived("AssaultInPosition"))
+                    VarInc("FormAssault");
+                ENDIF
+
+                IF (VarGet("FormAssault") == (7 - VarGet("AssaultDead")))
+                    JUMP FormUpAssault;
+                ENDIF
+
+                //decrement delay variables
+                IF (VarGet("BG1Delay"))
+                    VarDec("BG1Delay");
+                ENDIF
+                IF (VarGet("BG2Delay"))
+                    VarDec("BG2Delay");
+                ENDIF
+                IF (VarGet("AssaultDelay"))
+                    VarDec("AssaultDelay");
+                ENDIF
+                IF (VarGet("RearDelay"))
+                    VarDec("RearDelay");
+                ENDIF
+                IF (VarGet("SBDustDelay"))
+                    VarDec("SBDustDelay");
+                ENDIF
+                IF (VarGet("PortDustDelay"))
+                    VarDec("PortDustDelay");
+                ENDIF
+
+                IF ((VarGet("AssaultReplenished") == 7) &&
+                    (!VarGet("AssaultBusy")))
+                    VarSet("AssaultReplenished", 0);
+                    TimerCreateSetStart("TimerAssaultGroup", 5);
+                ENDIF
+            ENDWATCH
+        ENDSTATE Decreeing
+
+
+        //---------------------------
+        // Master: AnalyseBG1Baddies
+        // Sees what's in store for Battle Group 1, attacks if necessary
+        STATE AnalyseBG1Baddies
+            INIT
+                VarSet("BG1Delay", Random(6, 10));
+
+                IF (!VarGet("BattleGroup1Engaged") &&
+                    FindDistance(SHIPSPOINT_BG1Baddies, TEAMSPOINT_BG1HeavyCruiser) < 20000)
+                    MsgToBattleGroup1("Engage");
+                    VarCreateSet("BattleGroup1Engaged", TRUE);
+                ENDIF
+                JUMP Decreeing;
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE AnalyseBG1Baddies
+
+
+        //---------------------------
+        // Master: AnalyseBG2Baddies
+        // Sees what's in store for Battle Group 2, attacks if necessary
+        STATE AnalyseBG2Baddies
+            INIT
+                VarSet("BG2Delay", Random(6, 10));
+
+                IF (!VarGet("BattleGroup2Engaged") &&
+                    FindDistance(SHIPSPOINT_BG2Baddies, TEAMSPOINT_BG2HeavyCruiser) < 20000)
+                    MsgToBattleGroup2("Engage");
+                    VarCreateSet("BattleGroup2Engaged", TRUE);
+                ENDIF
+                JUMP Decreeing;
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE AnalyseBG2Baddies
+
+
+        //---------------------------
+        // Master: AnalyseAssaultBaddies
+        // Analyses what's in the assault volume and deals with it appropriately
+        STATE AnalyseAssaultBaddies
+            INIT
+                VarSet("AssaultDelay", Random(6, 10));
+
+                //send defenders
+                //depending on where the assault fleet is, send it in
+                //if visible, and has a takeout opposite, send it in
+                IF (ShipsSelectType(SHIPS_PlayerForce, SHIPS_AssaultBaddies, "Carrier") ||
+                    ShipsSelectType(SHIPS_PlayerForce, SHIPS_AssaultBaddies, "HeavyCruiser") ||
+                    ShipsSelectClass(SHIPS_PlayerForce, SHIPS_AssaultBaddies, "CLASS_Destroyer"))
+                    FindEnemiesNearby(SHIPS_PlayerForce, 15000);
+                    IF (VarGet("AssaultReplenished") > 2)
+                        VarSet("AssaultReplenished", 0);
+                        MsgToAssault("PlayerFleetOnTheWay");
+                    ENDIF
+                ENDIF
+                IF ((ShipsSelectClass(SHIPS_AntiFighterTarget, SHIPS_AssaultBaddies, "CLASS_Fighter") > 10) ||
+                    (ShipsSelectClass(SHIPS_AntiFighterTarget, SHIPS_AssaultBaddies, "CLASS_Corvette") > 5) ||
+                    ((!Random(0,2)) && (ShipsSelectType(SHIPS_AntiFighterTarget, SHIPS_AssaultBaddies, "SalCapCorvette") > 2)))
+                    MsgToAntiFighters("Takeout");
+                ENDIF
+                JUMP Decreeing;
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE AnalyseAssaultBaddies
+
+
+        //---------------------------
+        // Master: AnalyseRearBaddies
+        // Analyses what's  in the rear volume and deals with it
+        STATE AnalyseRearBaddies
+            INIT
+                VarSet("RearDelay", Random(6, 10));
+
+                //send whatever's around the mothership
+                //move honour guard staggered, guarded by honour guard frigate
+                //if visible, and has a takeout opposite, send it in
+
+//                IF (ShipsSelectType(SHIPS_SuicideTarget, SHIPS_RearBaddies, "Carrier") ||
+//                    ShipsSelectType(SHIPS_SuicideTarget, SHIPS_RearBaddies, "HeavyCruiser") ||
+//                    ShipsSelectType(SHIPS_SuicideTarget, SHIPS_RearBaddies, "StandardDestroyer"))
+//                    MsgToSuicideFighters("Takeout");
+//                ENDIF
+                IF ((ShipsSelectClass(SHIPS_AntiFighterTarget, SHIPS_RearBaddies, "CLASS_Fighter") > 10) ||
+                    (ShipsSelectClass(SHIPS_AntiFighterTarget, SHIPS_RearBaddies, "CLASS_Corvette") > 5))
+                    MsgToAntiFighters("Takeout");
+                ENDIF
+
+                //find the ships near the mothership
+                ShipsSelectNearby(SHIPS_NearRearBaddies, SHIPS_RearBaddies, TEAMSPOINT_ImperialFlagship, 15000);
+                ShipsClear(SHIPS_HonourBaddies);
+                ShipsAdd(SHIPS_HonourBaddies, SHIPS_NearRearBaddies);
+
+                //if there are any ships attacking the mothership or near the motherhsip
+                // or the rear baddies are dangerous
+                IF (UnderAttack(SHIPS_HonourBaddies) ||
+                    ShipsCount(SHIPS_HonourBaddies) ||
+                    (!Random(0,2) && ShipsSelectType(SHIPS_HonourBaddies, SHIPS_RearBaddies, "Carrier")) ||
+                    (!Random(0,2) && ShipsSelectType(SHIPS_HonourBaddies, SHIPS_RearBaddies, "HeavyCruiser")) ||
+                    (!Random(0,2) && (ShipsSelectClass(SHIPS_HonourBaddies, SHIPS_RearBaddies, "CLASS_Destroyer") > 2)) ||
+                    (!Random(0,1) && (ShipsSelectClass(SHIPS_HonourBaddies, SHIPS_RearBaddies, "CLASS_Frigate") > 4)))
+                    MsgToHonourGuard("Engage");
+                ENDIF
+
+                // if there are assault ships waiting to assault
+                IF (VarGet("AssaultReplenished"))
+                    IF ((VarGet("HonourDead") > 1) &&
+                        (ShipsCount(SHIPS_NearRearBaddies) ||
+                         UnderAttack(SHIPS_NearRearBaddies)))
+                        VarSet("AssaultBusy", TRUE);
+                        MsgToAssault("DefendFlagship");
+                    ELSEIF (VarGet("HonourDead") &&
+                            UnderAttack(SHIPS_NearRearBaddies))
+                        VarSet("AssaultBusy", TRUE);
+                        MsgToAssault("DefendFlagship");
+                    ELSEIF (VarGet("AssaultBusy"))
+//                        MsgToAssault("StandDown");
+                        VarSet("AssaultBusy", FALSE);
+                    ENDIF
+                ENDIF
+
+                JUMP Decreeing;
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE AnalyseRearBaddies
+
+        //---------------------------
+        // Master: AnalyseSBDustBaddies
+        // Sees what's in store in the starboard dustcloud, attacks if necessary
+        STATE AnalyseSBDustBaddies
+            INIT
+                VarSet("SBDustDelay", Random(6, 10));
+
+                JUMP Decreeing;
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE AnalyseSBDustBaddies
+
+
+        //---------------------------
+        // Master: AnalysePortDustBaddies
+        // Sees what's in store in the port dustcloud, attacks if necessary
+        STATE AnalysePortDustBaddies
+            INIT
+                VarSet("PortDustDelay", Random(6, 10));
+
+                JUMP Decreeing;
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE AnalysePortDustBaddies
+
+
+        //---------------------------
+        // Master: FormUpBG1
+        // Puts the battle group 1 into formation and sends them off
+        STATE FormUpBG1
+            INIT
+                ShipsAdd(SHIPS_BG1Formation, TEAMSHIPS_BG1HeavyCruiser);
+                ShipsAdd(SHIPS_BG1Formation, TEAMSHIPS_BG1Destroyer1);
+                ShipsAdd(SHIPS_BG1Formation, TEAMSHIPS_BG1Destroyer2);
+                ShipsAdd(SHIPS_BG1Formation, TEAMSHIPS_BG1Destroyer3);
+                ShipsAdd(SHIPS_BG1Formation, TEAMSHIPS_BG1Frigates);
+                ShipsAdd(SHIPS_BG1Formation, TEAMSHIPS_BG1IonFrigates);
+                FormationCustom(SHIPS_BG1Formation);
+                VarSet("FormBG1", 0);
+                VarCreateSet("G_AlreadyMoving", 6);
+                MsgToBattleGroup1("Attack");
+                ShipsMoveTo(SHIPS_BG1Formation, SHIPSPOINT_Mothership);
+                JUMP Decreeing;
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE FormUpBG1
+
+        //---------------------------
+        // Master: FormUpBG2
+        // Puts the battle group 2 into formation and sends them off
+        STATE FormUpBG2
+            INIT
+                ShipsAdd(SHIPS_BG2Formation, TEAMSHIPS_BG2HeavyCruiser);
+                ShipsAdd(SHIPS_BG2Formation, TEAMSHIPS_BG2Frigates);
+                ShipsAdd(SHIPS_BG2Formation, TEAMSHIPS_BG2IonFrigates);
+                FormationCustom(SHIPS_BG2Formation);
+                VarSet("FormBG2", 0);
+                VarCreateSet("G_AlreadyMoving", 3);
+                MsgToBattleGroup2("Attack");
+                ShipsMoveTo(SHIPS_BG2Formation, SHIPSPOINT_Mothership);
+                JUMP Decreeing;
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE FormUpBG2
+
+        //---------------------------
+        // Master: FormUpAssault
+        // Puts the assault fleet into formation and sends them off
+        STATE FormUpAssault
+            INIT
+                ShipsAdd(SHIPS_AssaultFormation, TEAMSHIPS_AssaultCruiser1);
+                ShipsAdd(SHIPS_AssaultFormation, TEAMSHIPS_AssaultTeamDestroyer1);
+                ShipsAdd(SHIPS_AssaultFormation, TEAMSHIPS_AssaultTeamIonCannon);
+                ShipsAdd(SHIPS_AssaultFormation, TEAMSHIPS_AssaultTeamFrigs);
+                ShipsAdd(SHIPS_AssaultFormation, TEAMSHIPS_AssaultTeamDestroyer2);
+                ShipsAdd(SHIPS_AssaultFormation, TEAMSHIPS_AssaultMissileDestroyer1);
+                ShipsAdd(SHIPS_AssaultFormation, TEAMSHIPS_AssaultMissileDestroyer2);
+                FormationCustom(SHIPS_AssaultFormation);
+                VarSet("FormAssault", 0);
+                VarCreateSet("G_AlreadyMoving", 7);
+                MsgToAssault("Attack");
+                ShipsMoveTo(SHIPS_AssaultFormation, SHIPSPOINT_Mothership);
+                JUMP Decreeing;
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE FormUpAssault
+
+
+        //---------------------------
+        // Master: NullState
+        // Nothing happens here
+        STATE NullState
+            INIT
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE NullState
+
+ENDFSM Master
+
+
+
+
+//€€€€€€€€€€€€€€€€€€€€€€     Global Stuff     €€€€€€€€€€€€€€€€€€€€€€
+INIT
+
+    //  Fill in the level volumes
+    FindEnemyShipsOfType(SHIPS_Mothership, "Mothership");
+    FindEnemiesInside(VOLUME_AssaultFleetChecker, SHIPS_AssaultFleetVol, 5000);
+    FindEnemiesInside(VOLUME_BattleFleet1Checker, SHIPS_BattleFleet1Vol, 5000);
+    FindEnemiesInside(VOLUME_BattleFleet2Checker, SHIPS_BattleFleet2Vol, 5000);
+    FindEnemiesInside(VOLUME_RearFleetChecker, SHIPS_RearFleetVol, 5000);
+
+    //
+    //  Create global variables
+    //
+    VarCreateSet("G_DefPost1", FALSE);
+    VarCreateSet("G_DefPost2", FALSE);
+    VarCreateSet("G_DefPost3", FALSE);
+    VarCreateSet("G_DefPost4", FALSE);
+    VarCreateSet("G_DefPost5", FALSE);
+    VarCreateSet("G_Assaults", 0);
+
+
+        //
+        //      FSM creates
+        //
+
+    FSMCreate(Master, TEAM_ImperialFlagship);
+    FSMCreate(Events, TEAM_Events);
+
+    // Assault Team 1
+    FSMCreate(AssaultStart, TEAM_BG1HeavyCruiser);
+    FSMCreate(AssaultStart, TEAM_BG1Destroyer1);
+    FSMCreate(AssaultStart, TEAM_BG1Destroyer2);
+    FSMCreate(AssaultStart, TEAM_BG1Destroyer3);
+    FSMCreate(AssaultStart, TEAM_BG1Frigates);
+    FSMCreate(AssaultStart, TEAM_BG1IonFrigates);
+
+    // Assault Team 2
+    FSMCreate(AssaultStart, TEAM_BG2HeavyCruiser);
+    FSMCreate(AssaultStart, TEAM_BG2Frigates);
+    FSMCreate(AssaultStart, TEAM_BG2IonFrigates);
+
+    // Defector Team
+    FSMCreate(AssaultStart, TEAM_DefectorDestroyer);
+    FSMCreate(AssaultStart, TEAM_DefectorFrigates);
+    FSMCreate(AssaultStart, TEAM_DefectorIonFrigs);
+    FSMCreate(AssaultStart, TEAM_DefectorMissileDestroyers);
+
+    // Proximity Sensor teams
+    FSMCreate(ProximityRoving, TEAM_Ps1t);
+    FSMCreate(ProximityRoving, TEAM_Ps2t);
+    FSMCreate(ProximityRoving, TEAM_Ps3t);
+    FSMCreate(ProximityRoving, TEAM_Ps4t);
+    FSMCreate(ProximityRoving, TEAM_Ps5t);
+    FSMCreate(ProximityRoving, TEAM_Ps6t);
+    FSMCreate(ProximityRoving, TEAM_Ps7t);
+    FSMCreate(ProximityRoving, TEAM_Ps8t);
+
+    // Defender Teams
+//    FSMCreate(DefenderWall, TEAM_DefenderSquad1);
+//    FSMCreate(DefenderWall, TEAM_DefenderSquad2);
+//    FSMCreate(DefenderWall, TEAM_DefenderSquad3);
+//    FSMCreate(DefenderWall, TEAM_DefenderSquad4);
+//    FSMCreate(DefenderWall, TEAM_DefenderSquad5);
+
+    // Elite Guard Teams
+    FSMCreate(EliteGuardCarrier, TEAM_EliteGuardCarrier);
+    FSMCreate(EliteGuard, TEAM_EliteGuardMGC);
+    FSMCreate(EliteGuard, TEAM_EliteGuardAB);
+
+    // Elite Harrass Teams
+    FSMCreate(EliteHarrassCarrier, TEAM_EliteHarrassCarrier);
+    FSMCreate(AssaultStart, TEAM_EliteHarrassBombers);
+    FSMCreate(AssaultStart, TEAM_EliteHarrassCorvettes);
+    FSMCreate(AssaultGeneral, TEAM_EliteHarrassIonFrigs);
+    FSMCreate(AssaultStart, TEAM_ABReinforce1);
+    FSMCreate(AssaultStart, TEAM_ABReinforce2);
+    FSMCreate(AssaultStart, TEAM_HCReinforce1);
+
+    // Takeout Target teams
+    FSMCreate(TakeoutTarget, TEAM_AntiFighterMC1);
+    FSMCreate(TakeoutTarget, TEAM_AntiFighterMC2);
+    FSMCreate(TakeoutTarget, TEAM_AntiFighter1GW);
+    FSMCreate(TakeoutTarget, TEAM_SuicideFighters1);
+    FSMCreate(TakeoutTarget, TEAM_SuicideFighters2);
+    FSMCreate(TakeoutTarget, TEAM_SuicideFighters3);
+    FSMCreate(TakeoutTarget, TEAM_SuicideFighters4);
+//    FSMCreate(TakeoutTarget, TEAM_SuicideCloakGen);
+
+    // Mothership Assault teams
+    FSMCreate(AssaultTeam, TEAM_AssaultCruiser1);
+    FSMCreate(AssaultTeam, TEAM_AssaultTeamDestroyer1);
+    FSMCreate(AssaultTeam, TEAM_AssaultTeamIonCannon);
+    FSMCreate(AssaultTeam, TEAM_AssaultTeamFrigs);
+    FSMCreate(AssaultTeam, TEAM_AssaultTeamDestroyer2);
+    FSMCreate(AssaultTeam, TEAM_AssaultMissileDestroyer1);
+    FSMCreate(AssaultTeam, TEAM_AssaultMissileDestroyer2);
+
+    // Honour guard teams
+    FSMCreate(AssaultGeneral, TEAM_HonourGuardHC1);
+    FSMCreate(AssaultGeneral, TEAM_HonourGuardHC2);
+    FSMCreate(AssaultGeneral, TEAM_HonourGuardHC3);
+//    FSMCreate(AssaultGeneral, TEAM_HonourGuardDefenceFrig);
+
+    // Minelayers
+//    FSMCreate(Mining, TEAM_PortMineLayer);
+//    FSMCreate(Mining, TEAM_SBMineLayer);
+//    FSMCreate(Mining, TEAM_FieldMineLayer1);
+//    FSMCreate(Mining, TEAM_FieldMineLayer2);
+
+    // Resourcers
+    FSMCreate(Resource, TEAM_ImperialResourcers1);
+    FSMCreate(Resource, TEAM_ImperialResourcers2);
+
+    // Support crew for HonourGuardHCs
+    FSMCreate(Support, TEAM_HonourGuardSupport1);
+    FSMCreate(Support, TEAM_HonourGuardSupport2);
+    FSMCreate(Support, TEAM_HonourGuardSupport3);
+
+
+    // Traders and Council
+    FSMCreate(Council, TEAM_Council1);
+    FSMCreate(Council, TEAM_Council2);
+    FSMCreate(Council, TEAM_Council3);
+    FSMCreate(Council, TEAM_Council4);
+    FSMCreate(Council, TEAM_Council5);
+    FSMCreate(Council, TEAM_Council6);
+    FSMCreate(Council, TEAM_Council7);
+    FSMCreate(Council, TEAM_Council8);
+    FSMCreate(Council, TEAM_Council9);
+    FSMCreate(Council, TEAM_Council10);
+    FSMCreate(Council, TEAM_Council11);
+    FSMCreate(Council, TEAM_Council12);
+    FSMCreate(Council, TEAM_Council13);
+    FSMCreate(Council, TEAM_Council14);
+    FSMCreate(Council, TEAM_Council15);
+    FSMCreate(Council, TEAM_Council16);
+    FSMCreate(Council, TEAM_Council17);
+    FSMCreate(Council, TEAM_Council18);
+
+        TraderGUIDisable (TRUE);
+
+        SaveLevel(8, LSTRING_LevelSave);
+
+ENDINIT
+
+WATCH
+
+        IFONCE (TRUE)
+//            BuildControl(TRUE);
+
+            DisableAllAIFeatures();
+            EnableAIFeature(ResourceFeature, AIR_ACTIVE_RESOURCE_COLLECTION);
+            EnableAIFeature(ResourceFeature, AIR_ACTIVE_RESOURCE_CONTROLLER);
+            EnableAIFeature(ResourceFeature, AIR_AGGRESSIVE_RESOURCING);
+            EnableAIFeature(DefenseFeature, AID_CLOAK_DEFENSE);
+            EnableAIFeature(DefenseFeature, AID_CLOAK_DEFENSE_RED);
+            EnableAIFeature(AttackFeature, AIA_ACTIVE_RECONAISSANCE);
+            EnableAIFeature(TeamFeature, AIT_ADVANCED_ATTACK);
+            EnableAIFeature(TeamFeature, AIT_FLANK_ATTACK);
+
+
+        ENDIFONCE
+
+
+        //  Fill in the level volumes
+        FindEnemyShipsOfType(SHIPS_Mothership, "Mothership");
+        ShipsAdd(SHIPS_MothershipSurrounding, SHIPS_Mothership);
+        FindEnemiesNearby(SHIPS_MothershipSurroundingD, 20000);
+        FindEnemiesInside(VOLUME_AssaultFleetChecker, SHIPS_AssaultFleetVol, 5000);
+        FindEnemiesInside(VOLUME_BattleFleet1Checker, SHIPS_BattleFleet1Vol, 5000);
+        FindEnemiesInside(VOLUME_BattleFleet2Checker, SHIPS_BattleFleet2Vol, 5000);
+        FindEnemiesInside(VOLUME_RearFleetChecker, SHIPS_RearFleetVol, 5000);
+
+
+        //
+        //      mission objectives
+        //
+
+
+//        IF ((ShipsCount (TEAMSHIPS_CarrierTeam1) = 0) AND
+//            (ShipsCount (TEAMSHIPS_HeavyCruiserTeam1) = 0) AND
+//            (ShipsCount (TEAMSHIPS_HeavyCruiserTeam2) = 0) AND
+//            (ShipsCount (TEAMSHIPS_HeavyCruiserTeam3) = 0) AND
+//            (ShipsCount (TEAMSHIPS_StandardDestroyerTeam1) = 0) AND
+//            (ShipsCount (TEAMSHIPS_MissileDestroyerTeam1) = 0) AND
+//            (ShipsCount (TEAMSHIPS_MissileDestroyerTeam2) = 0) AND
+//            (ShipsCount (TEAMSHIPS_IonCannonFrigateTeam1) = 0) AND
+//            (ShipsCount (TEAMSHIPS_GravWellGeneratorTeam1) = 0) AND
+//            (ShipsCount (SHIPS_GAIGeneral) = 0))
+//                ObjectiveSet ("DestroyEnemyShips", TRUE);
+//        ENDIF
+
+
+        //
+        //      technology
+        //
+
+
+        // MISSION 01 Tech stuff: //ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
+        // if player researches Fighter drive, allow Fighter chassis
+        IF ((TechGet ("MassDrive1Kt")) AND (VarGet ("SetTechOnce1") = FALSE))
+                TechSetResearch ("Chassis1");
+                VarCreateSet ("SetTechOnce1", TRUE);
+        ENDIF
+
+        // if player researches Corvette drive, allow Corvette chassis
+        IF ((TechGet ("MassDrive10Kt")) AND (VarGet ("SetTechOnce2") = FALSE))
+                TechSetResearch ("Chassis2");
+                VarCreateSet ("SetTechOnce2", TRUE);
+        ENDIF
+
+        // MISSION 02 Tech stuff: //ƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒƒ
+        // if player researches capital ship drive, give capital ship chassis
+        IF ((TechGet ("MassDrive100Kt")) AND (VarGet ("SetCapitalChassis") = FALSE))
+                TechSetResearch ("Chassis3");
+                VarSet ("SetCapitalChassis", TRUE);
+        ENDIF
+
+        // if player researches Corvette chassis, allow Heavy Corvette upgrade
+        IF ((TechGet ("Chassis2")) AND (VarGet ("SetMediumGuns") = FALSE))
+                TechSetResearch ("MediumGuns");
+                VarCreateSet ("SetMediumGuns", TRUE);
+        ENDIF
+
+
+
+ENDWATCH
+//€€€€€€€€€€€€€€€€€€€€€€     Global Stuff     €€€€€€€€€€€€€€€€€€€€€€

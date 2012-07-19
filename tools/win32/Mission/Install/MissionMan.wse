@@ -1,0 +1,2494 @@
+Document Type: WSE
+item: Global
+  Version=7.01
+  Title=MissionMan Installation
+  Flags=00000100
+  Languages=65 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+  Japanese Font Name=MS Gothic
+  Japanese Font Size=10
+  Progress Bar DLL=%_WISE_%\Progress\WIZ%_EXE_OS_TYPE_%.DLL
+  Start Gradient=0 0 255
+  End Gradient=0 0 0
+  Windows Flags=00000100000000110010110000001000
+  Log Pathname=%MAINDIR%\INSTALL.LOG
+  Message Font=MS Sans Serif
+  Font Size=8
+  Pages Modified=00110000000101000001001000001101
+  Extra Pages=00000000000000000000000000100010
+  Disk Filename=SETUP
+  Patch Flags=0000000000001001
+  Patch Threshold=85
+  Patch Memory=4000
+  EXE Filename=MMSetup.exe
+  FTP Cluster Size=20
+  Per-User Version ID=1
+  Dialogs Version=7
+  Version File=v1.13B
+  Version Description=MissionMan (MPO)
+  Version Copyright=(c) 1998-99
+  Version Company=Relic Entertainment Inc.
+  Distribute Path=Z:\Homeworld\Tools
+  Distribute Type=1
+  Step View=All
+  Variable Name1=_SYS_
+  Variable Default1=C:\WINNT\System32
+  Variable Flags1=00001000
+  Variable Name2=_WISE_
+  Variable Default2=D:\Wise
+  Variable Flags2=00001000
+  Variable Name3=_WIN_
+  Variable Default3=C:\WINNT
+  Variable Flags3=00001000
+  Variable Name4=_VB4WIN32DIR_
+  Variable Default4=D:\DevStudio\VB
+  Variable Flags4=00001000
+  Variable Name5=_VB4WIN32OPT_
+  Variable Default5=AC
+  Variable Flags5=00001000
+  Variable Name6=_VB4WIN32DAO_
+  Variable Default6=C:\Program Files\Common Files\Microsoft Shared\DAO
+  Variable Flags6=00001000
+  Variable Name7=_ALIASNAME_
+  Variable Flags7=00001000
+  Variable Name8=_ALIASPATH_
+  Variable Flags8=00001000
+  Variable Name9=_ALIASTYPE_
+  Variable Flags9=00001000
+end
+item: Include Script
+  Pathname=%_WISE_%\INCLUDE\vb6check.wse
+end
+item: Open/Close INSTALL.LOG
+  Flags=00000001
+end
+item: Check if File/Dir Exists
+  Pathname=%SYS%
+  Flags=10000100
+end
+item: Set Variable
+  Variable=SYS
+  Value=%WIN%
+end
+item: End Block
+end
+item: Set Variable
+  Variable=APPTITLE
+  Value=MissionMan
+  Flags=10000000
+end
+item: Set Variable
+  Variable=GROUP
+  Value=Sierra\Homeworld\MissionMan
+  Flags=10000000
+end
+item: Set Variable
+  Variable=MAINDIR
+  Value=Sierra\Homeworld\MissionMan
+  Flags=00010100
+end
+item: Set Variable
+  Variable=FLAG
+  Value=NO
+end
+item: Display Message
+  Title=%APPTITLE% Installation
+  Text=You are about to install %APPTITLE%.
+  Text=
+  Text=There is absolutely NO WARRANTY and NO SUPPORT for this software, you use it at your own risk.
+  Text=
+  Text=Do you still want to install %APPTITLE%?
+  Text=
+  Text=Press Yes if you want to continue with the %APPTITLE% installation.
+  Text=
+  Text=Press No if you want to abort the %APPTITLE% installation.
+  Text=
+  Text=
+  Flags=00101101
+end
+item: Set Variable
+  Variable=FLAG
+  Value=YES
+end
+item: End Block
+end
+item: If/While Statement
+  Variable=FLAG
+  Value=NO
+end
+item: Exit Installation
+end
+item: End Block
+end
+item: Check Configuration
+  Flags=10111011
+end
+item: Get Registry Key Value
+  Variable=COMMON
+  Key=SOFTWARE\Microsoft\Windows\CurrentVersion
+  Default=C:\Program Files\Common Files
+  Value Name=CommonFilesDir
+  Flags=00000100
+end
+item: Get Registry Key Value
+  Variable=PROGRAM_FILES
+  Key=SOFTWARE\Microsoft\Windows\CurrentVersion
+  Default=C:\Program Files
+  Value Name=ProgramFilesDir
+  Flags=00000100
+end
+item: Set Variable
+  Variable=MAINDIR
+  Value=C:\%MAINDIR%
+  Flags=00001100
+end
+item: Set Variable
+  Variable=EXPLORER
+  Value=1
+end
+item: Else Statement
+end
+item: Set Variable
+  Variable=MAINDIR
+  Value=C:\%MAINDIR%
+  Flags=00010100
+end
+item: End Block
+end
+item: Set Variable
+  Variable=BACKUP
+  Value=%MAINDIR%\BACKUP
+  Flags=10000000
+end
+item: Set Variable
+  Variable=DOBACKUP
+  Value=B
+  Flags=10000000
+end
+item: Set Variable
+  Variable=COMPONENTS
+  Flags=10000000
+end
+item: Set Variable
+  Variable=BRANDING
+  Value=0
+end
+item: If/While Statement
+  Variable=BRANDING
+  Value=1
+end
+item: Read INI Value
+  Variable=NAME
+  Pathname=%INST%\CUSTDATA.INI
+  Section=Registration
+  Item=Name
+end
+item: Read INI Value
+  Variable=COMPANY
+  Pathname=%INST%\CUSTDATA.INI
+  Section=Registration
+  Item=Company
+end
+item: If/While Statement
+  Variable=NAME
+end
+item: Set Variable
+  Variable=DOBRAND
+  Value=1
+end
+item: End Block
+end
+item: End Block
+end
+item: Wizard Block
+  Direction Variable=DIRECTION
+  Display Variable=DISPLAY
+  Bitmap Pathname=%_WISE_%\DIALOGS\TEMPLATE\WIZARD.BMP
+  X Position=9
+  Y Position=10
+  Filler Color=8421440
+  Dialog=Select Program Manager Group
+  Dialog=Select Backup Directory
+  Dialog=Display Registration Information
+  Dialog=Get Registration Information
+  Variable=GROUP
+  Variable=DOBACKUP
+  Variable=DOBRAND
+  Variable=DOBRAND
+  Value=
+  Value=A
+  Value=1
+  Value=1
+  Compare=0
+  Compare=1
+  Compare=0
+  Compare=1
+  Flags=00000011
+end
+item: Custom Dialog Set
+  Name=Welcome
+  Display Variable=DISPLAY
+  item: Dialog
+    Title=Welcome
+    Title French=Bienvenue
+    Title German=Willkommen
+    Title Portuguese=Bem-vindo 
+    Title Spanish=Bienvenido
+    Title Italian=Benvenuto
+    Title Danish=Velkommen
+    Title Dutch=Welkom
+    Title Norwegian=Velkommen
+    Title Swedish=Välkommen
+    Width=280
+    Height=224
+    Font Name=Helv
+    Font Size=8
+    item: Push Button
+      Rectangle=172 185 214 199
+      Variable=DIRECTION
+      Value=N
+      Create Flags=01010000000000010000000000000001
+      Text=&Next >
+      Text French=&Suivant>
+      Text German=&Weiter>
+      Text Portuguese=&Próximo>
+      Text Spanish=&Siguiente >
+      Text Italian=&Avanti >
+      Text Danish=&Næste>
+      Text Dutch=&Volgende>
+      Text Norwegian=&Neste>
+      Text Swedish=&Nästa >
+    end
+    item: Push Button
+      Rectangle=222 185 264 199
+      Action=3
+      Create Flags=01010000000000010000000000000000
+      Text=Cancel
+      Text French=Annuler
+      Text German=Abbrechen
+      Text Portuguese=Cancelar
+      Text Spanish=Cancelar
+      Text Italian=Annulla
+      Text Danish=Annuller
+      Text Dutch=Annuleren
+      Text Norwegian=Avbryt
+      Text Swedish=Avbryt
+    end
+    item: Static
+      Rectangle=9 177 263 178
+      Action=3
+      Create Flags=01010000000000000000000000000111
+    end
+    item: Static
+      Rectangle=83 8 121 33
+      Action=2
+      Enabled Color=00000000000000001111111111111111
+      Create Flags=01010000000000000000000000001011
+      Pathname=%_WISE_%\dialogs\template\install.grf
+      Pathname French=%_WISE_%\dialogs\template\install.grf
+      Pathname German=%_WISE_%\dialogs\template\install.grf
+      Pathname Portuguese=%_WISE_%\dialogs\template\install.grf
+      Pathname Spanish=%_WISE_%\dialogs\template\install.grf
+      Pathname Italian=%_WISE_%\dialogs\template\install.grf
+      Pathname Danish=%_WISE_%\dialogs\template\install.grf
+      Pathname Dutch=%_WISE_%\dialogs\template\install.grf
+      Pathname Norwegian=%_WISE_%\dialogs\template\install.grf
+      Pathname Swedish=%_WISE_%\dialogs\template\install.grf
+    end
+    item: Static
+      Rectangle=121 10 258 44
+      Enabled Color=00000000000000001111111111111111
+      Create Flags=01010000000000000000000000000000
+      Text=Welcome to %APPTITLE% Setup program. This program will install %APPTITLE% on your computer.
+      Text French=Bienvenue sur le programme d'installation %APPTITLE%. Ce programme va installer %APPTITLE% sur votre ordinateur.
+      Text German=Willkommen im Installationsprogramm für %APPTITLE%. Dieses Programm installiert  %APPTITLE% auf Ihrem Computer.
+      Text Portuguese=Bem-vindo ao programa de configuração %APPTITLE%. Este programa instalará %APPTITLE% no seu computador
+      Text Spanish=Bienvenido al programa de Configuración %APPTITLE%. Este programa instalará %APPTITLE en su ordenador
+      Text Italian=Benvenuto nel programma di installazione di %APPTITLE%. Con questo programma puoi installare %APPTITLE% sul tuo computer.
+      Text Danish=Velkommen til %APPTITLE% installationsprogrammet. Dette program installerer %APPTITLE% på computeren.
+      Text Dutch=Welkom bij het %APPTITLE% installatieprogramma. Dit programma installeert %APPTITLE% op uw computer.
+      Text Norwegian=Velkommen til %APPTITLE% Oppsett-program. Dette programmet vil installere %APPTITLE% på datamaskinen din.
+      Text Swedish=Välkommen till installationsprogrammet för %APPTITLE%. Detta program installerar %APPTITLE% på din dator.
+    end
+    item: Static
+      Rectangle=90 45 260 175
+      Enabled Color=00000000000000001111111111111111
+      Create Flags=01010000000000000000000000000000
+      Text=It is strongly recommended that you exit all Windows programs before running this Setup Program.
+      Text=
+      Text=Click Cancel to quit Setup and close any programs you have running.  Click Next to continue with the Setup program .
+      Text=
+      Text=WARNING: This program is protected by copyright law and international treaties.
+      Text=
+      Text=Unauthorized reproduction or distribution of this program, or any portion of it, may result in severe civil and criminal penalties, and will be prosecuted to the maximum extent possible under law.
+      Text French=Il vous est fortement recommandé de fermer tous les programmes Windows avant d'exécuter le Programme d'Installation
+      Text French=
+      Text French=Cliquez sur Annuler pour quitter l'Installation et fermez tous les programmes actuellement utilisés. Cliquez sur Suivant pour continuer l'installation
+      Text French=
+      Text French=ATTENTION : Ce programme est protégé par la loi sur les droits d'exploitation et par les traités internationaux
+      Text French=
+      Text French=Toute reproduction ou distribution, même partielle, de ce programme qui n'aura pas reçu d'autorisation préalable fera l'objet de poursuites et sera sévèrement sanctionnée par le droit civil et pénal
+      Text German=Wir empfehlen nachdrücklich, vor Ausführen dieses Installationsprogramms alle Windows-Programme zu beenden. 
+      Text German=
+      Text German=Auf Abbrechen klicken, um die Installation zu beenden und alle laufenden Programme zu schließen. Auf Weiter klicken, um mit dem Installationsprogramm beginnen.
+      Text German=
+      Text German=WARNUNG: Dieses Programm ist urheberrechtlich sowie durch internationale Verträge geschützt. 
+      Text German=
+      Text German=Die unzulässige Vervielfältigung oder Verbreitung dieses Programms, ob ganz oder auszugsweise, kann schwere zivil- und strafrechtliche Konsequenzen nach sich ziehen und wird unter voller Ausschöpfung der Rechtsmittel geahndet.
+      Text Portuguese=Recomenda-se insistentemente que saia de todos os programas do Windows antes de executar este Programa de Configuração.
+      Text Portuguese=
+      Text Portuguese=Faça um clique sobre Cancelar para sair da Configuração e feche todos os programas que estiver a executar. Faça um clique sobre Próximo para continuar com o programa de configuração
+      Text Portuguese=
+      Text Portuguese=AVISO: Este programa está protegido pela lei de direitos do autor e tratados internacionais
+      Text Portuguese=
+      Text Portuguese=A reprodução e a distribuição sem autorização deste programa, ou qualquer parte dele, pode dar lugar à aplicação de severas sanções civis e criminais, e serão perseguidas à extensão máxima permitida pela lei.
+      Text Spanish=Se recomienda encarecidamente que salga de todos los programas Windows antes de ejecutar este programa de Configuración.
+      Text Spanish=
+      Text Spanish=Haga un clic en Cancelar para abandonar la Configuración y cerrar cualquier programa que haya estado ejecutando. Haga un clic en Siguiente para continuar con el programa de Configuración.
+      Text Spanish=
+      Text Spanish=AVISO: Este programa está protegido por las leyes de derechos de autor y tratados internacionales.
+      Text Spanish=
+      Text Spanish=La reproducción o distribución no autorizadas de este programa, o cualquier parte de él, podría dar como resultado rigurosas multas civiles y penales, y se entablará la máxima acción judicial que permita la ley.
+      Text Italian=Ti consigliamo di uscire da tutti i programmi Windows prima di eseguire questo programma di installazione.
+      Text Italian=
+      Text Italian=Fai clic su Annulla per uscire dal programma di installazione e chiudi tutti i programmi aperti. Fai clic su Avanti per continuare con il programma di Installazione.
+      Text Italian=
+      Text Italian=AVVERTENZA: Questo programma è protetto ai sensi delle norme di legge e delle convenzioni internazionali in materia di diritti di copyright.
+      Text Italian=
+      Text Italian=La riproduzione o la distribuzione totale o parziale non autorizzata di questo programma potrà essere soggetta a penalità civili e penali, e sarà punita con la massima severità possibile a norma di legge.
+      Text Danish=Det anbefales kraftigt at afslutte alle Windows programmer, inden man kører dette installationsprogram.
+      Text Danish=
+      Text Danish=Klik på Annuller for at forlade installationsprogrammet og lukke alle igangværende programmer. Klik på Næste for at fortsætte med installationsprogrammet.
+      Text Danish=
+      Text Danish=ADVARSEL: Dette program er beskyttet af copyright og internationale traktater. 
+      Text Danish=
+      Text Danish=Uautoriseret gengivelse eller videresalg af dette program eller dele heraf kan føre til streng civil- og/eller kriminel stra. Retsforfølgning heraf vil finde sted i det videste omfang der hjemles muligt.
+      Text Dutch=Het wordt aangeraden om alle Windows programma's af te sluiten voordat u met de installatie van dit programma begint.
+      Text Dutch=
+      Text Dutch=Klik op Annuleren om de installatie te verlaten en eventueel nog lopende programma's af te sluiten. Klik op Volgende om verder te gaan met het Installatieprogramma.
+      Text Dutch=
+      Text Dutch=WAARSCHUWING: dit computerprogramma is auteursrechtelijk beschermd.
+      Text Dutch=
+      Text Dutch=Onrechtmatige verveelvoudiging of distributie van dit programma of een gedeelte ervan is verboden en strafbaar en zal met alle beschikbare juridische middelen worden bestreden.
+      Text Norwegian=Det anbefales på det sterkeste at du avslutter alle Windows-programmer før du kjører dette Oppsett-programmet.
+      Text Norwegian=
+      Text Norwegian=Velg Avbryt for å avbryte Oppsett og lukk alle programmer som er i bruk. Velg Neste for å fortsette med Oppsett-programmet.
+      Text Norwegian=
+      Text Norwegian=ADVARSEL: Dette programmet er beskyttet i henhold til lover om opphavsrett og internasjonale konvensjoner.
+      Text Norwegian=
+      Text Norwegian=Uautorisert kopiering eller distribuering av dette programmet eller deler av det, vil resultere i alvorlig sivil og kriminell straff og vil føre til saksmål i høyest mulig utstrekning i henhold til loven. 
+      Text Swedish=Du tillråds bestämt att gå ur alla Windows-program innan du kör installationsprogrammet.
+      Text Swedish=
+      Text Swedish=Klicka på Avbryt för att gå ur installationsprogrammet och stäng eventuella program som du har laddade. Klicka på Nästa för att fortsätta med installationen.
+      Text Swedish=
+      Text Swedish=VARNING: Detta program är skyddat av upphovsrätten och internationella avtal.
+      Text Swedish=
+      Text Swedish=Om du utan tillstånd kopierar eller distribuerar detta program eller delar av det kan det bli allvarliga civilrättsliga och brottsrättliga straffpåföljder. Vi beivrar sådana överträdelser i den allra högsta utsträckning som lagen tillåter.
+    end
+  end
+end
+item: Custom Dialog Set
+  Name=Select Destination Directory
+  Display Variable=DISPLAY
+  item: Dialog
+    Title=Choose Destination Location
+    Title French=Choisissez la localisation de destination
+    Title German=Zielpfad wählen
+    Title Portuguese=Escolher Local de Destino
+    Title Spanish=Elegir una localización de destino
+    Title Italian=Scegli Posizione di Destinazione
+    Title Danish=Vælg destinationsmappe
+    Title Dutch=Kies doellocatie
+    Title Norwegian=Velg målplassering
+    Title Swedish=Välj ställe för installationen
+    Width=280
+    Height=224
+    Font Name=Helv
+    Font Size=8
+    item: Push Button
+      Rectangle=172 185 214 199
+      Variable=DIRECTION
+      Value=N
+      Create Flags=01010000000000010000000000000001
+      Text=&Next >
+      Text French=&Suivant>
+      Text German=&Weiter>
+      Text Portuguese=&Próximo>
+      Text Spanish=&Siguiente >
+      Text Italian=&Avanti >
+      Text Danish=&Næste>
+      Text Dutch=&Volgende>
+      Text Norwegian=&Neste>
+      Text Swedish=&Nästa >
+    end
+    item: Push Button
+      Rectangle=130 185 172 199
+      Variable=DIRECTION
+      Value=B
+      Create Flags=01010000000000010000000000000000
+      Flags=0000000000000001
+      Text=< &Back
+      Text French=<&Retour
+      Text German=<&Zurück
+      Text Portuguese=<&Retornar
+      Text Spanish=<&Retroceder
+      Text Italian=< &Indietro
+      Text Danish=<&Tilbage
+      Text Dutch=<&Terug
+      Text Norwegian=<&Tilbake
+      Text Swedish=< &Tillbaka
+    end
+    item: Push Button
+      Rectangle=222 185 264 199
+      Action=3
+      Create Flags=01010000000000010000000000000000
+      Text=Cancel
+      Text French=Annuler
+      Text German=Abbrechen
+      Text Portuguese=Cancelar
+      Text Spanish=Cancelar
+      Text Italian=Annulla
+      Text Danish=Annuller
+      Text Dutch=Annuleren
+      Text Norwegian=Avbryt
+      Text Swedish=Avbryt
+    end
+    item: Static
+      Rectangle=9 177 263 178
+      Action=3
+      Create Flags=01010000000000000000000000000111
+    end
+    item: Static
+      Rectangle=90 10 260 122
+      Create Flags=01010000000000000000000000000000
+      Text=Setup will install %APPTITLE% in the following folder.
+      Text=
+      Text=To install into a different folder, click Browse, and select another folder. 
+      Text=
+      Text=You can choose not to install %APPTITLE% by clicking Cancel to exit Setup.
+      Text French=%APPTITLE% va être installé dans le répertoire ci-dessous
+      Text French=
+      Text French=Pour l'installer dans un répertoire différent, cliquez sur Parcourir et sélectionnez un autre répertoire
+      Text French=
+      Text French=Vous pouvez choisir de ne pas installer %APPTITLE% en cliquant sur Annuler pour quitter l'Installation
+      Text German=Installation speichert %APPTITLE% im unten angegebenen Ordner:
+      Text German=
+      Text German=Zur Installation in einem anderen Ordner auf Blättern klicken und einen anderen Ordner wählen.
+      Text German=
+      Text German=Wenn Sie %APPTITLE% nicht installieren möchten, können Sie durch Klicken auf Abbrechen die Installation beenden.
+      Text Portuguese=Configuração instalará %APPTITLE% na seguinte pasta
+      Text Portuguese=
+      Text Portuguese=Para instalar numa pasta diferente, faça um clique sobre Procurar, e seleccione uma outra pasta.
+      Text Portuguese=
+      Text Portuguese=Pode escolher não instalar %APPTITLE% clicando no botão Cancelar para sair da Configuração
+      Text Spanish=El programa de Configuración instalará %APPTITLE% en la siguiente carpeta.
+      Text Spanish=
+      Text Spanish=Para instalar en una carpeta diferente, haga un clic en Visualizar, y seleccione otra carpeta.
+      Text Spanish=
+      Text Spanish=Puede elegir no instalar %APPTITLE% haciendo un clic en Cancelar para salir de Configuración.
+      Text Italian=Il programma di installazione installerà %APPTITLE% nella seguente cartella.
+      Text Italian=
+      Text Italian=Per effettuare l’installazione in una cartella diversa, fai clic su Sfoglia, e scegli un’altra cartella.
+      Text Italian=
+      Text Italian=Puoi scegliere di non installare %APPTITLE% facendo clic su Annulla per uscire dal programma di installazione
+      Text Danish=Installationsprogrammet installerer %APPTITLE% i denne mappe.
+      Text Danish=
+      Text Danish=Man installerer i en anden mappe ved at klikke på Browse og vælge en anden mappe.
+      Text Danish=
+      Text Danish=Man kan vælge ikke at installere %APPTITLE% ved at klikke på Slet og forlade installationsprogrammet.
+      Text Dutch=Het installatieprogramma installeert %APPTITLE% in de volgende directory.
+      Text Dutch=
+      Text Dutch=Als u het in een andere directory wilt installeren, klik dan op Bladeren en kies een andere locatie.
+      Text Dutch=
+      Text Dutch=U kunt ervoor kiezen om %APPTITLE% niet te installeren: klik op Annuleren om het installatieprogramma te verlaten.
+      Text Norwegian=Oppsett vil installere %APPTITLE% i følgende mappe.
+      Text Norwegian=
+      Text Norwegian=For å installere i en annen mappe, klikk Bla igjennom og velg en annen mappe.
+      Text Norwegian=
+      Text Norwegian=Du kan velge å ikke installere %APPTITLE% ved å velge Avbryt for å gå ut av Oppsett.
+      Text Swedish=Installationsprogrammet installerar %APPTITLE% i följande mapp.
+      Text Swedish=
+      Text Swedish=Om du vill att installationen ska göras i en annan mapp, klickar du på Bläddra och väljer en annan mapp.
+      Text Swedish=
+      Text Swedish=Du kan välja att inte installera %APPTITLE% genom att klicka på Avbryt för att lämna installationsprogrammet.
+    end
+    item: Static
+      Rectangle=90 134 260 162
+      Action=1
+      Create Flags=01010000000000000000000000000111
+      Text=Destination Folder
+      Text French=Répertoire de destination
+      Text German=Zielordner
+      Text Portuguese=Pasta de Destino
+      Text Spanish=Carpeta de Destino
+      Text Italian=Cartella di destinazione
+      Text Danish=Destinationsmappe
+      Text Dutch=Doeldirectory
+      Text Norwegian=Målmappe
+      Text Swedish=Destinationsmapp
+    end
+    item: Push Button
+      Rectangle=213 143 255 157
+      Variable=MAINDIR_SAVE
+      Value=%MAINDIR%
+      Destination Dialog=1
+      Action=2
+      Create Flags=01010000000000010000000000000000
+      Text=B&rowse...
+      Text French=P&arcourir
+      Text German=B&lättern...
+      Text Portuguese=P&rocurar
+      Text Spanish=V&isualizar...
+      Text Italian=Sfoglia...
+      Text Danish=&Gennemse...
+      Text Dutch=B&laderen...
+      Text Norwegian=Bla igjennom
+      Text Swedish=&Bläddra
+    end
+    item: Static
+      Rectangle=95 146 211 157
+      Destination Dialog=2
+      Create Flags=01010000000000000000000000000000
+      Text=%MAINDIR%
+      Text French=%MAINDIR%
+      Text German=%MAINDIR%
+      Text Portuguese=%MAINDIR%
+      Text Spanish=%MAINDIR%
+      Text Italian=%MAINDIR%
+      Text Danish=%MAINDIR%
+      Text Dutch=%MAINDIR%
+      Text Norwegian=%MAINDIR%
+      Text Swedish=%MAINDIR%
+    end
+  end
+  item: Dialog
+    Title=Select Destination Directory
+    Title French=Choisissez le répertoire de destination
+    Title German=Zielverzeichnis wählen
+    Title Portuguese=Seleccionar Directório de Destino
+    Title Spanish=Seleccione el Directorio de Destino
+    Title Italian=Seleziona Directory di destinazione
+    Title Danish=Vælg Destinationsbibliotek
+    Title Dutch=Kies doeldirectory
+    Title Norwegian=Velg målkatalog
+    Title Swedish=Välj destinationskalatog
+    Width=221
+    Height=173
+    Font Name=Helv
+    Font Size=8
+    item: Listbox
+      Rectangle=5 2 160 149
+      Variable=MAINDIR
+      Create Flags=01010000100000010000000101000000
+      Flags=0000110000100010
+      Text=%MAINDIR%
+      Text French=%MAINDIR%
+      Text German=%MAINDIR%
+      Text Portuguese=%MAINDIR%
+      Text Spanish=%MAINDIR%
+      Text Italian=%MAINDIR%
+      Text Danish=%MAINDIR%
+      Text Dutch=%MAINDIR%
+      Text Norwegian=%MAINDIR%
+      Text Swedish=%MAINDIR%
+    end
+    item: Push Button
+      Rectangle=167 6 212 21
+      Create Flags=01010000000000010000000000000001
+      Text=OK
+      Text French=OK
+      Text German=OK
+      Text Portuguese=OK
+      Text Spanish=ACEPTAR
+      Text Italian=OK
+      Text Danish=OK
+      Text Dutch=OK
+      Text Norwegian=OK
+      Text Swedish=OK
+    end
+    item: Push Button
+      Rectangle=167 25 212 40
+      Variable=MAINDIR
+      Value=%MAINDIR_SAVE%
+      Create Flags=01010000000000010000000000000000
+      Flags=0000000000000001
+      Text=Cancel
+      Text French=Annuler
+      Text German=Abbrechen 
+      Text Portuguese=Cancelar
+      Text Spanish=Cancelar
+      Text Italian=Annulla
+      Text Danish=Slet
+      Text Dutch=Annuleren
+      Text Norwegian=Avbryt
+      Text Swedish=Avbryt
+    end
+  end
+end
+item: Custom Dialog Set
+  Name=Select Program Manager Group
+  Display Variable=DISPLAY
+  item: Dialog
+    Title=Select Program Manager Group
+    Title French=Sélectionnez le Groupe du Gestionnaire de Programmes
+    Title German=Programm-Managergruppe wählen
+    Title Portuguese=Seleccionar o Grupo Gestor de Programas
+    Title Spanish=Seleccione el Grupo del Administrador del Programa
+    Title Italian=Seleziona il gruppo Program Manager
+    Title Danish=Vælg Programstyringsgruppen
+    Title Dutch=Kies Programmabeheergroep.
+    Title Norwegian=Velg Programbehandlingsgruppen
+    Title Swedish=Välj grupp i Programhanteraren
+    Width=280
+    Height=224
+    Font Name=Helv
+    Font Size=8
+    item: Push Button
+      Rectangle=172 185 214 199
+      Variable=DIRECTION
+      Value=N
+      Create Flags=01010000000000010000000000000001
+      Text=&Next >
+      Text French=&Suivant>
+      Text German=&Weiter>
+      Text Portuguese=&Próximo>
+      Text Spanish=&Siguiente >
+      Text Italian=&Avanti >
+      Text Danish=&Næste>
+      Text Dutch=&Volgende>
+      Text Norwegian=&Neste>
+      Text Swedish=&Nästa >
+    end
+    item: Push Button
+      Rectangle=130 185 172 199
+      Variable=DIRECTION
+      Value=B
+      Create Flags=01010000000000010000000000000000
+      Flags=0000000000000001
+      Text=< &Back
+      Text French=<&Retour
+      Text German=<&Zurück
+      Text Portuguese=<&Retornar
+      Text Spanish=<&Retroceder
+      Text Italian=< &Indietro
+      Text Danish=<&Back
+      Text Dutch=<&Terug
+      Text Norwegian=<&Tilbake
+      Text Swedish=< &Tillbaka
+    end
+    item: Push Button
+      Rectangle=222 185 264 199
+      Action=3
+      Create Flags=01010000000000010000000000000000
+      Text=Cancel
+      Text French=Annuler
+      Text German=Abbrechen
+      Text Portuguese=Cancelar
+      Text Spanish=Cancelar
+      Text Italian=Annulla
+      Text Danish=Slet
+      Text Dutch=Annuleren
+      Text Norwegian=Avbryt
+      Text Swedish=Avbryt
+    end
+    item: Static
+      Rectangle=9 177 263 178
+      Action=3
+      Create Flags=01010000000000000000000000000111
+    end
+    item: Static
+      Rectangle=90 10 260 38
+      Create Flags=01010000000000000000000000000000
+      Text=Enter the name of the Program Manager group to add %APPTITLE% icons to:
+      Text French=Entrez le nom du groupe du Gestionnaire de Programmes où placer les icônes %APPTITLE% à :
+      Text German=Den Namen der Programm-Managergruppe wählen, in der die %APPTITLE%-Symbole gespeichert werden sollen:
+      Text Portuguese=Introduzir o nome do Grupo Gestor de Programa para acrescentar os ícones %APPTITLE% para:
+      Text Spanish=Introduzca el nombre del grupo del Administrador del Programa para añadir los iconos %APPTITLE para:
+      Text Italian=Inserisci il nome del gruppo Program Manager per aggiungere le icone di %APPTITLE% a:
+      Text Danish=Indtast navnet på Programstyringsgruppen der skal tilføjes %APPTITLE% elementer:
+      Text Dutch=Breng de naam van de programmabeheergroep in waaraan u %APPTITLE%-pictogrammen wilt toevoegen.
+      Text Norwegian=Tast inn navnet på programbehandlingsgruppen for å legge %APPTITLE%-ikoner til:
+      Text Swedish=Skriv in namnet på den grupp i Programhanteraren där du vill ha ikonerna för %APPTITLE%:
+    end
+    item: Combobox
+      Rectangle=90 42 260 172
+      Variable=GROUP
+      Create Flags=01010000001000010000001100000001
+      Flags=0000000000000001
+      Text=%GROUP%
+      Text=
+      Text French=%GROUP%
+      Text French=
+      Text German=%GROUP%
+      Text German=
+      Text Portuguese=%GROUP%
+      Text Portuguese=
+      Text Spanish=%GROUP%
+      Text Spanish=
+      Text Italian=%GROUP%
+      Text Italian=
+      Text Danish=%GROUP%
+      Text Danish=
+      Text Dutch=%GROUP%
+      Text Dutch=
+      Text Norwegian=%GROUP%
+      Text Norwegian=
+      Text Swedish=%GROUP%
+      Text Swedish=
+    end
+  end
+end
+item: Custom Dialog Set
+  Name=Start Installation
+  Display Variable=DISPLAY
+  item: Dialog
+    Title=Start Installation
+    Title French=Commencer l'installation
+    Title German=Installation beginnen
+    Title Portuguese=Iniciar Instalação
+    Title Spanish=Comenzar la Instalación
+    Title Italian=Avvia Installazione
+    Title Danish=Start installationen
+    Title Dutch=Start de installatie
+    Title Norwegian=Start installeringen
+    Title Swedish=Starta installationen
+    Width=280
+    Height=224
+    Font Name=Helv
+    Font Size=8
+    item: Push Button
+      Rectangle=172 185 214 199
+      Variable=DIRECTION
+      Value=N
+      Create Flags=01010000000000010000000000000001
+      Text=&Next >
+      Text French=&Suivant>
+      Text German=&Weiter>
+      Text Portuguese=&Próximo>
+      Text Spanish=&Siguiente >
+      Text Italian=&Avanti >
+      Text Danish=&Næste>
+      Text Dutch=&Volgende>
+      Text Norwegian=&Neste>
+      Text Swedish=&Nästa >
+    end
+    item: Push Button
+      Rectangle=130 185 172 199
+      Variable=DIRECTION
+      Value=B
+      Create Flags=01010000000000010000000000000000
+      Text=< &Back
+      Text French=<&Retour
+      Text German=<&Zurück
+      Text Portuguese=<&Retornar
+      Text Spanish=<&Retroceder
+      Text Italian=< &Indietro
+      Text Danish=<&Tilbage
+      Text Dutch=<&Terug
+      Text Norwegian=<&Tilbake
+      Text Swedish=< &Tillbaka
+    end
+    item: Push Button
+      Rectangle=222 185 264 199
+      Action=3
+      Create Flags=01010000000000010000000000000000
+      Text=Cancel
+      Text French=Annuler
+      Text German=Abbrechen
+      Text Portuguese=Cancelar
+      Text Spanish=Cancelar
+      Text Italian=Annulla
+      Text Danish=Annuller
+      Text Dutch=Annuleren
+      Text Norwegian=Avbryt
+      Text Swedish=Avbryt
+    end
+    item: Static
+      Rectangle=9 177 263 178
+      Action=3
+      Create Flags=01010000000000000000000000000111
+    end
+    item: Static
+      Rectangle=90 10 260 70
+      Create Flags=01010000000000000000000000000000
+      Text=You are now ready to install %APPTITLE%.
+      Text=
+      Text=Press the Next button to begin the installation or the Back button to reenter the installation information.
+      Text French=Vous êtes maintenant prêt à installer %APPTITLE%
+      Text French=
+      Text French=Cliquez sur Suivant pour commencer l'installation ou Retour pour entrer à nouveau les informations d'installation
+      Text German=Sie sind jetzt zur Installation von %APPTITLE% bereit.
+      Text German=
+      Text German=Auf die Schaltfläche Weiter klicken, um mit dem Start der Installation zu beginnen, oder auf die Schaltfläche Zurück, um die Installationsinformationen nochmals aufzurufen.
+      Text Portuguese=Está agora pronto para instalar %APPTITLE%
+      Text Portuguese=
+      Text Portuguese=Pressione o botão Próximo para começar a instalação ou o botão Retornar para introduzir novamente a informação sobre a instalação
+      Text Spanish=Ahora estará listo para instalar %APPTITLE%.
+      Text Spanish=
+      Text Spanish=Pulse el botón de Siguiente para comenzar la instalación o el botón Retroceder para volver a introducir la información sobre la instalación.
+      Text Italian=Sei pronto ad installare %APPTITLE%.
+      Text Italian=
+      Text Italian=Premi il tasto Avanti per iniziare l’installazione o il tasto Indietro per rientrare nuovamente nei dati sull’installazione
+      Text Danish=Du er nu klar til at installere %APPTITLE%.
+      Text Danish=
+      Text Danish=Klik på Næste for at starte installationen eller på Tilbage for at ændre installationsoplysningerne.
+      Text Dutch=U bent nu klaar om %APPTITLE% te installeren.
+      Text Dutch=
+      Text Dutch=Druk op Volgende om met de installatie te beginnen of op Terug om de installatie-informatie opnieuw in te voeren.
+      Text Norwegian=Du er nå klar til å installere %APPTITLE%
+      Text Norwegian=
+      Text Norwegian=Trykk på Neste-tasten for å starte installeringen, eller Tilbake-tasten for å taste inn installasjonsinformasjonen på nytt.
+      Text Swedish=Du är nu redo att installera %APPTITLE%.
+      Text Swedish=
+      Text Swedish=Tryck på Nästa för att starta installationen eller på Tillbaka för att skriva in installationsinformationen på nytt.
+    end
+  end
+end
+item: If/While Statement
+  Variable=DISPLAY
+  Value=Welcome
+end
+item: Get Registry Key Value
+  Variable=HW_DATA
+  Key=SOFTWARE\Sierra On-Line\Homeworld
+  Value Name=HW_Data
+  Flags=00000100
+end
+item: If/While Statement
+  Variable=HW_DATA
+end
+item: Display Message
+  Title=%APPTITLE% Setup
+  Text=Homeworld does not appear to be installed on your computer.
+  Text=
+  Text=Please install Homeworld and run the %APPTITLE% Setup program again.
+  Flags=00101000
+end
+item: Exit Installation
+end
+item: Else Statement
+end
+item: Set Variable
+  Variable=MAINDIR
+  Value=%HW_DATA%\MissionMan
+end
+item: End Block
+end
+item: End Block
+end
+item: If/While Statement
+  Variable=DISPLAY
+  Value=Select Destination Directory
+end
+item: Set Variable
+  Variable=BACKUP
+  Value=%MAINDIR%\BACKUP
+end
+item: End Block
+end
+item: End Block
+end
+item: If/While Statement
+  Variable=DOBACKUP
+  Value=A
+end
+item: Set Variable
+  Variable=BACKUPDIR
+  Value=%BACKUP%
+end
+item: End Block
+end
+item: If/While Statement
+  Variable=BRANDING
+  Value=1
+end
+item: If/While Statement
+  Variable=DOBRAND
+  Value=1
+end
+item: Edit INI File
+  Pathname=%INST%\CUSTDATA.INI
+  Settings=[Registration]
+  Settings=NAME=%NAME%
+  Settings=COMPANY=%COMPANY%
+  Settings=
+end
+item: End Block
+end
+item: End Block
+end
+item: Open/Close INSTALL.LOG
+end
+item: Check Disk Space
+  Component=COMPONENTS
+end
+item: Include Script
+  Pathname=%_WISE_%\INCLUDE\vb6.wse
+end
+item: Include Script
+  Pathname=%_WISE_%\INCLUDE\uninstal.wse
+end
+item: Install File
+  Source=C:\WINNT\System32\shdocvw.dll
+  Destination=%SYS32%\shdocvw.dll
+  Flags=0001000010000011
+end
+item: Install File
+  Source=C:\WINNT\System32\Comct332.ocx
+  Destination=%SYS32%\Comct332.ocx
+  Flags=0001001010000011
+end
+item: Install File
+  Source=C:\WINNT\System32\ComCt232.ocx
+  Destination=%SYS32%\ComCt232.ocx
+  Flags=0001001010000011
+end
+item: Install File
+  Source=C:\WINNT\System32\ComCtl32.ocx
+  Destination=%SYS32%\ComCtl32.ocx
+  Flags=0001001010000011
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\94897471.mor
+  Destination=%MAINDIR%\Objects\94897471.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\93602447.mor
+  Destination=%MAINDIR%\Objects\93602447.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\92338463.mor
+  Destination=%MAINDIR%\Objects\92338463.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\90628559.mor
+  Destination=%MAINDIR%\Objects\90628559.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\86771743.mor
+  Destination=%MAINDIR%\Objects\86771743.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\85276479.mor
+  Destination=%MAINDIR%\Objects\85276479.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\83601519.mor
+  Destination=%MAINDIR%\Objects\83601519.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\82147455.mor
+  Destination=%MAINDIR%\Objects\82147455.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\82119103.mor
+  Destination=%MAINDIR%\Objects\82119103.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\82119023.mor
+  Destination=%MAINDIR%\Objects\82119023.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\81048079.mor
+  Destination=%MAINDIR%\Objects\81048079.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\80737679.mor
+  Destination=%MAINDIR%\Objects\80737679.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\80410111.mor
+  Destination=%MAINDIR%\Objects\80410111.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\72416415.mor
+  Destination=%MAINDIR%\Objects\72416415.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\72236863.mor
+  Destination=%MAINDIR%\Objects\72236863.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\72203343.mor
+  Destination=%MAINDIR%\Objects\72203343.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\70413231.mor
+  Destination=%MAINDIR%\Objects\70413231.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\70364447.mor
+  Destination=%MAINDIR%\Objects\70364447.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\70191135.mor
+  Destination=%MAINDIR%\Objects\70191135.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\68369951.mor
+  Destination=%MAINDIR%\Objects\68369951.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\67416591.mor
+  Destination=%MAINDIR%\Objects\67416591.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\66305023.mor
+  Destination=%MAINDIR%\Objects\66305023.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\65589759.mor
+  Destination=%MAINDIR%\Objects\65589759.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\65552895.mor
+  Destination=%MAINDIR%\Objects\65552895.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\64762415.mor
+  Destination=%MAINDIR%\Objects\64762415.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\58448463.mor
+  Destination=%MAINDIR%\Objects\58448463.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\5630191.mor
+  Destination=%MAINDIR%\Objects\5630191.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\55610495.mor
+  Destination=%MAINDIR%\Objects\55610495.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\54988207.mor
+  Destination=%MAINDIR%\Objects\54988207.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\52673535.mor
+  Destination=%MAINDIR%\Objects\52673535.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\52468335.mor
+  Destination=%MAINDIR%\Objects\52468335.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\4988063.mor
+  Destination=%MAINDIR%\Objects\4988063.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\480319.mor
+  Destination=%MAINDIR%\Objects\480319.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\47142223.mor
+  Destination=%MAINDIR%\Objects\47142223.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\45586063.mor
+  Destination=%MAINDIR%\Objects\45586063.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\43805455.mor
+  Destination=%MAINDIR%\Objects\43805455.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\43499999.mor
+  Destination=%MAINDIR%\Objects\43499999.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\41899343.mor
+  Destination=%MAINDIR%\Objects\41899343.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\41184175.mor
+  Destination=%MAINDIR%\Objects\41184175.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\41184063.mor
+  Destination=%MAINDIR%\Objects\41184063.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\33699327.mor
+  Destination=%MAINDIR%\Objects\33699327.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\264085407.mor
+  Destination=%MAINDIR%\Objects\264085407.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\261501983.mor
+  Destination=%MAINDIR%\Objects\261501983.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\260891679.mor
+  Destination=%MAINDIR%\Objects\260891679.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\260863007.mor
+  Destination=%MAINDIR%\Objects\260863007.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\259382415.mor
+  Destination=%MAINDIR%\Objects\259382415.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\257472847.mor
+  Destination=%MAINDIR%\Objects\257472847.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\257468751.mor
+  Destination=%MAINDIR%\Objects\257468751.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\257076911.mor
+  Destination=%MAINDIR%\Objects\257076911.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\248956735.mor
+  Destination=%MAINDIR%\Objects\248956735.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\248956687.mor
+  Destination=%MAINDIR%\Objects\248956687.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\246765823.mor
+  Destination=%MAINDIR%\Objects\246765823.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\242341375.mor
+  Destination=%MAINDIR%\Objects\242341375.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\242136031.mor
+  Destination=%MAINDIR%\Objects\242136031.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\240519967.mor
+  Destination=%MAINDIR%\Objects\240519967.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\23086943.mor
+  Destination=%MAINDIR%\Objects\23086943.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\22688095.mor
+  Destination=%MAINDIR%\Objects\22688095.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\21959423.mor
+  Destination=%MAINDIR%\Objects\21959423.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\219079375.mor
+  Destination=%MAINDIR%\Objects\219079375.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\218949839.mor
+  Destination=%MAINDIR%\Objects\218949839.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\218883023.mor
+  Destination=%MAINDIR%\Objects\218883023.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\218757583.mor
+  Destination=%MAINDIR%\Objects\218757583.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\218192879.mor
+  Destination=%MAINDIR%\Objects\218192879.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\218192095.mor
+  Destination=%MAINDIR%\Objects\218192095.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\214701983.mor
+  Destination=%MAINDIR%\Objects\214701983.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\213859983.mor
+  Destination=%MAINDIR%\Objects\213859983.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\213798543.mor
+  Destination=%MAINDIR%\Objects\213798543.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\210630479.mor
+  Destination=%MAINDIR%\Objects\210630479.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\210609999.mor
+  Destination=%MAINDIR%\Objects\210609999.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\208516799.mor
+  Destination=%MAINDIR%\Objects\208516799.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\20660319.mor
+  Destination=%MAINDIR%\Objects\20660319.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\202577599.mor
+  Destination=%MAINDIR%\Objects\202577599.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\200436607.mor
+  Destination=%MAINDIR%\Objects\200436607.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\198649519.mor
+  Destination=%MAINDIR%\Objects\198649519.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\197953439.mor
+  Destination=%MAINDIR%\Objects\197953439.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\194757647.mor
+  Destination=%MAINDIR%\Objects\194757647.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\194211807.mor
+  Destination=%MAINDIR%\Objects\194211807.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\190754975.mor
+  Destination=%MAINDIR%\Objects\190754975.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\189571055.mor
+  Destination=%MAINDIR%\Objects\189571055.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\189570879.mor
+  Destination=%MAINDIR%\Objects\189570879.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\189511359.mor
+  Destination=%MAINDIR%\Objects\189511359.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\185018031.mor
+  Destination=%MAINDIR%\Objects\185018031.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\184230847.mor
+  Destination=%MAINDIR%\Objects\184230847.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\183378879.mor
+  Destination=%MAINDIR%\Objects\183378879.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\18306111.mor
+  Destination=%MAINDIR%\Objects\18306111.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\181150655.mor
+  Destination=%MAINDIR%\Objects\181150655.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\179097967.mor
+  Destination=%MAINDIR%\Objects\179097967.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\179061103.mor
+  Destination=%MAINDIR%\Objects\179061103.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\174906559.mor
+  Destination=%MAINDIR%\Objects\174906559.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\173087695.mor
+  Destination=%MAINDIR%\Objects\173087695.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\1725775.mor
+  Destination=%MAINDIR%\Objects\1725775.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\171997311.mor
+  Destination=%MAINDIR%\Objects\171997311.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\171383247.mor
+  Destination=%MAINDIR%\Objects\171383247.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\169023775.mor
+  Destination=%MAINDIR%\Objects\169023775.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\168979295.mor
+  Destination=%MAINDIR%\Objects\168979295.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\168979279.mor
+  Destination=%MAINDIR%\Objects\168979279.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\168358879.mor
+  Destination=%MAINDIR%\Objects\168358879.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\168114447.mor
+  Destination=%MAINDIR%\Objects\168114447.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\167526943.mor
+  Destination=%MAINDIR%\Objects\167526943.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\164648079.mor
+  Destination=%MAINDIR%\Objects\164648079.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\164390687.mor
+  Destination=%MAINDIR%\Objects\164390687.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\158673343.mor
+  Destination=%MAINDIR%\Objects\158673343.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\155210895.mor
+  Destination=%MAINDIR%\Objects\155210895.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\154953503.mor
+  Destination=%MAINDIR%\Objects\154953503.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\151536351.mor
+  Destination=%MAINDIR%\Objects\151536351.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\150320943.mor
+  Destination=%MAINDIR%\Objects\150320943.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\143060015.mor
+  Destination=%MAINDIR%\Objects\143060015.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\141892415.mor
+  Destination=%MAINDIR%\Objects\141892415.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\100769087.mor
+  Destination=%MAINDIR%\Objects\100769087.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\100881087.mor
+  Destination=%MAINDIR%\Objects\100881087.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\101279855.mor
+  Destination=%MAINDIR%\Objects\101279855.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\101538143.mor
+  Destination=%MAINDIR%\Objects\101538143.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\101788143.mor
+  Destination=%MAINDIR%\Objects\101788143.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\102046159.mor
+  Destination=%MAINDIR%\Objects\102046159.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\102346799.mor
+  Destination=%MAINDIR%\Objects\102346799.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\102443503.mor
+  Destination=%MAINDIR%\Objects\102443503.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\102525791.mor
+  Destination=%MAINDIR%\Objects\102525791.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\102525903.mor
+  Destination=%MAINDIR%\Objects\102525903.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\102574575.mor
+  Destination=%MAINDIR%\Objects\102574575.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\103395375.mor
+  Destination=%MAINDIR%\Objects\103395375.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\104572607.mor
+  Destination=%MAINDIR%\Objects\104572607.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\104883519.mor
+  Destination=%MAINDIR%\Objects\104883519.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\104883631.mor
+  Destination=%MAINDIR%\Objects\104883631.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\110139887.mor
+  Destination=%MAINDIR%\Objects\110139887.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\110715599.mor
+  Destination=%MAINDIR%\Objects\110715599.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\111088831.mor
+  Destination=%MAINDIR%\Objects\111088831.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\111253919.mor
+  Destination=%MAINDIR%\Objects\111253919.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\111525167.mor
+  Destination=%MAINDIR%\Objects\111525167.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\112573743.mor
+  Destination=%MAINDIR%\Objects\112573743.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\114546159.mor
+  Destination=%MAINDIR%\Objects\114546159.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\123220047.mor
+  Destination=%MAINDIR%\Objects\123220047.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\124417599.mor
+  Destination=%MAINDIR%\Objects\124417599.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\125664767.mor
+  Destination=%MAINDIR%\Objects\125664767.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\125664943.mor
+  Destination=%MAINDIR%\Objects\125664943.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\125977679.mor
+  Destination=%MAINDIR%\Objects\125977679.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\127563327.mor
+  Destination=%MAINDIR%\Objects\127563327.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\128509407.mor
+  Destination=%MAINDIR%\Objects\128509407.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\132431727.mor
+  Destination=%MAINDIR%\Objects\132431727.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\134559503.mor
+  Destination=%MAINDIR%\Objects\134559503.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\134842431.mor
+  Destination=%MAINDIR%\Objects\134842431.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\135251599.mor
+  Destination=%MAINDIR%\Objects\135251599.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\135251871.mor
+  Destination=%MAINDIR%\Objects\135251871.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\138750399.mor
+  Destination=%MAINDIR%\Objects\138750399.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Objects\140520303.mor
+  Destination=%MAINDIR%\Objects\140520303.mor
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Mission.cfg
+  Destination=%MAINDIR%\Mission.cfg
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Mission.doc
+  Destination=%MAINDIR%\Mission.doc
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\mission.dll
+  Destination=%MAINDIR%\mission.dll
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\MissionMan.exe
+  Destination=%MAINDIR%\MissionMan.exe
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\Mission.ini
+  Destination=%MAINDIR%\Mission.ini
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\tools\win32\Mission\Install\MissionMan\mission.mdr
+  Destination=%MAINDIR%\mission.mdr
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain2\BigDustCloud.dist
+  Destination=%HW_DATA%\MultiPlayer\Curtain2\BigDustCloud.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain2\Curtain.dist
+  Destination=%HW_DATA%\MultiPlayer\Curtain2\Curtain.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain2\Curtain2.level
+  Destination=%HW_DATA%\MultiPlayer\Curtain2\Curtain2.level
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain2\Mothership_0.missphere
+  Destination=%HW_DATA%\MultiPlayer\Curtain2\Mothership_0.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain2\Mothership_1.missphere
+  Destination=%HW_DATA%\MultiPlayer\Curtain2\Mothership_1.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain2\pebble.dist
+  Destination=%HW_DATA%\MultiPlayer\Curtain2\pebble.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain2\ResourceSphere_2.missphere
+  Destination=%HW_DATA%\MultiPlayer\Curtain2\ResourceSphere_2.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain2\Tiny.dist
+  Destination=%HW_DATA%\MultiPlayer\Curtain2\Tiny.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain2\mission.mdr
+  Destination=%HW_DATA%\MultiPlayer\Curtain2\mission.mdr
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain3\BigDustCloud.dist
+  Destination=%HW_DATA%\MultiPlayer\Curtain3\BigDustCloud.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain3\Curtain.dist
+  Destination=%HW_DATA%\MultiPlayer\Curtain3\Curtain.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain3\Curtain3.level
+  Destination=%HW_DATA%\MultiPlayer\Curtain3\Curtain3.level
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain3\Mothership_0.missphere
+  Destination=%HW_DATA%\MultiPlayer\Curtain3\Mothership_0.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain3\Mothership_1.missphere
+  Destination=%HW_DATA%\MultiPlayer\Curtain3\Mothership_1.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain3\Mothership_2.missphere
+  Destination=%HW_DATA%\MultiPlayer\Curtain3\Mothership_2.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain3\pebble.dist
+  Destination=%HW_DATA%\MultiPlayer\Curtain3\pebble.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain3\ResourceSphere_2.missphere
+  Destination=%HW_DATA%\MultiPlayer\Curtain3\ResourceSphere_2.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain3\Tiny.dist
+  Destination=%HW_DATA%\MultiPlayer\Curtain3\Tiny.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain3\mission.mdr
+  Destination=%HW_DATA%\MultiPlayer\Curtain3\mission.mdr
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain4\BigDustCloud.dist
+  Destination=%HW_DATA%\MultiPlayer\Curtain4\BigDustCloud.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain4\Curtain.dist
+  Destination=%HW_DATA%\MultiPlayer\Curtain4\Curtain.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain4\Curtain4.level
+  Destination=%HW_DATA%\MultiPlayer\Curtain4\Curtain4.level
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain4\Mothership_0.missphere
+  Destination=%HW_DATA%\MultiPlayer\Curtain4\Mothership_0.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain4\Mothership_1.missphere
+  Destination=%HW_DATA%\MultiPlayer\Curtain4\Mothership_1.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain4\Mothership_2.missphere
+  Destination=%HW_DATA%\MultiPlayer\Curtain4\Mothership_2.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain4\Mothership_3.missphere
+  Destination=%HW_DATA%\MultiPlayer\Curtain4\Mothership_3.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain4\pebble.dist
+  Destination=%HW_DATA%\MultiPlayer\Curtain4\pebble.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain4\ResourceSphere_2.missphere
+  Destination=%HW_DATA%\MultiPlayer\Curtain4\ResourceSphere_2.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain4\Tiny.dist
+  Destination=%HW_DATA%\MultiPlayer\Curtain4\Tiny.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Curtain4\mission.mdr
+  Destination=%HW_DATA%\MultiPlayer\Curtain4\mission.mdr
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud2\AsteroidBigSphere.dist
+  Destination=%HW_DATA%\MultiPlayer\DustCloud2\AsteroidBigSphere.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud2\AsteroidCentre.dist
+  Destination=%HW_DATA%\MultiPlayer\DustCloud2\AsteroidCentre.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud2\AsteroidLong.dist
+  Destination=%HW_DATA%\MultiPlayer\DustCloud2\AsteroidLong.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud2\DustCloud2.level
+  Destination=%HW_DATA%\MultiPlayer\DustCloud2\DustCloud2.level
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud2\DustCloudCentre.dist
+  Destination=%HW_DATA%\MultiPlayer\DustCloud2\DustCloudCentre.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud2\Mothership_0.missphere
+  Destination=%HW_DATA%\MultiPlayer\DustCloud2\Mothership_0.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud2\Mothership_1.missphere
+  Destination=%HW_DATA%\MultiPlayer\DustCloud2\Mothership_1.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud2\ResourceSphere_3.missphere
+  Destination=%HW_DATA%\MultiPlayer\DustCloud2\ResourceSphere_3.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud2\mission.mdr
+  Destination=%HW_DATA%\MultiPlayer\DustCloud2\mission.mdr
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud3\AsteroidBigSphere.dist
+  Destination=%HW_DATA%\MultiPlayer\DustCloud3\AsteroidBigSphere.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud3\AsteroidCentre.dist
+  Destination=%HW_DATA%\MultiPlayer\DustCloud3\AsteroidCentre.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud3\AsteroidLong.dist
+  Destination=%HW_DATA%\MultiPlayer\DustCloud3\AsteroidLong.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud3\DustCloud3.level
+  Destination=%HW_DATA%\MultiPlayer\DustCloud3\DustCloud3.level
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud3\DustCloudCentre.dist
+  Destination=%HW_DATA%\MultiPlayer\DustCloud3\DustCloudCentre.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud3\Mothership_0.missphere
+  Destination=%HW_DATA%\MultiPlayer\DustCloud3\Mothership_0.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud3\Mothership_1.missphere
+  Destination=%HW_DATA%\MultiPlayer\DustCloud3\Mothership_1.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud3\Mothership_4.missphere
+  Destination=%HW_DATA%\MultiPlayer\DustCloud3\Mothership_4.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud3\ResourceSphere_3.missphere
+  Destination=%HW_DATA%\MultiPlayer\DustCloud3\ResourceSphere_3.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud3\mission.mdr
+  Destination=%HW_DATA%\MultiPlayer\DustCloud3\mission.mdr
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud4\AsteroidBigSphere.dist
+  Destination=%HW_DATA%\MultiPlayer\DustCloud4\AsteroidBigSphere.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud4\AsteroidCentre.dist
+  Destination=%HW_DATA%\MultiPlayer\DustCloud4\AsteroidCentre.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud4\AsteroidLong.dist
+  Destination=%HW_DATA%\MultiPlayer\DustCloud4\AsteroidLong.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud4\DustCloud4.level
+  Destination=%HW_DATA%\MultiPlayer\DustCloud4\DustCloud4.level
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud4\DustCloudCentre.dist
+  Destination=%HW_DATA%\MultiPlayer\DustCloud4\DustCloudCentre.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud4\Mothership_0.missphere
+  Destination=%HW_DATA%\MultiPlayer\DustCloud4\Mothership_0.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud4\Mothership_1.missphere
+  Destination=%HW_DATA%\MultiPlayer\DustCloud4\Mothership_1.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud4\Mothership_4.missphere
+  Destination=%HW_DATA%\MultiPlayer\DustCloud4\Mothership_4.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud4\Mothership_5.missphere
+  Destination=%HW_DATA%\MultiPlayer\DustCloud4\Mothership_5.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud4\ResourceSphere_3.missphere
+  Destination=%HW_DATA%\MultiPlayer\DustCloud4\ResourceSphere_3.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud4\mission.mdr
+  Destination=%HW_DATA%\MultiPlayer\DustCloud4\mission.mdr
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud5\AsteroidBigSphere.dist
+  Destination=%HW_DATA%\MultiPlayer\DustCloud5\AsteroidBigSphere.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud5\AsteroidCentre.dist
+  Destination=%HW_DATA%\MultiPlayer\DustCloud5\AsteroidCentre.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud5\AsteroidLong.dist
+  Destination=%HW_DATA%\MultiPlayer\DustCloud5\AsteroidLong.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud5\DustCloud5.level
+  Destination=%HW_DATA%\MultiPlayer\DustCloud5\DustCloud5.level
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud5\DustCloudCentre.dist
+  Destination=%HW_DATA%\MultiPlayer\DustCloud5\DustCloudCentre.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud5\Mothership_0.missphere
+  Destination=%HW_DATA%\MultiPlayer\DustCloud5\Mothership_0.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud5\Mothership_1.missphere
+  Destination=%HW_DATA%\MultiPlayer\DustCloud5\Mothership_1.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud5\Mothership_4.missphere
+  Destination=%HW_DATA%\MultiPlayer\DustCloud5\Mothership_4.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud5\Mothership_5.missphere
+  Destination=%HW_DATA%\MultiPlayer\DustCloud5\Mothership_5.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud5\Mothership_6.missphere
+  Destination=%HW_DATA%\MultiPlayer\DustCloud5\Mothership_6.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud5\ResourceSphere_3.missphere
+  Destination=%HW_DATA%\MultiPlayer\DustCloud5\ResourceSphere_3.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\DustCloud5\mission.mdr
+  Destination=%HW_DATA%\MultiPlayer\DustCloud5\mission.mdr
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered2\BigDustCloud.dist
+  Destination=%HW_DATA%\MultiPlayer\Scattered2\BigDustCloud.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered2\Mothership_21.missphere
+  Destination=%HW_DATA%\MultiPlayer\Scattered2\Mothership_21.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered2\Mothership_22.missphere
+  Destination=%HW_DATA%\MultiPlayer\Scattered2\Mothership_22.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered2\pebble.dist
+  Destination=%HW_DATA%\MultiPlayer\Scattered2\pebble.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered2\ResourceSphere_1.missphere
+  Destination=%HW_DATA%\MultiPlayer\Scattered2\ResourceSphere_1.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered2\Scattered.dist
+  Destination=%HW_DATA%\MultiPlayer\Scattered2\Scattered.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered2\Scattered2.level
+  Destination=%HW_DATA%\MultiPlayer\Scattered2\Scattered2.level
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered2\Tiny.dist
+  Destination=%HW_DATA%\MultiPlayer\Scattered2\Tiny.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered2\mission.mdr
+  Destination=%HW_DATA%\MultiPlayer\Scattered2\mission.mdr
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered3\BigDustCloud.dist
+  Destination=%HW_DATA%\MultiPlayer\Scattered3\BigDustCloud.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered3\Mothership_2.missphere
+  Destination=%HW_DATA%\MultiPlayer\Scattered3\Mothership_2.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered3\Mothership_3.missphere
+  Destination=%HW_DATA%\MultiPlayer\Scattered3\Mothership_3.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered3\Mothership_4.missphere
+  Destination=%HW_DATA%\MultiPlayer\Scattered3\Mothership_4.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered3\pebble.dist
+  Destination=%HW_DATA%\MultiPlayer\Scattered3\pebble.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered3\ResourceSphere_1.missphere
+  Destination=%HW_DATA%\MultiPlayer\Scattered3\ResourceSphere_1.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered3\Scattered.dist
+  Destination=%HW_DATA%\MultiPlayer\Scattered3\Scattered.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered3\Scattered3.level
+  Destination=%HW_DATA%\MultiPlayer\Scattered3\Scattered3.level
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered3\Tiny.dist
+  Destination=%HW_DATA%\MultiPlayer\Scattered3\Tiny.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered3\mission.mdr
+  Destination=%HW_DATA%\MultiPlayer\Scattered3\mission.mdr
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered4\BigDustCloud.dist
+  Destination=%HW_DATA%\MultiPlayer\Scattered4\BigDustCloud.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered4\Mothership_0.missphere
+  Destination=%HW_DATA%\MultiPlayer\Scattered4\Mothership_0.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered4\Mothership_1.missphere
+  Destination=%HW_DATA%\MultiPlayer\Scattered4\Mothership_1.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered4\Mothership_2.missphere
+  Destination=%HW_DATA%\MultiPlayer\Scattered4\Mothership_2.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered4\Mothership_3.missphere
+  Destination=%HW_DATA%\MultiPlayer\Scattered4\Mothership_3.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered4\pebble.dist
+  Destination=%HW_DATA%\MultiPlayer\Scattered4\pebble.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered4\ResourceSphere_1.missphere
+  Destination=%HW_DATA%\MultiPlayer\Scattered4\ResourceSphere_1.missphere
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered4\Scattered.dist
+  Destination=%HW_DATA%\MultiPlayer\Scattered4\Scattered.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered4\Scattered4.level
+  Destination=%HW_DATA%\MultiPlayer\Scattered4\Scattered4.level
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered4\Tiny.dist
+  Destination=%HW_DATA%\MultiPlayer\Scattered4\Tiny.dist
+  Flags=0000000010000010
+end
+item: Install File
+  Source=e:\Homeworld\Data\MultiPlayer\Scattered4\mission.mdr
+  Destination=%HW_DATA%\MultiPlayer\Scattered4\mission.mdr
+  Flags=0000000010000010
+end
+item: Set Variable
+  Variable=COMMON
+  Value=%COMMON%
+  Flags=00010100
+end
+item: Check Configuration
+  Flags=10111011
+end
+item: Get Registry Key Value
+  Variable=STARTUPDIR
+  Key=Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
+  Default=%WIN%\Start Menu\Programs\StartUp
+  Value Name=StartUp
+  Flags=00000010
+end
+item: Get Registry Key Value
+  Variable=DESKTOPDIR
+  Key=Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
+  Default=%WIN%\Desktop
+  Value Name=Desktop
+  Flags=00000010
+end
+item: Get Registry Key Value
+  Variable=STARTMENUDIR
+  Key=Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
+  Default=%WIN%\Start Menu
+  Value Name=Start Menu
+  Flags=00000010
+end
+item: Get Registry Key Value
+  Variable=GROUPDIR
+  Key=Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
+  Default=%WIN%\Start Menu\Programs
+  Value Name=Programs
+  Flags=00000010
+end
+item: Get Registry Key Value
+  Variable=CSTARTUPDIR
+  Key=Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
+  Default=%STARTUPDIR%
+  Value Name=Common Startup
+  Flags=00000100
+end
+item: Get Registry Key Value
+  Variable=CDESKTOPDIR
+  Key=Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
+  Default=%DESKTOPDIR%
+  Value Name=Common Desktop
+  Flags=00000100
+end
+item: Get Registry Key Value
+  Variable=CSTARTMENUDIR
+  Key=Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
+  Default=%STARTMENUDIR%
+  Value Name=Common Start Menu
+  Flags=00000100
+end
+item: Get Registry Key Value
+  Variable=CGROUPDIR
+  Key=Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders
+  Default=%GROUPDIR%
+  Value Name=Common Programs
+  Flags=00000100
+end
+item: Set Variable
+  Variable=CGROUP_SAVE
+  Value=%GROUP%
+end
+item: Set Variable
+  Variable=GROUP
+  Value=%GROUPDIR%\%GROUP%
+end
+item: Create Shortcut
+  Source=%MAINDIR%\MissionMan.exe
+  Destination=%GROUP%\MissionMan.lnk
+  Icon Number=0
+end
+item: Create Shortcut
+  Source=%MAINDIR%\Mission.doc
+  Destination=%GROUP%\MissionMan Help.lnk
+  Icon Number=0
+  Key Type=1536
+  Flags=00000001
+end
+item: Create Shortcut
+  Source=%MAINDIR%\Unwise.exe
+  Destination=%GROUP%\Uninstall MissionMan.lnk
+  Icon Number=0
+  Key Type=1536
+  Flags=00000001
+end
+item: Else Statement
+end
+item: Add ProgMan Icon
+  Group=%GROUP%
+  Icon Name=MissionMan
+  Command Line=%MAINDIR%\MissionMan.exe
+  Flags=01000000
+end
+item: Add ProgMan Icon
+  Group=%GROUP%
+  Icon Name=MissionMan Help
+  Command Line=%MAINDIR%\Mission.doc
+  Flags=01000000
+end
+item: Add ProgMan Icon
+  Group=%GROUP%
+  Icon Name=Uninstall MissionMan
+  Command Line=%MAINDIR%\Unwise.exe
+  Flags=01000000
+end
+item: End Block
+end
+item: Self-Register OCXs/DLLs
+  Description=Updating System Configuration, Please Wait...
+end
+item: Edit Registry
+  Total Keys=3
+  item: Key
+    Key=.mdr
+    New Value=MissionMan.Document
+  end
+  item: Key
+    Key=MissionMan.Document
+    New Value=MissionMan Document
+  end
+  item: Key
+    Key=MissionMan.Document\shell\open\command
+    New Value=%MAINDIR%\MissionMan.exe %%1
+  end
+end
+item: Wizard Block
+  Direction Variable=DIRECTION
+  Display Variable=DISPLAY
+  Bitmap Pathname=%_WISE_%\DIALOGS\TEMPLATE\WIZARD.BMP
+  X Position=9
+  Y Position=10
+  Filler Color=8421440
+  Flags=00000011
+end
+item: Custom Dialog Set
+  Name=Finished
+  Display Variable=DISPLAY
+  item: Dialog
+    Title=Installation Complete
+    Title French=Installation en cours
+    Title German=Installation abgeschlossen
+    Title Portuguese=Instalação Completa 
+    Title Spanish=Se ha completado la Instalación
+    Title Italian=Installazione completata
+    Title Danish=Installation gennemført
+    Title Dutch=Installatie afgerond
+    Title Norwegian=Installasjonen er fullført
+    Title Swedish=Installationen klar
+    Width=280
+    Height=224
+    Font Name=Helv
+    Font Size=8
+    item: Push Button
+      Rectangle=170 185 212 199
+      Variable=DIRECTION
+      Value=N
+      Create Flags=01010000000000010000000000000001
+      Text=&Finish >
+      Text French=&Terminer>
+      Text German=&Fertigstellen>
+      Text Portuguese=&Terminar >
+      Text Spanish=&Finalizar>
+      Text Italian=&Fine >
+      Text Danish=&Afslut >
+      Text Dutch=&Klaar>
+      Text Norwegian=&Avslutt>
+      Text Swedish=&Sluta>
+    end
+    item: Push Button
+      Control Name=CANCEL
+      Rectangle=222 185 264 199
+      Action=3
+      Create Flags=01010000000000010000000000000000
+      Text=Cancel
+      Text French=Annuler
+      Text German=Abbrechen
+      Text Portuguese=Cancelar
+      Text Spanish=Cancelar
+      Text Italian=Annulla
+      Text Danish=Annuller
+      Text Dutch=Annuleren
+      Text Norwegian=Avbryt
+      Text Swedish=Avbryt
+    end
+    item: Static
+      Rectangle=9 177 263 178
+      Action=3
+      Create Flags=01010000000000000000000000000111
+    end
+    item: Static
+      Rectangle=90 10 260 63
+      Enabled Color=00000000000000001111111111111111
+      Create Flags=01010000000000000000000000000000
+      Text=%APPTITLE% has been successfully installed.
+      Text=
+      Text=
+      Text=Press the Finish button to exit this installation.
+      Text=
+      Text French=L'installation de %APPTITLE% est réussie
+      Text French=
+      Text French=
+      Text French=Cliquez sur Terminer pour quitter cette installation
+      Text French=
+      Text German=%APPTITLE% wurde erfolgreich installiert.
+      Text German=
+      Text German=
+      Text German=Zum Beenden dieser Installation Fertigstellen anklicken.
+      Text German=
+      Text Portuguese=%APPTITLE% foi instalado com êxito
+      Text Portuguese=
+      Text Portuguese=
+      Text Portuguese=Pressionar o botão Terminar para sair desta instalação
+      Text Portuguese=
+      Text Spanish=%APPTITLE% se ha instalado con éxito.
+      Text Spanish=
+      Text Spanish=
+      Text Spanish=Pulse el botón de Finalizar para salir de esta instalación.
+      Text Spanish=
+      Text Italian=%APPTITLE% è stato installato.
+      Text Italian=
+      Text Italian=
+      Text Italian=Premi il pulsante Fine per uscire dal programma di installazione
+      Text Italian=
+      Text Danish=%APPTITLE% er nu installeret korrekt.
+      Text Danish=
+      Text Danish=
+      Text Danish=Klik på Afslut for at afslutte installationen.
+      Text Danish=
+      Text Dutch=%APPTITLE% is met succes geïnstalleerd.
+      Text Dutch=
+      Text Dutch=
+      Text Dutch=Druk op Klaar om deze installatie af te ronden.
+      Text Dutch=
+      Text Norwegian=Installasjonen av %APPTITLE% er vellykket.
+      Text Norwegian=
+      Text Norwegian=
+      Text Norwegian=Trykk på Avslutt-tasten for å avslutte denne installasjonen.
+      Text Norwegian=
+      Text Swedish=Installationen av %APPTITLE% har lyckats.
+      Text Swedish=
+      Text Swedish=
+      Text Swedish=Tryck på Sluta för att gå ur installationsprogrammet.
+      Text Swedish=
+    end
+    item: Push Button
+      Control Name=BACK
+      Rectangle=128 185 170 199
+      Variable=DIRECTION
+      Value=B
+      Create Flags=01010000000000010000000000000000
+      Text=< &Back
+      Text French=<&Retour
+      Text German=<&Zurück
+      Text Portuguese=<&Retornar
+      Text Spanish=<&Retroceder
+      Text Italian=< &Indietro
+      Text Danish=<&Tilbage
+      Text Dutch=<&Terug
+      Text Norwegian=<&Tilbake
+      Text Swedish=< &Tillbaka
+    end
+    item: Set Control Attribute
+      Control Name=BACK
+      Operation=1
+    end
+    item: Set Control Attribute
+      Control Name=CANCEL
+      Operation=1
+    end
+  end
+end
+item: End Block
+end
+item: New Event
+  Name=Cancel
+end
+item: Include Script
+  Pathname=%_WISE_%\INCLUDE\rollback.wse
+end

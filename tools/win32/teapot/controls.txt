@@ -1,0 +1,11 @@
+panX = noneX
+panY = noneY
+rotateLatitude = rightX
+rotateLongitude = rightY
+zoom = leftRightY
+zoomInMult = .95
+zoomOutMult = 1.05
+panMultX = 0.03
+panMultY = 0.03
+degreeMultX = 0.5
+degreeMultY = 0.5

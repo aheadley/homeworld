@@ -1,0 +1,762 @@
+//        Swarmer Header file
+
+#ifndef __SWARMER_KASH
+#define __SWARMER_KASH
+
+#include "Attributes.h"
+
+//P2 Mothership escape defines
+#define MO_ESCAPE_HEALTH         30     //health where mothership escapes
+#define MO_ESCAPE_HYPER_HEALTH   45     //health where mothership begins hyperspace escape sequence
+#define MO_ESCAPE_LOW_HEALTH     10     //low for propping up
+#define MO_ESCAPE_PROPUP_HEALTH  15     //prop up level
+
+
+//-----------------------------------------------------------------------------
+//    Name        : HonourGuardSwarm
+//    Description : Advanced Swarmers guarding the prison ship
+//-----------------------------------------------------------------------------
+FSM HonourGuardSwarm
+
+    States Waiting, WaitingLeader, Attack, Dock, NullState;
+
+    INIT
+        VarCreateSet("DockCount", 0);
+        VarCreateSet("PodCount", 1);
+        IF (ThisTeamIs(TEAM_HighGuardSwarmers1))
+            JUMP WaitingLeader;
+        ELSEIF (ThisTeamIs(TEAM_HighGuardSwarmers2))
+            JUMP Waiting;
+        ENDIF
+    ENDINIT
+    WATCH
+        IFONCE (TeamCount() == 0)
+            //I Toss My Life Away!  For The Honour!
+            JUMP NullState;
+        ENDIFONCE
+    ENDWATCH
+
+        //---------------------------
+        // HonourGuardSwarm: Waiting
+        // Waits for message to attack
+        STATE Waiting
+            INIT
+            ENDINIT
+            WATCH
+                IF (MsgReceived("HonourAttack"))
+                    JUMP WaitingLeader;
+                ENDIF
+            ENDWATCH
+        ENDSTATE Waiting
+
+        //---------------------------
+        // HonourGuardSwarm: WaitingLeader
+        // Waits for enemies to enter the volume.  Leads the attack
+        STATE WaitingLeader
+            INIT
+            ENDINIT
+            WATCH
+                IF (FindEnemiesInside(VOLUME_CheckVolume, SHIPS_Invaders, 4000))
+                    JUMP Attack;
+                ENDIF
+            ENDWATCH
+        ENDSTATE WaitingLeader
+
+        //---------------------------
+        // HonourGuardSwarm: Attack
+        // Attacks any invader
+        STATE Attack
+            INIT
+                TacticsAggressive();
+                Attack(SHIPS_Invaders);
+            ENDINIT
+            WATCH
+                IF (TimerExpiredDestroy("DockTimer"))
+                    JUMP Dock;
+                ENDIF
+
+                IF (!TimerRemaining("DockTimer") &&
+                    ((ShipsCount(SHIPS_Invaders) == 0) ||
+                     (TeamFuelLowest() < 25)))
+                    TimerCreateSetStart("DockTimer", 3);
+                    MsgSendAll("HonourAttack");
+                ENDIF
+            ENDWATCH
+        ENDSTATE Attack
+
+        //---------------------------
+        // HonourGuardSwarm: Dock
+        // Team docks with both pods
+        STATE Dock
+            INIT
+                IF ((ShipsCount(TEAMSHIPS_HighGuardFuelPod1)) &&
+                    (ShipsCount(TEAMSHIPS_HighGuardFuelPod2)))
+                    ShipsAdd(SHIPS_DockShips, TEAMSHIPS_HighGuardFuelPod1);
+                    ShipsAdd(SHIPS_DockShips, TEAMSHIPS_HighGuardFuelPod2);
+                    ShipsDockSupportWith(THISTEAMSHIPS, SHIPS_DockShips);
+//                    IF (ShipsSelectIndex(SHIPS_Docker, THISTEAMSHIPS, VarGet("DockCount")))
+//                        VarInc("DockCount");
+//                        IF (VarGet("PodCount") == 1)
+//                            ShipsDockSupportWith(SHIPS_Docker, TEAMSHIPS_HighGuardFuelPod1);
+//                            VarInc("PodCount");
+//                            JUMP Dock;
+//                        ELSEIF (VarGet("PodCount") == 2)
+//                            VarDec("PodCount");
+//                            ShipsDockSupportWith(SHIPS_Docker, TEAMSHIPS_HighGuardFuelPod2);
+//                            JUMP Dock;
+//                        ENDIF
+//                    ELSE
+//                        VarSet("DockCount", 0);
+//                    ENDIF
+                ELSEIF (ShipsCount(TEAMSHIPS_HighGuardFuelPod1))
+                    DockSupportWith(TEAM_HighGuardFuelPod1);
+                ELSEIF (ShipsCount(TEAMSHIPS_HighGuardFuelPod2))
+                    DockSupportWith(TEAM_HighGuardFuelPod2);
+                ELSE
+//                        JUMP Kamikaze;
+                ENDIF
+            ENDINIT
+            WATCH
+                IF (!TeamDocking())
+                    JUMP Waiting;
+                ENDIF
+            ENDWATCH
+        ENDSTATE Dock
+
+        //---------------------------
+        // HonourGuardSwarm: NullState
+        // Nothing happens here
+        STATE NullState
+            INIT
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE NullState
+
+ENDFSM HonourGuardSwarm
+
+
+
+//-----------------------------------------------------------------------------
+//    Name        : GenericSwarmAttack
+//    Description : Generic Finite state machine for swarmer teams
+//-----------------------------------------------------------------------------
+FSM GenericSwarmAttack
+
+    States NullState;
+
+    INIT
+        ShipsAdd(SHIPS_GenericSwarmers,THISTEAMSHIPS);
+        TeamGiveToAI();
+        JUMP NullState;
+    ENDINIT
+    WATCH
+//        IFONCE (TeamCount() == 0)
+            //Eeeep!  We've all been generically killed!!
+//            JUMP NullState;
+//        ENDIFONCE
+    ENDWATCH
+
+        //---------------------------
+        // GenericSwarmAttack: NullState
+        // Nothing happens here
+        STATE NullState
+            INIT
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE NullState
+
+ENDFSM GenericSwarmAttack
+
+
+//-----------------------------------------------------------------------------
+//    Name        : GenericMothershipSwarm
+//    Description : Generic FSM for swarming ships around the mothership
+//-----------------------------------------------------------------------------
+FSM GenericMothershipSwarm
+
+    States NullState;
+
+    INIT
+        VarCreateSet("DeadMoSwarmers", 0);
+        ShipsAdd(SHIPS_MothershipSwarm,THISTEAMSHIPS);
+        VarCreateSet("LastMoSwarmers", ShipsCount(SHIPS_MothershipSwarm));
+        FindEnemyShipsOfType(SHIPS_Temp, "Mothership");
+        FindEnemiesNearby(SHIPS_Temp, 10000);
+        ShipsSelectType(SHIPS_Moship, SHIPS_Temp, "Mothership");
+        ShipsRemove(SHIPS_Temp, SHIPS_Moship);
+
+        IF ((ShipsSelectClass(SHIPS_Targets, SHIPS_Temp, "CLASS_Fighter")) ||
+            (ShipsSelectClass(SHIPS_Targets, SHIPS_Temp, "CLASS_Corvette")) ||
+            (ShipsSelectCapital(SHIPS_Targets, SHIPS_Temp)) ||
+            (ShipsSelectClass(SHIPS_Targets, SHIPS_Temp, "CLASS_Resource")) ||
+            (ShipsSelectClass(SHIPS_Targets, SHIPS_Temp, "CLASS_NonCombat")))
+
+            //remove Field Frigates
+            IF (ShipsSelectType(SHIPS_Field, SHIPS_Targets, "DFGFrigate"))
+
+                ShipsRemove(SHIPS_Targets, SHIPS_Field);
+
+                //if there aren't any more, fill the targets shiplist
+                IF (!ShipsCount(SHIPS_Targets))
+                    IF (ShipsSelectClass(SHIPS_Targets, SHIPS_Temp, "CLASS_Resource") ||
+                        ShipsSelectClass(SHIPS_Targets, SHIPS_Temp, "CLASS_NonCombat"))
+                    ENDIF
+                ENDIF
+            ENDIF
+
+            IF (ShipsSelectDamaged(SHIPS_Damaged, SHIPS_Targets, 50) ||
+                ShipsSelectDamaged(SHIPS_Damaged, SHIPS_Targets, 90))
+                ShipsClear(SHIPS_Targets);
+                ShipsAdd(SHIPS_Targets, SHIPS_Damaged);
+            ENDIF
+
+            SetSwarmTargets(SHIPS_Targets);
+        ENDIF
+        TeamGiveToAI();
+        JUMP NullState;
+    ENDINIT
+    WATCH
+        IF (ShipsCount(SHIPS_MothershipSwarm) < VarGet("LastMoSwarmers"))
+            VarSet("DeadMoSwarmers", VarGet("DeadMoSwarmers") + (VarGet("LastMoSwarmers") - ShipsCount(SHIPS_MothershipSwarm)));
+            VarSet("LastMoSwarmers", ShipsCount(SHIPS_MothershipSwarm));
+        ENDIF
+        IFONCE (ShipsCount(SHIPS_MothershipSwarm) < VarGet("DeadMoSwarmers"))
+            MsgSend(MASTERTEAM, "MoSwarmersInTrouble");
+
+            MsgSend(EVENTSTEAM, "MoSwarmersInTrouble");
+        ENDIFONCE
+        IFONCE (!ShipsCount(SHIPS_MothershipSwarm))
+            MsgSend(MASTERTEAM, "MoSwarmersDead");
+        ENDIFONCE
+    ENDWATCH
+
+        //---------------------------
+        // GenericSwarmAttack: NullState
+        // Nothing happens here
+        STATE NullState
+            INIT
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE NullState
+
+ENDFSM GenericMothershipSwarm
+
+
+//-----------------------------------------------------------------------------
+//    Name        : GenericResourcerSwarm
+//    Description : Generic FSM for swarming resourcing ships
+//-----------------------------------------------------------------------------
+FSM GenericResourcerSwarm
+
+    States NullState, MoveToTarget;
+
+    INIT
+        VarCreateSet("DeadResSwarmers", 0);
+        ShipsAdd(SHIPS_ResourcerSwarm,THISTEAMSHIPS);
+        VarCreateSet("LastResSwarmers", ShipsCount(SHIPS_ResourcerSwarm));
+        //create a swarmer team to takeout any resourcer
+        IF (FindEnemyShipsOfType(SHIPS_Coll, "ResourceCollector"))
+            VarCreateSet("TakingResourcers", TRUE);
+        ELSE
+            FindEnemyShipsOfType(SHIPS_Coll, "ResourceController");
+        ENDIF
+        TimerCreateSetStart("ResSwarm", 40);
+        JUMP MoveToTarget;
+    ENDINIT
+    WATCH
+        IF (ShipsCount(SHIPS_ResourcerSwarm) < VarGet("LastResSwarmers"))
+            VarSet("DeadResSwarmers", VarGet("DeadResSwarmers") + (VarGet("LastResSwarmers") - ShipsCount(SHIPS_ResourcerSwarm)));
+            VarSet("LastResSwarmers", ShipsCount(SHIPS_ResourcerSwarm));
+        ENDIF
+        IFONCE (ShipsCount(SHIPS_ResourcerSwarm) < VarGet("DeadResSwarmers"))
+            MsgSend(MASTERTEAM, "ResSwarmersInTrouble");
+            MsgSend(EVENTSTEAM, "ResSwarmersInTrouble");
+        ENDIFONCE
+        IFONCE (!ShipsCount(SHIPS_ResourcerSwarm))
+            MsgSend(MASTERTEAM, "ResSwarmersDead");
+        ENDIFONCE
+    ENDWATCH
+
+        //---------------------------
+        // GenericResourcerSwarm: MoveToTarget
+        // Moves the swarmships towards their targets
+        STATE MoveToTarget
+            INIT
+                SwarmMoveTo(SHIPS_Coll);
+            ENDINIT
+            WATCH
+                IF (TimerExpiredDestroy("ResSwarm"))
+                    IF (VarGet("TakingResourcers"))
+                        MsgSendAll("ImTakingTheResourcers");
+                    ENDIF
+                    Stop();
+                    SetSwarmTargets(SHIPS_Coll);
+                    TeamGiveToAI();
+                    JUMP NullState;
+                ENDIF
+            ENDWATCH
+        ENDSTATE MoveToTarget
+
+        //---------------------------
+        // GenericResourcerSwarm: NullState
+        // Nothing happens here
+        STATE NullState
+            INIT
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE NullState
+
+ENDFSM GenericResourcerSwarm
+
+//-----------------------------------------------------------------------------
+//    Name        : ResourceDefenderSwarm
+//    Description : Generic FSM for swarming the defense around resourcing ships
+//-----------------------------------------------------------------------------
+FSM ResourceDefenderSwarm
+
+    States NullState, MoveToTarget;
+
+    INIT
+        VarCreateSet("DeadResDefSwarmers", 0);
+        ShipsAdd(SHIPS_ResourceDefSwarm,THISTEAMSHIPS);
+        VarCreateSet("LastResDefSwarmers", ShipsCount(SHIPS_ResourceDefSwarm));
+        //create a swarmer team to takeout any resourcer defenses
+        IF ((FindEnemyShipsOfType(SHIPS_Temp1, "ResourceController")) ||
+            (FindEnemyShipsOfType(SHIPS_Temp2, "ResourceCollector")))
+            //put collector and controller together
+            ShipsAdd(SHIPS_Resource, SHIPS_Temp1);
+            ShipsAdd(SHIPS_Resource, SHIPS_Temp2);
+
+            //find all ships around the resourcers
+            ShipsAdd(SHIPS_Defenders, SHIPS_Resource);
+            FindEnemiesNearby(SHIPS_Defenders, 5000);
+
+            //remove the resourcers from the defender list
+            ShipsRemove(SHIPS_Defenders, SHIPS_Temp);
+        ENDIF
+        TimerCreateSetStart("ResDefSwarm", 20);
+        JUMP MoveToTarget;
+    ENDINIT
+    WATCH
+        IF (ShipsCount(SHIPS_ResourceDefSwarm) < VarGet("LastResDefSwarmers"))
+            VarSet("DeadResDefSwarmers", VarGet("DeadResSwarmers") + (VarGet("LastResSwarmers") - ShipsCount(SHIPS_ResourceDefSwarm)));
+            VarSet("LastResDefSwarmers", ShipsCount(SHIPS_ResourceDefSwarm));
+        ENDIF
+        IFONCE (ShipsCount(SHIPS_ResourceDefSwarm) < VarGet("DeadResDefSwarmers"))
+            MsgSend(MASTERTEAM, "ResDefSwarmersInTrouble");
+            MsgSend(TEAM_Dummy1, "ResDefSwarmersInTrouble");
+        ENDIFONCE
+        IFONCE (!ShipsCount(SHIPS_ResourceDefSwarm))
+            MsgSend(MASTERTEAM, "ResDefSwarmersDead");
+        ENDIFONCE
+    ENDWATCH
+
+        //---------------------------
+        // ResourceDefenderSwarm: MoveToTarget
+        // Moves the swarmships towards their targets
+        STATE MoveToTarget
+            INIT
+                SwarmMoveTo(SHIPS_Defenders);
+            ENDINIT
+            WATCH
+                IF (TimerExpiredDestroy("ResDefSwarm"))
+                    Stop();
+                    SetSwarmTargets(SHIPS_Defenders);
+                    TeamGiveToAI();
+                    JUMP NullState;
+                ENDIF
+            ENDWATCH
+        ENDSTATE MoveToTarget
+
+        //---------------------------
+        // ResourceDefenderSwarm: NullState
+        // Nothing happens here
+        STATE NullState
+            INIT
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE NullState
+
+ENDFSM ResourceDefenderSwarm
+
+//-----------------------------------------------------------------------------
+//    Name        : DefendMothership
+//    Description : Swarmers that defend the mothership
+//                  ** Note ** doesn't work with MsgSender Mothers (yet?)
+//-----------------------------------------------------------------------------
+FSM DefendMothership
+
+    States NullState;
+
+    INIT
+        #ifdef MISSION7
+        UnderAttackElsewhere(MOTHERTEAM, SHIPS_Attackers);
+        #else
+        IF (VarGet("G_MothershipUnderAttack") == 1)
+            UnderAttackElsewhere(TEAM_MSTeam1, SHIPS_Attackers);
+        ELSEIF (VarGet("G_MothershipUnderAttack") == 2)
+            UnderAttackElsewhere(TEAM_MSTeam2, SHIPS_Attackers);
+        ELSEIF (VarGet("G_MothershipUnderAttack") == 3)
+            UnderAttackElsewhere(TEAM_MSTeam3, SHIPS_Attackers);
+        ENDIF
+        #endif
+        SetSwarmTargets(SHIPS_Attackers);
+        ShipsAdd(SHIPS_DefendMothership, THISTEAMSHIPS);
+        TeamGiveToAI();
+        JUMP NullState;
+    ENDINIT
+    WATCH
+        IFONCE (TeamCount() == 0)
+            //I Tried to save you Mother...  but I failed....
+            JUMP NullState;
+        ENDIFONCE
+    ENDWATCH
+
+        //---------------------------
+        // DefendMothership: NullState
+        // Nothing happens here
+        STATE NullState
+            INIT
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE NullState
+
+ENDFSM DefendMothership
+
+//-----------------------------------------------------------------------------
+//    Name        : IntroAttack
+//    Description : Controls Intro swarmers from launch to battle
+//-----------------------------------------------------------------------------
+FSM IntroAttack
+
+    States GetStarted, WaitForAttack, NullState;
+
+    INIT
+        ShipsSetNonRetaliation(THISTEAMSHIPS);
+        JUMP GetStarted;
+    ENDINIT
+    WATCH
+        IFONCE (TeamCount() == 0)
+            //Let me introduce myself... I'm' ...  augh!!
+            JUMP NullState;
+        ENDIFONCE
+    ENDWATCH
+
+        //---------------------------
+        // IntroAttack: GetStarted
+        // Moves the swarmers into position
+        STATE GetStarted
+            INIT
+                AttackMothership();
+            ENDINIT
+            WATCH
+                IF (Nearby(POINT_StartPointPlayer, 10000))
+                    JUMP WaitForAttack;
+                ENDIF
+                IF (MsgReceived("Attack"))
+                    Stop();
+                    ShipsSetRetaliation(THISTEAMSHIPS);
+                    FSMCreate(GenericMothershipSwarm, THISTEAM);
+                ENDIF
+                IF (UnderAttack(SHIPS_PartyPoopers))
+                    Stop();
+                    ShipsSetRetaliation(THISTEAMSHIPS);
+                    MsgSend(EVENTSTEAM, "UnderAttack");
+                    FSMCreate(GenericMothershipSwarm, THISTEAM);
+                ENDIF
+            ENDWATCH
+        ENDSTATE GetStarted
+
+        //---------------------------
+        // IntroAttack: WaitForAttack
+        // Waits for the player to attack,
+        // or the attack command to come, then changes the
+        // swarmers to attack swarmers
+        STATE WaitForAttack
+            INIT
+                MsgSend(EVENTSTEAM, "Stopped");
+                Stop();
+            ENDINIT
+            WATCH
+                IF (MsgReceived("Attack"))
+                    ShipsSetRetaliation(THISTEAMSHIPS);
+                    FSMCreate(GenericMothershipSwarm, THISTEAM);
+                ENDIF
+                IF (UnderAttack(SHIPS_PartyPoopers))
+                    ShipsSetRetaliation(THISTEAMSHIPS);
+                    MsgSendAll("Attack");
+                    MsgSend(EVENTSTEAM, "UnderAttack");
+                    FSMCreate(GenericMothershipSwarm, THISTEAM);
+                ENDIF
+            ENDWATCH
+        ENDSTATE WaitForAttack
+
+        //---------------------------
+        // IntroAttack: NullState
+        // Nothing happens here
+        STATE NullState
+            INIT
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE NullState
+
+ENDFSM IntroAttack
+
+//-----------------------------------------------------------------------------
+//    Name        : PreAttackPod
+//    Description : FSM for Pods before they attack
+//-----------------------------------------------------------------------------
+FSM PreAttackPod
+
+    States Dock, WaitToLaunch, Launch, GetOrders, NullState;
+
+    INIT
+        JUMP Dock;
+    ENDINIT
+    WATCH
+        IF (MsgReceived ("DockNow"))
+            JUMP NullState;
+        ENDIF
+    ENDWATCH
+
+        //---------------------------
+        // PreAttackPod: Dock
+        // Pod Hyperspaces out
+        STATE Dock
+            INIT
+                TeamHyperspaceOut();
+            ENDINIT
+            WATCH
+                IF (MsgReceived("DefendMothership"))
+                    VarCreateSet("DefendMothership", TRUE);
+                    JUMP WaitToLaunch;
+                ELSEIF (MsgReceived("MothershipSwarm"))
+                    VarCreateSet("MothershipSwarm", TRUE);
+                    JUMP WaitToLaunch;
+                ELSEIF (MsgReceived("ResourceSwarm"))
+                    VarCreateSet("ResourceSwarm", TRUE);
+                    JUMP WaitToLaunch;
+                ELSEIF (MsgReceived("ResourceDefenderSwarm"))
+                    VarCreateSet("ResourceDefenderSwarm", TRUE);
+                    JUMP WaitToLaunch;
+                ELSEIF (MsgReceived("IntroAttack"))
+                    VarCreateSet("IntroAttack", TRUE);
+                    JUMP WaitToLaunch;
+                ENDIF
+            ENDWATCH
+        ENDSTATE Dock
+
+        //---------------------------
+        // PreAttackPod: WaitToLaunch
+        // Waits for the swarmers to launch
+        STATE WaitToLaunch
+            INIT
+                TimerCreateSetStart ("WaitToLaunch",5);
+            ENDINIT
+            WATCH
+                IF (TimerExpiredDestroy ("WaitToLaunch"))
+                    Jump Launch;
+                ENDIF
+            ENDWATCH
+        ENDSTATE WaitToLaunch
+
+        //---------------------------
+        // PreAttackPod: Launch
+        // Pod Hyperspaces In
+        STATE Launch
+            INIT
+                TeamHyperspaceInNear (TEAMSPOINT_MsgSender, 1000);
+                TimerCreateSetStart ("GiveToAI",10);
+            ENDINIT
+            WATCH
+                IF (TimerExpiredDestroy ("GiveToAI"))
+                    Jump GetOrders;
+                ENDIF
+            ENDWATCH
+        ENDSTATE Launch
+
+
+        //---------------------------
+        // PreAttackPod: GetOrders
+        // Pod finds out where it's needed and starts new FSM
+        STATE GetOrders
+            INIT
+                IF (VarGet("DefendMothership"))
+                    FSMCreate(DefendMothership, THISTEAM);
+                ELSEIF (VarGet("MothershipSwarm"))
+                    FSMCreate(GenericMothershipSwarm, THISTEAM);
+                ELSEIF (VarGet("ResourceSwarm"))
+                    FSMCreate(GenericResourcerSwarm, THISTEAM);
+                ELSEIF (VarGet("ResourceDefenderSwarm"))
+                    FSMCreate(ResourceDefenderSwarm, THISTEAM);
+                ELSEIF (VarGet("IntroAttack"))
+                    FSMCreate(IntroAttack, THISTEAM);
+                ENDIF
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE GetOrders
+
+        //---------------------------
+        // PreAttackPod: NullState
+        // Nothing happens here
+        STATE NullState
+            INIT
+            ENDINIT
+            WATCH
+                IF (ShipsCount(THISTEAMSHIPS) && MsgReceived("P2MothershipBlowin"))
+                    TeamHyperspaceOut();
+                ENDIF
+            ENDWATCH
+        ENDSTATE NullState
+
+ENDFSM PreAttackPod
+
+//-----------------------------------------------------------------------------
+//    Name        : PreAttackSwarm
+//    Description : Swarmers before they are sent off to attack
+//-----------------------------------------------------------------------------
+FSM PreAttackSwarm
+
+    States NullState, Dock, Launch, WaitToLaunch, GetOrders, DockAgain;
+
+    INIT
+        JUMP Dock;
+    ENDINIT
+    WATCH
+    ENDWATCH
+
+        //---------------------------
+        // PreAttackSwarm: Dock
+        // Swarmers dock with mothership
+        STATE Dock
+            INIT
+                #ifdef MISSION7
+                    DockInstant (MOTHERTEAM);
+                #else
+                    IF (VarGet("G_MothershipCount") == 1)
+                        DockInstant(TEAM_MSTeam1);
+                    ELSEIF (VarGet("G_MothershipCount") == 2)
+                        DockInstant(TEAM_MSTeam2);
+                    ELSE
+                        DockInstant(TEAM_MSTeam3);
+                    ENDIF
+
+                    IncRevolvingCount("G_MothershipCount", 3, 1)
+                #endif
+            ENDINIT
+            WATCH
+                IF (MsgReceived("DefendMothership"))
+                    VarCreateSet("DefendMothership", TRUE);
+                    JUMP WaitToLaunch;
+                ELSEIF (MsgReceived("MothershipSwarm"))
+                    VarCreateSet("MothershipSwarm", TRUE);
+                    JUMP WaitToLaunch;
+                ELSEIF (MsgReceived("ResourceSwarm"))
+                    VarCreateSet("ResourceSwarm", TRUE);
+                    JUMP WaitToLaunch;
+                ELSEIF (MsgReceived("ResourceDefenderSwarm"))
+                    VarCreateSet("ResourceDefenderSwarm", TRUE);
+                    JUMP WaitToLaunch;
+                ELSEIF (MsgReceived("IntroAttack"))
+                    VarCreateSet("IntroAttack", TRUE);
+                    JUMP WaitToLaunch;
+                ENDIF
+
+                IF (MsgReceived ("DockNow"))
+                    JUMP NullState;
+                ENDIF
+            ENDWATCH
+        ENDSTATE Dock
+
+
+        //---------------------------
+        // PreAttackSwarm: WaitToLaunch
+        // Swarmers wait for the right time to launch
+        STATE WaitToLaunch
+            INIT
+                TimerCreateSetStart ("WaitToLaunch",5);
+            ENDINIT
+            WATCH
+                IF (TimerExpiredDestroy ("WaitToLaunch"))
+                    Jump Launch;
+                ENDIF
+            ENDWATCH
+        ENDSTATE WaitToLaunch
+
+
+        //---------------------------
+        // PreAttackSwarm: Launch
+        // Swarmers launch
+        STATE Launch
+            INIT
+                Launch ();
+                TimerCreateSetStart ("GiveToAI",10);
+            ENDINIT
+            WATCH
+                IF (MsgReceived ("DockNow"))
+                    JUMP DockAgain;
+                ENDIF
+                IF (TimerExpiredDestroy ("GiveToAI"))
+                    Jump GetOrders;
+                ENDIF
+            ENDWATCH
+        ENDSTATE Launch
+
+
+        //---------------------------
+        // PreAttackSwarm: DockAgain
+        // Docks again with the mothership
+        STATE DockAgain
+            INIT
+                DockStay(MOTHERTEAM);
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE DockAgain
+
+
+        //---------------------------
+        // PreAttackSwarm: GetOrders
+        // Swarmers get orders and change to the proper FSM
+        STATE GetOrders
+            INIT
+                IF (VarGet("DefendMothership"))
+                    FSMCreate(DefendMothership, THISTEAM);
+                ELSEIF (VarGet("MothershipSwarm"))
+                    FSMCreate(GenericMothershipSwarm, THISTEAM);
+                ELSEIF (VarGet("ResourceSwarm"))
+                    FSMCreate(GenericResourcerSwarm, THISTEAM);
+                ELSEIF (VarGet("ResourceDefenderSwarm"))
+                    FSMCreate(ResourceDefenderSwarm, THISTEAM);
+                ELSEIF (VarGet("IntroAttack"))
+                    FSMCreate(IntroAttack, THISTEAM);
+                ENDIF
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE GetOrders
+
+
+        //---------------------------
+        // PreAttackSwarm: NullState
+        // Nothing happens here
+        STATE NullState
+            INIT
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE NullState
+
+ENDFSM PreAttackSwarm
+
+
+
+#endif

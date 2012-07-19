@@ -1,0 +1,17 @@
+LIBRARY    vol
+DESCRIPTION "Volume library"
+EXPORTS
+	volOpenWLookup=_volOpenWLookup@16
+	volWriteLookup=_volWriteLookup@4
+	volCloseWLookup=_volCloseWLookup@0
+	volOpenRLookup=_volOpenRLookup@12
+	volReadLookup=_volReadLookup@4
+	volCloseRLookup=_volCloseRLookup@0
+	volOpenWFreq=_volOpenWFreq@12
+	volWriteFreq=_volWriteFreq@4
+	volCloseWFreq=_volCloseWFreq@0
+	volOpenRFreq=_volOpenRFreq@8
+	volReadFreq=_volReadFreq@4
+	volCloseRFreq=_volCloseRFreq@0
+	volGetLabels=_volGetLabels@12
+	volGetErr=_volGetErr@8

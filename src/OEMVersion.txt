@@ -1,0 +1,152 @@
+Source files used for OEMV1.051 (aside from files labeled as for that build):
+
+ConsMGR.C                   179
+ConsMGR.h                   34
+Universe.C                  287
+MultiplayerGame.C           Label
+MultiplayerLANGame.C        Label
+Collision.C                 Label
+Tactics.C                   Label
+CommandLayer.C              Label
+Main.C                      Label
+Mouse.C                     Label
+
+Data files:
+Plugscreens\*               Copy label of OEMPlugscreens\*.plug and *.jpg
+Tactics.script              Label
+UnitLimitCaps.script        21
+UnitLimitCaps1.script       2
+UnitLimitCaps2.script       2
+UnitLimitCaps3.script       2
+UnitLimitCaps4.script       2
+UnitLimitCaps5.script       3
+UnitLimitCaps6.script       4
+UnitLimitCaps7.script       3
+UnitLimitCaps8.script       3
+ResearchDepend.script       Label
+R1\AdvanceSupportFrigate.shpLabel
+R1\DDDFrigate.shp           Label
+R1\Drone.shp                Label
+R1\StandardFrigate.shp      Label
+R1\CloakedFighter.shp       Label
+R2\AdvanceSupportFrigate.shpLabel
+R2\StandardFrigate.shp      Label
+
+*****************************************************************************
+Bug fixes:
+[edaly] Fuel burn things to reduce power of the "swarm"
+Kamikaze damage reduced
+User name text in multiplayer is white
+Power of swarm reduced
+Support frigates cannot support themselves
+Cloaked fighter easier to research, quicker to build and more powerful
+ASF's not as effective
+Drone frigate more effective
+Standard Frigate better against strike craft, especially corvettes.
+
+
+*****************************************************************************
+To Build:
+Set HW_Demo=OEM
+set HW_Level=HW_Release
+wmake clean/depend/wmake
+Copy .exe to Janik's share
+edit makefile
+make sure all build versions have /debug:NONE set
+wmake
+Copy .exe to Janik's share
+Copy .exe from Share to exe directory on Janik's system.
+Get OEMPlugscreens
+getsound
+delete plugscreens
+Rename OEMPlugscreens to Plugscreens
+make a update.big file from the listing included in this file
+Copy the update.big to Janik's share
+Copy from share to data directory on Janik's system
+
+*****************************************************************************
+On Janik's system:
+alias wise32 d:\wise\wise32.exe
+switch to e:\homeworld\install\master
+wise32 /d ROOTDIR=e:\homeworld /d VERSION=OEM /d SETUPDIR=i:\common\cdimage /c Master_OEM.wse
+
+Install in on any system and test
+
+
+
+
+*****************************************************************************
+UpdateContents.txt
+
+AiPlayer.script
+English.script
+Feman\CSM-ALL.fib
+Feman\Choose_Server.fib
+Feman\Construction_Manager.fib
+Feman\Front_End.fib
+Feman\Game_Chat.FIB
+Feman\Horse_Race.fib
+Feman\Hyperspace_Roll_Call.fib
+Feman\In_game_esc_menu.FIB
+Feman\Launch_Manager.FIB
+Feman\Multiplayer_Game.fib
+Feman\Multiplayer_LAN_Game.fib
+Feman\Research_manager.fib
+Feman\Sensors_manager.fib
+Feman\TaskBar.fib
+Feman\Trader_Interface.FIB
+Feman\single_player_objective.fib
+French.script
+German.script
+Italian.script
+Plugscreens\Back00.LiF
+Plugscreens\Back01.LiF
+Plugscreens\BuyHomeworld0.plug
+Plugscreens\BuyHomeworld1.plug
+Plugscreens\BuyHomeworld2.plug
+Plugscreens\Main_01.jpg
+Plugscreens\Main_02.jpg
+Plugscreens\Main_03.jpg
+Plugscreens\Next00.LiF
+Plugscreens\Next01.LiF
+Plugscreens\Order00.LiF
+Plugscreens\Order01.LiF
+Plugscreens\Relic00.LiF
+Plugscreens\Relic01.LiF
+Plugscreens\Sierra00.LiF
+Plugscreens\Sierra01.LiF
+R1\AttackBomber.shp
+R1\Carrier.shp
+R1\CloakedFighter.shp
+R1\HeavyCorvette.shp
+R1\HeavyDefender.shp
+R1\MinelayerCorvette.shp
+R1\Missile.shp
+R1\MissileDestroyer.shp
+R1\MultiGunCorvette.shp
+R2\AttackBomber.shp
+R2\Carrier.shp
+R2\HeavyCorvette.shp
+R2\HeavyDefender.shp
+R2\MinelayerCorvette.shp
+R2\Missile.shp
+R2\MissileDestroyer.shp
+R2\MultiGunCorvette.shp
+SinglePlayer\Mission05_OEM\DustCloud.dist
+SinglePlayer\Mission05_OEM\Mission05_OEM.mission
+SinglePlayer\Mission05_OEM\ResourceSphere_1.missphere
+SinglePlayer\Mission05_OEM\loading.jpg
+SoundFX\OEM_Music.wxh
+Spanish.script
+tweak.script
+
+Tactics.script
+ResearchDepend.script
+R1\AdvanceSupportFrigate.shp
+R1\DDDFrigate.shp
+R1\Drone.shp
+R1\StandardFrigate.shp
+R1\CloakedFighter.shp
+R2\AdvanceSupportFrigate.shp
+R2\StandardFrigate.shp
+

@@ -1,0 +1,37 @@
+//Microsoft Developer Studio generated resource script.
+//
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#define APSTUDIO_HIDDEN_SYMBOLS
+#include "windows.h"
+#include "WINRESRC.H"
+
+#include "resource.h"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON1               ICON    DISCARDABLE     "HomeworldLogo.ico"
+IDI_ICON2               ICON    DISCARDABLE     "Homeworld.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+//dialog for command-line usage
+IDD_CommandLine DIALOG DISCARDABLE  0, 0, 287, 213
+STYLE 0x80 | 0x200 | 0x0004 | 0x80000000 | 0x00C00000 | 0x00080000
+CAPTION "Command-line usage"
+FONT 8, "MS Sans Serif"
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,130,192,50,14
+    EDITTEXT        IDC_CommandLine,7,7,273,180,0x0004 | 0x0800 | 0x00200000
+END

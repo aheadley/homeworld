@@ -1,0 +1,1029 @@
+//
+//  MISSION06 - Asteroids 3D
+//
+#include "..\\Game\\speechevent.h"
+#include "attributes.h"
+#include "..\\Game\\soundmusic.h"
+
+    LOCALIZATION //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+            LSTRING_Savegame
+                "06 - Diamond Shoals"
+                "06 - Récifs de Diamant"
+                "06 - Diamantengrund"
+                "06 - Montañas de diamantes"
+				"06 - I diamanti"
+
+            LSTRING_LocationCard
+                "DIAMOND SHOALS"
+                "RECIFS DE DIAMANT"
+                "DIAMANTENGRUND"
+                "MONTAÑAS DE DIAMANTES"
+				"I DIAMANTI"
+
+            LSTRING_FIProtectTASKBAR
+                "Protect the Mothership"
+                "Protection du Vaisseau Mère."
+                "Das Mutterschiff schützen."
+                "Proteger la Nave nodriza"
+				"Proteggi l'Astronave Madre"
+
+            LSTRING_TraderIntro
+                "Welcome."
+                "Bienvenue"
+                "Willkommen."
+                "Bienvenido."
+				"Benvenuto."
+
+            LSTRING_TraderPurchaseMade                              // IGNORE
+                "Thank you.  Enjoy your purchase."
+                "Merci. Profitez bien de votre acquisition."
+                "Besten Dank. Erfreut euch an eurem Kauf."
+                "Gracias. Que disfrutes de tu compra."
+                "Grazie.  Buon divertimento con il vostro nuovo acquisto."
+
+            LSTRING_Hyperspace
+                "                      HYPERSPACE"
+                "                      HYPERESPACE"
+                "           HYPERRAUMSPRUNG"
+                "                    HIPERESPACIO"
+				"					IPERSPAZIO"
+
+    ENDL //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     FleetIntel     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+FSM FleetIntel
+        States FCIntro,
+
+               FIProtectMothershipLBXIn, FIProtectMothershipOpenSensors, FIProtectMothership, FIProtectMothership2, FIProtectMothership3,
+               FIProtectMothershipPING, FIProtectMothershipLBXOut, FIProtectMothershipEND, FIProtectMothershipWAITEND,
+
+               FIResearchCapShipDrive, FIResearchIonCannons,
+
+               FIClearedField, FIBentusiArriving,
+
+               TradersHello, TradersBringUpGUI, TradersFirstWarning, FICeaseFire, TradersTellPlayer,
+
+               FCGiveUsInfo,
+
+               TradersNebulaIsBad,
+
+               FIModuleCharged,
+
+
+
+               FIIdle;
+
+        INIT
+                Jump FIIdle;                                        // Go immediately to FIIdle
+        ENDINIT
+        WATCH
+        ENDWATCH
+
+
+        STATE FCIntro //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M06_Fleet_HyperspaceSuccessful,0);         // Hyperspace jump successful.
+                    //SoundEvent (4000);                                  // #define Exp_DestProjectileLarge
+                    //SubtitleSimulate (0, 4000, LSTRING_FCIntro);        // Hyperspace jump successful.
+            ENDINIT
+            WATCH
+                    IF (IntelEventEnded ())
+                            Jump FIProtectMothershipLBXIn;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FCIntro //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+        STATE FIProtectMothershipLBXIn //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    PauseOtherKAS();
+                    wideScreenIn(90);                       // letterbox bars fade in over 3 seconds
+                    Jump FIProtectMothershipOpenSensors;
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE FIProtectMothershipLBXIn //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FIProtectMothershipOpenSensors //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TimerCreateSetStart ("FIOpenSensorsTimer", 4);
+            ENDINIT
+            WATCH
+                    IF (TimerExpiredDestroy ("FIOpenSensorsTimer"))
+                            OpenSensors (TRUE);
+                            PauseUniverse();
+                            Jump FIProtectMothership;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIProtectMothershipOpenSensors //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FIProtectMothership //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TimerCreateSetStart ("FIProtectMothershipTimer", 1);
+            ENDINIT
+            WATCH
+                    // FLEET INTEL event for the asteroid field
+                    IF (TimerExpiredDestroy ("FIProtectMothershipTimer"))
+                            Jump FIProtectMothership2;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIProtectMothership //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FIProtectMothership2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M06_Intel_AsteroidCollision,0);            // We haven't cleared the asteroid field.  Prepare for collisions.
+                    //SoundEvent (4000);                                      // #define Exp_DestProjectileLarge
+                    //SubtitleSimulate (0, 8000, LSTRING_FIProtectMothership);       // We haven't cleared the asteroid field.  Prepare for collisions.\n\nIncoming asteroids must be destroyed before they impact with the Mothership.  Concentrate fire within this collision envelope.
+                    VarCreateSet ("G_ProtectMothershipHasPlayed", TRUE);      // Tells other parts of the script to do stuff (create the objectives)
+            ENDINIT
+            WATCH
+                    VarDestroy ("IntelEvent");
+                    VarCreateSet("IntelEvent", IntelEventEnded());
+                    IF (VarGet("IntelEvent") = 2)
+                            wideScreenOut (30);                     // player pressed SPACE or ESC and wants out immediately so remove the LBX in 1 second
+                            Jump FIProtectMothershipEND;
+                    ELSEIF (VarGet("IntelEvent"))
+                            Jump FIProtectMothership3;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIProtectMothership2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FIProtectMothership3 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M06_Intel_DestroyAsteroids,0);              // Incoming asteroids must be destroyed before they impact with the Mothership.  Concentrate fire within this collision envelope.
+                    Jump FIProtectMothershipPING;
+                    //SoundEvent (4000);                                      // #define Exp_DestProjectileLarge
+                    //SubtitleSimulate (0, 8000, LSTRING_FIProtectMothership);       // We haven't cleared the asteroid field.  Prepare for collisions.\n\nIncoming asteroids must be destroyed before they impact with the Mothership.  Concentrate fire within this collision envelope.
+            ENDINIT
+            WATCH
+                    //VarDestroy ("IntelEvent");
+                    //VarCreateSet("IntelEvent", IntelEventEnded());
+                    //IF (VarGet("IntelEvent") = 2)
+                    //        wideScreenOut (30);                     // player pressed SPACE or ESC and wants out immediately so remove the LBX in 1 second
+                    //        Jump FIProtectMothershipEND;
+                    //ELSEIF (VarGet("IntelEvent"))
+                    //        Jump FIProtectMothershipPING;
+                    //ENDIF
+            ENDWATCH
+        ENDSTATE FIProtectMothership3 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FIProtectMothershipPING //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TimerCreateSetStart ("FIProtectMothershipPINGTimer", 2);
+            ENDINIT
+            WATCH
+                    VarDestroy ("IntelEvent");
+                    VarCreateSet("IntelEvent", IntelEventEnded());
+                    IF (VarGet("IntelEvent") = 2)
+                            wideScreenOut (30);                     // player pressed SPACE or ESC and wants out immediately so remove the LBX in 1 second
+                            Jump FIProtectMothershipEND;
+                    ELSEIF (VarGet("IntelEvent"))
+                            //SoundEvent (267);                                                   // Play the movement chime when the pointer is drawn
+                            //TutSetTextDisplayBoxToSubtitleRegion();
+                            //TutSetPointerTargetAIVolume("CollisionEnvelopePOINTER", VOLUME_CollisionEnvelope);
+                            //wideScreenOut (30);                     // event ended normally
+                            Jump FIProtectMothershipWAITEND;
+                    ENDIF
+                    IF (TimerExpiredDestroy ("FIProtectMothershipPINGTimer"))
+                            SoundEvent (267);                                                   // Play the movement chime when the pointer is drawn
+                            TutSetTextDisplayBoxToSubtitleRegion();
+                            TutSetPointerTargetAIVolume("CollisionEnvelopePOINTER", VOLUME_CollisionEnvelope);
+                            //Jump FIProtectMothershipLBXOut;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIProtectMothershipPING //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FIProtectMothershipLBXOut //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TimerCreateSetStart ("FIProtectMothershipLBXOutTimer", 1);
+            ENDINIT
+            WATCH
+                    IF (TimerExpiredDestroy ("FIProtectMothershipLBXOutTimer"))
+                            wideScreenOut(150);                      // letterbox bars fade out over 5 seconds
+                            Jump FIProtectMothershipWAITEND;
+                    ENDIF
+                    IF (IntelEventEnded())
+                            wideScreenOut (30);                     // player pressed SPACE or ESC and wants out immediately so remove the LBX in 1 second
+                            Jump FIProtectMothershipEND;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIProtectMothershipLBXOut //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FIProtectMothershipWAITEND //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TimerCreateSetStart ("FIProtectMothershipENDTimer", 3);
+            ENDINIT
+            WATCH
+                    VarDestroy ("IntelEvent");
+                    VarCreateSet("IntelEvent", IntelEventEnded());
+                    IF (VarGet("IntelEvent") = 2)
+                            wideScreenOut (30);                     // player pressed SPACE or ESC and wants out immediately so remove the LBX in 1 second
+                            Jump FIProtectMothershipEND;
+                    ENDIF
+
+                    IF (TimerExpiredDestroy ("FIProtectMothershipENDTimer"))
+                            wideScreenOut(30);                      // letterbox bars fade out over 1 second
+                            Jump FIProtectMothershipEND;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIProtectMothershipWAITEND //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FIProtectMothershipEND //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TutRemoveAllPointers ();
+                    UnpauseUniverse();
+                    UnpauseOtherKAS();
+                    CloseSensors (TRUE);
+                    VarDestroy("G_CLICK_ProtectMothership");
+                    Jump FIIdle;
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE FIProtectMothershipEND //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+
+
+
+
+
+        STATE FIResearchCapShipDrive //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M06_Intel_ResearchSuperCap,0);             //  Research Division reports it is now equipped for Super Capital Ship Drive technology.  We advise commencing research immediately.
+            ENDINIT
+            WATCH
+                    IF (IntelEventEnded ())
+                            Jump FIIdle;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIResearchCapShipDrive //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FIResearchIonCannons //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M06_Intel_IonCannonTech,0);             //  Research Division reports it is now equipped for Ion Cannon technology.  We advise commencing research immediately.
+            ENDINIT
+            WATCH
+                    IF (IntelEventEnded ())
+                            Jump FIIdle;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIResearchIonCannons //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+
+
+
+
+
+        STATE FIClearedField //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M06_Intel_ClearedField,0);                 //  We've cleared the field.
+                    //SoundEvent (271);                                   // Play a sound event to notify the player that a subtitle is up
+                    //SubtitleSimulate (4, 3500, LSTRING_FIClearedField);
+            ENDINIT
+            WATCH
+                    IF (IntelEventEnded ())
+                            VarCreateSet ("G_FISaidClearedField", TRUE);
+                            Jump FIIdle;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIClearedField //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+
+        STATE FIBentusiArriving //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M06_Intel_DetectingBentusi,0);                 //  Detecting incoming Bentusi vessel from the clearing ahead.
+                    MusicPlay (NISlet01);
+                    //SoundEvent (271);                                   // Play a sound event to notify the player that a subtitle is up
+                    //SubtitleSimulate (4, 3500, "Detecting incoming Bentusi vessel from the clearing ahead.");
+            ENDINIT
+            WATCH
+                    IF (IntelEventEnded ())
+                            IFONCE (TRUE)
+                                    VarCreateSet ("G_PlayTraderNISLet", TRUE);
+                            ENDIFONCE
+                            Jump FIIdle;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIBentusiArriving //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+
+
+
+
+
+        STATE TradersHello //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M06_Traders_ComeToTrade,0);                //  Greetings.  We have come to trade.
+                    //SoundEvent (271);                                   // Play a sound event to notify the player that a subtitle is up
+                    //SubtitleSimulate (5, 3500, LSTRING_TradersHello);
+            ENDINIT
+            WATCH
+                    IF (IntelEventEnded ())
+                            TimerCreateSetStart ("G_BringUpTraderGUI", 1);
+                            Jump FIIdle;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE TradersHello //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE TradersBringUpGUI //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SoundEvent (267);                               // Play the movement mechanism "tick"
+                    TraderGUIDisplay();                             // Bring up the Trader GUI
+                    Jump FIIdle;
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE TradersBringUpGUI //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+
+
+
+
+        STATE TradersFirstWarning //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M04_Traders_StopAttackNow, 0);      // The Bentusi wish only to trade and make contact.  Your attack is unwarranted and ill-advised.  Stop now.
+            ENDINIT
+            WATCH
+                    IF (IntelEventEnded ())
+                            Jump FICeaseFire;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE TradersFirstWarning //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FICeaseFire //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M04_Intel_CeaseFire, 0);           //  Recommend immediate cease-fire.
+                    TimerCreateSetStart ("G_GivePlayerTimeToWithdrawAttack", 12);
+            ENDINIT
+            WATCH
+                    IF ( (VarGet ("G_PlayerHasAttackedTraders") = FALSE) AND (TimerExpiredDestroy ("G_GivePlayerTimeToWithdrawAttack")) )
+                            Jump FIIdle;
+                    ENDIF
+
+                    IF ( (VarGet ("G_PlayerHasAttackedTraders") = TRUE) AND (TimerExpiredDestroy ("G_GivePlayerTimeToWithdrawAttack")) )
+                            Jump TradersTellPlayer;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FICeaseFire //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE TradersTellPlayer //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M04_Traders_KickAss, 0);           //  You insist on conflict.  This is most unfortunate.
+            ENDINIT
+            WATCH
+                    IF (IntelEventEnded ())
+                            VarCreateSet ("G_TradersObliteratePlayer", TRUE);
+                    ENDIF
+            ENDWATCH
+        ENDSTATE TradersTellPlayer //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+
+
+
+
+
+
+        STATE FCGiveUsInfo //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M06_Fleet_AskTradersForInfo,0);            //  This is a dangerous and unpredictable region.  Can you give us information that will guide us through the nebula ahead?
+                    //SoundEvent (271);                                   // Play a sound event to notify the player that a subtitle is up
+                    //SubtitleSimulate (0, 4500, LSTRING_FCGiveUsInfo);
+            ENDINIT
+            WATCH
+                    IF (IntelEventEnded ())
+                            //Jump TradersNebulaIsBad;
+                            VarCreateSet ("G_GoToTradersNebulaIsBad", TRUE);
+                            Jump FIIdle;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FCGiveUsInfo //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+
+
+        STATE TradersNebulaIsBad //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    //SoundEvent (271);                                   // Play a sound event to notify the player that a subtitle is up
+                    IF (RaceOfHuman () = 0)
+                            //SubtitleSimulate (5, 3500, LSTRING_TradersNebulaTAIIDAN);
+                            SpeechEvent (M06_Traders_FearNebulaKushan,0);           //  We hear nothing there.  Even the Taiidan fear the Great Nebula.  No one returns.
+                    ELSEIF (RaceOfHuman () = 1)
+                            //SubtitleSimulate (5, 3500, LSTRING_TradersNebulaKUSHAN);
+                            SpeechEvent (M06_Traders_FearNebulaTaiidan,0);          //  We hear nothing there.  Even the Kushan fear the Great Nebula.  No one returns.
+                    ENDIF
+            ENDINIT
+            WATCH
+                    IF (IntelEventEnded ())
+                            VarCreateSet ("G_TradersAreDoneTalking", TRUE);
+                            Jump FIIdle;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE TradersNebulaIsBad //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+
+
+        STATE FIModuleCharged //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M06_Intel_HyperspaceReady,0);              //  Hyperspace Module fully charged.
+                    //SoundEvent (271);                                   // Play a sound event to notify the player that a subtitle is up
+                    //SubtitleSimulate (0, 1500, LSTRING_FIModuleCharged);
+            ENDINIT
+            WATCH
+                    IF (IntelEventEnded ())
+                            VarCreateSet ("G_ModuleIsCharged", TRUE);
+                            Jump FIIdle;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIModuleCharged //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        STATE FIIdle //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+            ENDINIT
+            WATCH
+                    // FIRST TIME watches
+
+                    // play the Fleet Command intro event 5 seconds after you enter the level
+                    IFONCE (TimerExpiredDestroy ("G_FCHyperspaceSuccessful"))
+                            Jump FCIntro;
+                    ENDIFONCE
+
+                    // play an FI event telling the player that they can research Ion Cannons
+                    IFONCE (VarGet ("G_PlayIonTechEvent") = TRUE)
+                            Jump FIResearchIonCannons;
+                    ENDIFONCE
+
+                    // play an FI event telling the player that they can research Super Capital Ship Drive
+                    IFONCE (VarGet ("G_PlaySuperCapTechEvent") = TRUE)
+                            Jump FIResearchCapShipDrive;
+                    ENDIFONCE
+
+                    // when the player has cleared the field, play an FI event letting you know that
+                    IFONCE (TimerExpiredDestroy ("G_PlayFIClearedField"))
+                            Jump FIClearedField;
+                    ENDIFONCE
+
+                    // after the timer is up from clearing the field, play the FI event about the Bentusi arriving
+                    IFONCE (TimerExpiredDestroy ("G_PlayTraderArrival"))
+                            Jump FIBentusiArriving;
+                    ENDIFONCE
+
+                    // when the Trader arrival NISLet is done and the Traders are in place, play an in-game event from the
+                    IFONCE (TimerExpiredDestroy ("G_TradersAreInPlace"))
+                            Jump TradersHello;
+                    ENDIFONCE
+
+                    // when the Traders have said their hello line, bring up the Trader GUI
+                    IFONCE (TimerExpiredDestroy ("G_BringUpTraderGUI"))
+                            Jump TradersBringUpGUI;
+                    ENDIFONCE
+
+                    // when the player completes a trade, or the timer expires, start the FC/Traders conversation
+                    IFONCE ( (TimerExpiredDestroy ("G_PlayFCTalkToTraders")) AND (VarGet ("G_PlayerHasAttackedTraders") = FALSE) )
+                            Jump FCGiveUsInfo;
+                    ENDIFONCE
+
+                    // if the player attacks the Traders, give them the warning and a chance to withdraw
+                    IF (VarGet ("G_PlayerHasAttackedTraders") = TRUE)
+                            Jump TradersFirstWarning;
+                    ENDIF
+
+                    // when FC is done asking for info, let the Traders give their reply
+                    IFONCE ( (VarGet ("G_GoToTradersNebulaIsBad") = TRUE) AND (VarGet ("G_PlayerHasAttackedTraders") = FALSE) )
+                            Jump TradersNebulaIsBad;
+                    ENDIFONCE
+
+                    // when the Traders have left, play the FC event telling you that the hyperspace module is charged
+                    IFONCE (TimerExpiredDestroy ("G_TradersHaveLeftTheBuilding"))
+                            Jump FIModuleCharged;
+                    ENDIFONCE
+
+
+
+
+                    // REPLAYING event watches
+
+                    // FLEET INTEL event - send probe to Khar-Selim
+                    IF (VarGet ("G_CLICK_ProtectMothership"))
+                            Jump FIProtectMothershipLBXIn;
+                    ENDIF
+
+
+            ENDWATCH
+        ENDSTATE FIIdle //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+ENDFSM FleetIntel
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     FleetIntel     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     Traders     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+FSM Traders
+    States Trading, Watching, UnderAttackWatch, TradersObliteratePlayer, HyperspaceOut, NullState;
+
+    INIT
+            TraderGUIDisable (FALSE);
+            TeamAttributesSet(ATTRIBUTES_Defector);
+            Jump Trading;
+    ENDINIT
+    WATCH
+            IF (TeamHealthAverage () < 95)
+                    TeamHealthSet (100);
+            ENDIF
+    ENDWATCH
+
+        STATE Trading //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    //IF (RaceOfHuman () = 0)
+                    //        TechSetCost("DDDFTech", 500);
+                    //        TechSetPurchase("DDDFTech");
+                    //ELSEIF (RaceOfHuman () = 1)
+                    //        TechSetCost("DFGFTech", 500);
+                    //        TechSetPurchase("DFGFTech");
+                    //ENDIF
+                    TechSetCost ("DDDFDFGFTech", 500);
+                    TechSetPurchase ("DDDFDFGFTech");
+                    TraderGUIDialogSet (0, LSTRING_TraderIntro);
+                    TraderGUIDialogSet (1, LSTRING_TraderIntro);
+                    TraderGUIDialogSet (2, LSTRING_TraderIntro);
+                    TraderGUIDialogSet (3, LSTRING_TraderIntro);
+                    TraderGUIDialogSet (4, LSTRING_TraderPurchaseMade);
+                    TraderGUIDialogSet (5, LSTRING_TraderPurchaseMade);
+                    Jump Watching;
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE Trading //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        STATE Watching //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+            ENDINIT
+            WATCH
+                    IF (VarGet ("G_TradersAreDoneTalking") = TRUE)
+                            Jump HyperspaceOut;
+                    ENDIF
+
+                    IF (UnderAttack (SHIPS_Null87238923))
+                            VarCreateSet ("G_PlayerHasAttackedTraders", TRUE);
+                            Jump UnderAttackWatch;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE Watching //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        STATE UnderAttackWatch //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+            ENDINIT
+            WATCH
+                    IF (VarGet ("G_TradersObliteratePlayer") = TRUE)
+                            Jump TradersObliteratePlayer;
+                    ENDIF
+
+                    IF (NOT UnderAttack (SHIPS_Null8723487238))
+                            VarDestroy ("G_PlayerHasAttackedTraders");
+                            Jump Watching;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE UnderAttackWatch //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        STATE TradersObliteratePlayer //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    FindEnemiesInside (VOLUME_MothershipSphere, SHIPS_PlayerFleet, 1000);
+                    IF (ShipsSelectClass (SHIPS_TraderTargets, SHIPS_PlayerFleet, "CLASS_Destroyer"))
+                    ELSEIF (ShipsSelectClass (SHIPS_TraderTargets, SHIPS_PlayerFleet, "CLASS_Frigate"))
+                    ELSEIF (ShipsSelectClass (SHIPS_TraderTargets, SHIPS_PlayerFleet, "CLASS_Mothership"))
+                    ELSE
+                            ShipsAdd (SHIPS_TraderTargets, SHIPS_PlayerFleet);
+                    ENDIF
+
+                    IF (ShipsCount (SHIPS_TraderTargets) > 0)
+                            Attack (SHIPS_TraderTargets);
+                    ENDIF
+            ENDINIT
+            WATCH
+                    // if the ships you're attacking die OR you stop attacking for some reason, jump back into this state to kill the rest of the baddies
+                    IF ( (ShipsCount (SHIPS_TraderTargets) = 0) OR (ShipsOrder (TEAMSHIPS_Traders) != 2) )
+                            Jump TradersObliteratePlayer;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE TradersObliteratePlayer //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        STATE HyperspaceOut //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TimerCreateSetStart ("G_TradersHaveLeftTheBuilding", 15);
+                    TeamHyperspaceOut ();
+                    MusicStop (4);
+                    Jump NullState;
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE HyperspaceOut //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        STATE NullState //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE NullState //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+ENDFSM Traders
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     Traders     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+
+
+
+
+//ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ     Global Stuff     ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
+INIT
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      FSM creates
+        //
+
+        FSMCreate (FleetIntel, TEAM_FleetIntel);                    // FSM used only for displaying Fleet Intel events; bound to a dummy ship in the MM
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      mission objectives
+        //
+
+        TimerCreateSetStart ("G_AsteroidTimer", 840);       // Times the asteroid field.  When this timer is up, the objective is met (passing the field)
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      technology
+        //
+
+        //TechSetResearch ("MassDrive1Mt");                           // Give Super-Capital Ship Drive (BUILD: Destroyer)
+
+        TimerCreateSetStart ("G_GiveTechnology", Random (35, 55));
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+        // save the level!
+        SaveLevel (6, LSTRING_Savegame);
+
+
+ENDINIT
+
+WATCH
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      location card
+        //
+
+        IFONCE (TRUE)
+                TimerCreateSetStart ("LocationCardTimer", 1);
+        ENDIFONCE
+
+        IF (TimerExpiredDestroy ("LocationCardTimer"))
+                LocationCard (5000, LSTRING_LocationCard);
+        ENDIF
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      fleet intel
+        //
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      AI stuffs
+        //
+
+        IFONCE (VarGet ("G_Nislet60Complete"))                              // If the NISLet is complete, create the Trader FSM
+                wideScreenOut (60);
+                FSMCREATE (Traders, TEAM_Traders);
+                TimerCreateSetStart ("G_TradersAreInPlace", 5);
+                TimerCreateSetStart ("G_TradersWaitingToTrade", 90);        // Traders will wait for 90 seconds and then trigger the 'leaving' sequence
+        ENDIFONCE
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      in-game events
+        //
+
+
+        // When you come out of hyperspace, start a timer to trigger an in-game Fleet Command event which talks about the jump
+        IFONCE (TRUE)
+                TimerCreateSetStart ("G_FCHyperspaceSuccessful", 5);
+        ENDIFONCE
+
+        // if the player completes a trade, OR the WaitingToTrade timer expires, start the mini-conversation between FC and the Traders
+        IFONCE ( (TechGet ("DDDFDFGFTech")) OR (TimerExpiredDestroy ("G_TradersWaitingToTrade")) )
+                VarCreateSet ("G_TradersAreDone", TRUE);
+                TimerCreateSetStart ("G_PlayFCTalkToTraders", 5);
+        ENDIFONCE
+
+        // when the player has cleared the asteroid field, set a timer to play an FI event telling them
+        IFONCE (VarGet ("G_PlayerHasClearedField"))
+                TimerCreateSetStart ("G_PlayFIClearedField", 5);
+        ENDIFONCE
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      mission objectives
+        //
+
+
+        // if the Fleet Intel event has played, create the objective to protect the Mothership
+        IFONCE (VarGet ("G_ProtectMothershipHasPlayed") = TRUE)
+                ObjectiveCreate("ProtectMothership",
+                                LSTRING_FIProtectTASKBAR,
+                                LSTRING_FIProtectTASKBAR);
+        ENDIFONCE
+
+        // when the Asteroid Timer is up, create a variable to tell other parts of the script to do stuff
+        IF (TimerExpiredDestroy ("G_AsteroidTimer"))                // TEMPORARY - replace with a variable trigger based on an FI event (FIClearedField?)
+                VarCreateSet ("G_PlayerHasClearedField", TRUE);
+        ENDIF
+
+        // when Fleet Intel has said his line about clearing the field, the "ProtectMothership" objective is met
+        IFONCE (VarGet ("G_FISaidClearedField") = TRUE)
+                ObjectiveSet("ProtectMothership", TRUE);
+        ENDIFONCE
+
+
+        // when FC has said her speech event about the module being charged, create the hyperspace objective
+        IFONCE (VarGet ("G_ModuleIsCharged") = TRUE)
+                ObjectiveCreate ("Hyperspace", LSTRING_Hyperspace, LSTRING_Hyperspace);
+        ENDIFONCE
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      NIS's
+        //
+
+        // when the player has cleared the field, set a timer for the Traders to come
+        IFONCE (VarGet ("G_PlayerHasClearedField") = TRUE)
+                TimerCreateSetStart ("G_PlayTraderArrival", 15);
+        ENDIFONCE
+
+        // when the timer is up, start the widescreen for the Trader arrival
+        //IFONCE (TimerExpired ("G_PlayTraderArrival"))
+        IFONCE (VarGet ("G_PlayTraderNISLet") = TRUE)
+                TimerCreateSetStart ("WideScreenInBeforeNISLet", 4);
+                wideScreenIn(90);                                   //90 frames == 3 seconds
+        ENDIFONCE
+
+        // when the timer is up, play the generic Trader arrival NISLet
+        IFONCE (TimerExpiredDestroy ("WideScreenInBeforeNISLet"))
+                FindEnemiesInside (VOLUME_MothershipSphere, SHIPS_EntireFleet, 100);//find the mothership
+                ShipsSelectClass (SHIPS_PlayerMothership, SHIPS_EntireFleet, "CLASS_Mothership");
+                ShipsAdd(SHIPS_NisCentreShip, SHIPS_PlayerMothership);//centre about mothership
+                VarCreateSet ("G_PlayNislet", 60);                  // Play NISlet: Generic Trader arrival
+                VarCreateSet ("G_NowPlayingNISLet", TRUE);
+        ENDIFONCE
+
+
+
+        // TEMPORARY - if the player has a heavy cruiser, set a timer to play Generic Trader Arrival NISLet
+        //IFONCE (FindEnemyShipsOfType(SHIPS_Stuff, "HeavyCruiser"))
+        //        TimerCreateSetStart ("PlayN07Timer", 1);
+        //ENDIFONCE
+
+        // when the timer is up, play the Generic Trader Arrival NISLet
+        //IFONCE (TimerExpiredDestroy ("PlayN07Timer"))
+        //        VarCreateSet ("G_PlayNislet", 60);                  // Play NISlet: Generic Trader arrival
+        //        VarCreateSet ("G_NowPlayingNISLet", TRUE);
+        //ENDIFONCE
+
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      technology
+        //
+
+        // MISSION 06 Tech stuff: //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        // if the player comes in with Ion Cannon tech (fully researched), then give them capital ship drive tech and play the speech event
+        IF (VarGet ("G_TechEventHasPlayed") = FALSE)
+                IFONCE ( (TimerExpired ("G_GiveTechnology")) AND (TechGet ("IonWeapons")) )
+                        TechSetResearch ("MassDrive1Mt");
+                        VarCreateSet ("G_PlaySuperCapTechEvent", TRUE);
+                        VarCreateSet ("G_TechEventHasPlayed", TRUE);
+                ENDIFONCE
+        ENDIF
+
+        // if the player comes in with Ion Cannon tech (not researched), then give them capital ship drive tech and play the speech event
+        IF (VarGet ("G_TechEventHasPlayed") = FALSE)
+                IFONCE ( (TimerExpired ("G_GiveTechnology")) AND (TechGetResearch ("IonWeapons")) )
+                        TechSetResearch ("MassDrive1Mt");
+                        VarCreateSet ("G_PlaySuperCapTechEvent", TRUE);
+                        VarCreateSet ("G_TechEventHasPlayed", TRUE);
+                ENDIFONCE
+        ENDIF
+
+        // if the player comes in with Plasma Bomb tech (fully researched) AND they don't have Ion Weapons (fully researched or not), then give them Ion Cannons and play the speech event
+        IF (VarGet ("G_TechEventHasPlayed") = FALSE)
+                IFONCE ( (TimerExpired ("G_GiveTechnology")) AND
+                         (TechGet ("PlasmaWeapons")) AND
+                         (NOT (TechGet ("IonWeapons"))) AND
+                         (NOT (TechGetResearch ("IonWeapons")))
+                       )
+                        TechSetResearch ("IonWeapons");
+                        VarCreateSet ("G_PlayIonTechEvent", TRUE);
+                        VarCreateSet ("G_TechEventHasPlayed", TRUE);
+                ENDIFONCE
+        ENDIF
+
+        // if the player comes in with Plasma Bomb tech (not researched), then give them Ion Cannons and play the speech event
+        IF (VarGet ("G_TechEventHasPlayed") = FALSE)
+                IFONCE ( (TimerExpired ("G_GiveTechnology")) AND
+                         (TechGetResearch ("PlasmaWeapons")) AND
+                         (NOT (TechGet ("IonWeapons"))) AND
+                         (NOT (TechGetResearch ("IonWeapons")))
+                       )
+                        TechSetResearch ("IonWeapons");
+                        VarCreateSet ("G_PlayIonTechEvent", TRUE);
+                        VarCreateSet ("G_TechEventHasPlayed", TRUE);
+                ENDIFONCE
+        ENDIF
+
+
+
+
+
+
+
+        // MISSION 02 Tech stuff: //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        // if player researches Corvette drive, allow Corvette chassis                  // (Build: Light Corvette)
+        IFONCE (TechGet ("MassDrive10Kt"))
+                TechSetResearch ("Chassis2");
+        ENDIFONCE
+
+        // if player researches Corvette chassis, allow Heavy Corvette upgrade            // (Build: Heavy Corvette)
+        IF ((TechGet ("Chassis2")) AND (VarGet ("SetMediumGuns") = FALSE))
+                TechSetResearch ("MediumGuns");
+                VarCreateSet ("SetMediumGuns", TRUE);
+        ENDIF
+
+        // MISSION 01 Tech stuff: //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        // if player researches Fighter chassis, allow Corvette Drive                   // (Build: Repair Corvette)
+        IFONCE (TechGet ("Chassis1"))
+                TechSetResearch ("MassDrive10Kt");
+        ENDIFONCE
+
+
+
+ENDWATCH
+//ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ     Global Stuff     ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
+
+

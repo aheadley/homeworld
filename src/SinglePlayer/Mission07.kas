@@ -1,0 +1,1274 @@
+//
+//  MISSION07 - Swarmer Battle
+//
+//
+
+//#include "Utilities.kash"
+
+
+    LOCALIZATION //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        LSTRING_LCLocationCard
+            "THE GARDENS OF KADESH"
+            "JARDINS DE KADESH"
+            "DIE GÄRTEN VON KADESH"
+            "LOS JARDINES DE KADESH"
+			"I GIARDINI DI KADESH"
+
+        LSTRING_FINebulaRich
+            "The Nebula is incredibly rich in energy and resources.  Energy levels are so high that our sensors are having trouble compensating.\n\nBegin harvesting the nebula while we address this problem."
+            "La Nébuleuse est incroyablement riche en énergie et en ressources. Il y a de tels niveaux d'énergie que nos détecteurs peinent à compenser.\n\nCommencez la collecte dans la nébuleuse pendant que nous nous penchons sur ce problème."
+            "Der Nebel ist unglaublich reich an Energie und Rohstoffen. Die Energie-Level sind so hoch, dass unsere Sensoren Probleme haben, dies zu kompensieren.\n\nBeginnen Sie mit der Rohstoffernte im Nebel, während wir uns um dieses Problem kümmern."
+            "La nebulosa es muy rica en energía y recursos. Los niveles de energía son tan altos que nuestros sensores no pueden compensarlos.\n\nEmpieza a recolectar en la nebulosa mientras buscamos solución a este problema."
+			"Questa nebulosa è ricchissima di energia e risorse; i livelli energetici sono così alti che i nostri sensori non riescono a calcolarli.\n\nComincia la raccolta delle risorse, mentre tentiamo di risolvere questo problema."
+
+        LSTRING_FIUnknownContacts
+            "There is a contact closing with the Mothership.  Sensors instability in this region makes it difficult to identify."
+            "Contact établi avec véhicule près du Vaisseau Mère, mais l'instabilité des détecteurs dans cette région rend son identification difficile."
+            "Ein Kontakt nähert sich dem Mutterschiff. Die Sensor-Instabilität in dieser Region macht eine Identifikation sehr schwierig."
+            "Se está cerrando un contacto con la Nave nodriza. La inestabilidad de los sensores en esta zona dificulta la identificación de ese contacto."
+			"C'è un contatto in avvicinamento all'Astronave Madre. Purtroppo, i sensori sono fuori scala e non riescono a identificarlo."
+
+        LSTRING_FIPreparingAmbassador
+            "Prepare the Ambassador."
+            "Préparation de l'Ambassadeur."
+            "Botschafter bereitmachen."
+            "Preparad al embajador."
+			"Prepara l'Ambassador."
+
+        LSTRING_FIDefendMothership
+            "Delay the attacking ships while Fleet Command charges the hyperdrive module.  We should have the range to jump clear of the nebula."
+            "Retardez les vaisseaux agresseurs pendant que l'Amirauté charge le module d'hyperpropulsion. La portée devrait être suffisante pour nous faire bondir hors de la nébuleuse."
+            "Halten Sie die angreifenden Schiffe zurück, während das Flottenkommando das Hypersprung-Modul auflädt. Unsere Reichweite sollte so groß sein, dass wir aus dem Nebel herausspringen."
+            "Distrae a las naves atacantes mientras el mando de la flota carga el módulo de hiperpropulsión. Deberemos tener el alcance necesario para salir de la nebulosa."
+			"Trattieni le navi nemiche mentre il Comando della Flotta carica il modulo dell'iperguida. Dovremmo essere in grado di allontanarci dalla nebulosa."
+
+        LSTRING_FCHyperModuleCharging1
+            "Hyperspace module at 35%, ready in 8 minutes."
+            "Module hyperspatial à 35%, prêt dans 8 minutes."
+            "Hypersprung-Modul bei 35%. Bereit in 8 Minuten."
+            "Módulo hiperespacial al 35%, preparado en 8 minutos."
+			"Modulo dell'Iperspazio al 35%, pronto in 8 minuti."
+
+        LSTRING_FCHyperModuleCharging2
+            "Hyperspace module at 90%, ready in 1 minute."
+            "Module hyperspatial à 90%, prêt dans 1 minute."
+            "Hypersprung-Modul bei 90%. Bereit in 1 Minute."
+            "Módulo hiperespacial al 90%, preparado en 1 minuto."
+			"Modulo dell'Iperspazio al 90%, pronto in 1 minuto."
+
+        LSTRING_FCLetsGetOutOfHere
+            "Hyperspace module fully charged.  Get us out of this place."
+            "Activation  maximale du module hyperspatial. Sortez-nous vite d'ici."
+            "Hypersprung-Modul voll aufgeladen. Nichts wie raus hier!"
+            "Módulo hiperespacial completamente cargado. Vámonos de este sitio."
+			"Modulo dell'Iperspazio pronto. Andiamocene da qui."
+
+        LSTRING_FIEngage
+            "Yes, co-ordinates set.  Engage hyperdrive!"
+            "Oui, le cap est déterminé. Enclenchez l'hyperpropulsion!"
+            "Ja, Koordinaten sind eingestellt. Hypersprung-Aggregat einschalten!"
+            "Sí, coordenadas establecidas. Activar hiperpropulsión."
+			"Coordinate impostate: attiva l'iperguida!"
+
+        LSTRING_FCHyperdriveFail
+            "Hyperdrive jump failed!  The Quantum waveform collapsed before the ship could enter hyperspace."
+            "Le bond par hyperpropulsion a échoué ! Il y a eu effondrement de l'amplitude quantique avant même que le vaisseau puisse atteindre l'hyperespace.  "
+            "Hyperraum-Sprung fehlgeschlagen! Die Quanten-Wellenform brach zusammen, bevor das Schiff in den Hyperraum eintreten konnte."
+            "Ha fallado la hiperpropulsión. La forma de onda cuántica ha colapsado antes de que la nave pudiera entrar en el hiperespacio."
+			"Salto nell'Iperspazio fallito! La forma d'onda Quantum è collassata prima che la nave potesse entrare nell'Iperspazio."
+
+        LSTRING_FIContinueProtecting
+            "Analyzing malfunction.  Continue to protect the Mothership until the problem is solved."
+            "Analyse de la défaillance. Protection du Vaisseau Mère jusqu'à résolution du problème."
+            "Fehlfunktion wird analysiert. Schützen Sie weiterhin das Mutterschiff, bis das Problem gelöst ist."
+            "Analizando fallo de funcionamiento. Sigue protegiendo la Nave nodriza hasta que se resuelva el problema."
+			"Stiamo analizzando il malfunzionamento: continua a proteggere l'Astronave Madre fino a quando non avremo trovato una soluzione."
+
+        LSTRING_FINewResearch
+            "We have never had to combat so many fighter craft before.  Our Research division has determined that it can design a new type of Corvette specially suited to combat multiple fighters.  Begin Research as soon as possible."
+            "Jamais n'avons nous dû affronter autant de chasseurs. Notre Service de recherche a établi la faisabilité d'un nouveau type de Corvette adapté au combat contre de multiples chasseurs.  Lancez cette recherche dès que possible."
+            "Wir mussten uns noch nie so vielen Jägern gleichzeitig stellen. Unsere Forschungsabteilung hat festgestellt, dass sie einen neuen Korvettentyp entwickeln kann, der speziell für den Kampf gegen mehrere Jäger ausgelegt ist. Beginnen Sie so schnell wie möglich mit den Forschungsarbeiten."
+            "Nunca habíamos tenido que enfrentarnos a tantos cazas juntos. Nuestra división de investigación ha determinado que puede diseñar un nuevo tipo de corbeta concebida especialmente para combatir a varios cazas. La investigación debe comenzar cuanto antes."
+			"Non abbiamo mai dovuto combattere con così tanti caccia prima d'ora. I nostri ricercatori pensano di poter creare un nuovo tipo di Corvetta, dedicata al combattimento contro nemici multipli. Comincia le ricerche il prima possibile."
+
+        LSTRING_FIProtectResources
+            "Enemy forces are concentrating on our Resource Collectors.  Allocate combat vessels to protect them."
+            "Les forces ennemies se concentrent sur nos Collecteurs de Ressources.  Affectez des unités de combat à leur protection."
+            "Feindliche Kräfte konzentrieren sich auf unsere Rohstoffernteschiffe. Setzen Sie Kampfschiffe zu ihrem Schutz ein."
+            "Las fuerzas enemigas se concentran en nuestros recolectores de recursos. Asigna naves de combate a su protección."
+			"Le forze nemiche si stanno concentrando intorno ai nostri Collettori di Ricerca: disponi le forze in modo da proteggerli."
+
+        LSTRING_FCHyperspaceBack
+            "The Hyperdrive is back on-line."
+            "L'hyperpropulsion est de nouveau opérationnelle."
+            "Das Hypersprung-Aggregat ist wieder online."
+            "Ya funciona la hiperpropulsión."
+			"L'Iperguida è di nuovo operativa."
+
+        LSTRING_FIJumpAway
+            "Let's put these fanatics behind us."
+            "Semons ces fanatiques."
+            "Nichts wie weg von diesen Irren."
+            "Alejémonos de esos fanáticos."
+			"Lasciamoci alle spalle questi pazzi."
+
+        LSTRING_TBHyperspace
+            "                HYPERSPACE"
+            "                HYPERESPACE"
+            "        HYPERRAUMSPRUNG"
+            "              HIPERESPACIO"
+			"				IPERSPAZIO"
+
+        LSTRING_OBDefendFleet
+            "Defend Fleet"
+            "Défendre la Flotte"
+            "Flotte schützen."
+			"Defiende la flota"
+			"Difendi la flotta"
+
+        LSTRING_OBHarvestNebula
+            "Harvest Nebula"
+            "Collecter des ressources au sein de la Nébuleuse"
+            "Rohstoffe in Nebelwolke ernten."
+			"Recolecta nebulosas"
+			"Raccogli le risorse nella nebulosa"
+
+        LSTRING_OBProtect
+            "Protect Resourcers"
+            "Protéger les collecteurs de ressources"
+            "Rohstoffschiffe schützen."
+			"Protege los recursos"
+			"Proteggi le risorse"
+
+        LSTRING_LevelSave
+            "07 - The Gardens of Kadesh"
+            "07 - Jardins de Kadesh"
+            "07 – Die Gärten von Kadesh"
+            "07 - Los jardines de Kadesh"
+			"07 - I giardini di Kadesh"
+
+    ENDL //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+#define MISSION7
+#define MOTHERTEAM     TEAM_P2Mothership
+#define MASTERTEAM     TEAM_P2Mothership
+#define EVENTSTEAM     TEAM_Dummy1
+#include "Swarmer.kash"
+#include "speechevent.h"
+#include "soundmusic.h"
+#include "CommandDefs.h"
+//-----------------------------------------------------------------------------
+//    Name        : Events
+//    Description : Contains Fleet Intel/Command events and Objectives
+//                  Objectives: Harvest Nebula
+//                              Defend Mothership
+//                  Secondary Objectives: Defend Resource Collectors
+//-----------------------------------------------------------------------------
+FSM Events
+
+    States LocationCard, Wait1, NebulaRich, UnknownContacts, PreparingAmbassador, UnknownContactsWait, LBXIn1,
+           P2IntroNIS, DefendMothership, HyperModuleCharging1, HyperModuleCharging2,
+           LetsGetOutOfHere, Engage, HyperdriveFail, ContinueProtecting, AddedResearch, ProtectResourcers,
+           P2MothershipEscapes, HyperspaceBack, JumpAway, NullState, FinalState;
+
+    INIT
+        VarCreateSet("InNullState", FALSE);
+        IntelEventNotEnded();
+        JUMP LocationCard;
+//            VarCreateSet("G_MothershipComeOnIn", TRUE);
+//        JUMP UnknownContactsWait;          //temporary
+    ENDINIT
+    WATCH
+//        IFONCE (FindEnemyShipsOfType(SHIPS_Whatever, "Carrier"))
+//            JUMP LetsGetOutOfHere;
+//        ENDIFONCE
+
+        //once a few resources have been collected,
+        //trigger the P2
+        IFONCE (VarGet("G_HarvestedRUs") > 600)
+            MsgSend(TEAM_P2Mothership, "MothershipComeOnIn");
+            VarSet("InNullState", FALSE);
+            JUMP UnknownContactsWait;
+        ENDIFONCE
+
+        IFONCE (FindEnemyShipsOfType(SHIPS_Stuff, "HeavyCruiser"))
+            MsgSend(TEAM_P2Mothership, "MothershipComeOnIn");
+            VarSet("InNullState", FALSE);
+            JUMP UnknownContactsWait;
+        ENDIFONCE
+
+        //IFONCE (FindEnemyShipsOfType(SHIPS_Stuff, "Carrier"))
+        //    TimerCreateSetStart("HyperTest", 20);
+        //ENDIFONCE
+
+        //IF (TimerExpiredDestroy("HyperTest"))
+        //    JUMP Engage;
+        //ENDIF
+
+        IFONCE ((RUsEnemyCollected() > 1400))
+            ObjectiveSet("Harvest", TRUE);
+        ENDIFONCE
+
+        IFONCE (MsgReceived("ImTakingTheResourcers"))
+            TimerCreateSetStart("Resourcers", Random(20, 30));
+        ENDIFONCE
+
+        //for new research
+        IFONCE (MsgReceived("MoSwarmersInTrouble"))
+            TimerCreateSetStart("ResearchTimer", 45);
+        ENDIFONCE
+
+        IF (VarGet("G_CLICK_Harvest"))
+            VarDestroy("G_CLICK_Harvest");
+            JUMP NebulaRich;
+        ELSEIF (VarGet("G_CLICK_DefendFleet"))
+            VarDestroy("G_CLICK_DefendFleet");
+            JUMP DefendMothership;
+        ELSEIF (VarGet("G_CLICK_ProtectResourcers"))
+            VarDestroy("G_CLICK_ProtectResourcers");
+            JUMP ProtectResourcers;
+        ENDIF
+
+        //only call these states if we're in the NULL state
+        IF (VarGet("InNullState") && !VarGet("InFinalState"))
+            //this state was called from DefendMothership state
+            IFONCE (TimerExpiredDestroy("ChargeUpTimer1"))
+                VarSet("InNullState", FALSE);
+                JUMP HyperModuleCharging1;
+            ENDIFONCE
+
+            //this state was called from HyperModuleCharging1 state
+            IFONCE (TimerExpiredDestroy("ChargeUpTimer2"))
+                VarSet("InNullState", FALSE);
+                JUMP HyperModuleCharging2;
+            ENDIFONCE
+
+            //finished charging up soon
+            IFONCE (TimerExpiredDestroy("ChargeUpTimer3"))
+                VarSet("InNullState", FALSE);
+                JUMP LetsGetOutOfHere;
+            ENDIFONCE
+
+            //new research topic
+            IFONCE (TimerExpiredDestroy("ResearchTimer"))
+                VarSet("InNullState", FALSE);
+                JUMP AddedResearch;
+            ENDIFONCE
+
+            //Resourcers being attacked
+            IFONCE (TimerExpiredDestroy("Resourcers"))
+                VarSet("InNullState", FALSE);
+                JUMP ProtectResourcers;
+            ENDIFONCE
+
+            //P2Mothership takes off
+            IFONCE (MsgReceived("P2MothershipBlowin"))
+                VarSet("InNullState", FALSE);
+                JUMP P2MothershipEscapes;
+            ENDIFONCE
+
+            //if the mothership died, instead of hyperspacing out
+            IFONCE (VarGet("P2MothershipIn") && !FindFriendlyShipsOfType(SHIPS_Temp, "P2Mothership"))
+                VarSet("InNullState", FALSE);
+                JUMP HyperspaceBack;
+            ENDIFONCE
+        ENDIF
+
+    ENDWATCH
+
+        //---------------------------
+        // Events: LocationCard
+        // Wait a little for location card
+        STATE LocationCard
+            INIT
+                TimerCreateSetStart("LocationCardTimer", 2);
+            ENDINIT
+            WATCH
+                IF (TimerExpiredDestroy("LocationCardTimer"))
+                    LocationCard(5000, LSTRING_LCLocationCard);
+                    JUMP Wait1;
+                ENDIF
+            ENDWATCH
+        ENDSTATE LocationCard
+
+        //---------------------------
+        // Events: Wait1
+        // Wait a little while everything launches
+        STATE Wait1
+            INIT
+                TimerCreateSetStart("Launching", 8);
+            ENDINIT
+            WATCH
+                IF (TimerExpiredDestroy("Launching"))
+                    JUMP NebulaRich;
+                ENDIF
+            ENDWATCH
+        ENDSTATE Wait1
+
+        //---------------------------
+        // Events: NebulaRich
+        // Event 1.0 Fleet Intel Observes Rich Nebula
+        STATE NebulaRich
+            INIT
+                SoundEvent(262);
+                SpeechEvent(M07_Intel_HarvestNebula, 0);
+//                SubtitleSimulate(4, 18000, LSTRING_FINebulaRich);
+                ObjectiveCreate("Harvest", LSTRING_OBHarvestNebula, "fleet intel 3.2");
+                JUMP NullState;
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE NebulaRich
+
+        //---------------------------
+        // Events: UnknownContactsWait
+        // Delay time for Unknown contacts event to start
+        STATE UnknownContactsWait
+            INIT
+                TimerCreateSetStart("ScaryUFOGuys", Random(20, 28));
+            ENDINIT
+            WATCH
+                IF (TimerExpiredDestroy("ScaryUFOGuys"))
+                    VarCreateSet("MothershipIn", TRUE);
+                    JUMP LBXIn1;
+                ENDIF
+            ENDWATCH
+        ENDSTATE UnknownContactsWait
+
+        //---------------------------
+        // Events: LBXIn1
+        // Letterbox come in...
+        STATE LBXIn1
+            INIT
+                wideScreenIn(30);
+                TimerCreateSetStart("LBXTimer", 4);
+            ENDINIT
+            WATCH
+                IF ((TimerRemaining("LBXTimer") == 0))
+                    OpenSensors(80000);
+                    JUMP UnknownContacts;
+                ENDIF
+            ENDWATCH
+        ENDSTATE LBXIn1
+
+        //---------------------------
+        // Events: UnknownContacts
+        // Event 1.1 Intel believes an unknown contact
+        //           is closing on the mothership
+        STATE UnknownContacts
+            INIT
+                SoundEvent(262);
+                SpeechEvent(M07_Intel_AlertStatus, 0);
+//                SubtitleSimulate(4, 15000, LSTRING_FIUnknownContacts);
+                TutSetPointerTargetShipSelection("Contacts", TEAMSHIPS_P2Mothership);
+                PingAddShips(TEAMSHIPS_P2Mothership, "UnknownContacts");
+            ENDINIT
+            WATCH
+                IF (IntelEventEnded())
+                    TutRemoveAllPointers();
+                    CloseSensors(TRUE);
+                    WideScreenOut(90);
+                    JUMP PreparingAmbassador;
+                ENDIF
+            ENDWATCH
+        ENDSTATE UnknownContacts
+
+        //---------------------------
+        // Events: PreparingAmbassador
+        // Letterbox come in...
+        STATE PreparingAmbassador
+            INIT
+                SoundEvent(262);
+                SpeechEvent(M07_Intel_PrepareAmbassador, 0);
+//                SubtitleSimulate(4, 5000, LSTRING_FIPreparingAmbassador);
+            ENDINIT
+            WATCH
+                IF (IntelEventEnded())
+                    TimerCreateSetStart("Ambassador", 5);
+                    TimerCreateSetStart("LBX", 2);
+                ENDIF
+                IF (TimerExpiredDestroy("LBX"))
+                    WideScreenIn(90);
+                ENDIF
+                IF (TimerExpiredDestroy("Ambassador"))
+                    JUMP P2IntroNIS;
+                ENDIF
+            ENDWATCH
+        ENDSTATE PreparingAmbassador
+
+        //---------------------------
+        // Events: P2IntroNIS
+        // Event 1.2 Play N05
+        STATE P2IntroNIS
+            INIT
+                FindEnemyShipsOfType(SHIPS_NISTargetShips, "Mothership");
+                PingRemove("UnknownContacts");
+                VarCreateSet("G_PlayNis", 5);
+                VarCreateSet("G_PlayingNIS", TRUE);
+            ENDINIT
+            WATCH
+                IF (VarGet("G_Nis5Complete"))
+                    VarSet("G_PlayingNIS", FALSE);
+                    WideScreenOut(90);
+                    JUMP DefendMothership;
+                ENDIF
+            ENDWATCH
+        ENDSTATE P2IntroNIS
+
+        //---------------------------
+        // Events: DefendMothership
+        // Event 1.3 Intel asks to hold off swarmers
+        STATE DefendMothership
+            INIT
+                MusicPlay(B03_Swarmers);
+                SoundEvent(262);
+                SpeechEvent(M07_Intel_DefendMothership, 0);
+//                SubtitleSimulate(4, 10000, LSTRING_FIDefendMothership);
+                ObjectiveCreate("DefendFleet", LSTRING_OBDefendFleet, "fleet intel 3.2");
+                TimerCreateSetStart("ChargeUpTimer1", 30); //30 seconds
+            ENDINIT
+            WATCH
+                JUMP NullState;
+            ENDWATCH
+        ENDSTATE DefendMothership
+
+        //---------------------------
+        // Events: HyperModuleCharging1
+        // Event 1.4 Hyperspace Module at 35
+        STATE HyperModuleCharging1
+            INIT
+                SoundEvent(262);
+                SpeechEvent(M07_Fleet_Charging8Minutes, 0);
+//                SubtitleSimulate(0, 10000, LSTRING_FCHyperModuleCharging1);
+                TimerCreateSetStart("ChargeUpTimer2", 420);
+            ENDINIT
+            WATCH
+                JUMP NullState;
+            ENDWATCH
+        ENDSTATE HyperModuleCharging1
+
+        //---------------------------
+        // Events: HyperModuleCharging2
+        // Event 1.5  Hyperspace module at 90
+        STATE HyperModuleCharging2
+            INIT
+                SoundEvent(262);
+                SpeechEvent(M07_Fleet_Charging1Minute, 0);
+//                SubtitleSimulate(0, 10000, LSTRING_FCHyperModuleCharging2);
+                TimerCreateSetStart("ChargeUpTimer3", 60);
+            ENDINIT
+            WATCH
+                JUMP NullState;
+            ENDWATCH
+        ENDSTATE HyperModuleCharging2
+
+        //---------------------------
+        // Events: LetsGetOutOfHere
+        // Event 1.6 Fleet command says "let's get out of here!"
+        STATE LetsGetOutOfHere
+            INIT
+                SoundEvent(262);
+                SpeechEvent(M07_Fleet_HyperspaceReady, 0);
+                MsgSend(TEAM_P2Mothership, "PlayerPoweredUp");
+//                SubtitleSimulate(0, 10000, LSTRING_FCLetsGetOutOfHere);
+            ENDINIT
+            WATCH
+                IF (IntelEventEnded())
+                    JUMP Engage;
+                ENDIF
+            ENDWATCH
+        ENDSTATE LetsGetOutOfHere
+
+        //---------------------------
+        // Events: Engage
+        // Event 1.6 Fleet Intel does the picard thing
+        //      but hyperspacing has been disabled!  Watchout!
+        STATE Engage
+            INIT
+                SoundEvent(262);
+                SpeechEvent(M07_Intel_EngageHyperdrive, 0);
+//                SubtitleSimulate(4, 10000, LSTRING_FIEngage);
+                DisablePlayerHyperspace();
+                ObjectiveSet("DefendFleet", TRUE);
+                ObjectiveCreate("Hyperspace", LSTRING_TBHyperspace, LSTRING_FIEngage);
+            ENDINIT
+            WATCH
+                IF (TutGameSentMessage("Game_HyperspaceFailed") == 1)
+                    JUMP HyperdriveFail;
+                ENDIF
+            ENDWATCH
+        ENDSTATE Engage
+
+        //---------------------------
+        // Events: HyperdriveFail
+        // Event 1.7 Fleet Command whines about hyperdrive failing
+        STATE HyperdriveFail
+            INIT
+                SoundEvent(262);
+                SpeechEvent(M07_Fleet_HyperdriveFailedNEW, 0);
+//                SubtitleSimulate(0, 10000, LSTRING_FCHyperdriveFail);
+            ENDINIT
+            WATCH
+                IF (IntelEventEnded())
+                    MsgSend(TEAM_P2Mothership, "TheyreGettingAway");
+                    JUMP ContinueProtecting;
+                ENDIF
+            ENDWATCH
+        ENDSTATE HyperdriveFail
+
+        //---------------------------
+        // Events: ContinueProtecting
+        // Event 1.7 Fleet Intel tries to do something about hyperdrive
+        STATE ContinueProtecting
+            INIT
+                SoundEvent(262);
+                SpeechEvent(M07_Intel_AnalyzingField, 0);
+//                SubtitleSimulate(4, 10000, LSTRING_FIContinueProtecting);
+                ObjectiveDestroy("DefendFleet");
+                ObjectiveDestroy("Hyperspace");
+                ObjectiveCreate("DefendFleet", LSTRING_OBDefendFleet, "fleet intel 3.2");
+                TimerCreateSetStart("ResearchTimer", 45);
+            ENDINIT
+            WATCH
+                JUMP NullState;
+            ENDWATCH
+        ENDSTATE ContinueProtecting
+
+        //---------------------------
+        // Events: AddedResearch
+        // Fleet intel indicates a new research topic is available
+        STATE AddedResearch
+            INIT
+                SoundEvent(262);
+                SpeechEvent(M07_Intel_ResearchMultigunVette, 0);
+//                SubtitleSimulate(4, 10000, LSTRING_FINewResearch);
+                TechSetResearch("TargetingSystems");
+            ENDINIT
+            WATCH
+                JUMP NullState;
+            ENDWATCH
+        ENDSTATE AddedResearch
+
+
+        //---------------------------
+        // Events: ProtectResourcers
+        // Event 1.8 Secondary objective - protect resourcers
+        STATE ProtectResourcers
+            INIT
+                SoundEvent(262);
+                SpeechEvent(M07_Intel_DefendCollectors, 0);
+//                SubtitleSimulate(0, 10000, LSTRING_FIProtectResources);
+                ObjectiveCreateSecondary("ProtectResourcers", LSTRING_OBProtect, LSTRING_FIProtectResources);
+            ENDINIT
+            WATCH
+                JUMP NullState;
+            ENDWATCH
+        ENDSTATE ProtectResourcers
+
+        //---------------------------
+        // Events: P2MothershipEscapes
+        // Event 1.9 NISLet of P2 Mothership leaving
+        STATE P2MothershipEscapes
+            INIT
+                SoundEvent(262);
+                TutCameraFocus(TEAMSHIPS_P2Mothership);
+                TutCameraFocus(TEAMSHIPS_P2Mothership);
+                MusicStop (4);
+                TimerCreateSetStart("P2EscapeTimer", 20);
+                TimerCreateSetStart("CancelFocus", 14);
+//                ShipsAdd(SHIPS_NisCenterShip, TEAMSHIPS_P2Mothership);
+//                VarCreateSet("G_PlayNislet", 70);
+            ENDINIT
+            WATCH
+                IF (TutGameSentMessage("Game_BandBoxFocus,Game_ClickFocus,KB_CancelFocus,KB_Focus"))
+                    TimerDestroy("CancelFocus");
+                ENDIF
+
+                IF (TimerExpiredDestroy("CancelFocus"))
+                    SoundEvent(262);
+                    TutCameraFocusCancel();
+                    TutCameraFocusCancel();
+                ENDIF
+
+                IF (TimerExpiredDestroy("P2EscapeTimer"))
+                    VarSet("P2MothershipIn", FALSE);
+                    JUMP HyperspaceBack;
+                ENDIF
+            ENDWATCH
+        ENDSTATE P2MothershipEscapes
+
+        //---------------------------
+        // Events: HyperspaceBack
+        // Event 1.10 Fleet Command all giddy about hyperspace being back
+        STATE HyperspaceBack
+            INIT
+                SoundEvent(262);
+                SpeechEvent(M07_Intel_FieldDisappeared, 0);
+//                SubtitleSimulate(0, 10000, LSTRING_FCHyperspaceBack);
+                ObjectiveCreate("Hyperspace", LSTRING_TBHyperspace, LSTRING_FIEngage);
+                ObjectiveSet("DefendFleet", TRUE);
+            ENDINIT
+            WATCH
+                IF (IntelEventEnded())
+                    JUMP JumpAway;
+                ENDIF
+            ENDWATCH
+        ENDSTATE HyperspaceBack
+
+        //---------------------------
+        // Events: JumpAway
+        // Event 1.10 Fleet Intel oozes with pleasure about hyperdrives
+        STATE JumpAway
+            INIT
+                SoundEvent(262);
+                SpeechEvent(M07_Intel_HyperdriveFunctional, 0);
+                //SubtitleSimulate(4, 10000, LSTRING_FIJumpAway);
+            ENDINIT
+            WATCH
+                JUMP FinalState;
+            ENDWATCH
+        ENDSTATE JumpAway
+
+//***  Need mission failure states.
+
+        //---------------------------
+        // Events: NullState
+        // Nothing happens here
+        STATE NullState
+            INIT
+                VarCreateSet("InNullState", TRUE);
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE NullState
+
+        //---------------------------
+        // Events: FinalState
+        // Nothing happens here
+        STATE FinalState
+            INIT
+                VarCreateSet("InFinalState", TRUE);
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE FinalState
+
+
+ENDFSM Events
+
+
+//-----------------------------------------------------------------------------
+//    Name        : P2Mothership
+//    Description : P2 Mothership - moves around and drops off swarmers, then makes a b-line outa there
+//-----------------------------------------------------------------------------
+FSM P2Mothership
+
+    States NullState, Wait, Reappear, InitialAttack, ReissueMove, HyperDodge, HypeDodgeIn, MidBattle,
+           SecondAttack, EndBattleDelay, EndBattle, DefendSelf, GetOuttaHere;
+
+    INIT
+        VarCreateSet("WaveNum", 0);
+        JUMP Wait;
+    ENDINIT
+    WATCH
+        IF (!VarGet("G_MothershipDead"))
+//            IFONCE (Nearby(POINT_StartPointPlayer, 6000))
+//                MoveTo(POINT_Vol2);
+//            ENDIFONCE
+
+            IFONCE (Nearby(POINT_Vol2, 2000))
+                VarSet("MovingToVol2", FALSE);
+                VarCreateSet("MovingToVol1", TRUE);
+                MoveTo(POINT_Vol1);
+            ENDIFONCE
+
+            IFONCE (Nearby(POINT_Vol1, 2000))
+                VarSet("MovingToVol1", FALSE);
+                VarCreateSet("MovingToVol3", TRUE);
+                MoveTo(POINT_Vol3);
+            ENDIFONCE
+
+            IFONCE (Nearby(POINT_Vol3, 2000))
+                VarSet("MovingToVol2", FALSE);
+                VarCreateSet("AttackingMothership", TRUE);
+                AttackMothership();
+            ENDIFONCE
+
+            IFONCE ((VarGet("WaveNum") == 6) && VarGet("FinalAssaultGone"))
+                TimerCreateSetStart("ImDryImOuttaHere", Random(60, 90));
+            ENDIFONCE
+
+            IFONCE (TimerExpiredDestroy("ImDryImOuttaHere"))
+                JUMP GetOuttaHere;
+            ENDIFONCE
+
+            IF (!VarGet("DodgingOrOuttaHere") &&
+                TeamHealthLowest() <= MO_ESCAPE_HYPER_HEALTH)
+                IF (VarGet("AttackingMothership"))
+                    JUMP GetOuttaHere;
+                ELSE
+                    JUMP HyperDodge;
+                ENDIF
+            ENDIF
+
+
+        ENDIF
+        IFONCE (TeamCount() == 0)
+            //I am Invincible!!!!
+            FindEnemyShipsOfType(SHIPS_YourDeadNow, "Mothership");
+            KamikazeEveryone(SHIPS_YourDeadNow);
+            VarCreateSet("G_MothershipDead", TRUE);
+            JUMP NullState;
+        ENDIFONCE
+    ENDWATCH
+
+        //---------------------------
+        // P2Mothership: Wait
+        // Waits for other ships to dock with it, then disappears
+        STATE Wait
+            INIT
+                TimerCreateSetStart("WaitForDocking", 2);
+            ENDINIT
+            WATCH
+                IF (TimerExpiredDestroy("WaitForDocking"))
+                    TeamHyperspaceOut();
+                ENDIF
+                IF (MsgReceived("MothershipComeOnIn"))
+                    JUMP Reappear;
+                ENDIF
+            ENDWATCH
+        ENDSTATE Wait
+
+        //---------------------------
+        // P2Mothership: Reappear
+        // Mothership reappears for a time
+        STATE Reappear
+            INIT
+                TeamHyperspaceIn(POINT_MothershipIn);
+//                AttackMothership();  //just to get the P2 Mothership closer to the Mothership
+            ENDINIT
+            WATCH
+                IFONCE (Nearby(POINT_MothershipIn, 2000))
+                    AttackMothership();
+                ENDIFONCE
+                IFONCE (VarGet("G_PlayingNIS"))
+                    Stop();
+                    HideShips(TEAMSHIPS_P2Mothership);
+                ENDIFONCE
+                IF (VarGet("G_Nis5Complete"))
+                    UnHideShips(TEAMSHIPS_P2Mothership);
+                    MoveTo(POINT_Vol2);
+                    VarCreateSet("MovingToVol2", TRUE);
+                    JUMP InitialAttack;
+                ENDIF
+            ENDWATCH
+        ENDSTATE Reappear
+
+        //---------------------------
+        // P2Mothership: InitialAttack
+        // Main Attack Code for the P2 Mothership
+        STATE InitialAttack
+            INIT
+                // initial attack (wave 0) sent off
+                VarInc("WaveNum");
+
+                FSMCreate(GenericMothershipSwarm, TEAM_NISTeam1);
+                FindEnemyShipsOfType(SHIPS_Test, "ResourceCollector");
+                FindEnemiesNearby(SHIPS_Test, 6000);
+
+                // if there are armed ships near the resourcers
+                IF (ShipsSelectSpecial(SHIPS_Armed, SHIPS_Test, 3) > 5)
+                    FSMCreate(ResourceDefenderSwarm, TEAM_NISTeam2);
+                    TimerCreateSetStart("ResourcerSwarm", Random(50, 70));
+                ELSE
+                    FSMCreate(GenericResourcerSwarm, TEAM_NISTeam2);
+                    TimerCreateSetStart("ResourceDefenderSwarm", Random(50, 70));
+                ENDIF
+            ENDINIT
+            WATCH
+                IF (TimerExpiredDestroy("ResourcerSwarm"))
+                    FSMCreate(GenericResourcerSwarm, TEAM_NISTeam3);
+                    JUMP MidBattle;
+                ENDIF
+
+                IF (TimerExpiredDestroy("ResourceDefenderSwarm"))
+                    FSMCreate(ResourceDefenderSwarm, TEAM_NISTeam3);
+                    JUMP MidBattle;
+                ENDIF
+            ENDWATCH
+        ENDSTATE InitialAttack
+
+
+        //---------------------------
+        // P2Mothership: ReissueMove
+        // Gets the mothership moving again after it attacks
+        STATE ReissueMove
+            INIT
+                IF (VarGet("MovingToVol2"))
+                    MoveTo(POINT_Vol2);
+                ELSEIF (VarGet("MovingToVol1"))
+                    MoveTo(POINT_Vol1);
+                ELSEIF (VarGet("MovingToVol3"))
+                    MoveTo(POINT_Vol3);
+                ELSEIF (VarGet("AttackingMothership"))
+                    AttackMothership();
+                ENDIF
+                JUMP MidBattle;
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE ReissueMove
+
+        //---------------------------
+        // P2Mothership: HyperDodge
+        // Mothership hyperspaces out, then hyperspaces in at another point.
+        STATE HyperDodge
+            INIT
+                //keeps this state from being called over and over again
+                VarCreateSet("DodgingOrOuttaHere", TRUE);
+                TeamHyperspaceOut();
+                TimerCreateSetStart("HyperspaceTimer", 15);
+            ENDINIT
+            WATCH
+                IF (TimerExpiredDestroy("HyperspaceTimer"))
+                    JUMP HypeDodgeIn;
+                ENDIF
+            ENDWATCH
+        ENDSTATE HyperDodge
+
+
+        //---------------------------
+        // P2Mothership: HypeDodgeIn
+        // Waits for the P2Mothership to hyperspace in
+        STATE HypeDodgeIn
+            INIT
+                TeamHealthSet(100);
+                IF (VarGet("MovingToVol2"))
+                    TeamHyperspaceIn(POINT_Vol2);
+                ELSEIF (VarGet("MovingToVol1"))
+                    TeamHyperspaceIn(POINT_Vol1);
+                ELSEIF (VarGet("MovingToVol3"))
+                    TeamHyperspaceIn(POINT_Vol3);
+                ELSE
+                    TeamHyperspaceIn(POINT_Vol2);
+                ENDIF
+            ENDINIT
+            WATCH
+                IF (Nearby(THISTEAMSPOINT, 10000))
+                    VarDestroy("DodgingOrOuttaHere");
+                    JUMP MidBattle;
+                ENDIF
+            ENDWATCH
+        ENDSTATE HypeDodgeIn
+
+
+        //---------------------------
+        // P2Mothership: MidBattle
+        // P2Mothership in the middle of two waves
+        STATE MidBattle
+            INIT
+                VarCreate("NumSwarmers");
+                VarCreate("NumPods");
+                TimerCreateSetStart("DownTime", Random(80, 100));
+            ENDINIT
+            WATCH
+                IFONCE (MsgReceived("PlayerPoweredUp"))
+                    JUMP EndBattleDelay;
+                ENDIFONCE
+
+                IF (UnderAttack(SHIPS_Attacking) && (ShipsCount(SHIPS_DefendMothership) < Random(4,8)))
+                    JUMP DefendSelf;
+                ENDIF
+
+                IF (!ShipsSelectMoving(SHIPS_Move, THISTEAMSHIPS))
+                    JUMP ReissueMove;
+                ENDIF
+
+                IF (TimerExpiredDestroy("PodTest"))
+                    TimerSet("DownTime", 0);
+                ENDIF
+
+                // if there are no pods left in the world, get some out!
+                IF (!TimerExpired("DownTime") &&
+                    !FindFriendlyShipsOfType(SHIPS_Pods, "P2FuelPod") &&
+                    !TimerRemaining("PodTest"))
+                    TimerCreateSetStart("PodTest", 8);
+                ENDIF
+
+                IF (TimerExpired("DownTime"))
+                    IF (MsgReceived("ResSwarmersInTrouble"))
+                        VarCreateset("ResSwarmers", TRUE);
+                        JUMP SecondAttack;
+                    ENDIF
+
+                    //only attack resourcers, no matter what
+                    IF (MsgReceived("ResDefSwarmersInTrouble"))
+                        VarCreateSet("ResSwarmers", TRUE);
+//                        VarCreateSet("ResDefSwarmers", TRUE);
+                        JUMP SecondAttack;
+                    ENDIF
+
+                    VarSet("NumSwarmers", FindFriendlyShipsOfType(SHIPS_Swarmers, "P2Swarmer"));
+                    VarSet("NumPods", FindFriendlyShipsOfType(SHIPS_Pods, "P2FuelPod"));
+
+                    //later use percentages of full power.
+                    IF ((VarGet("NumPods") < 2) || (VarGet("NumSwarmers") < 10))
+                        VarCreateSet("ResSwarmers", TRUE);
+                        JUMP SecondAttack;
+                    ENDIF
+
+                    IF ((VarGet("WaveNum") != 2) &&
+                        (VarGet("WaveNum") != 4))
+                        IF (MsgReceived("MoSwarmersInTrouble"))
+                            VarCreateSet("MoSwarmers", TRUE);
+                            JUMP SecondAttack;
+                        ENDIF
+                    ENDIF
+                ENDIF
+            ENDWATCH
+        ENDSTATE MidBattle
+
+        //---------------------------
+        // P2Mothership: SecondAttack
+        // Second Wave code for P2Mothership
+        STATE SecondAttack
+            INIT
+                IF (VarGet("WaveNum") == 1)
+                    // first wave reinforces where it is needed
+                    IF (VarGet("ResSwarmers"))
+                        MsgSend(TEAM_FuelPod1WAVE1, "ResourceSwarm");
+                        MsgSend(TEAM_Swarmer1WAVE1, "ResourceSwarm");
+                    ELSEIF (VarGet("ResDefSwarmers"))
+                        MsgSend(TEAM_FuelPod1WAVE1, "ResourceDefenderSwarm");
+                        MsgSend(TEAM_Swarmer1WAVE1, "ResourceDefenderSwarm");
+                    ELSEIF (VarGet("MoSwarmers"))
+                        MsgSend(TEAM_FuelPod1WAVE1, "MothershipSwarm");
+                        MsgSend(TEAM_Swarmer1WAVE1, "MothershipSwarm");
+                    ELSE    //error
+                        Print("No One To Send To");
+                    ENDIF
+
+                    VarInc("WaveNum");
+
+                ELSEIF (VarGet("WaveNum") == 2)
+                        // second wave only attacks resourcers
+//                    // second wave reinforces where it is needed
+//                    IF (VarGet("MoSwarmers"))
+//                        MsgSend(TEAM_FuelPod1WAVE2,  "MothershipSwarm");
+//                        MsgSend(TEAM_Swarmer1WAVE2A, "MothershipSwarm");
+//                        MsgSend(TEAM_Swarmer1WAVE2B, "MothershipSwarm");
+//                    ELSEIF (VarGet("ResDefSwarmers"))
+//                        MsgSend(TEAM_FuelPod1WAVE2,  "ResourceDefenderSwarm");
+//                        MsgSend(TEAM_Swarmer1WAVE2A, "ResourceDefenderSwarm");
+//                        MsgSend(TEAM_Swarmer1WAVE2B, "ResourceDefenderSwarm");
+//                    ELSEIF (VarGet("ResSwarmers"))
+                        MsgSend(TEAM_FuelPod1WAVE2,  "ResourceSwarm");
+                        MsgSend(TEAM_Swarmer1WAVE2A, "ResourceSwarm");
+                        MsgSend(TEAM_Swarmer1WAVE2B, "ResourceSwarm");
+//                    ENDIF
+
+                    VarInc("WaveNum");
+
+                ELSEIF (VarGet("WaveNum") == 3)
+                    // third wave reinforces where it is needed
+                    IF (VarGet("MoSwarmers"))
+                        MsgSend(TEAM_FuelPod2WAVE1, "MothershipSwarm");
+                        MsgSend(TEAM_Swarmer2WAVE1, "MothershipSwarm");
+                    ELSEIF (VarGet("ResDefSwarmers"))
+                        MsgSend(TEAM_FuelPod2WAVE1, "ResourceDefenderSwarm");
+                        MsgSend(TEAM_Swarmer2WAVE1, "ResourceDefenderSwarm");
+                    ELSEIF (VarGet("ResSwarmers"))
+                        MsgSend(TEAM_FuelPod2WAVE1, "ResourceSwarm");
+                        MsgSend(TEAM_Swarmer2WAVE1, "ResourceSwarm");
+                    ENDIF
+
+                    VarInc("WaveNum");
+
+                ELSEIF (VarGet("WaveNum") == 4)
+                    // fourth wave reinforces where it is needed
+                    IF (VarGet("MoSwarmers"))
+                        MsgSend(TEAM_FuelPod2WAVE2,  "MothershipSwarm");
+                        MsgSend(TEAM_Swarmer2WAVE2A, "MothershipSwarm");
+                        MsgSend(TEAM_Swarmer2WAVE2B, "MothershipSwarm");
+                    ELSEIF (VarGet("ResDefSwarmers"))
+                        MsgSend(TEAM_FuelPod2WAVE2,  "ResourceDefenderSwarm");
+                        MsgSend(TEAM_Swarmer2WAVE2A, "ResourceDefenderSwarm");
+                        MsgSend(TEAM_Swarmer2WAVE2B, "ResourceDefenderSwarm");
+                    ELSEIF (VarGet("ResSwarmers"))
+                        MsgSend(TEAM_FuelPod2WAVE2,  "ResourceSwarm");
+                        MsgSend(TEAM_Swarmer2WAVE2A, "ResourceSwarm");
+                        MsgSend(TEAM_Swarmer2WAVE2B, "ResourceSwarm");
+                    ENDIF
+
+                    VarInc("WaveNum");
+
+                ELSEIF (VarGet("WaveNum") == 5)
+                    // fourth wave reinforces where it is needed
+                    IF (VarGet("MoSwarmers"))
+                        MsgSend(TEAM_FuelPod3WAVE1, "MothershipSwarm");
+                        MsgSend(TEAM_Swarmer3WAVE1, "MothershipSwarm");
+                    ELSEIF (VarGet("ResDefSwarmers"))
+                        MsgSend(TEAM_FuelPod3WAVE1, "ResourceDefenderSwarm");
+                        MsgSend(TEAM_Swarmer3WAVE1, "ResourceDefenderSwarm");
+                    ELSEIF (VarGet("ResSwarmers"))
+                        MsgSend(TEAM_FuelPod3WAVE1, "ResourceSwarm");
+                        MsgSend(TEAM_Swarmer3WAVE1, "ResourceSwarm");
+                    ENDIF
+
+                    VarInc("WaveNum");
+
+                ENDIF
+                TimerCreateSetStart("AttackTimer", Random(50, 90));
+            ENDINIT
+            WATCH
+                // wait a bit
+                IF (TimerExpiredDestroy("AttackTimer"))
+                    JUMP MidBattle;
+                ENDIF
+            ENDWATCH
+        ENDSTATE SecondAttack
+
+        //---------------------------
+        // P2Mothership: DefendSelf
+        // P2 Mothership sends out bunch of defense stuff.
+        STATE DefendSelf
+            INIT
+                UnderAttack(SHIPS_Attacking);
+                IF (ShipsSelectCapital(SHIPS_Capital, SHIPS_Attacking))
+                    VarCreateSet("CounterAttack", TRUE);
+                    Attack(SHIPS_Capital);
+                ENDIF
+
+                //maybe launch depending on number of attackers
+                //or have timer change depending on number of attackers
+                IF (VarGet("WaveNum") == 1)
+                    MsgSend(TEAM_FuelPod1WAVE1, "DefendMothership");
+                    MsgSend(TEAM_Swarmer1WAVE1, "DefendMothership");
+                ELSEIF (VarGet("WaveNum") == 2)
+                    MsgSend(TEAM_FuelPod1WAVE2,  "DefendMothership");
+                    MsgSend(TEAM_Swarmer1WAVE2A, "DefendMothership");
+                    MsgSend(TEAM_Swarmer1WAVE2B, "DefendMothership");
+                    VarInc("WaveNum");
+                ELSEIF (VarGet("WaveNum") == 3)
+                    MsgSend(TEAM_FuelPod2WAVE1,  "DefendMothership");
+                    MsgSend(TEAM_Swarmer2WAVE1,  "DefendMothership");
+                    VarInc("WaveNum");
+                ELSEIF (VarGet("WaveNum") == 4)
+                    MsgSend(TEAM_FuelPod2WAVE2,  "DefendMothership");
+                    MsgSend(TEAM_Swarmer2WAVE2A, "DefendMothership");
+                    MsgSend(TEAM_Swarmer2WAVE2B, "DefendMothership");
+                    VarInc("WaveNum");
+                ELSEIF (VarGet("WaveNum") == 5)
+                    MsgSend(TEAM_FuelPod3WAVE1,  "DefendMothership");
+                    MsgSend(TEAM_Swarmer3WAVE1,  "DefendMothership");
+                    VarInc("WaveNum");
+                ENDIF
+                TimerCreateSetStart("DefenseTimer", Random(40, 100));
+            ENDINIT
+            WATCH
+                // wait a bit
+                IF (TimerExpiredDestroy("DefenseTimer"))
+                    IF (UnderAttack(SHIPS_Attacking))
+                        SetSwarmTargets(SHIPS_Attacking);
+                    ENDIF
+                    JUMP MidBattle;
+                ENDIF
+                IF (VarGet("CounterAttack") &&
+                    (ShipsOrder(THISTEAMSHIPS) != COMMAND_ATTACK))
+                    IF (UnderAttack(SHIPS_Attacking) &&
+                        ShipsSelectCapital(SHIPS_Capital, SHIPS_Attacking))
+                        Attack(SHIPS_Capital);
+                    ELSE
+                        VarDestroy("CounterAttack");
+                    ENDIF
+                ENDIF
+            ENDWATCH
+        ENDSTATE DefendSelf
+
+
+        //---------------------------
+        // P2Mothership: EndBattle
+        // Delay before the end of battle
+        STATE EndBattleDelay
+            INIT
+                TimerCreateSetStart("AttackTimer", Random(5, 20));
+            ENDINIT
+            WATCH
+                IF (TimerExpiredDestroy("AttackTimer"))
+                    JUMP EndBattle;
+                ENDIF
+            ENDWATCH
+        ENDSTATE EndBattleDelay
+
+
+        //---------------------------
+        // P2Mothership: EndBattle
+        // Mothership launches last wave and attacks the mothership
+        STATE EndBattle
+            INIT
+//                AttackMothership();
+                MsgSend(TEAM_FuelPod3WAVE2,  "MothershipSwarm");
+                MsgSend(TEAM_Swarmer3WAVE2A, "MothershipSwarm");
+                MsgSend(TEAM_Swarmer3WAVE2B, "MothershipSwarm");
+                TimerCreateSetStart("AttackTimer", Random(30, 60));
+                VarCreateSet("FinalAssaultGone", TRUE);
+            ENDINIT
+            WATCH
+                IF (TimerExpiredDestroy("AttackTimer") AND
+                    VarGet("WaveNum") < 6)
+                    JUMP MidBattle;
+                ENDIF
+            ENDWATCH
+        ENDSTATE EndBattle
+
+
+        //---------------------------
+        // P2Mothership: GetOuttaHere
+        // Mothership calls in ships to dock, then hyperspaces out
+        STATE GetOuttaHere
+            INIT
+                VarCreateSet("DodgingOrOuttaHere", TRUE);
+                MsgSendAll("DockNow");
+                TimerCreateSetStart("BootIt", 50);
+            ENDINIT
+            WATCH
+                IF (TeamHealthLowest() < MO_ESCAPE_LOW_HEALTH)
+                    TeamHealthSet(MO_ESCAPE_PROPUP_HEALTH);
+                ENDIF
+
+                VarSet("NumSwarmers", FindFriendlyShipsOfType(SHIPS_Swarmers, "P2Swarmer"));
+                VarSet("NumAdv", FindFriendlyShipsOfType(SHIPS_AdvSwarmers, "P2AdvanceSwarmer"));
+
+                IF (((VarGet("NumSwarmers") == 0) && (VarGet("NumAdv") == 0)) ||
+                    (TeamHealthLowest() <= 8) ||
+                    (TimerExpiredDestroy("BootIt")))
+                    MsgSendAll("P2MothershipBlowin");
+                    TeamHyperspaceOut();
+                    JUMP NullState;
+                ENDIF
+            ENDWATCH
+        ENDSTATE GetOuttaHere
+
+        //---------------------------
+        // P2Mothership: NullState
+        // Nothing happens here
+        STATE NullState
+            INIT
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE NullState
+
+ENDFSM P2Mothership
+
+//ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ     Global Stuff     ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
+INIT
+
+        //
+        //      FSM creates
+        //
+
+        FSMCREATE (P2Mothership, TEAM_P2Mothership);
+
+        //create all the reinfocement swarmers and pods
+        FSMCREATE (PreAttackPod,   TEAM_FuelPod1WAVE1);
+        FSMCREATE (PreAttackPod,   TEAM_FuelPod1WAVE2);
+        FSMCREATE (PreAttackSwarm, TEAM_Swarmer1WAVE1);
+        FSMCREATE (PreAttackSwarm, TEAM_Swarmer1WAVE2A);
+        FSMCREATE (PreAttackSwarm, TEAM_Swarmer1WAVE2B);
+        FSMCREATE (PreAttackPod,   TEAM_FuelPod2WAVE1);
+        FSMCREATE (PreAttackPod,   TEAM_FuelPod2WAVE2);
+        FSMCREATE (PreAttackSwarm, TEAM_Swarmer2WAVE1);
+        FSMCREATE (PreAttackSwarm, TEAM_Swarmer2WAVE2A);
+        FSMCREATE (PreAttackSwarm, TEAM_Swarmer2WAVE2B);
+        FSMCREATE (PreAttackPod,   TEAM_FuelPod3WAVE1);
+        FSMCREATE (PreAttackPod,   TEAM_FuelPod3WAVE2);
+        FSMCREATE (PreAttackSwarm, TEAM_Swarmer3WAVE1);
+        FSMCREATE (PreAttackSwarm, TEAM_Swarmer3WAVE2A);
+        FSMCREATE (PreAttackSwarm, TEAM_Swarmer3WAVE2B);
+
+        FSMCREATE (Events, TEAM_Dummy1);
+
+        //
+        //      technology
+        //
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      mission objectives
+        //
+
+        // TEMPORARY - Create hyperspace objective right away so you can hyperspace through the game
+//        ObjectiveCreate ("Hyperspace", LSTRING_TBHyperspace, LSTRING_TBHyperspace);
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+        //
+        //      variables
+        //
+
+        // set this to what the player's RUs are at when they enter the level
+        VarCreateSet ("WorldStartRUs", GetWorldResources());
+        VarCreateSet ("PreviousWorldRUs", GetWorldResources());
+        VarCreateSet ("CurrentRUs", GetWorldResources());
+        VarCreateSet ("G_HarvestedRUs", 0);
+
+        //turn on Sensor Weirdness
+        SensorsWeirdness(160);
+
+        SaveLevel(7, LSTRING_LevelSave);
+ENDINIT
+
+
+WATCH
+
+        // use this for the amount of RUs the player currently has
+        VarSet("CurrentRUs", GetWorldResources());
+        VarSet("G_HarvestedRUs", VarGet("HarvestedRUs") + (VarGet("PreviousWorldRUs") - VarGet("CurrentRUs")));
+        VarSet("PreviousWorldRUs", VarGet("CurrentRUs"));
+
+        SensorsWeirdness((160 * VarGet("CurrentRUs")) / VarGet("WorldStartRUs"));
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      technology
+        //
+
+
+        // MISSION 02 Tech stuff: //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        // if player researches Corvette drive, allow Corvette chassis                  // (Build: Light Corvette)
+        IFONCE (TechGet ("MassDrive10Kt"))
+                TechSetResearch ("Chassis2");
+        ENDIFONCE
+
+        // if player researches Corvette chassis, allow Heavy Corvette upgrade          // (Build: Heavy Corvette)
+        IFONCE ((TechGet ("Chassis2")) AND (VarGet ("SetMediumGuns") = FALSE))
+                TechSetResearch ("MediumGuns");
+                VarCreateSet ("SetMediumGuns", TRUE);
+        ENDIFONCE
+
+        // MISSION 01 Tech stuff: //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        // if player researches Fighter drive, allow Corvette chassis                   // (Build: Repair Corvette)
+        IFONCE (TechGet ("MassDrive1Kt"))
+                TechSetResearch ("Chassis2");
+        ENDIFONCE
+
+        IFONCE (!TechGet("MassDrive1Mt"))
+            TimerCreateSetStart("Tech1Mt", Random(15, 25));
+        ENDIFONCE
+
+        IF (TimerExpiredDestroy("Tech1Mt"))
+            SpeechEvent(M06_Intel_ResearchSuperCap, 0);
+            TechSetResearch("MassDrive1Mt");
+        ENDIF
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+ENDWATCH
+//ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ     Global Stuff     ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
+
+

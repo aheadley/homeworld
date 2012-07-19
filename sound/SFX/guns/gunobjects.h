@@ -1,0 +1,19 @@
+#define GS_LargeEnergyCannon		0
+#define GS_LargeIonCannon			1
+#define GS_LargePlasmaBomb			2
+#define GS_LargeProjectile			3
+#define GS_MediumEnergyCannon		4
+#define GS_MediumIonCannon			5
+#define GS_MediumPlasmaBomb			6
+#define GS_MediumProjectile			7
+#define GS_MineLauncher				8
+#define GS_MissleLauncher			9
+#define GS_SmallEnergyCannon		10
+#define GS_SmallIonCannon			11
+#define GS_SmallPlasmaBomb			12
+#define GS_SmallProjectile			13
+#define GS_VeryLargeEnergyCannon	14
+#define GS_VeryLargeIonCannon		15
+#define GS_VeryLargePlasmaBomb		16
+#define GS_Laser					17
+

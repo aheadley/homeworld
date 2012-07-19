@@ -1,0 +1,28 @@
+Microsoft Visual Studio Solution File, Format Version 7.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BTG", "BTG.vcproj", "{787DD19B-E9C0-433D-B626-84413FE6329D}"
+EndProject
+Global
+	GlobalSection(SourceCodeControl) = preSolution
+		SccNumberOfProjects = 1
+		SccProjectUniqueName0 = BTG.vcproj
+		SccProjectName0 = \u0022$/tools/win32/BTG\u0022,\u0020RFOAAAAA
+		SccLocalPath0 = .
+		SccProvider0 = MSSCCI:Microsoft\u0020Visual\u0020SourceSafe
+	EndGlobalSection
+	GlobalSection(SolutionConfiguration) = preSolution
+		ConfigName.0 = Debug
+		ConfigName.1 = Release
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{787DD19B-E9C0-433D-B626-84413FE6329D}.Debug.ActiveCfg = Debug|Win32
+		{787DD19B-E9C0-433D-B626-84413FE6329D}.Debug.Build.0 = Debug|Win32
+		{787DD19B-E9C0-433D-B626-84413FE6329D}.Release.ActiveCfg = Release|Win32
+		{787DD19B-E9C0-433D-B626-84413FE6329D}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

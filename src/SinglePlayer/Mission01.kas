@@ -1,0 +1,2330 @@
+//
+//  MISSION01
+//
+#include "..\\Game\\speechevent.h"
+#include "Attributes.h"
+
+
+    LOCALIZATION //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+            LSTRING_LocationCard
+                "KHARAK SYSTEM"
+                "SYSTEME KHARAK"
+                "KHARAK-SYSTEM"
+                "SISTEMA DE KHARAK"
+                "IL SISTEMA DI KHARAK"
+
+            LSTRING_HarvestTASKBAR
+                "Harvest asteroids"
+                "Collecte asteroïdes"
+                "Rohstoffe in Asteroiden ernten."
+                "Cosechar asteroides"
+                "Raccogli degli asteroidi"
+
+            LSTRING_ResearchShipTASKBAR
+                "Construct a Research Ship"
+                "Construction Vaisseau de Recherche"
+                "Ein Forschungsschiff bauen"
+                "Construir nave de investigación"
+                "Costruisci una Nave da Ricerca"
+
+            LSTRING_StartResearchTASKBAR
+                "Research Fighter Chassis"
+                "Recherche sur les châssis de chasseur"
+                "Jäger-Chassis erforschen."
+                "Investigar chasis de caza"
+                "Ricerca struttura Caccia Stellare"
+
+            LSTRING_ScoutTrialFormationTASKBAR
+                "Destroy Target Drones using a formation"
+                "Destruction des Drones-cibles. Méthode : Formation"
+                "Zieldrohnen mit einer Formation vernichten."
+                "Destruir naves teledirigidas con una formación"
+                "Distruggere il bersaglio Droni servendosi di una formazione"
+
+            LSTRING_ScoutTrialTacticsTASKBAR
+                "Destroy Target Drones using tactics"
+                "Destruction des Drones-cibles. Méthode : Tactique"
+                "Zieldrohnen unter Verwendung von Taktiken zerstören."
+                "Destruir naves teledirigidas con tácticas"
+                "Distruggi il bersaglio Droni con una strategia"
+
+            LSTRING_SalvageTrialTASKBAR
+                "Capture the Drone using a Salvage Corvette."
+                "Capture du Drone. Moyens : Corvette de sauvetage."
+                "Drohne mit Hilfe einer Bergungskorvette übernehmen."
+                "Capturar la nave teledirigida con una corbeta de salvamento"
+                "Cattura il Drone utilizzando una Corvetta di Recupero"
+
+            LSTRING_InterceptorTrialTASKBAR
+                "Use Interceptors to destroy advanced drones"
+                "Destruction des Drones de pointe. Moyens : Intercepteurs"
+                "Abfangjäger zur Zerstörung von Superdrohnen verwenden."
+                "Usar interceptadores para destruir naves teledirigidas avanzadas"
+                "Utilizza gli Intercettori per distruggere i Droni rimasti"
+
+            LSTRING_HyperspaceTASKBAR
+                "                      HYPERSPACE"
+                "                      HYPERESPACE"
+                "           HYPERRAUMSPRUNG"
+                "                    HIPERESPACIO"
+                "                    IPERSPAZIO"
+
+            LSTRING_ObjectiveIncomplete
+                "A mission objective remains incomplete. Consult objectives."
+                "Il reste un objectif de mission à accomplir. Consulter objectifs.Il reste un objectif de mission à accomplir. Consulter objectifs."
+                "Eine Aufgabe dieser Mission ist noch nicht abgeschlossen. Bitte Aufgabenziele überprüfen."
+                ""
+                ""
+
+
+    ENDL //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     FleetIntel     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+FSM FleetIntel
+        States FIIntro, FIIntro2, FIIntro3,
+
+               FIFormationTrialLBXIn, FIFormationTrialLBXIn2, FIFormationOpenSensors, FIFormationTrial, FIFormationTrial2,
+               FIFormationTrialPING, FIFormationTrialLBXOut, FIFormationTrialWAITEND, FIFormationTrialEND,
+
+               TutTip1, TutorialWait, TutTip2,
+
+               FIObjectiveIncomplete,
+
+               FCHyperspaceJuice,
+
+               FCCryoTrayJuice,
+
+               FIStartResearching, FIAlreadyResearching,
+
+               FITacticsTrialLBXIn, FITacticsTrialLBXIn2, FITacticsOpenSensors, FITacticsTrial, FITacticsTrial2, FITacticsTrialPING,
+               FITacticsTrialPING2, FITacticsTrialLBXOut, FITacticsTrialWAITEND, FITacticsTrialEND,
+
+               FISalvageTrialLBXIn, FISalvageTrialLBXIn2, FISalvageOpenSensors, FISalvageTrial, FISalvageTrial2, FISalvageTrialPING, FISalvageTrialLBXOut,
+               FISalvageTrialWAITEND, FISalvageTrialEND,
+
+               FIInterceptorTrialLBXIn, FIInterceptorTrialLBXIn2, FIInterceptorOpenSensors, FIInterceptorTrial, FIInterceptorTrial2, FIInterceptorTrialPING,
+               FIInterceptorTrialLBXOut, FIInterceptorTrialWAITEND, FIInterceptorTrialEND,
+
+               FIFormationTrialRepopulation, FITacticsTrialRepopulation, FIInterceptorTrialRepopulation, FISalvageTrialRepopulation,
+
+               FICorvetteChassisRasp, FICorvetteChassisUnderwayRasp,
+
+               FIHyperspace, FCHyperspaceModuleReady, FITriggerHyperspace,
+
+
+
+               FIIdle;
+
+        INIT
+                Jump FIIdle;
+        ENDINIT
+        WATCH
+                // If the player makes the taskbar go away, goes into the BM, RM, or SM, then remove the flashing box
+                IF ( (TutGameSentMessage ("Game_TaskbarOff,Start_BuildManager,Start_ResearchManager,Start_LaunchManager,KB_Sensors,TB_SensorsManager,SP_EscMenu")) AND
+                     (VarGet ("ObjectivesBoxIsFlashing") = TRUE) )
+                        TutRemoveAllPointers ();
+                        VarDestroy ("ObjectivesBoxIsFlashing");
+                ENDIF
+        ENDWATCH
+
+
+        // FLEET INTEL intro event - sets up harvesting and building a research ship objectives
+        STATE FIIntro //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M01_Intel_GoingOnline,0);                                 // Fleet Intelligence going on-line...
+                    //VarDestroy ("G_CLICK_Harvest");
+                    //VarDestroy ("G_CLICK_ResearchShip");
+            ENDINIT
+            WATCH
+                    IF (IntelEventEnded ())
+                            //VarCreateSet ("G_CreateInitialObjectives", TRUE);           // Tell other parts of the script to do stuff (create the objectives)
+                            //Jump FIIdle;
+                            Jump FIIntro2;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIIntro //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FIIntro2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M01_Intel_ResearchObjective,0);                          // Test construction by building the primary research ship.
+                    ForceTaskbar();
+                    ForceTaskbar();
+                    SoundEvent (267);                                                   // Play the movement mechanism "tick"
+                    TimerCreateSetStart ("FlashTaskbar", 1);
+                    ObjectiveCreate ("ResearchShip", LSTRING_ResearchShipTASKBAR, LSTRING_ResearchShipTASKBAR);           // Player must build a research ship
+            ENDINIT
+            WATCH
+                    IF (TimerExpiredDestroy ("FlashTaskbar"))
+                            TutSetPointerTargetFERegion ("TaskbarPointer", "TB_ObjectivesWindowInit");      // Flash the objectives box
+                            VarCreateSet ("ObjectivesBoxIsFlashing", TRUE);
+                    ENDIF
+                    IF (IntelEventEnded ())
+                            VarDestroy ("G_CLICK_ResearchShip");
+                            IFONCE (TRUE)
+                                    VarCreateSet ("G_CreateInitialObjectives", TRUE);           // Tell other parts of the script to do stuff (create the objectives)
+                            ENDIFONCE
+                            Jump FIIntro3;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIIntro2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FIIntro3 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M01_Intel_HavestingObjective,0);                          // Test resource processing by harvesting the asteroids provided nearby.
+                    SoundEvent (267);                                                   // Play the movement mechanism "tick"
+                    ObjectiveCreate ("Harvest", LSTRING_HarvestTASKBAR, LSTRING_HarvestTASKBAR);                     // Player must harvest some asteroids (1 load)
+            ENDINIT
+            WATCH
+                    IF (IntelEventEnded ())
+                            VarDestroy ("G_CLICK_Harvest");
+                            IFONCE (TRUE)
+                                    VarCreateSet ("G_CreateInitialObjectives", TRUE);           // Tell other parts of the script to do stuff (create the objectives)
+                            ENDIFONCE
+                            IFONCE (TRUE)
+                                    Jump FCHyperspaceJuice;
+                            ENDIFONCE
+                            Jump FIIdle;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIIntro3 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+        // FLEET INTEL formation trial event - sets up formation trial objective
+        STATE FIFormationTrialLBXIn //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TutRemoveAllPointers ();
+                    PauseOtherKAS ();
+                    wideScreenIn(90);                                   // letterbox bars fade in over 3 seconds
+                    Jump FIFormationOpenSensors;
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE FIFormationTrialLBXIn //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FIFormationTrialLBXIn2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    PauseOtherKAS ();
+                    wideScreenIn(30);                                   // letterbox bars fade in over 1 second
+                    TimerCreateSetStart ("WideScreenTimer", 2);
+            ENDINIT
+            WATCH
+                    IF (TimerExpiredDestroy ("WideScreenTimer"))
+                            OpenSensors (TRUE);
+                            PauseUniverse();
+                            Jump FIFormationTrialPING;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIFormationTrialLBXIn2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FIFormationOpenSensors //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TimerCreateSetStart ("FIOpenSensorsTimer", 4);      // give 3 seconds for the LBX bars, then wait an additional 1 second with bars on
+            ENDINIT
+            WATCH
+                    IF (TimerExpiredDestroy ("FIOpenSensorsTimer"))
+                            OpenSensors (TRUE);
+                            PauseUniverse();
+                            Jump FIFormationTrial;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIFormationOpenSensors //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FIFormationTrial //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TimerCreateSetStart ("FIFormationTrialTimer", 1);
+            ENDINIT
+            WATCH
+                    // FI event for the SCOUT FORMATION trials
+                    IF (TimerExpiredDestroy ("FIFormationTrialTimer"))
+                            Jump FIFormationTrial2;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIFormationTrial //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FIFormationTrial2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M01_Intel_CombatTrials,0);                             // Standby to begin combat trials.  First we will be monitoring formation performance.
+            ENDINIT
+            WATCH
+                    VarDestroy ("IntelEvent");
+                    VarCreateSet("IntelEvent", IntelEventEnded());
+                    IF (VarGet("IntelEvent") = 2)
+                            wideScreenOut (30);                                         // player pressed SPACE or ESC and wants out immediately so remove the LBX in 1 second
+                            Jump FIFormationTrialEND;
+                    ELSEIF (VarGet("IntelEvent"))
+                            Jump FIFormationTrialPING;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIFormationTrial2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FIFormationTrialPING //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M01_Intel_CombatTrialsObjective,0);                    // Target Drones have been provided here.  Assign a formation to your Fighters and destroy the Drones.
+                    TimerCreateSetStart ("FIFormationTrialPINGTimer", 1);
+            ENDINIT
+            WATCH
+                    VarDestroy ("IntelEvent");
+                    VarCreateSet("IntelEvent", IntelEventEnded());
+                    IF (VarGet("IntelEvent") = 2)
+                            IF (VarGet ("NeverCreateFormationPingAgain") = FALSE)
+                                    PingAddShips (TEAMSHIPS_TDFormationTrial, "FormationTrialPING");
+                                    //PingAddPoint (POINT_FormationTrialPING, "FormationTrialPING");      // Create the PING for the Target Drones to be destroyed
+                                    VarCreateSet ("NeverCreateFormationPingAgain", TRUE);
+                            ENDIF
+                            wideScreenOut (30);                     // player pressed SPACE or ESC and wants out immediately so remove the LBX in 1 second
+                            Jump FIFormationTrialEND;
+                    ELSEIF (VarGet("IntelEvent"))
+                            Jump FIFormationTrialWAITEND;
+                    ENDIF
+
+                    IF (TimerExpiredDestroy ("FIFormationTrialPINGTimer"))
+                            SoundEvent (267);                                                   // Play the movement mechanism "tick" when the pointer is drawn
+                            IF (VarGet ("NeverCreateFormationPingAgain") = FALSE)
+                                    PingAddShips (TEAMSHIPS_TDFormationTrial, "FormationTrialPING");
+                                    //PingAddPoint (POINT_FormationTrialPING, "FormationTrialPING");      // Create the PING for the Target Drones to be destroyed
+                                    VarCreateSet ("NeverCreateFormationPingAgain", TRUE);
+                            ENDIF
+                            TutSetTextDisplayBoxToSubtitleRegion();
+                            TutSetPointerTargetShipSelection ("FormationTrialPOINTER", TEAMSHIPS_TDFormationTrial);
+                            //TutSetPointerTargetAIVolume ("FormationTrialPOINTER", VOLUME_FormationTrial);
+                            //Jump FIFormationTrialLBXOut;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIFormationTrialPING //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FIFormationTrialLBXOut //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TimerCreateSetStart ("FIFormationTrialLBXOutTimer", 10);
+            ENDINIT
+            WATCH
+                    IF (TimerExpiredDestroy ("FIFormationTrialLBXOutTimer"))
+                            wideScreenOut(150);                      // letterbox bars fade out over 5 seconds
+                            Jump FIFormationTrialWAITEND;
+                    ENDIF
+                    IF (IntelEventEnded())
+                            wideScreenOut (30);                     // player pressed SPACE or ESC and wants out immediately so remove the LBX in 1 second
+                            Jump FIFormationTrialEND;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIFormationTrialLBXOut //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FIFormationTrialWAITEND //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TimerCreateSetStart ("FIFormationTrialENDTimer", 2);
+            ENDINIT
+            WATCH
+                    VarDestroy ("IntelEvent");
+                    VarCreateSet("IntelEvent", IntelEventEnded());
+                    IF (VarGet("IntelEvent") = 2)
+                            wideScreenOut (30);                     // player pressed SPACE or ESC and wants out immediately so remove the LBX in 1 second
+                            Jump FIFormationTrialEND;
+                    ENDIF
+
+                    IF (TimerExpiredDestroy ("FIFormationTrialENDTimer"))
+                            wideScreenOut (30);                     // fade out over 1 second
+                            Jump FIFormationTrialEND;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIFormationTrialWAITEND //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FIFormationTrialEND //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TutRemoveAllPointers ();
+                    UnpauseUniverse();
+                    UnpauseOtherKAS ();
+                    CloseSensors (TRUE);
+                    VarDestroy ("G_CLICK_ScoutTrialFormations");
+                    IFONCE (TRUE)
+                            VarCreateSet ("G_BeginScoutTrialFormations", TRUE);     // Lets other parts of the script know the scout trials (formations) have begun
+                            TimerCreateSetStart ("DisplayTutTip1", 7);              // Create this timer only once, so tutorial tips play once
+                    ENDIFONCE
+                    Jump FIIdle;
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE FIFormationTrialEND //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+        // TUTORIAL event, 2 tips: (1) objectives are found on the taskbar  (2) click on objective text to replay the event
+        STATE TutTip1 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    //SoundEvent (267);                               // Play the movement mechanism "tick" when the tutorial tip comes up
+                    //TutSetTextDisplayBoxGame(20, 20, 300, 50);      // xstart, ystart, width, height
+                    //TutShowText(LSTRING_TutorialTip1);
+                    //TutShowNextButton();
+                    //TutSetPointerTargetXY("SomePointer", 480, 450); // x,y
+                    TimerCreateSetStart ("GoToTutorialTip1",10);
+            ENDINIT
+            WATCH
+                    //IF (VarGet ("G_RenderMainScreen") = FALSE)      // Means the player must be in a fullscreen GUI (not at the main game screen)
+                    //        TutHideText();
+                    //        TutHideNextButton();
+                    //        TutRedrawEverything();
+                    //ELSE
+                    //        TutSetTextDisplayBoxGame(20, 20, 300, 50);      // xstart, ystart, width, height
+                    //        TutShowText(LSTRING_TutorialTip1);
+                    //        TutShowNextButton();
+                    //        TutSetPointerTargetXY("SomePointer", 480, 450); // x,y
+                    //ENDIF
+                    IF ( (TutNextButtonClicked()) OR (TimerExpiredDestroy ("GoToTutorialTip1")) )
+                    //        TutHideText();
+                    //        TutHideNextButton();
+                            TimerCreateSetStart ("DisplayTutTip2", 1);
+                            Jump TutorialWait;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE TutTip1 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE TutorialWait //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+            ENDINIT
+            WATCH
+                    IF (TimerExpiredDestroy ("DisplayTutTip2"))
+                            Jump TutTip2;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE TutorialWait //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE TutTip2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    //SoundEvent (267);                               // Play the movement mechanism "tick" when the tutorial tip comes up
+                    //TutSetTextDisplayBoxGame(20, 20, 300, 50);      // xstart, ystart, width, height
+                    //TutShowText(LSTRING_TutorialTip2);
+                    //TutShowNextButton();
+                    //TutSetPointerTargetXY("SomePointer", 480, 440); // x,y
+                    TimerCreateSetStart ("GoToTutorialTip2",10);
+            ENDINIT
+            WATCH
+                    //IF (VarGet ("G_RenderMainScreen") = FALSE)      // Means the player must be in a fullscreen GUI (not at the main game screen)
+                    //        TutHideText();
+                    //        TutHideNextButton();
+                    //        TutRedrawEverything();
+                    //ELSE
+                    //        TutSetTextDisplayBoxGame(20, 20, 300, 50);      // xstart, ystart, width, height
+                    //        TutShowText(LSTRING_TutorialTip2);
+                    //        TutShowNextButton();
+                    //        TutSetPointerTargetXY("SomePointer", 480, 440); // x,y
+                    //ENDIF
+                    IF ( (TutNextButtonClicked()) OR
+                         (TimerExpiredDestroy ("GoToTutorialTip2")) OR
+                         (VarGet ("G_CLICK_Harvest")) OR
+                         (VarGet ("G_CLICK_ResearchShip")) OR
+                         (VarGet ("G_CLICK_ScoutTrialFormations")) )
+                            TutHideText();
+                            TutHideNextButton();
+                            Jump FIIdle;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE TutTip2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+
+
+        // FLEET COMMAND event - gives you juice about the hyperspace drive
+        STATE FCHyperspaceJuice //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M01_Fleet_HyperspaceCharging,0);                                       // Hyperspace module charging...
+                    VarCreateSet ("G_FormationDronesHyperspaceIn", TRUE);
+                    //TimerCreateSetStart ("FCHyperspaceJuiceENDTimer", 13);
+            ENDINIT
+            WATCH
+                    //IF (TimerExpiredDestroy ("FCHyperspaceJuiceENDTimer"))
+                    IF (IntelEventEnded ())
+                            Jump FIIdle;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FCHyperspaceJuice //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+
+
+
+        // FLEET INTEL event - reminds you that an objective is incomplete after a certain amount of time with inactivity
+        STATE FIObjectiveIncomplete //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SubtitleSimulate (4, 300, LSTRING_ObjectiveIncomplete);
+                    //SpeechEvent (M01_Fleet_HyperspaceCharging,0);                                       // Hyperspace module charging...
+            ENDINIT
+            WATCH
+                    IF (IntelEventEnded ())
+                            Jump FIIdle;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIObjectiveIncomplete //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+
+
+        // FLEET COMMAND event - gives you the juice about the cryo trays
+        STATE FCCryoTrayJuice //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    //SpeechEvent (1658,0);                                       // Kharak Launch Command has notified me that the last of the cryogenic trays are in position...
+                    //TimerCreateSetStart ("FCCryoJuiceENDTimer", 19);
+            ENDINIT
+            WATCH
+                    //IF (TimerExpiredDestroy ("FCCryoJuiceENDTimer"))
+                    //IF (IntelEventEnded ())
+                            Jump FIIdle;
+                    //ENDIF
+            ENDWATCH
+        ENDSTATE FCCryoTrayJuice //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+
+
+
+        // FLEET INTEL event - tells you to start researching if you've built a Research Ship
+        STATE FIStartResearching //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M01_Intel_ResearchOnline,0);                                       // Research Ship has been constructed and the Research Division is online...
+                    //TimerCreateSetStart ("FIStartResearchingENDTimer", 16);
+            ENDINIT
+            WATCH
+                    //IF (TimerExpiredDestroy ("FIStartResearchingENDTimer"))
+                    IF (IntelEventEnded ())
+                            VarCreateSet ("G_OnlyCreateResearchObjOnce", TRUE);
+                            VarDestroy ("G_CLICK_StartResearch");
+                            Jump FIIdle;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIStartResearching //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+
+
+        // FLEET INTEL event - tells you to about the Fighter Chassis if you've already started researching
+        STATE FIAlreadyResearching //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    //SpeechEvent (2670,0);                                       // Research reports that Fighter Chassis project is underway...
+                    //TimerCreateSetStart ("FIAlreadyResearchingENDTimer", 15);
+            ENDINIT
+            WATCH
+                    //IF (TimerExpiredDestroy ("FIAlreadyResearchingENDTimer"))
+                    //IF (IntelEventEnded ())
+                            Jump FIIdle;
+                    //ENDIF
+            ENDWATCH
+        ENDSTATE FIAlreadyResearching //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+        // FLEET INTEL tactics trial event - sets up tactics trial objective
+        STATE FITacticsTrialLBXIn //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    PauseOtherKAS ();
+                    wideScreenIn(90);                                   // letterbox bars fade in over 3 seconds
+                    Jump FITacticsOpenSensors;
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE FITacticsTrialLBXIn //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FITacticsTrialLBXIn2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    wideScreenIn(30);                                   // letterbox bars fade in over 1 second
+                    TimerCreateSetStart ("WideScreenTimer", 2);
+            ENDINIT
+            WATCH
+                    IF (TimerExpiredDestroy ("WideScreenTimer"))
+                            OpenSensors (TRUE);
+                            PauseUniverse();
+                            Jump FITacticsTrialPING;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FITacticsTrialLBXIn2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FITacticsOpenSensors //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TimerCreateSetStart ("FIOpenSensorsTimer", 4);      // give 3 seconds for the LBX bars, then wait an additional 1 second with bars on
+            ENDINIT
+            WATCH
+                    IF (TimerExpiredDestroy ("FIOpenSensorsTimer"))
+                            OpenSensors (TRUE);
+                            PauseUniverse();
+                            Jump FITacticsTrial;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FITacticsOpenSensors //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FITacticsTrial //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TimerCreateSetStart ("FITacticsTrialTimer", 1);
+            ENDINIT
+            WATCH
+                    // FI event for the SCOUT TACTICS trials
+                    VarDestroy ("IntelEvent");
+                    VarCreateSet("IntelEvent", IntelEventEnded());
+                    IF (VarGet("IntelEvent") = 2)
+                            wideScreenOut (30);                     // player pressed SPACE or ESC and wants out immediately so remove the LBX in 1 second
+                            Jump FITacticsTrialEND;
+                    ENDIF
+
+                    IF (TimerExpiredDestroy ("FITacticsTrialTimer"))
+                            //SpeechEvent (M01_Intel_FormationAnalysis,0);                             // Analysis of combat data shows formation flight increases attack efficiency by 22%...
+                            Jump FITacticsTrial2;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FITacticsTrial //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FITacticsTrial2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M01_Intel_FormationAnalysis,0);                             // Analysis of combat data shows formation flight increases attack efficiency by 22%...
+            ENDINIT
+            WATCH
+                    // FI event for the SCOUT TACTICS trials
+                    VarDestroy ("IntelEvent");
+                    VarCreateSet("IntelEvent", IntelEventEnded());
+                    IF (VarGet("IntelEvent") = 2)
+                            wideScreenOut (30);                     // player pressed SPACE or ESC and wants out immediately so remove the LBX in 1 second
+                            Jump FITacticsTrialEND;
+                    ELSEIF (VarGet("IntelEvent"))
+                            Jump FITacticsTrialPING;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FITacticsTrial2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FITacticsTrialPING //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M01_Intel_TacticsTrial,0);                             //  The next trial will test the effectiveness of tactics.  Standby to begin tactics trial.  Use Aggressive or Evasive tactics and engage the Target Drones here.
+                    TimerCreateSetStart ("FITacticsTrialPINGTimer", 6);
+            ENDINIT
+            WATCH
+                    VarDestroy ("IntelEvent");
+                    VarCreateSet("IntelEvent", IntelEventEnded());
+                    IF (VarGet("IntelEvent") = 2)
+                            IF (VarGet ("NeverCreateTacticsPingAgain") = FALSE)
+                                    //PingAddPoint (POINT_TacticsTrialPING, "TacticsTrialPING");      // Create the PING for the Target Drones to be destroyed
+                                    VarCreateSet ("NeverCreateTacticsPingAgain", TRUE);
+                            ENDIF
+                            wideScreenOut (30);                     // player pressed SPACE or ESC and wants out immediately so remove the LBX in 1 second
+                            Jump FITacticsTrialEND;
+                    ELSEIF (VarGet("IntelEvent"))
+                            Jump FITacticsTrialWAITEND;
+                    ENDIF
+
+                    IF (TimerExpiredDestroy ("FITacticsTrialPINGTimer"))
+                            SoundEvent (267);                                                   // Play the movement chime when the pointer is drawn
+                            IF (VarGet ("NeverCreateTacticsPingAgain") = FALSE)
+                                    //PingAddShips (TEAMSHIPS_TDTacticsTrial, "TacticsTrialPING");
+                                    //PingAddPoint (POINT_TacticsTrialPING, "TacticsTrialPING");      // Create the PING for the Target Drones to be destroyed
+                                    VarCreateSet ("NeverCreateTacticsPingAgain", TRUE);
+                            ENDIF
+                            TutSetTextDisplayBoxToSubtitleRegion();
+                            TutSetPointerTargetShipSelection("TacticsTrialPOINTER", TEAMSHIPS_TDTacticsTrial);
+                            //TutSetPointerTargetAIVolume ("TacticsTrialPOINTER", VOLUME_TacticsTrial);
+                            //Jump FITacticsTrialLBXOut;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FITacticsTrialPING //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        // this state is a HACK to work around this speech event which ends twice
+        STATE FITacticsTrialPING2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+            ENDINIT
+            WATCH
+                    IF (TimerExpiredDestroy ("FITacticsTrialPINGTimer"))
+                            SoundEvent (267);                                                   // Play the movement chime when the pointer is drawn
+                            IF (VarGet ("NeverCreateTacticsPingAgain") = FALSE)
+                                    //PingAddShips (TEAMSHIPS_TDTacticsTrial, "TacticsTrialPING");
+                                    //PingAddPoint (POINT_TacticsTrialPING, "TacticsTrialPING");      // Create the PING for the Target Drones to be destroyed
+                                    VarCreateSet ("NeverCreateTacticsPingAgain", TRUE);
+                            ENDIF
+                            TutSetTextDisplayBoxToSubtitleRegion();
+                            TutSetPointerTargetShipSelection("TacticsTrialPOINTER", TEAMSHIPS_TDTacticsTrial);
+                            //TutSetPointerTargetAIVolume ("TacticsTrialPOINTER", VOLUME_TacticsTrial);
+                            Jump FITacticsTrialLBXOut;
+                    ENDIF
+                    IF (IntelEventEnded())
+                            SoundEvent (267);                                                   // Play the movement chime when the pointer is drawn
+                            IF (VarGet ("NeverCreateTacticsPingAgain") = FALSE)
+                                    //PingAddShips (TEAMSHIPS_TDTacticsTrial, "TacticsTrialPING");
+                                    //PingAddPoint (POINT_TacticsTrialPING, "TacticsTrialPING");      // Create the PING for the Target Drones to be destroyed
+                                    VarCreateSet ("NeverCreateTacticsPingAgain", TRUE);
+                            ENDIF
+                            TutSetTextDisplayBoxToSubtitleRegion();
+                            TutSetPointerTargetShipSelection("TacticsTrialPOINTER", TEAMSHIPS_TDTacticsTrial);
+                            //TutSetPointerTargetAIVolume ("TacticsTrialPOINTER", VOLUME_TacticsTrial);
+                            wideScreenOut (30);                     // player pressed SPACE or ESC and wants out immediately so remove the LBX in 1 second
+                            Jump FITacticsTrialEND;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FITacticsTrialPING2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+        STATE FITacticsTrialLBXOut //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TimerCreateSetStart ("FITacticsTrialLBXOutTimer", 15);
+            ENDINIT
+            WATCH
+                    IF (TimerExpiredDestroy ("FITacticsTrialLBXOutTimer"))
+                            wideScreenOut(150);                      // letterbox bars fade out over 5 seconds
+                            Jump FITacticsTrialEND;
+                    ENDIF
+                    IF (IntelEventEnded() = 2)
+                            wideScreenOut (30);                     // player pressed SPACE or ESC and wants out immediately so remove the LBX in 1 second
+                            Jump FITacticsTrialEND;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FITacticsTrialLBXOut //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FITacticsTrialWAITEND //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TimerCreateSetStart ("FITacticsTrialENDTimer", 2);
+            ENDINIT
+            WATCH
+                    VarDestroy ("IntelEvent");
+                    VarCreateSet("IntelEvent", IntelEventEnded());
+                    IF (VarGet("IntelEvent") = 2)
+                            wideScreenOut (30);                     // player pressed SPACE or ESC and wants out immediately so remove the LBX in 1 second
+                            Jump FITacticsTrialEND;
+                    ENDIF
+
+                    IF (TimerExpiredDestroy ("FITacticsTrialENDTimer"))
+                            wideScreenOut (30);                     // player pressed SPACE or ESC and wants out immediately so remove the LBX in 1 second
+                            Jump FITacticsTrialEND;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FITacticsTrialWAITEND //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FITacticsTrialEND //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+            ENDINIT
+            WATCH
+                    TutRemoveAllPointers ();
+                    UnpauseUniverse();
+                    UnpauseOtherKAS ();
+                    CloseSensors (TRUE);
+                    IFONCE (TRUE)
+                            VarCreateSet ("G_BeginScoutTrialTactics", TRUE);     // Lets other parts of the script know the scout trials (formations) have begun
+                    ENDIFONCE
+                    VarDestroy ("G_CLICK_ScoutTrialTactics");
+                    Jump FIIdle;
+            ENDWATCH
+        ENDSTATE FITacticsTrialEND //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // FLEET INTEL salvage trial event - sets up salvage trial objective
+        STATE FISalvageTrialLBXIn //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    //PauseOtherKAS ();
+                    IFONCE (TRUE)
+                            VarCreateSet ("G_SalvageTrialHasBegun", TRUE);
+                    ENDIFONCE
+                    wideScreenIn(90);                                   // letterbox bars fade in over 3 seconds
+                    Jump FISalvageOpenSensors;
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE FISalvageTrialLBXIn //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FISalvageTrialLBXIn2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    PauseOtherKAS ();
+                    wideScreenIn(30);                                   // letterbox bars fade in over 1 second
+                    TimerCreateSetStart ("WideScreenTimer", 2);
+            ENDINIT
+            WATCH
+                    IF (TimerExpiredDestroy ("WideScreenTimer"))
+                            OpenSensors (TRUE);
+                            PauseUniverse();
+                            Jump FISalvageTrialPING;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FISalvageTrialLBXIn2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FISalvageOpenSensors //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TimerCreateSetStart ("FIOpenSensorsTimer", 4);      // give 3 seconds for the LBX bars, then wait an additional 1 second with bars on
+            ENDINIT
+            WATCH
+                    IF (TimerExpiredDestroy ("FIOpenSensorsTimer"))
+                            OpenSensors (TRUE);
+                            PauseUniverse();
+                            Jump FISalvageTrial;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FISalvageOpenSensors //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FISalvageTrial //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TimerCreateSetStart ("FISalvageTrialTimer", 1);
+            ENDINIT
+            WATCH
+                    // FI event for the SALVAGE trial
+                    IF (TimerExpiredDestroy ("FISalvageTrialTimer"))
+                            //SpeechEvent (M01_Intel_TacticsComplete,0);                             // Tactics trial complete...
+                            Jump FISalvageTrial2;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FISalvageTrial //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FISalvageTrial2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    IFONCE (TRUE)
+                            VarCreateSet ("G_CreateSalvageObjective", TRUE);
+                    ENDIFONCE
+                    SpeechEvent (M01_Intel_TacticsComplete,0);                             // Tactics trial complete...
+            ENDINIT
+            WATCH
+                    VarDestroy ("IntelEvent");
+                    VarCreateSet("IntelEvent", IntelEventEnded());
+                    IF (VarGet("IntelEvent") = 2)
+                            wideScreenOut (30);                                         // player pressed SPACE or ESC and wants out immediately so remove the LBX in 1 second
+                            Jump FISalvageTrialEND;
+                    ELSEIF (VarGet("IntelEvent"))
+                            Jump FISalvageTrialPING;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FISalvageTrial2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FISalvageTrialPING //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    IFONCE (TRUE)
+                            VarCreateSet ("G_CreateSalvageObjective", TRUE);
+                    ENDIFONCE
+                    SpeechEvent (M01_Intel_SalvageTrial,0);                             // The next trial will test the performance of the Salvage Corvette.  Build one and capture the Target Drone here.
+                    TimerCreateSetStart ("FISalvageTrialPINGTimer", 4);
+            ENDINIT
+            WATCH
+                    VarDestroy ("IntelEvent");
+                    VarCreateSet("IntelEvent", IntelEventEnded());
+                    IF (VarGet("IntelEvent") = 2)
+                            SoundEvent (267);                                                   // Play the movement chime when the pointer is drawn
+                            IF (VarGet ("NeverCreateSalvagePingAgain") = FALSE)
+                                    //PingAddPoint (POINT_SalvageTrialPING, "SalvageTrialPING");      // Create the PING for the Target Drones to be destroyed
+                                    //PingAddShips (TEAMSHIPS_TDSalvageTrial, "SalvageTrialPING");
+                                    VarCreateSet ("NeverCreateSalvagePingAgain", TRUE);
+                            ENDIF
+                            wideScreenOut (30);                     // player pressed SPACE or ESC and wants out immediately so remove the LBX in 1 second
+                            Jump FISalvageTrialEND;
+                    ELSEIF (VarGet("IntelEvent"))
+                            Jump FISalvageTrialWAITEND;
+                    ENDIF
+
+
+
+                    IF (TimerExpiredDestroy ("FISalvageTrialPINGTimer"))
+                            SoundEvent (267);                                                   // Play the movement chime when the pointer is drawn
+                            IF (VarGet ("NeverCreateSalvagePingAgain") = FALSE)
+                                    //PingAddPoint (POINT_SalvageTrialPING, "SalvageTrialPING");      // Create the PING for the Target Drones to be destroyed
+                                    //PingAddShips (TEAMSHIPS_TDSalvageTrial, "SalvageTrialPING");
+                                    VarCreateSet ("NeverCreateSalvagePingAgain", TRUE);
+                            ENDIF
+                            TutSetTextDisplayBoxToSubtitleRegion();
+                            TutSetPointerTargetShipSelection("SalvageTrialPOINTER", TEAMSHIPS_TDSalvageTrial);
+                            //TutSetPointerTargetAIVolume ("SalvageTrialPOINTER", VOLUME_SalvageTrial);
+                            //Jump FISalvageTrialLBXOut;
+                    ENDIF
+
+            ENDWATCH
+        ENDSTATE FISalvageTrialPING //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FISalvageTrialLBXOut //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TimerCreateSetStart ("FISalvageTrialLBXOutTimer", 5);
+            ENDINIT
+            WATCH
+                    IF ( (TimerExpiredDestroy ("FISalvageTrialLBXOutTimer")) OR (IntelEventEnded()) )
+                            wideScreenOut(150);                      // letterbox bars fade out over 5 seconds
+                            Jump FISalvageTrialWAITEND;
+                    ENDIF
+                    IF (IntelEventEnded())
+                            wideScreenOut (30);                     // player pressed SPACE or ESC and wants out immediately so remove the LBX in 1 second
+                            Jump FISalvageTrialEND;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FISalvageTrialLBXOut //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FISalvageTrialWAITEND //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TimerCreateSetStart ("FISalvageTrialENDTimer", 2);
+            ENDINIT
+            WATCH
+                    VarDestroy ("IntelEvent");
+                    VarCreateSet("IntelEvent", IntelEventEnded());
+                    IF (VarGet("IntelEvent") = 2)
+                            wideScreenOut (30);                     // player pressed SPACE or ESC and wants out immediately so remove the LBX in 1 second
+                            Jump FISalvageTrialEND;
+                    ENDIF
+
+                    IF (TimerExpiredDestroy ("FISalvageTrialENDTimer"))
+                            wideScreenOut (30);                     // player pressed SPACE or ESC and wants out immediately so remove the LBX in 1 second
+                            Jump FISalvageTrialEND;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FISalvageTrialWAITEND //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FISalvageTrialEND //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TutRemoveAllPointers ();
+                    UnpauseUniverse();
+                    UnpauseOtherKAS ();
+                    CloseSensors (TRUE);
+                    VarDestroy ("G_CLICK_SalvageTrial");
+                    Jump FIIdle;
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE FISalvageTrialEND //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        // FLEET INTEL Interceptor trial event - sets up Interceptor trial objective
+        STATE FIInterceptorTrialLBXIn //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    PauseOtherKAS ();
+                    wideScreenIn(90);                                   // letterbox bars fade in over 3 seconds
+                    Jump FIInterceptorOpenSensors;
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE FIInterceptorTrialLBXIn //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FIInterceptorTrialLBXIn2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    wideScreenIn(30);                                   // letterbox bars fade in over 1 second
+                    TimerCreateSetStart ("WideScreenTimer", 2);
+            ENDINIT
+            WATCH
+                    IF (TimerExpiredDestroy ("WideScreenTimer"))
+                            OpenSensors (TRUE);
+                            PauseUniverse ();
+                            Jump FIInterceptorTrialPING;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIInterceptorTrialLBXIn2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FIInterceptorOpenSensors //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TimerCreateSetStart ("FIOpenSensorsTimer", 4);      // give 3 seconds for the LBX bars, then wait an additional 1 second with bars on
+            ENDINIT
+            WATCH
+                    IF (TimerExpiredDestroy ("FIOpenSensorsTimer"))
+                            OpenSensors (TRUE);
+                            PauseUniverse();
+                            Jump FIInterceptorTrial;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIInterceptorOpenSensors //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FIInterceptorTrial //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    VarCreateSet ("G_BeginInterceptorTrialNOW", TRUE);
+                    TimerCreateSetStart ("FIInterceptorTrialTimer", 1);
+            ENDINIT
+            WATCH
+                    // FI event for the SALVAGE trial
+                    IF (TimerExpiredDestroy ("FIInterceptorTrialTimer"))
+                            //SpeechEvent (M01_Intel_BuildInterceptors,0);                             //   Interceptors are ready for construction.
+                            Jump FIInterceptorTrial2;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIInterceptorTrial //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FIInterceptorTrial2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M01_Intel_BuildInterceptors,0);                             // Interceptors are ready for construction.
+            ENDINIT
+            WATCH
+                    VarDestroy ("IntelEvent");
+                    VarCreateSet("IntelEvent", IntelEventEnded());
+                    IF (VarGet("IntelEvent") = 2)
+                            wideScreenOut (30);                                         // player pressed SPACE or ESC and wants out immediately so remove the LBX in 1 second
+                            Jump FIInterceptorTrialEND;
+                    ELSEIF (VarGet("IntelEvent"))
+                            Jump FIInterceptorTrialPING;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIInterceptorTrial2 //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FIInterceptorTrialPING //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M01_Intel_AdvancedCombatTrials,0);                     // Advanced Target Drones with heavier armor have been provided.  Using Interceptors, begin the mock combat exercise here.
+                    TimerCreateSetStart ("FIInterceptorTrialPINGTimer", 3);
+            ENDINIT
+            WATCH
+                    VarDestroy ("IntelEvent");
+                    VarCreateSet("IntelEvent", IntelEventEnded());
+                    IF (VarGet("IntelEvent") = 2)
+                            IF (VarGet ("NeverCreateInterceptorPingAgain") = FALSE)
+                                    //PingAddShips (TEAMSHIPS_TDInterceptorTrial, "InterceptorTrialPING");
+                                    //PingAddPoint (POINT_InterceptorTrialPING, "InterceptorTrialPING");      // Create the PING for the Target Drones to be destroyed
+                                    VarCreateSet ("NeverCreateInterceptorPingAgain", TRUE);
+                            ENDIF
+                            wideScreenOut (30);                     // player pressed SPACE or ESC and wants out immediately so remove the LBX in 1 second
+                            Jump FIInterceptorTrialEND;
+                    ELSEIF (VarGet("IntelEvent"))
+                            Jump FIInterceptorTrialWAITEND;
+                    ENDIF
+
+                    IF (TimerExpiredDestroy ("FIInterceptorTrialPINGTimer"))
+                            SoundEvent (267);                                                   // Play the movement chime when the pointer is drawn
+                            IF (VarGet ("NeverCreateInterceptorPingAgain") = FALSE)
+                                    //PingAddShips (TEAMSHIPS_TDInterceptorTrial, "InterceptorTrialPING");
+                                    //PingAddPoint (POINT_InterceptorTrialPING, "InterceptorTrialPING");      // Create the PING for the Target Drones to be destroyed
+                                    VarCreateSet ("NeverCreateInterceptorPingAgain", TRUE);
+                            ENDIF
+                            TutSetTextDisplayBoxToSubtitleRegion();
+                            TutSetPointerTargetShipSelection ("InterceptorTrialPOINTER", TEAMSHIPS_TDInterceptorTrial);
+                            //TutSetPointerTargetAIVolume ("InterceptorTrialPOINTER", VOLUME_InterceptorTrialPOINT);
+                            //Jump FIInterceptorTrialLBXOut;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIInterceptorTrialPING //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FIInterceptorTrialLBXOut //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TimerCreateSetStart ("FIInterceptorTrialLBXOutTimer", 10);
+            ENDINIT
+            WATCH
+                    IF (TimerExpiredDestroy ("FIInterceptorTrialLBXOutTimer"))
+                            wideScreenOut(150);                      // letterbox bars fade out over 5 seconds
+                            Jump FIInterceptorTrialWAITEND;
+                    ENDIF
+                    IF (IntelEventEnded ())
+                            wideScreenOut (30);                     // player pressed SPACE or ESC and wants out immediately so remove the LBX in 1 second
+                            Jump FIInterceptorTrialEND;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIInterceptorTrialLBXOut //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FIInterceptorTrialWAITEND //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TimerCreateSetStart ("FIInterceptorTrialENDTimer", 2);
+            ENDINIT
+            WATCH
+                    VarDestroy ("IntelEvent");
+                    VarCreateSet("IntelEvent", IntelEventEnded());
+                    IF (VarGet("IntelEvent") = 2)
+                            wideScreenOut (30);                     // player pressed SPACE or ESC and wants out immediately so remove the LBX in 1 second
+                            Jump FIInterceptorTrialEND;
+                    ENDIF
+
+                    IF (TimerExpiredDestroy ("FIInterceptorTrialENDTimer"))
+                            wideScreenOut (30);                     // player pressed SPACE or ESC and wants out immediately so remove the LBX in 1 second
+                            Jump FIInterceptorTrialEND;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIInterceptorTrialWAITEND //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        STATE FIInterceptorTrialEND //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TutRemoveAllPointers ();
+                    UnpauseUniverse();
+                    UnpauseOtherKAS ();
+                    CloseSensors (TRUE);
+                    VarDestroy ("G_CLICK_InterceptorTrial");
+                    Jump FIIdle;
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE FIInterceptorTrialEND //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+
+
+
+        // FLEET INTEL event - if the player kills the TD's in the FORMATION trial, let them know they didn't complete the objective
+        STATE FIFormationTrialRepopulation //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M01_Intel_CombatUseFormation,0);                                       // Target Drones destroyed...
+                    //TimerCreateSetStart ("FIFormationTrialRepopENDTimer", 12);
+            ENDINIT
+            WATCH
+                    //IF (TimerExpiredDestroy ("FIFormationTrialRepopENDTimer"))
+                    IF (IntelEventEnded ())
+                            Jump FIIdle;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIFormationTrialRepopulation //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        // FLEET INTEL event - if the player kills the TD's in the TACTICS trial, let them know they didn't complete the objective
+        STATE FITacticsTrialRepopulation //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M01_Intel_CombatUseTactics,0);                                       // Target Drones destroyed...
+                    //TimerCreateSetStart ("FITacticsTrialRepopENDTimer", 12);
+            ENDINIT
+            WATCH
+                    //IF (TimerExpiredDestroy ("FITacticsTrialRepopENDTimer"))
+                    IF (IntelEventEnded ())
+                            Jump FIIdle;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FITacticsTrialRepopulation //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        // FLEET INTEL event - if the player kills the TD's in the INTERCEPTOR trial, let them know they didn't complete the objective
+        STATE FIInterceptorTrialRepopulation //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M01_Intel_CombatUseInterceptors,0);                                       // Advanced Target Drones destroyed...
+                    //TimerCreateSetStart ("FIInterceptorTrialRepopENDTimer", 12);
+            ENDINIT
+            WATCH
+                    //IF (TimerExpiredDestroy ("FIInterceptorTrialRepopENDTimer"))
+                    IF (IntelEventEnded ())
+                            Jump FIIdle;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIInterceptorTrialRepopulation //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        // FLEET INTEL event - if the player kills the TD in the SALVAGE trial, let them know they didn't complete the objective
+        STATE FISalvageTrialRepopulation //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M01_Intel_SalvageTargetDestroyed,0);                                       // Salvage target destroyed...
+                    //PingAddShips (TEAMSHIPS_TDSalvageTrial, "SalvageTrialPING");
+                    //TimerCreateSetStart ("FISalvageTrialRepopENDTimer", 12);
+            ENDINIT
+            WATCH
+                    //IF (TimerExpiredDestroy ("FISalvageTrialRepopENDTimer"))
+                    IF (IntelEventEnded ())
+                            Jump FIIdle;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FISalvageTrialRepopulation //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+
+
+
+        // FLEET INTEL event - if the player can build the Repair Corvette, give 'em a rasp about it
+        STATE FICorvetteChassisRasp //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    //SpeechEvent (2679,0);                                       // Research Division reports that Corvette Drive is available for research...
+                    //TimerCreateSetStart ("FICorvetteChassisRaspENDTimer", 18);
+            ENDINIT
+            WATCH
+                    //IF (TimerExpiredDestroy ("FICorvetteChassisRaspENDTimer"))
+                    //IF (IntelEventEnded ())
+                            Jump FIIdle;
+                    //ENDIF
+            ENDWATCH
+        ENDSTATE FICorvetteChassisRasp //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        // FLEET INTEL event - if the player is already researching the the Repair Corvette (corvette chassis), give 'em a rasp about it
+        STATE FICorvetteChassisUnderwayRasp //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    //SpeechEvent (2680,0);                                       // Research Division reports Corvette Drive research is underway...
+                    //TimerCreateSetStart ("FICorvetteChassis999ENDTimer", 18);
+            ENDINIT
+            WATCH
+                    //IF (TimerExpiredDestroy ("FICorvetteChassis999ENDTimer"))
+                    //IF (IntelEventEnded ())
+                            Jump FIIdle;
+                    //ENDIF
+            ENDWATCH
+        ENDSTATE FICorvetteChassisUnderwayRasp //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+
+
+
+        // FLEET INTEL event - all objectives are complete and we're ready to go
+        STATE FIHyperspace //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M01_Intel_HyperdriveTest,0);                                       // Standby for Hyperdrive test.  Internal pressure doors sealed.  Abort systems standing by.
+                    //TimerCreateSetStart ("FCHyperspaceModuleReady", 12);
+            ENDINIT
+            WATCH
+                    //IF (TimerExpiredDestroy ("FCHyperspaceModuleReady"))
+                    IF (IntelEventEnded ())
+                            Jump FCHyperspaceModuleReady;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FIHyperspace //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        // FLEET COMMAND event - hyperspace module is A-OK
+        STATE FCHyperspaceModuleReady //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M01_Fleet_HyperspaceReady,0);                                       // Hyperspace module fully charged.  I am ready to...
+                    //TimerCreateSetStart ("FITriggerHyperspace", 12);
+            ENDINIT
+            WATCH
+                    //IF (TimerExpiredDestroy ("FITriggerHyperspace"))
+                    IF (IntelEventEnded ())
+                            Jump FITriggerHyperspace;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FCHyperspaceModuleReady //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+        // FLEET INTEL event - trigger hyperspace now bucky
+        STATE FITriggerHyperspace //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    SpeechEvent (M01_Intel_HyperspaceReady,0);                                       // All sections have reported in.  Trigger the...
+                    //TimerCreateSetStart ("FITriggerHyperspace", 12);
+            ENDINIT
+            WATCH
+                    //IF (TimerExpiredDestroy ("FITriggerHyperspace"))
+                    IF (IntelEventEnded ())
+                            TimerCreateSetStart ("G_MissionCompleteTimer", 1);  // Do this so the hyperspace objective will be created (down in the mission objectives section)
+                            Jump FIIdle;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE FITriggerHyperspace //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+
+
+
+
+
+
+        STATE FIIdle //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+            ENDINIT
+            WATCH
+                // FIRST TIME watches
+
+                // when the FleetIntelTimer is up, play the Fleet Intel intro
+                IF (TimerExpiredDestroy ("G_FleetIntelTimer"))
+                        Jump FIIntro;
+                ENDIF
+
+                // when the BeginScoutTrialFormations variable is true, play the Formation Trial FI event
+                IFONCE  ( (TimerExpiredDestroy ("G_BeginScoutTrials")) OR (VarGet ("G_PlayFIFormationImmediately") = TRUE) )
+                        VarDestroy ("G_PlayFIFormationImmediately");
+                        TimerDestroy ("G_BeginScoutTrials");
+                        VarCreateSet ("G_FIFormationTrialHasPlayed", TRUE);
+                        Jump FIFormationTrialLBXIn;
+                ENDIFONCE
+
+                // when the formation trial objective gets created, watch for a timer to trigger the first tutorial tip
+                IF (TimerExpiredDestroy ("DisplayTutTip1"))
+                        //Jump TutTip1;
+                ENDIF
+
+                // when hyperspace juice timer is up, play the in-game Fleet Command event (hyperspace juice)
+                //IF (TimerExpiredDestroy ("G_FCHyperspaceJuice"))
+                //        Jump FCHyperspaceJuice;
+                //ENDIF
+
+                // when the cryo tray juice timer is up, play the in-game Fleet Command event (cryo tray juice)
+                IF (TimerExpiredDestroy ("G_FCCryoTrayJuice"))
+                        Jump FCCryoTrayJuice;
+                ENDIF
+
+                // when player has built a Research Ship and the timer for it to get into position has expired, play the FIStartResearching event
+                IF ( (VarGet ("G_ReadyToHYPERSPACE") = FALSE) AND (TimerExpiredDestroy ("G_ResearchPopup")) )
+                        IF (TechIsResearching ())                           // If the player is researching, DON'T create the 2ndary objective to research Fighter Drive, just give them a rasp about the Interceptor
+                                Jump FIAlreadyResearching;
+                        ELSE                                                // If the player isn't researching, DO create the 2ndary objective to research Fighter Drive
+                                Jump FIStartResearching;
+                        ENDIF
+                ENDIF
+
+                // when the formation trial is over, play the tactics trial FI event
+                //IFONCE (ObjectiveGet ("ScoutTrialFormations"))              // If the formation trials are over, create the tactics trial
+                IFONCE (TimerExpiredDestroy ("G_BeginTacticsTrialNow"))
+                        Jump FITacticsTrialLBXIn;
+                ENDIFONCE
+
+                // when the tactics trial is over, play the salvage trial FI event
+                IFONCE (TimerExpiredDestroy ("G_BeginSalvageTrialNow"))
+                        Jump FISalvageTrialLBXIn;
+                ENDIFONCE
+
+                // when the player has researched Fighter Chassis, _AND_ the drones have hyperspaced in, _AND_ the player has at least 55 RUs,
+                // play the Interceptor trial event
+                //IFONCE ( (TechGet ("Chassis1")) AND (TimerExpired ("G_InterceptorDronesAreInPlace")) ) //AND (RUsGet (0) > 55) )
+                //        Jump FIInterceptorTrialLBXIn;
+                //ENDIFONCE
+
+                // if FORMATION TRIAL TD's are being repopulated, let the player know this is happening and that they didn't complete the objective
+                IF (VarGet ("G_FormationTrialRepopulation") = TRUE)
+                        IF (VarGet ("G_BeginScoutTrialFormations") = TRUE)          // Only play the event if the objective has already been created
+                                VarDestroy ("G_FormationTrialRepopulation");        // Destroy this so that if the team is repopulated again this message plays again
+                                Jump FIFormationTrialRepopulation;
+                        ENDIF
+                ENDIF
+
+                // if TACTICS TRIAL TD's are being repopulated, let the player know this is happening and that they didn't complete the objective
+                IF (VarGet ("G_TacticsTrialRepopulation") = TRUE)
+                        IF (VarGet ("G_BeginScoutTrialTactics") = TRUE)             // Only play the event if the objective has already been created
+                                VarDestroy ("G_TacticsTrialRepopulation");          // Destroy this so that if the team is repopulated again this message plays again
+                                Jump FITacticsTrialRepopulation;
+                        ENDIF
+                ENDIF
+
+                // if INTERCEPTOR TRIAL TD's are being repopulated, let the player know this is happening and that they didn't complete the objective
+                IF (VarGet ("G_InterceptorTrialRepopulation") = TRUE)
+                        IF (VarGet ("G_BeginInterceptorTrialNOW") = TRUE)             // Only play the event if the objective has already been created
+                                VarDestroy ("G_InterceptorTrialRepopulation");          // Destroy this so that if the team is repopulated again this message plays again
+                                Jump FIInterceptorTrialRepopulation;
+                        ENDIF
+                ENDIF
+
+                // if SALVAGE TRIAL TD's are being repopulated, let the player know this is happening and that they didn't complete the objective
+                IF (VarGet ("G_SalvageTrialRepopulation") = TRUE)
+                        IF (VarGet ("G_BeginSalvageTrial") = TRUE)      // Only play the event if the objective has already been createed
+                                VarDestroy ("G_SalvageTrialRepopulation");          // Destroy this so that if the team is repopulated again this message plays again
+                                Jump FISalvageTrialRepopulation;
+                        ENDIF
+                ENDIF
+
+                // when the timer is up, play an in-game event telling you all about the Repair Corvette
+                IF ( (VarGet ("G_PlayedCorvetteChassisUnderwayRasp") = FALSE) AND (TimerExpiredDestroy ("PlayCorvetteChassisRasp")) )
+                        Jump FICorvetteChassisRasp;
+                ENDIF
+
+                // when the timer is up, play an in-game event telling you all about the Repair Corvette
+                IF ( (VarGet ("G_PlayedCorvetteChassisUnderwayRasp") = FALSE) AND (TimerExpiredDestroy ("PlayCorvetteChassisUnderwayRasp")) )
+                        VarCreateSet ("G_PlayedCorvetteChassisRasp", TRUE);
+                        Jump FICorvetteChassisUnderwayRasp;
+                ENDIF
+
+                // when all the primary objectives are complete, trigger the FI hyperspace event,
+                IFONCE (VarGet ("G_ReadyToHYPERSPACE") = TRUE)
+                        Jump FIHyperspace;                                          // This plays 3 events (FI -> FC -> FI)
+                ENDIFONCE
+
+
+
+
+
+
+                // REPLAYING event watches
+
+                // Building a Research Ship
+                IF (VarGet ("G_CLICK_ResearchShip"))
+                        Jump FIIntro2;
+                ENDIF
+
+                // Harvesting
+                IF (VarGet ("G_CLICK_Harvest"))
+                        Jump FIIntro3;
+                ENDIF
+
+                // Formation trial
+                IF (VarGet("G_CLICK_ScoutTrialFormations"))
+                    Jump FIFormationTrialLBXIn2;
+                ENDIF
+
+                // SECONDARY: Research Fighter Drive
+                IF (VarGet("G_CLICK_StartResearch"))
+                    Jump FIStartResearching;
+                ENDIF
+
+                // Tactics trial
+                IF (VarGet("G_CLICK_ScoutTrialTactics"))
+                    Jump FITacticsTrialLBXIn2;
+                ENDIF
+
+                // Salvage trial
+                IF (VarGet("G_CLICK_SalvageTrial"))
+                    Jump FISalvageTrialLBXIn2;
+                ENDIF
+
+                // Interceptor trial
+                IF (VarGet("G_CLICK_InterceptorTrial"))
+                    Jump FIInterceptorTrialLBXIn2;
+                ENDIF
+
+
+            ENDWATCH
+        ENDSTATE FIIdle //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+ENDFSM FleetIntel
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     FleetIntel     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+
+
+
+
+
+
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     TDFormationTrial     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+FSM TDFormationTrial
+    States WatchForAttackers, WaitingForShips, GetIntoPosition;
+
+    INIT
+            TeamAttributesSet (ATTRIBUTES_StartInHS);
+            TeamHyperspaceOut ();
+            //Jump WatchForAttackers;
+    ENDINIT
+    WATCH
+            IF (ShipsCount (THISTEAMSHIPS) > 1)
+                    IF (UnderAttack (SHIPS_FormTrialTDUnderAttack))
+                            // just do this to create the shiplist
+                    ENDIF
+            ELSE
+                    ShipsClear (SHIPS_FormTrialTDUnderAttack);
+            ENDIF
+
+            IFONCE (VarGet ("G_FormationDronesHyperspaceIn") = TRUE)
+                    Jump GetIntoPosition;
+            ENDIFONCE
+    ENDWATCH
+
+        STATE WatchForAttackers //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+            ENDINIT
+            WATCH
+                    IFONCE ( (ShipsCount (TEAMSHIPS_TDFormationTrial) < 9) AND (VarGet ("G_FIFormationTrialHasPlayed") = FALSE) )
+                            VarCreateSet ("G_PlayFIFormationImmediately", TRUE);
+                    ENDIFONCE
+                    IF (VarGet ("G_TDFormationGoToWaiting") = TRUE)
+                            VarDestroy ("G_TDFormationGoToWaiting");
+                            Jump WaitingForShips;
+                    ENDIF
+                    //IF ( (ShipsCount (TEAMSHIPS_TDFormationTrial) = 0) AND (VarGet ("G_PlayerHasUsedFormation") = FALSE) )
+                    //        PingRemove ("FormationTrialPING");
+                    //        RequestShips ("TargetDrone",9);
+                    //        VarCreateSet ("G_FormationTrialRepopulation", TRUE);
+                    //        Jump WaitingForShips;
+                    //ENDIF
+            ENDWATCH
+        ENDSTATE WatchForAttackers //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        STATE WaitingForShips //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+            ENDINIT
+            WATCH
+                    IF (ShipsCount (TEAMSHIPS_TDFormationTrial) = 9)
+                            FormationWall ();
+                            TeamHyperspaceOut ();
+                            Jump GetIntoPosition;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE WaitingForShips //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        STATE GetIntoPosition //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TeamHyperspaceIn (POINT_FormationTrialPING);
+            ENDINIT
+            WATCH
+                    IF (Nearby (POINT_TacticsTrialPING, 500))
+                            PingAddShips (TEAMSHIPS_TDTacticsTrial, "TacticsTrialPING");
+                            Jump WatchForAttackers;
+                    ENDIF
+                    IF (VarGet ("G_TDFormationGoToWaiting") = TRUE)
+                            VarDestroy ("G_TDFormationGoToWaiting");
+                            Jump WaitingForShips;
+                    ENDIF
+                    //IF ( (ShipsCount (TEAMSHIPS_TDFormationTrial) = 0) AND (VarGet ("G_PlayerHasUsedFormation") = FALSE) )
+                    //        PingRemove ("FormationTrialPING");
+                    //        RequestShips ("TargetDrone",9);
+                    //        VarCreateSet ("G_FormationTrialRepopulation", TRUE);
+                    //        Jump WaitingForShips;
+                    //ENDIF
+            ENDWATCH
+        ENDSTATE GetIntoPosition //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+ENDFSM TDFormationTrial
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     TDFormationTrial     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     TDFormationRepopulation     ÍÍÍÍÍÍÍÍÍÍ
+FSM TDFormationRepopulation
+    States WatchForFailure, GiveDronesToTeam;
+
+    INIT
+            Jump WatchForFailure;
+    ENDINIT
+    WATCH
+    ENDWATCH
+
+
+        STATE WatchForFailure //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    RequestShips ("TargetDrone", 9);
+            ENDINIT
+            WATCH
+                    IF ( (ShipsCount (TEAMSHIPS_TDFormationTrial) = 0) AND
+                         (VarGet ("G_PlayerHasUsedFormation") = FALSE) )        // If the player kills all the drones but doesn't complete the trial
+                            PingRemove ("FormationTrialPING");
+                            VarCreateSet ("G_FormationTrialRepopulation", TRUE);
+                            Jump GiveDronesToTeam;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE WatchForFailure //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        STATE GiveDronesToTeam //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+            ENDINIT
+            WATCH
+                    IF (ShipsCount (TEAMSHIPS_TDFormationRepopulation) = 9)
+                            ReinforceTeamWithShips (TEAM_TDFormationTrial, TEAMSHIPS_TDFormationRepopulation);
+                            ShipsRemove (TEAMSHIPS_TDFormationRepopulation, TEAMSHIPS_TDFormationRepopulation);
+                            VarCreateSet ("G_TDFormationGoToWaiting", TRUE);
+                            Jump WatchForFailure;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE GiveDronesToTeam //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+ENDFSM TDFormationRepopulation
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     TDFormationRepopulation     ÍÍÍÍÍÍÍÍÍÍ
+
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     TDTacticsTrial     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+FSM TDTacticsTrial
+    States WaitForObjective, WaitingForShips, GetIntoPosition, WatchForAttackers;
+
+    INIT
+            Jump WaitForObjective;
+    ENDINIT
+    WATCH
+            IF (UnderAttack (SHIPS_TacticsTrialTDUnderAttack))
+                    // just create the SHIPSlist above so that it can be checked in the global watch for the tactics trial
+            ENDIF
+    ENDWATCH
+
+
+        STATE WaitForObjective //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    //RequestShips ("TargetDrone", 16);
+                    HideShips (TEAMSHIPS_TDTacticsTrial);
+                    TeamHyperspaceOut ();
+            ENDINIT
+            WATCH
+                    IF (VarGet ("G_BeginTacticsTrial") = TRUE)
+                            //Jump WaitingForShips;
+                            FormationWall ();
+                            Jump GetIntoPosition;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE WaitForObjective //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        STATE WaitingForShips //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+            ENDINIT
+            WATCH
+                    IF (ShipsCount (TEAMSHIPS_TDTacticsTrial) = 16)
+                            FormationWall ();
+                            TeamHyperspaceOut ();
+                            Jump GetIntoPosition;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE WaitingForShips //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        STATE GetIntoPosition //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TeamHyperspaceIn (POINT_TacticsTrialPING);
+            ENDINIT
+            WATCH
+                    IF (Nearby (POINT_TacticsTrialPING, 500))
+                            PingAddShips (TEAMSHIPS_TDTacticsTrial, "TacticsTrialPING");
+                            Jump WatchForAttackers;
+                    ENDIF
+                    IF (VarGet ("G_TDTacticsGoToWaiting") = TRUE)
+                            VarDestroy ("G_TDTacticsGoToWaiting");
+                            Jump WaitingForShips;
+                    ENDIF
+                    //IF ( (ShipsCount (TEAMSHIPS_TDTacticsTrial) = 0) AND (VarGet ("G_PlayerHasUsedTactics") = FALSE) )      // Do this incase they die on their way in
+                    //        PingRemove ("TacticsTrialPING");
+                    //        //RequestShips ("TargetDrone", 16);
+                    //        VarCreateSet ("G_TacticsTrialRepopulation", TRUE);
+                    //        Jump WaitingForShips;
+                    //ENDIF
+            ENDWATCH
+        ENDSTATE GetIntoPosition //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        STATE WatchForAttackers //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+            ENDINIT
+            WATCH
+                    IF (VarGet ("G_TDTacticsGoToWaiting") = TRUE)
+                            VarDestroy ("G_TDTacticsGoToWaiting");
+                            Jump WaitingForShips;
+                    ENDIF
+                    //IF ( (ShipsCount (TEAMSHIPS_TDTacticsTrial) = 0) AND (VarGet ("G_PlayerHasUsedTactics") = FALSE) )      // Do this incase they die on their way in
+                    //        PingRemove ("TacticsTrialPING");
+                    //        //RequestShips ("TargetDrone", 16);
+                    //        VarCreateSet ("G_TacticsTrialRepopulation", TRUE);
+                    //        Jump WaitingForShips;
+                    //ENDIF
+            ENDWATCH
+        ENDSTATE WatchForAttackers //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+ENDFSM TDTacticsTrial
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     TDTacticsTrial     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     TDTacticsRepopulation     ÍÍÍÍÍÍÍÍÍÍÍÍ
+FSM TDTacticsRepopulation
+    States WatchForFailure, GiveDronesToTeam;
+
+    INIT
+            Jump WatchForFailure;
+    ENDINIT
+    WATCH
+    ENDWATCH
+
+
+        STATE WatchForFailure //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    RequestShips ("TargetDrone", 16);
+            ENDINIT
+            WATCH
+                    IF ( (ShipsCount (TEAMSHIPS_TDTacticsTrial) = 0) AND
+                         (VarGet ("G_PlayerHasUsedTactics") = FALSE) AND
+                         (VarGet ("G_BeginScoutTrialTactics") = TRUE) )    // If the player kills all the drones but doesn't complete the trial
+                            PingRemove ("TacticsTrialPING");
+                            VarCreateSet ("G_TacticsTrialRepopulation", TRUE);
+                            Jump GiveDronesToTeam;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE WatchForFailure //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        STATE GiveDronesToTeam //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+            ENDINIT
+            WATCH
+                    IF (ShipsCount (TEAMSHIPS_TDTacticsRepopulation) = 16)
+                            ReinforceTeamWithShips (TEAM_TDTacticsTrial, TEAMSHIPS_TDTacticsRepopulation);
+                            ShipsRemove (TEAMSHIPS_TDTacticsRepopulation, TEAMSHIPS_TDTacticsRepopulation);
+                            VarCreateSet ("G_TDTacticsGoToWaiting", TRUE);
+                            Jump WatchForFailure;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE GiveDronesToTeam //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+ENDFSM TDTacticsRepopulation
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     TDTacticsRepopulation     ÍÍÍÍÍÍÍÍÍÍÍÍ
+
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     TDInterceptorTrial     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+FSM TDInterceptorTrial
+    States WaitForObjective, WaitingForShips, GetIntoPosition, WatchForAttackers, Attack, WaitToPatrolAgain;
+
+    INIT
+            Jump WaitForObjective;
+    ENDINIT
+    WATCH
+    ENDWATCH
+
+
+        STATE WaitForObjective //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    RequestShips ("TargetDrone", 9);
+            ENDINIT
+            WATCH
+                    IF (VarGet ("G_BeginInterceptorTrial") = TRUE)
+                            //RequestShips ("TargetDrone", 9);
+                            Jump WaitingForShips;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE WaitForObjective //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        STATE WaitingForShips //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    //HideShips (TEAMSHIPS_TDInterceptorTrial);
+            ENDINIT
+            WATCH
+                    IF (ShipsCount (TEAMSHIPS_TDInterceptorTrial) = 9)
+                            UnHideShips (TEAMSHIPS_TDInterceptorTrial);   // have to unhide ships or formation command will be ignored
+                            FormationDelta3D ();
+                            HideShips (TEAMSHIPS_TDInterceptorTrial);     // rehide them now
+                            TeamHyperspaceOut ();
+                            Jump GetIntoPosition;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE WaitingForShips //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        STATE GetIntoPosition //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TeamHyperspaceIn (POINT_InterceptorTrialPING);
+                    TimerCreateSetStart ("TDIntHyperspaceInTimer", 12);
+            ENDINIT
+            WATCH
+                    IF (TimerExpiredDestroy ("TDIntHyperspaceInTimer"))
+                            IF (VarGet ("G_NeverCreateTDIntPingAgain") = FALSE)
+                                    PingAddShips (TEAMSHIPS_TDInterceptorTrial, "InterceptorTrialPING");
+                                    VarCreateSet ("G_NeverCreateTDIntPingAgain", TRUE);
+                            ENDIF
+                            TeamHealthSet (600);
+                            Jump WatchForAttackers;
+                    ENDIF
+                    //IF (FindEnemiesInside (VOLUME_InterceptorTRIAL, SHIPS_AdvancedTDFOUND, 2500))
+                    IF (UnderAttack (SHIPS_AdvancedTDFOUND))
+                            ShipsSelectType (SHIPS_InterceptorTargets, SHIPS_AdvancedTDFOUND, "HeavyInterceptor");      // Filter out the Interceptors
+                            IF (ShipsCount (SHIPS_InterceptorTargets) > 0)
+                                    VarCreateSet ("G_PlayerHasUsedInterceptors", TRUE);
+                                    IF (VarGet ("G_NeverCreateTDIntPingAgain") = FALSE)
+                                            PingAddShips (TEAMSHIPS_TDInterceptorTrial, "InterceptorTrialPING");
+                                            VarCreateSet ("G_NeverCreateTDIntPingAgain", TRUE);
+                                    ENDIF
+                                    TeamHealthSet (600);
+                                    Jump Attack;
+                            ENDIF
+                    ENDIF
+                    IF (VarGet ("G_TDInterceptorGoToWaiting") = TRUE)
+                            VarDestroy ("G_TDInterceptorGoToWaiting");
+                            Jump WaitingForShips;
+                    ENDIF
+                    //IF ( (ShipsCount (TEAMSHIPS_TDInterceptorTrial) = 0) AND (VarGet ("G_PlayerHasUsedInterceptors") = FALSE) )      // Do this incase they die on their way in
+                    //        PingRemove ("InterceptorTrialPING");
+                    //        RequestShips ("TargetDrone", 9);
+                    //        VarCreateSet ("G_InterceptorTrialRepopulation", TRUE);
+                    //        Jump WaitingForShips;
+                    //ENDIF
+            ENDWATCH
+        ENDSTATE GetIntoPosition //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        STATE WatchForAttackers //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+            ENDINIT
+            WATCH
+                    IF (FindEnemiesInside (VOLUME_InterceptorTRIAL, SHIPS_AdvancedTDFOUND, 2500))
+                            ShipsSelectType (SHIPS_InterceptorTargets, SHIPS_AdvancedTDFOUND, "HeavyInterceptor");      // Filter out the Interceptors
+                            IF (ShipsCount (SHIPS_InterceptorTargets) > 0)
+                                    VarCreateSet ("G_PlayerHasUsedInterceptors", TRUE);
+                                    Jump Attack;
+                            ENDIF
+                    ENDIF
+                    IF (VarGet ("G_TDInterceptorGoToWaiting") = TRUE)
+                            VarDestroy ("G_TDInterceptorGoToWaiting");
+                            Jump WaitingForShips;
+                    ENDIF
+                    //IF ( (ShipsCount (TEAMSHIPS_TDInterceptorTrial) = 0) AND (VarGet ("G_PlayerHasUsedInterceptors") = FALSE) )      // Do this incase they die on their way in
+                    //        PingRemove ("InterceptorTrialPING");
+                    //        RequestShips ("TargetDrone", 9);
+                    //        VarCreateSet ("G_InterceptorTrialRepopulation", TRUE);
+                    //        Jump WaitingForShips;
+                    //ENDIF
+            ENDWATCH
+        ENDSTATE WatchForAttackers //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        STATE Attack //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    Attack (SHIPS_InterceptorTargets);
+            ENDINIT
+            WATCH
+                    // if the interceptors you're "attacking" leave the volume, create a timer to go back to
+                    IF (FindEnemiesInside (VOLUME_InterceptorTRIAL, SHIPS_AdvancedTDFOUND, 1000))
+                            ShipsSelectType (SHIPS_InterceptorTargets, SHIPS_AdvancedTDFOUND, "HeavyInterceptor");      // Filter out the Interceptors
+                            IF (ShipsCount (SHIPS_InterceptorTargets) = 0)
+                                    Stop ();
+                                    TimerCreateSetStart ("NotUnderAttack", 10);
+                                    Jump WaitToPatrolAgain;
+                            ENDIF
+                    ENDIF
+                    IF (VarGet ("G_TDInterceptorGoToWaiting") = TRUE)
+                            VarDestroy ("G_TDInterceptorGoToWaiting");
+                            Jump WaitingForShips;
+                    ENDIF
+                    //IF ( (ShipsCount (TEAMSHIPS_TDInterceptorTrial) = 0) AND (VarGet ("G_PlayerHasUsedInterceptors") = FALSE) )      // Do this incase they die while attacking (should never be able to happen)
+                    //        PingRemove ("InterceptorTrialPING");
+                    //        RequestShips ("TargetDrone", 9);
+                    //        VarCreateSet ("G_InterceptorTrialRepopulation", TRUE);
+                    //        Jump WaitingForShips;
+                    //ENDIF
+            ENDWATCH
+        ENDSTATE Attack //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        STATE WaitToPatrolAgain //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+            ENDINIT
+            WATCH
+                    IF (FindEnemiesInside (VOLUME_InterceptorTRIAL, SHIPS_AdvancedTDFOUND, 2500))
+                            ShipsSelectType (SHIPS_InterceptorTargets, SHIPS_AdvancedTDFOUND, "HeavyInterceptor");      // Filter out the Interceptors
+                            IF (ShipsCount (SHIPS_InterceptorTargets) > 0)
+                                    VarCreateSet ("G_PlayerHasUsedInterceptors", TRUE);
+                                    Jump Attack;
+                            ENDIF
+                    ENDIF
+                    IF (VarGet ("G_TDInterceptorGoToWaiting") = TRUE)
+                            VarDestroy ("G_TDInterceptorGoToWaiting");
+                            Jump WaitingForShips;
+                    ENDIF
+                    //IF ( (ShipsCount (TEAMSHIPS_TDInterceptorTrial) = 0) AND (VarGet ("G_PlayerHasUsedInterceptors") = FALSE) )      // Do this incase they die on their way in
+                    //        PingRemove ("InterceptorTrialPING");
+                    //        RequestShips ("TargetDrone", 9);
+                    //        VarCreateSet ("G_InterceptorTrialRepopulation", TRUE);
+                    //        Jump WaitingForShips;
+                    //ENDIF
+                    IF (TimerExpiredDestroy ("NotUnderAttack"))
+                            MoveTo (POINT_InterceptorTrialPING);
+                            Jump WatchForAttackers;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE WaitToPatrolAgain //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+ENDFSM TDInterceptorTrial
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     TDInterceptorTrial     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     TDIntRepopulation     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+FSM TDIntRepopulation
+    States WatchForFailure, GiveDronesToTeam;
+
+    INIT
+            Jump WatchForFailure;
+    ENDINIT
+    WATCH
+    ENDWATCH
+
+
+        STATE WatchForFailure //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    RequestShips ("TargetDrone", 9);
+            ENDINIT
+            WATCH
+                    IF ( (ShipsCount (TEAMSHIPS_TDInterceptorTrial) = 0) AND
+                         (VarGet ("G_PlayerHasUsedInterceptors") = FALSE) AND
+                         (ObjectiveGet ("ScoutTrialFormations") = TRUE) )    // If the player kills all the drones but doesn't complete the trial
+                            PingRemove ("InterceptorTrialPING");
+                            VarCreateSet ("G_InterceptorTrialRepopulation", TRUE);
+                            Jump GiveDronesToTeam;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE WatchForFailure //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        STATE GiveDronesToTeam //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+            ENDINIT
+            WATCH
+                    IF (ShipsCount (TEAMSHIPS_TDIntRepopulation) = 9)
+                            ReinforceTeamWithShips (TEAM_TDInterceptorTrial, TEAMSHIPS_TDIntRepopulation);
+                            ShipsRemove (TEAMSHIPS_TDIntRepopulation, TEAMSHIPS_TDIntRepopulation);
+                            VarCreateSet ("G_TDInterceptorGoToWaiting", TRUE);
+                            Jump WatchForFailure;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE GiveDronesToTeam //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+ENDFSM TDIntRepopulation
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     TDIntRepopulation     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     TDSalvageTrial     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+FSM TDSalvageTrial
+    States WaitForObjective, WaitingForShips, GetIntoPosition, WatchForAttackers;
+
+    INIT
+            HideShips (TEAMSHIPS_TDSalvageTrial);
+            TeamHyperspaceOut ();
+            Jump WaitForObjective;
+            //Jump WaitingForShips;
+    ENDINIT
+    WATCH
+    ENDWATCH
+
+
+        STATE WaitForObjective //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    //RequestShips ("TargetDrone", 1);
+            ENDINIT
+            WATCH
+                    IF (VarGet ("G_BeginSalvageTrial") = TRUE)
+                            //Jump WaitingForShips;
+                            Jump GetIntoPosition;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE WaitForObjective //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        STATE WaitingForShips //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    //HideShips (TEAMSHIPS_TDFormationTrial);
+            ENDINIT
+            WATCH
+                    IF (ShipsCount (TEAMSHIPS_TDSalvageTrial) = 1)
+                            //FormationWall ();
+                            TeamHyperspaceOut ();
+                            Jump GetIntoPosition;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE WaitingForShips //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        STATE GetIntoPosition //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    TeamHyperspaceIn (POINT_SalvageTrialPING);
+            ENDINIT
+            WATCH
+                    IF (Nearby (THISTEAMSPOINT, 500))
+                            Stop ();
+                    ENDIF
+                    IF (Nearby (POINT_SalvageTrialPING, 500))
+                            PingAddShips (TEAMSHIPS_TDSalvageTrial, "SalvageTrialPING");
+                            //Stop ();
+                            Jump WatchForAttackers;
+                    ENDIF
+                    IF ( (ShipsCount (TEAMSHIPS_TDSalvageTrial) = 0) AND (VarGet ("G_PlayerHasSalvaged") = FALSE) )      // Do this incase they die on their way in
+                            PingRemove ("SalvageTrialPING");
+                            RequestShips ("TargetDrone", 1);
+                            VarCreateSet ("G_SalvageTrialRepopulation", TRUE);
+                            Jump WaitingForShips;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE GetIntoPosition //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        STATE WatchForAttackers //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+            ENDINIT
+            WATCH
+                    IF ( (ShipsCount (TEAMSHIPS_TDSalvageTrial) = 0) AND (VarGet ("G_PlayerHasSalvaged") = FALSE) )      // Do this incase they die on their way in
+                            PingRemove ("SalvageTrialPING");
+                            RequestShips ("TargetDrone", 1);
+                            VarCreateSet ("G_SalvageTrialRepopulation", TRUE);
+                            Jump WaitingForShips;
+                    ENDIF
+            ENDWATCH
+        ENDSTATE WatchForAttackers //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+ENDFSM TDSalvageTrial
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     TDSalvageTrial     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+
+
+
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     R2Mothership     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+FSM R2Mothership
+    States Hide, Null;
+
+    INIT
+            Jump Hide;
+    ENDINIT
+    WATCH
+    ENDWATCH
+
+
+        STATE Hide //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+                    HideShips(TEAMSHIPS_R2Mothership);              // hide the Mothership - it's only used to repopulate the TRIAL teams; player should never see it
+                    Jump Null;
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE Hide //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+        STATE Null //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+            INIT
+            ENDINIT
+            WATCH
+            ENDWATCH
+        ENDSTATE Null //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+ENDFSM R2Mothership
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ     R2Mothership     ÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+
+
+
+
+
+//ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ     Global Stuff     ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
+INIT
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      FSM creates
+        //
+
+        FSMCreate (FleetIntel, TEAM_FleetIntel);                            // FSM used only for displaying Fleet Intel events; bound to a dummy ship in the MM
+
+        FSMCREATE (TDFormationTrial, TEAM_TDFormationTrial);                // Target Drones used for the Scout FORMATION trials
+        FSMCREATE (TDFormationRepopulation, TEAM_TDFormationRepopulation);  // Dummy FSM used for repopulating the Formation Trial group
+        FSMCREATE (TDTacticsTrial, TEAM_TDTacticsTrial);                    // Target Drones used for the Scout FORMATION trials
+        FSMCREATE (TDTacticsRepopulation, TEAM_TDTacticsRepopulation);      // Dummy FSM used for repopulating the Tactics Trial group
+        FSMCREATE (TDSalvageTrial, TEAM_TDSalvageTrial);                    // Target Drone used for the SALVAGE trial
+        FSMCREATE (TDInterceptorTrial, TEAM_TDInterceptorTrial);            // Tougher interceptor team - is empty until player can build interceptors
+        FSMCREATE (TDIntRepopulation, TEAM_TDIntRepopulation);              // Dummy FSM used for repopulating the Interceptor Trial group
+        FSMCREATE (R2Mothership, TEAM_R2Mothership);                        // Hidden mothership used to repopulate the teams
+
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      mission objectives
+        //
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      technology
+        //
+
+        TechSet ("MassDrive1Kt");                                   // Give Fighter drive - ALREADY RESEARCHED (Build: Scout)
+        TechSetResearch ("Chassis1");                               // Allow Fighter chassis - AVAILABLE FOR RESEARCH (Build: Interceptor)
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+        // save the level!
+        // NOT NEEDED ANYMORE - game code saves this one due to opening NIS weirdness
+        //SaveLevel (1, "01 - Kharak System");
+
+ENDINIT
+
+
+WATCH
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      location card
+        //
+
+        IFONCE (VarGet ("G_Nis1Complete"))
+                TimerCreateSetStart ("LocationCardTimer", 1);
+        ENDIFONCE
+
+        IF (TimerExpiredDestroy ("LocationCardTimer"))
+                LocationCard (5000, LSTRING_LocationCard);
+                //Print (LSTRING_LocationCard);                            // TEMPORARY, til we get the real location card
+        ENDIF
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      fleet intel
+        //
+
+        // start a timer to trigger the Fleet Intel intro
+        IFONCE (VarGet ("G_Nis1Complete"))
+                TimerCreateSetStart ("G_FleetIntelTimer", 7);        // Start timer for the first fleet intel event
+        ENDIFONCE
+
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      in-game events
+        //
+
+
+        // set a timer for a Fleet Command event to give you some juice about the Hyperspace drive sometime during the mission
+        IFONCE (VarGet ("G_Nis1Complete"))
+                TimerCreateSetStart ("G_FCHyperspaceJuice", (Random (145,180)));
+        ENDIFONCE
+
+
+        // After some of the primary objectives are complete, set a timer for a Fleet Intel event to give you some juice about the cryo trays
+        IFONCE ( (ObjectiveGet ("Harvest")) AND (ObjectiveGet ("ResearchShip")) AND (ObjectiveGet ("ScoutTrialFormations")) )
+                TimerCreateSetStart ("G_FCCryoTrayJuice", (Random (55,115)));
+        ENDIFONCE
+
+        // When the player has built a Research Ship, start a timer to trigger an in-game event telling them to start researching
+        IFONCE (ObjectiveGet ("ResearchShip") = TRUE)
+                TimerCreateSetStart ("G_ResearchPopup", 5);        // Allow 5 seconds for the Research Ship to get in Parade position
+        ENDIFONCE
+
+        // if player has researched the Fighter Chassis, can now research the Corvette Drive (but hasn't started yet) start a timer
+        IFONCE ( (TechGetResearch ("MassDrive10Kt")) AND (TechGet ("Chassis1")) AND (NOT TechIsResearching()) AND (VarGet ("G_PlayedCorvetteChassisUnderwayRasp") = FALSE) )
+                TimerCreateSetStart ("PlayCorvetteChassisRasp", Random (10,30));
+                VarCreateSet ("G_PlayedCorvetteChassisRasp", TRUE);
+        ENDIFONCE
+
+        // if player has researched the Fighter Chassis, can now research the Corvette Drive (AND _has_ started) start a timer
+        IFONCE ( (TechGetResearch ("MassDrive10Kt")) AND (TechGet ("Chassis1")) AND (VarGet ("G_PlayedCorvetteChassisRasp") = FALSE) )
+                TimerCreateSetStart ("PlayCorvetteChassisUnderwayRasp", Random (10,30));
+                VarCreateSet ("G_PlayedCorvetteChassisUnderwayRasp", TRUE);
+        ENDIFONCE
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      mission objectives
+        //
+
+
+        // when the first fleet intel event plays, create the intial PRIMARY objectives
+        //IFONCE (VarGet ("G_CreateInitialObjectives") = TRUE)
+        //        ObjectiveCreate ("Harvest", LSTRING_HarvestTASKBAR, LSTRING_HarvestTASKBAR);                     // Player must harvest some asteroids (1 load)
+        //        ObjectiveCreate ("ResearchShip", LSTRING_ResearchShipTASKBAR, LSTRING_ResearchShipTASKBAR);           // Player must build a research ship
+        //ENDIFONCE
+
+        // if player collects 500 RUs, "Harvest" objective is met
+        IFONCE (RUsEnemyCollected() >= 500)
+                ObjectiveSet ("Harvest", TRUE);
+        ENDIFONCE
+
+        // if player builds a Research Ship, "ResearchShip" objective is met
+        IFONCE (FindEnemyShipsOfType(SHIPS_Temp, "ResearchShip"))
+                ObjectiveSet ("ResearchShip", TRUE);
+        ENDIFONCE
+
+        // attempt to fix this stupid repeating message bug when you click on the StartResearch objective
+        IFONCE (VarGet ("G_OnlyCreateResearchObjOnce") = TRUE)
+                VarCreateSet ("G_CreateResearchObj", TRUE);
+        ENDIFONCE
+
+
+        // Create SECONDARY objective: start researching
+        IFONCE (VarGet ("G_CreateResearchObj") = TRUE)
+                ObjectiveCreateSecondary ("StartResearch", LSTRING_StartResearchTASKBAR, LSTRING_StartResearchTASKBAR);
+        ENDIFONCE
+
+        // if player researches the Fighter Chassis, "StartResearch" objective is met
+        IFONCE (TechGet ("Chassis1"))
+                ObjectiveSet ("StartResearch", TRUE);
+        ENDIFONCE
+
+        // SCOUT TRIALS: set a timer to trigger the scout trials
+        IFONCE (VarGet ("G_Nis1Complete"))
+                TimerCreateSetStart ("G_BeginScoutTrials", (Random (35,55)));
+        ENDIFONCE
+
+        // When the timer is up, create the PRIMARY objective: SCOUT TRIALS using FORMATIONS
+        IFONCE (VarGet ("G_BeginScoutTrialFormations") = TRUE)
+                ObjectiveCreate ("ScoutTrialFormations", LSTRING_ScoutTrialFormationTASKBAR, LSTRING_ScoutTrialFormationTASKBAR);
+        ENDIFONCE
+
+        // check to see if the player has put the Scouts in formation (part of satisfying the above objective)
+        IF (VarGet ("G_PlayerHasUsedFormation") = FALSE)            // Checks to see if the player has given a formation command
+                //IF (TutGameSentMessage("Game_Formation_DELTA_FORMATION,Game_Formation_BROAD_FORMATION,Game_Formation_DELTA3D_FORMATION,Game_Formation_CLAW_FORMATION,Game_Formation_WALL_FORMATION,Game_Formation_SPHERE_FORMATION,Game_Formation_CUSTOM_FORMATION"))
+                IF ( (ShipsInFormation (SHIPS_FormTrialTDUnderAttack, 0)) OR
+                     (ShipsInFormation (SHIPS_FormTrialTDUnderAttack, 1)) OR
+                     (ShipsInFormation (SHIPS_FormTrialTDUnderAttack, 2)) OR
+                     (ShipsInFormation (SHIPS_FormTrialTDUnderAttack, 3)) OR
+                     (ShipsInFormation (SHIPS_FormTrialTDUnderAttack, 4)) OR
+                     (ShipsInFormation (SHIPS_FormTrialTDUnderAttack, 5)) )
+                        VarCreateSet ("G_PlayerHasUsedFormation", TRUE);
+                ENDIF
+        ENDIF
+
+        // if player kills all 9 Target Drones AND uses a formation, "ScoutTrialFormations" objective is met
+        IFONCE ( (ShipsCount (TEAMSHIPS_TDFormationTrial) = 0) AND (VarGet ("G_PlayerHasUsedFormation") = TRUE) )
+                ObjectiveSet ("ScoutTrialFormations", TRUE);
+                PingRemove ("FormationTrialPING");                      // Kill the PING on the formation Target Drones now that they're dead
+                TutRemoveAllPointers();
+                TimerCreateSetStart ("G_BeginTacticsTrialNow", 7);
+                VarCreateSet ("G_BeginTacticsTrial", TRUE);         // Lets other parts of the script know the tactics trial has begun
+        ENDIFONCE
+
+        // when the Formation trials are over, create the PRIMARY objective: SCOUT TRIALS using TACTICS
+        IFONCE (VarGet ("G_BeginScoutTrialTactics") = TRUE)
+                ObjectiveCreate ("ScoutTrialTactics", LSTRING_ScoutTrialTacticsTASKBAR, LSTRING_ScoutTrialTacticsTASKBAR);
+        ENDIFONCE
+
+        // check to see if the player has used any of the tactics settings (part of satisfying the above objective) - ONLY after the Fleet Intel tactics
+        // spiel has played
+        IF (VarGet ("G_PlayerHasUsedTactics") = FALSE)
+                IF ( ((TutShipsTactics (SHIPS_TacticsTrialTDUnderAttack) = 0) OR (TutShipsTactics (SHIPS_TacticsTrialTDUnderAttack) = 2)) AND
+                     (VarGet ("G_BeginScoutTrialTactics") = TRUE) )
+                        VarCreateSet ("G_PlayerHasUsedTactics", TRUE);
+                ENDIF
+        ENDIF
+
+        // if the player kills all 9 target drones AND uses tactics, "ScoutTrialTactics" objective is met
+        IFONCE ( (ShipsCount (TEAMSHIPS_TDTacticsTrial) = 0) AND (VarGet ("G_PlayerHasUsedTactics") = TRUE) )
+                ObjectiveSet ("ScoutTrialTactics", TRUE);
+                PingRemove ("TacticsTrialPING");                        // Kill the PING on the tactics Target Drones now that they're dead
+                TimerCreateSetStart ("G_BeginSalvageTrialNow", 10);
+                VarCreateSet ("G_BeginSalvageTrial", TRUE);         // Lets other parts of the script know the salvage trial has begun
+        ENDIFONCE
+
+
+        // when the player has researched Fighter Chassis, play the Interceptor trial FI event
+        IFONCE ( (TechGet ("Chassis1")) AND ((RUsGet (0) > 55) OR (FindEnemyShipsOfType(SHIPS_Stuff, "HeavyInterceptor"))) AND (VarGet ("G_ReadyToHYPERSPACE") = FALSE) )
+                //VarCreateSet ("G_BeginInterceptorTrial", TRUE);         // Tells drones to start requesting and then hyperspace in
+                //TimerCreateSetStart ("G_InterceptorDronesAreInPlace", 10);
+        ENDIFONCE
+
+
+        // if the player has researched Fighter Chassis, create the SECONDARY objective: INTERCEPTOR TRIALS
+        IFONCE (VarGet ("G_BeginInterceptorTrialNOW") = TRUE)
+                ObjectiveCreateSecondary ("InterceptorTrial", LSTRING_InterceptorTrialTASKBAR, LSTRING_InterceptorTrialTASKBAR);
+                VarDestroy ("G_InterceptorTrialRepopulation");          // Destroy this so that the repopulation message doesn't play if the player killed the drones before the objective was created
+        ENDIFONCE
+
+        // if the player kills all 5 ADVANCED target drones using Interceptors, "InterceptorTrial" objective is met
+        IFONCE ( (VarGet ("G_PlayerHasUsedInterceptors") = TRUE) AND (ShipsCount (TEAMSHIPS_TDInterceptorTrial) = 0) )
+                ObjectiveSet ("InterceptorTrial", TRUE);
+                PingRemove ("InterceptorTrialPING");
+        ENDIFONCE
+
+        // when the Tactics trials are over, create the PRIMARY objective: SALVAGE trial
+        IFONCE (VarGet ("G_CreateSalvageObjective") = TRUE)
+                ObjectiveCreate ("SalvageTrial", LSTRING_SalvageTrialTASKBAR, LSTRING_SalvageTrialTASKBAR);
+        ENDIFONCE
+
+        // check to see if the player has locked onto the Target Drone with their Salvage Corvette
+        IF (VarGet ("G_SalvageTD"))
+                PingRemove ("SalvageTrialPING");
+        ENDIF
+
+        // when the Salvage Trial begins, reset the SalvageTS special variable in case the player has salvaged before
+        IFONCE (VarGet ("G_SalvageTrialHasBegun") = TRUE)
+                VarSet ("G_SalvageTS", 0);
+        ENDIFONCE
+
+        // check to see if the player captures a ship (part of satisfying the above objective)
+        IFONCE ( (VarGet ("G_SalvageTrialHasBegun") = TRUE) AND (VarGet ("G_SalvageTS")) )
+                VarCreateSet ("G_PlayerHasSalvaged", TRUE);
+        ENDIFONCE
+
+        // if the player captures a ship, "SalvageTrial" objective is met
+        IFONCE (VarGet ("G_PlayerHasSalvaged") = TRUE)
+                ObjectiveSet ("SalvageTrial", TRUE);
+                PingRemove ("SalvageTrialPING");
+        ENDIFONCE
+
+
+
+
+        // if all primary objectives are complete, start a timer to create the HYPERSPACE objective
+        IFONCE ( (ObjectiveGet ("Harvest") = TRUE) AND
+               (ObjectiveGet ("ResearchShip") = TRUE) AND
+               (ObjectiveGet ("ScoutTrialFormations") = TRUE) AND
+               (ObjectiveGet ("ScoutTrialTactics") = TRUE) AND
+               (ObjectiveGet ("SalvageTrial") = TRUE) )
+                VarCreateSet ("G_ReadyToHYPERSPACE", TRUE);
+        ENDIFONCE
+
+        // when the timer's up, create the HYPERSPACE objective and the ReadyToHYPERSPACE variable (which tells other parts of the script to do stuff)
+        IF (TimerExpiredDestroy ("G_MissionCompleteTimer"))
+                ObjectiveCreate ("Hyperspace", LSTRING_HyperspaceTASKBAR, LSTRING_HyperspaceTASKBAR);
+        ENDIF
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      speech
+        //
+
+
+        // if all objectives are complete create the timer to play the hyperspace speech event
+        IFONCE (VarGet ("G_ReadyToHYPERSPACE") = TRUE)
+                TimerCreateSetStart ("G_PlayFleetCommandSpeech", 4);
+        ENDIFONCE
+
+        IF (TimerExpiredDestroy ("G_PlayFleetCommandSpeech"))
+                //SpeechEvent (1333,0);                                   // "Mission complete.  Hyperspace drives online."  Event #309 in speechevent.h, changed to #1333 because of magic numbers
+        ENDIF
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+
+
+        //ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+        //      technology
+        //
+
+        // if player researches Fighter chassis, allow Corvette drive  (Build: Repair Corvette)
+        IFONCE (TechGet ("Chassis1"))
+                TechSetResearch ("MassDrive10Kt");
+        ENDIFONCE
+
+
+
+ENDWATCH
+//ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ     Global Stuff     ÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛÛ
+
+

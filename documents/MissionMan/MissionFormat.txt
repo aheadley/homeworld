@@ -1,0 +1,256 @@
+For .level and .mission files:
+********************************************************************************************
+(Written by Gary)
+
+MissionSphere   playerNumber,raceName,posx,posy,posz,radius,sphererotz,contents,startingResourceUnits
+Defaults:
+MissionSphere   -1,?,0.0,0.0,0.0,30000.0,1000.0,sphere.missphere
+; where playerNumber is player #, -1 for no player
+; raceName is name of the race or ? for no race
+; posx, posy, posz are positions
+; radius is radius of mission sphere
+; sphererotz is angle of rotation of the mission sphere, 1000.0 points towards centre of universe
+; contents refers to .missphere file
+; startingResourceUnits is # of RUs the player starts with (integer, optional)
+
+Lighting        lightingfilename
+; where lightingfilename is the filename of a lighting file
+
+Background      backgroundfilename,angle1,angle2
+; where backgroundfilename is the filename of a background file
+; where angle1 and angle2 are angles of rotation
+
+smDepthCueRadius                realnum
+smDepthCueStartRadius           realnum
+smCircleBorder                  realnum
+smZoomMax                       realnum
+smZoomMin                       realnum
+smInitialDistance               realnum
+smUniverseSizeX                 realnum
+smUniverseSizeY                 realnum
+smUniverseSizeZ                 realnum
+Defaults:
+; where realnum is a floating point number for tuning
+
+For ONLY .mission files (single player)
+
+RUNeededForNextHyperSpaceJump   numRU                   ; default 1000
+; where numRU is the number of RU's (integer)
+
+For .missphere files:
+********************************************************************************************
+(Written by Gary)
+
+Ships           Label,posx,posy,posz,rot,race,shiptype,numShips,formation|flag|color,properties[,numShips2]
+Defaults:
+Ships           0.0,0.0,0.0,0.0,R1,LightInterceptor,NULL_FORMATION|?|?,?
+; where Label is AI label (no spaces) or ?
+; posx, posy, posz are positions
+; rot is rotation angle of ship
+; race is R1, R2, P1, P2, P3, or Traders
+; shiptype is ship (e.g. LightInterceptor)
+; numShips is # of ships to place
+; formation is:
+; NULL_FORMATION
+: PARADE_FORMATION
+; DELTA_FORMATION
+; BROAD_FORMATION
+; DELTA3D_FORMATION
+; CLAW_FORMATION
+; WALL_FORMATION
+; SPHERE_FORMATION
+; PICKET_FORMATION
+; color (see Colors: below)
+; flag is UseAsMothership or ?
+; properties is <check with Gary>
+; numShips2 is <check with Gary> (single player only)
+
+Resources       resourcetype,posx,posy,posz,layout,distribution,numResources,radius,length,roty,rotz,properties
+Defaults:
+Resources       Asteroid,0.0,0.0,0.0,Sphere,distrib.dist,10,5000.0,10000.0,0.0,0.0,?
+; where resourcetype is Asteroid, Nebula, GasCloud, or DustCloud
+; posx, posy, posz are positions
+; layout is Sphere, Cylinder, Nebula (Nebula is a sphere, see section below)
+; distribution refers to distribution file
+; numResources is # of resources
+; radius is radius of cylinder or sphere
+; length is length of cylinder or the *diameter* of the sphere (not relevant for spheres)
+; roty, rotz are angles of rotation (not relevant for spheres)
+; properties is <check with Gary>
+
+Derelict        derelicttype,posx,posy,posz,roty,rotz,properties
+Defaults:
+Derelict        Shipwreck,0.0,0.0,0.0,0.0,?
+; where derelicttype is Shipwreck, Ghostship, or Fragment
+; posx, posy, posz are positions
+; roty, rotz are angles of rotation (not relevant for spheres)
+; properties is <check with Gary>
+
+AI stuff:
+********************************************************************************************
+(Written by Janik)
+
+Single player *ONLY*
+
+; AIPoint Label,X,Y,Z,rot
+; Label is AI label (no spaces)
+; X, Y, Z are positions
+; rot is angle of rotation
+AIPoint    Point,3000.17,.4478073,999.939,0
+
+; AIPath Label,X,Y,Z,Flag,Count/Total
+; Label is AI label (no spaces)
+; X, Y, Z are positions
+; Flag is Open or Closed
+; Count is current element number
+; Total is number of elements in path
+AIPath    New Label,4000,-1999.708,-1999.777,Open,1/4
+AIPath    New Label,3999.744,-999.7877,.3286133,Open,2/4
+AIPath    New Label,3999.744,1000.159,.6430817,Open,3/4
+AIPath    New Label,3999.744,2000.646,-1998.618,Open,4/4
+
+; AIBox Label,X,Y,Z,Width,Height,Depth
+; Label is AI label (no spaces)
+; X, Y, Z are positions
+; Width, height, depth are well... just that! duh :)
+AIBox    Box,-3999.707,-999.6141,2999.531,1000,1000,1000
+
+; AISphere Label,X,Y,Z,Diameter
+; Label is AI label (no spaces)
+; X, Y, Z are positions
+; Diameter is diameter of the sphere
+AISphere    Sphere,-4000.079,1000.091,2999.707,1000
+
+Colors:
+********************************************************************************************
+(Written by Luke)
+
+Changes to ship creation
+The only complicated one change I made was to the "Ships" directive.  It is also the only change which will be a per-ship attribute in the mission editor.  Here I added a new option string at the end of the line.  You can add a "colorScheme(n)" to explicitly control what color scheme the ship will be.  Here are the default color schemes for the ships as they stand now.  Let me know if you have a problem with any of these
+Race		Default color scheme
+R1		0
+R2		1
+P1		4
+P2		5
+P3		6
+Traders		7
+
+the 'n' in the color scheme should be between 0 and 7, inclusive.
+
+Also, there are 3 optional strings at the end of "Ships" line.  They are:
+colorScheme(n)
+formation (such as PARADE_FORMATION or DELTA_FORMATION)
+UseAsMothership
+
+These strings can appear in any combination and should be separated by a pipe (|) with no spaces.
+
+Here is an example of a Ships line using the new format:
+Ships       Label,-3000,-5000,0,90,P1,P1MissileCorvette,5,DELTA_FORMATION|?|colorScheme(6)
+
+Defining color schemes:
+Color schemes can now be defined for a given level.  Color schemes defined in the level files will only last as long as that level; they will be reset at the start of the next level.  The player's chosen color will not be effected.
+The format for changing the color scheme is a simplified version of that used in teamColors.script.  The only directives available are BaseColor and StripeColor.  The colors of engine trails and tactical overlay will be determined from these 2 members.
+
+Determining what ships to load:
+Not all ships/resources/derelicts etc. need be loaded for every level.  Substantial savings in loading time and texture RAM can be realized by excluding some things from the load.  By default everything is loaded every level.  If something is loaded in one level and not loaded the next, the space it occupied (in RAM and texture RAM) is freed for other uses.
+
+Here is a listing of the new directives to control this:
+ExcludeShips		race shiptype
+IncludeShips		race shiptype
+Exclude<Asteroids|DustCloud|GasCloud|Nebula> resourcetype
+Include<Asteroids|DustCloud|GasCloud|Nebula> resourcetype
+ExcludeDerelict derelicttype
+IncludeDerelict derelicttype
+
+The values of race are any of R1,R2,P1,P2,P3,Traders.  The value of shiptype would be any ship type valid for these races.  shiptype can also be "All" which will include or exclude that entire race.  Genocide so to speak!
+
+The value of resourcetype depends on what type of resource it is.  For asteroids:
+Asteroid0
+Asteroid1
+Asteroid2
+Asteroid3
+Asteroid4
+HeadShotAsteroidR1
+HeadShotAsteroidR2
+For dust clouds:
+DustCloud0
+DustCloud1
+DustCloud2
+DustCloud3
+For gas clouds:
+GasCloud0
+GasCloud1
+For Nebulae:
+Nebula0
+For Derelicts, derelicttype is:
+Fragment
+Ghostship
+Shipwreck
+(more will likely be added later such as the scaffolding and perhaps other inanimate objects)
+
+Determining what color schemes a ship can be:
+By default, the color scheme of a ship is based on it's race.  See the table in the section "Changes to ship creation" for the defaults.  In order for your fancy color scheme to show up, you must enable it for every ship that will use it by using this directive:
+AvailableColorSchemes	race type scheme#[scheme#[...]]
+Race can be any valid race.  Type can be any ship valid for that race or "All".  The scheme number(s) are in the range of 0..7 inclusive.
+
+Examples of new directives and changes:
+Following is an example I am using to test these changes.
+
+In the .level file I added:
+
+; only load 1 pirate beyond the basic R1/R2 fleet
+ExcludeShips    Traders,All
+ExcludeShips    P3,All
+ExcludeShips    P2,All
+ExcludeShips    P1,All
+IncludeShips    P1,P1MissileCorvette
+
+; don't load the head shot asteroids, they're really big
+ExcludeAsteroid HeadShotAsteroidR1
+ExcludeAsteroid HeadShotAsteroidR2
+
+; don't load all the derelicts
+ExcludeDerelict Fragment
+ExcludeDerelict ShipWreck
+
+; black/red stripe color scheme for a 'stealth' missile destroyer
+BaseColor                           7, 20, 0, 0
+StripeColor                         7, 255, 100, 0
+
+;regular R1 colors, R2 colors and 'stealth' colors
+AvailableColorSchemes       R1 MissileDestroyer 0,1, 7
+;pirates of a purple color
+AvailableColorSchemes       P1 P1MissileCorvette 6
+
+In the .missphere file I added:
+
+;'stealth' missile destroyer
+Ships       Label,-3000.0,-2500.0,0.0,-90.0,R1,MissileDestroyer,1,?|?|colorScheme(7)
+;R2 colors missile destroyer
+Ships       Label,-3500.0,-2500.0,0.0,-90.0,R1,MissileDestroyer,1,?|?|colorScheme(1)
+;purple pirate corvettes
+Ships       Label,-3000,-5000,0,90,P1,P1MissileCorvette,5,DELTA_FORMATION|?|colorScheme(6)
+
+This made a mission sphere where I had 2 funky-colored missile destroyers and a formation of purple pirates.  Great fun for the whole family!
+
+Nebula stuff:
+********************************************************************************************
+(Written by Keith)
+
+Nebulae use the same number of parameters as other resources, but with different intent.  Here's a template:
+
+Resources Nebula, x, y, z, Nebula, [distname].dist, numTendrils, xSize, ySize, zSize, numChunks
+
+x,y,z:               position in 3D
+Nebula:              the distribution [normally cylinder, sphere, &c].  Nebulae can only be of distribution Nebula
+[distname].dist:     relative distribution of RUs throughout the nebula
+numTendrils:         the number of "tendrils" in the nebula
+xSize, ySize, zSize: the extents of the region that the nebula appears within, defines an axis-aligned box
+numChunks:           seed value.  best to leave at >= 60 * numTendrils, <= 100 * numTendrils
+
+Nebulae aren't as flexible wrt controlling the distribution as other resource types because
+of the extreme amount of randomness that goes into their construction: a vast cylindrical
+region thinly populated with nebulosity tendrils appears mostly identical to a vast
+rectangular region [box] populated similarly, and I found that too many constraints produce
+unappealing tendril bunching.  Nebulae tend to form in a cylindrical / spherical fashion,
+even given the box distribution.

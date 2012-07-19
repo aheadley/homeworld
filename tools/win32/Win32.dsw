@@ -1,0 +1,145 @@
+Microsoft Developer Studio Workspace File, Format Version 5.00
+# WARNING: DO NOT EDIT OR DELETE THIS WORKSPACE FILE!
+
+###############################################################################
+
+Project: "BTG"=.\BTG\BTG.DSP - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/tools/win32", JBMAAAAA
+    .
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "Biggie"=.\Biggie\Biggie.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/tools/win32", JBMAAAAA
+    .
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "FEMan"=.\FEMan\FEMan.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/tools/win32", JBMAAAAA
+    .
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "Fontastic"=.\Fontastic\Fontastic.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/tools/win32", JBMAAAAA
+    .
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "LWExport"=.\LWExport\LWExport.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/tools/win32", JBMAAAAA
+    .
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "Paco"=.\Paco\Paco.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/tools/win32", JBMAAAAA
+    .
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "UnitView"=.\UnitView\UnitView.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/tools/win32", JBMAAAAA
+    .
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Project: "polycount"=.\polycount\polycount.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/tools/win32", JBMAAAAA
+    .
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Global:
+
+Package=<5>
+{{{
+}}}
+
+Package=<3>
+{{{
+}}}
+
+###############################################################################
+

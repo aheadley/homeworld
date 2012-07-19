@@ -1,0 +1,82 @@
+;1.1 tweak
+;bit 01 (00000001) fast front end [ffe]
+;bit 02 (00000002) fast front end, OpenGL only [gl ffe]
+;bit 03 (00000004) OpenGL [gl]
+;bit 04 (00000008) fast front end, Direct3D only [d3d ffe]
+;bit 05 (00000010) small textures [texmin]
+;bit 06 (00000020) OpenGL double buffer actually double [triple]
+;bit 07 (00000040) 32bit modes [32bit]
+;bit 08 (00000080) OpenGL 32bit modes [32bit gl]
+;bit 09 (00000100) Direct3D [d3d]
+;bit 10 (00000200) 3dfx OpenGL [3dfxgl]
+;bit 11 (00000400) OpenGL DirectDraw [ddraw]
+;bit 12 (00000800) don't nudge fonts in y [yadj]
+;bit 13 (00001000) don't nudge fonts in x [xadj]
+;bit 14 (00002000) paletted textures [pal]
+;bit 15 (00004000) software DirectDraw [sw ddraw]
+;bit 16 (00008000) background colour [bg]
+;bit 17 (00010000) background colour, Direct3D only [d3d bg]
+;bit 18 (00020000) antialiasing [aa]
+;bit 19 (00040000) unfiltered fonts [-xadj]
+;bit 20 (00080000) read textures from hardware [teximage]
+;bit 21 (00100000) point smoothing [pointsmooth]
+;bit 22 (00200000) mode disabling doesn't affect software [sw disable]
+;...
+;bit 23 (00400000) 32bit 1600x1200 [1600x1200x32]
+;bit 24 (00800000) 32bit 1280x1024 [1280x1024x32]
+;bit 25 (01000000) 32bit 1024x768 [1024x768x32]
+;bit 26 (02000000) 32bit 800x600 [800x600x32]
+;bit 27 (04000000) 32bit 640x480 [640x480x32]
+;bit 28 (08000000) 16bit 1600x1200 [1600x1200x16]
+;bit 29 (10000000) 16bit 1280x1024 [1280x1024x16]
+;bit 30 (20000000) 16bit 1024x768 [1024x768x16]
+;bit 31 (40000000) 16bit 800x600 [800x600x16]
+;bit 32 (80000000) 16bit 640x480 [640x480x16]
+;...
+;bit 01 (00000001) mixed depth modes [depth]
+;bit 02 (00000002) additive alpha [add]
+;bit 03 (00000004) iterated alpha [ialpha]
+;bit 04 (00000008) DrawPixels [drawpixels]
+;bit 05 (00000010) user clipping planes [userclip]
+;bit 06 (00000020) dither while alpha blending [dalpha]
+;bit 07 (00000040) OpenGL, Win95 only [gl 95]
+;bit 08 (00000080) Direct3D, Win95 only [d3d 95]
+;...
+BB388FC3 00002140 5796D767 00000000 Voodoo Graphics        ; 32bit, d3d, pal
+4BCCC0B4 00002140 45237889 00000000 Voodoo 2               ; 32bit, d3d, pal
+2937F34B 00002140 45237889 00000000 Monster 3D II          ; 32bit, d3d, pal
+7EAAC7D6 00002240 FD9F1FEC 00000001 Voodoo Banshee         ; 32bit, 3dfxgl, pal. depth
+00000000 00002240 60482755 00000001 Voodoo ?               ; 32bit, 3dfxgl, pal. depth
+ED0CE54C 00002240 D8F44030 00000001 Voodoo 3               ; 32bit, 3dfxgl, pal. depth
+8BE84387 00042900 714995DC 00000002 nVidia RIVA 128        ; d3d, yadj, pal, -xadj. add
+0F3B3958 00000000 44D64592 00000040 nVidia RIVA TNT        ; gl 95
+4D592BF4 00000020 81626D7D 00000040 nVidia RIVA TNT2       ; triple. gl 95
+8501B033 7FC80004 00000000 00000002 ATI Rage Mach 64 GT    ; gl, teximage, display mode disabling. add
+4A538D49 18C80004 00000000 00000002 ATI Rage LT Pro        ; gl, teximage, display mode disabling. add
+8E8C639B 18C80004 F99A9932 00000002 ATI Rage Pro Turbo     ; gl, teximage, display mode disabling. add
+F20A0E06 00000000 6C156FFE 00000008 ATI Rage 128           ; drawpixels
+A9CD92C4 00000012 00000000 00000000 Matrox Mill II         ; gl ffe, texmin
+CC6ED890 18C00104 8CA1EF4B 00000000 Matrox PowerVR         ; gl, d3d, display mode disabling
+819F0056 00000000 268F7918 00000008 Matrox G200            ; drawpixels
+07975886 00000000 A9EDEE4F 00000018 Matrox G400            ; drawpixels, userclip
+066CC11C 00004000 296A6E77 00000002 S3 ViRGE-VX 988        ; sw ddraw. add
+2B9CF29B 00106004 31E4A62C 00000000 Savage 3               ; gl, pal, sw ddraw, pointsmooth
+DA69E600 00102004 9BED6EA7 00000000 Savage 4               ; gl, pal, pointsmooth
+29AC3216 00000020 5D660EE2 00000000 Intel i740             ; triple
+A17F0B9A 7FC00000 77970A03 00000002 Rendition V1000-E      ; display mode disabling. add
+CEBDD703 00000004 F7662B86 00000000 Rendition V2100        ; gl
+62222D33 19C20100 62222D33 00000000 Rendition V2200        ; d3d, aa, display mode disabling
+1E493959 00092002 D564B855 00000066 Permedia 2             ; gl ffe, pal, d3d bg, teximage. add, ialpha, dalpha, gl 95
+9F888E68 00000000 9F888E68 00000000 Cirrus Logic 546X
+62DF4B43 1C200100 62DF4B43 00000000 Trident 9850           ; d3d, sw disable, display mode disabling
+8BE84387 00042900 C9F5F2B9 00000002                        ; d3d, yadj, pal, -xadj. add
+8BE84387 00042900 2C2F619C 00000002                        ; d3d, yadj, pal, -xadj. add
+8BE84387 00042900 949306F9 00000002                        ; d3d, yadj, pal, -xadj. add
+4D592BF4 00000020 39DE0A18 00000040                        ; triple. gl 95
+4D592BF4 00000020 2B6BA5F6 00000040                        ; triple. gl 95
+4D592BF4 00000020 93D7C293 00000040                        ; triple. gl 95
+4D592BF4 00000020 0E00FA2A 00000040                        ; triple. gl 95
+4D592BF4 00000020 B6BC9D4F 00000040                        ; triple. gl 95
+4D592BF4 00000020 A40932A1 00000040                        ; triple. gl 95
+4D592BF4 00000020 1CB555C4 00000040                        ; triple. gl 95
+4D592BF4 00000020 14CF120D 00000040                        ; triple. gl 95
