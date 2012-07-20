@@ -6,7 +6,11 @@
     Copyright Relic Entertainment, Inc.  All rights reserved.
 =============================================================================*/
 
+#ifdef _WIN32
 #include <windows.h>
+#else
+#include <dlfcn.h>
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,7 +38,8 @@ static char DEFAULT_RENDERER[8];
 
 
 //use malloc / free if WIN_ALLOC is defined
-#undef WIN_ALLOC
+//#undef WIN_ALLOC
+#define WIN_ALLOC
 
 //poly stat variables
 GLuint g_NumPolys = 0;
@@ -411,11 +416,11 @@ GLboolean gl_select_device(GLint index)
     if (index >= 0 && index < nDevices)
     {
         activeDevice = index;
-        return TRUE;
+        return GL_TRUE;
     }
     else
     {
-        return FALSE;
+        return GL_FALSE;
     }
 }
 
@@ -2752,7 +2757,7 @@ static GLboolean gl_driver_init(GLboolean reload)
 {
     GLcontext* ctx = CC;
     static GLboolean (*init_driver)();
-    HINSTANCE lib;
+    void* lib;
     char fname[64];
 
     ctx->NewMask |= NEW_RASTER;
@@ -2777,14 +2782,25 @@ static GLboolean gl_driver_init(GLboolean reload)
 
     if (reload)
     {
+#ifdef _WIN32
         strcpy(fname, "rgl");
+#else
+        strcpy(fname, "librgl");
+#endif
         strcat(fname, devices[activeDevice].name);
+#ifndef _WIN32
+        strcat(fname, ".so");
+#endif
 
+#ifdef _WIN32
         lib = GetModuleHandle(fname);
         if (lib == NULL)
         {
             lib = LoadLibrary(fname);
         }
+#else
+        lib = dlopen(fname, RTLD_GLOBAL | RTLD_NOW);
+#endif
         if (lib == NULL)
         {
             strcat(fname, " : couldn't load driver");
@@ -2792,7 +2808,11 @@ static GLboolean gl_driver_init(GLboolean reload)
             return GL_FALSE;
         }
 
+#ifdef _WIN32
         init_driver = (GLboolean(*)())GetProcAddress(lib, "init_driver");
+#else
+        init_driver = (GLboolean(*)())dlsym(lib, "init_driver");
+#endif
         if (init_driver == NULL)
         {
             return GL_FALSE;
@@ -5414,13 +5434,13 @@ DLL void rglSetAllocs(MemAllocFunc allocFunc, MemFreeFunc freeFunc)
 }
 
 /*-----------------------------------------------------------------------------
-    Name        : glLitColorTable
+    Name        : glLitColorTableEXT
     Description : binds a shared pre-lit colortable to the context
     Inputs      :
     Outputs     :
     Return      :
 ----------------------------------------------------------------------------*/
-DLL void API glLitColorTable(
+DLL void API glLitColorTableEXT(
     GLenum target, GLenum internalformat, GLsizei length,
     GLenum format, GLenum type, GLvoid const* palette)
 {
@@ -5461,13 +5481,13 @@ DLL void API glLitColorTable(
 }
 
 /*-----------------------------------------------------------------------------
-    Name        : glColorTable
+    Name        : glColorTableEXT
     Description : binds a colortable (palette) to the currently bound texture object
     Inputs      : [as per spec, but only palette is used]
     Outputs     :
     Return      :
 ----------------------------------------------------------------------------*/
-DLL void API glColorTable(
+DLL void API glColorTableEXT(
     GLenum target, GLenum internalformat, GLsizei length,
     GLenum format, GLenum type, GLvoid const* palette)
 {
@@ -5526,6 +5546,33 @@ DLL void API glColorTable(
         ctx->DriverFuncs.tex_palette(tex);
     }
 }
+
+/*-----------------------------------------------------------------------------
+    Name        : glColorTable
+    Description : alias for glColorTableEXT() (for consistency, should be
+                  removed once we're sure all references to glColorTable() are
+                  cleaned out)
+    Inputs      : [as per spec, but only palette is used]
+    Outputs     :
+    Return      :
+----------------------------------------------------------------------------*/
+DLL void API glColorTable(
+    GLenum target, GLenum internalformat, GLsizei length,
+    GLenum format, GLenum type, GLvoid const* palette)
+{ glColorTableEXT(target, internalformat, length, format, type, palette); }
+
+/*-----------------------------------------------------------------------------
+    Name        : glLitColorTable
+    Description : alias for glColorTableEXT() (like glColorTable(), it's for
+                  consistency and should eventually be removed)
+    Inputs      :
+    Outputs     :
+    Return      :
+----------------------------------------------------------------------------*/
+DLL void API glLitColorTable(
+    GLenum target, GLenum internalformat, GLsizei length,
+    GLenum format, GLenum type, GLvoid const* palette)
+{ glLitColorTableEXT(target, internalformat, length, format, type, palette); }
 
 /*-----------------------------------------------------------------------------
     Name        : glPixelTransferf
@@ -6433,7 +6480,7 @@ DLL void rglDrawPitchedPixels(
 
 static struct __extensions__ ext[] =
 {
-    { (pROC)glColorTable, "glColorTableEXT" },
+    { (pROC)glColorTableEXT, "glColorTableEXT" },
     { (pROC)glLitColorTable, "glLitColorTableEXT" },
     { (pROC)rglFeature, "rglFeature" },
     { (pROC)rglSpecExp, "rglSpecExp" },
@@ -6469,7 +6516,7 @@ static struct __extensions__ ext[] =
 
 static int qt_ext = sizeof(ext) / sizeof(ext[0]);
 
-pROC rglGetProcAddress(LPCSTR lpszProc)
+pROC rglGetProcAddress(char* lpszProc)
 {
     int i;
 

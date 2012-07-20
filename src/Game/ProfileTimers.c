@@ -4,9 +4,9 @@
 #include "color.h"
 #include "font.h"
 #include <string.h>
-#include "memory.h"
-#include "debug.h"
-#include "file.h"
+#include "Memory.h"
+#include "Debug.h"
+#include "File.h"
 
 #ifdef PROFILE_TIMERS
 

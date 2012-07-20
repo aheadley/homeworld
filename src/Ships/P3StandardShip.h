@@ -9,8 +9,8 @@
 #ifndef ___P3_STANDARD_SHIP_H
 #define ___P3_STANDARD_SHIP_H
 
-#include "types.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "SpaceObj.h"
 
 /*=============================================================================
     Defines:

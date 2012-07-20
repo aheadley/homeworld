@@ -8,13 +8,13 @@
 #ifndef ___AIUTILITIES_H
 #define ___AIUTILITIES_H
 
-#include "types.h"
-#include "spaceobj.h"
-#include "blobs.h"
-#include "memory.h"
-#include "vector.h"
-#include "universe.h"
-#include "volume.h"
+#include "Types.h"
+#include "SpaceObj.h"
+#include "Blobs.h"
+#include "Memory.h"
+#include "Vector.h"
+#include "Universe.h"
+#include "Volume.h"
 
 bool ShipAlreadyHyperspaceOut(Ship *ship);      // don't include singleplayer.h, just this
 
@@ -141,6 +141,8 @@ void aiuMoveShipSelection(MaxSelection *dest, MaxSelection *source, udword num);
 /*-----------------------------------------------------------------------------
     Ship Related Utility Functions:
 -----------------------------------------------------------------------------*/
+struct AITeam;
+
 //rescues (reinforces) a certain ship
 bool aiuRescueShip(ShipPtr ship, struct AITeam *team);
 

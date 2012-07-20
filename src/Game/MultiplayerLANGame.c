@@ -6,38 +6,54 @@
     Copyright Relic Entertainment, Inc.  All rights reserved.
 =============================================================================*/
 
-
+#ifdef _WIN32
 #include <windows.h>
+#else
+#define _GNU_SOURCE   /* Get to wcscasecmp() */
+#endif
+
 #include <stdio.h>
+#include <strings.h>
+
+#ifndef _MACOSX
+    #include <wchar.h>
+#endif
+
+#include <stdlib.h>
 #include "MultiplayerLANGame.h"
-#include "MultiplayerGame.h"
-#include "feflow.h"
+//#include "MultiplayerGame.h"
+#include "FEFlow.h"
 #include "utility.h"
-#include "scenpick.h"
-#include "uicontrols.h"
-#include "region.h"
+#include "ScenPick.h"
+#include "UIControls.h"
+#include "Region.h"
 #include "mouse.h"
-#include "fontreg.h"
-#include "scroller.h"
-#include "linkedlist.h"
+#include "FontReg.h"
+#include "Scroller.h"
+#include "LinkedList.h"
 #include "prim2d.h"
-#include "randy.h"
-#include "chatting.h"
-#include "commandnetwork.h"
-#include "globals.h"
-#include "msg\serverstatus.h"
+#include "Randy.h"
+#include "Chatting.h"
+#include "CommandNetwork.h"
+#include "Globals.h"
+#include "msg/ServerStatus.h"
 #include "ChannelFSM.h"
-#include "colpick.h"
+#include "ColPick.h"
 #include "mainswitches.h"
-#include "chatting.h"
-#include "strings.h"
-#include "queue.h"
-#include "file.h"
-#include "statscript.h"
+#include "Chatting.h"
+#include "Strings.h"
+#include "Queue.h"
+#include "File.h"
+#include "StatScript.h"
 #include "TimeoutTimer.h"
 #include "Titan.h"
-#include "Titannet.h"
-#include "gamechat.h"
+#include "TitanNet.h"
+#include "GameChat.h"
+
+#ifdef _WIN32
+#define strncasecmp _strnicmp
+#define wcscasecmp  _wcsicmp
+#endif
 
 /*=============================================================================
     Defines:
@@ -498,7 +514,7 @@ void *lgParseChatEntry(char *messageorig, bool preGameChat)
                 {
                     user = listGetStructOfNode(walk);
                     gcRemoveAmpersands(ampremoved, user->userName);
-                    if (strnicmp(ampremoved,toname,i)==0)
+                    if (strncasecmp(ampremoved,toname,i)==0)
                     {
                         // found a match so far
                         matched = user;
@@ -521,7 +537,7 @@ void *lgParseChatEntry(char *messageorig, bool preGameChat)
                 {
                     guser = listGetStructOfNode(walk);
                     gcRemoveAmpersands(ampremoved, guser->name);
-                    if (strnicmp(ampremoved,toname,i)==0)
+                    if (strncasecmp(ampremoved,toname,i)==0)
                     {
                         // found a match so far
                         gmatched = guser;
@@ -715,7 +731,7 @@ void lgLanProtocalButton(char *name, featom *atom)
     }
     else
     {
-        LanProtocalButton = (ubyte)atom->pData;
+        LanProtocalButton = (ubyte)(size_t)atom->pData;
     }
 }
 
@@ -1081,6 +1097,7 @@ void lgUserNameWindowInit(char *name, featom *atom)
 
 void lgSeeDetails(char*name,featom*atom)
 {
+#ifndef _MACOSX_FIX_ME
     dbgAssert(LANGame);
 
     if (lgListOfGamesWindow->CurLineSelected!=NULL)
@@ -1091,6 +1108,7 @@ void lgSeeDetails(char*name,featom*atom)
         dbgAssert(SeeingDetailsForGameName[0] != 0);
         mgShowScreen(MGS_Basic_Options_View,TRUE);
     }
+#endif
 }
 
 void lgRequestJoinGame(tpscenario *game)
@@ -1134,6 +1152,7 @@ void lgJoinGame(char*name,featom*atom)
             }
         }
 
+#ifndef _MACOSX_FIX_ME
         if (wcslen(gameinfo->game.directoryCustomInfo.stringdata)>1)
         {
             joingame = &gameinfo->game;
@@ -1143,6 +1162,7 @@ void lgJoinGame(char*name,featom*atom)
         {
             lgRequestJoinGame(&gameinfo->game);
         }
+#endif
     }
 }
 
@@ -1151,7 +1171,10 @@ void lgJoinGame(char*name,featom*atom)
 // callback for sorting the game list window
 bool lgListOfGamesCompare(void *firststruct,void *secondstruct)
 {
+#ifndef _MACOSX_FIX_ME
     sdword i;
+#endif
+
     lggamelist *one = (lggamelist *)(((listitemhandle)firststruct)->data);
     lggamelist *two = (lggamelist *)(((listitemhandle)secondstruct)->data);
 
@@ -1166,11 +1189,11 @@ bool lgListOfGamesCompare(void *firststruct,void *secondstruct)
             return(FALSE);
     }
 
-
+#ifndef _MACOSX_FIX_ME
     switch (lgListOfGamesWindow->sorttype)
     {
         case LG_SortByGameName:
-            if ((i=wcsicmp( one->game.Name,two->game.Name)) > 0)
+            if ((i=wcscasecmp( one->game.Name,two->game.Name)) > 0)
                 return (lgListOfGamesWindow->sortOrder);
             else
             {
@@ -1195,7 +1218,7 @@ bool lgListOfGamesCompare(void *firststruct,void *secondstruct)
             wchar_t *onemapname = one->game.directoryCustomInfo.stringdata + 1+wcslen(one->game.directoryCustomInfo.stringdata);
             wchar_t *twomapname = two->game.directoryCustomInfo.stringdata + 1+wcslen(two->game.directoryCustomInfo.stringdata);
 
-            if ((i=wcsicmp( onemapname,twomapname)) > 0)
+            if ((i=wcscasecmp( onemapname,twomapname)) > 0)
                 return (lgListOfGamesWindow->sortOrder);
             else
             {
@@ -1206,6 +1229,9 @@ bool lgListOfGamesCompare(void *firststruct,void *secondstruct)
             }
         }
     }
+#endif
+
+    return FALSE;
 }
 
 // callback if the title is clicked on
@@ -1360,9 +1386,12 @@ void lgListOfGamesItemDraw(rectangle *rect, listitemhandle data)
     color       c;
     fonthandle  oldfont;
     lggamelist   *gameinfo = (lggamelist *)data->data;
-    udword passwordlen;
     bool gameinprogress = gameinfo->game.directoryCustomInfo.flag & GAME_IN_PROGRESS;
     bool diffversion = (!CheckNetworkVersionCompatibility(gameinfo->game.directoryCustomInfo.versionInfo));
+
+#ifndef _MACOSX_FIX_ME
+    udword passwordlen;
+#endif
 
     oldfont = fontMakeCurrent(lgListOfGamesFont);
 
@@ -1393,6 +1422,7 @@ void lgListOfGamesItemDraw(rectangle *rect, listitemhandle data)
     sprintf(temp,"%i",gameinfo->game.directoryCustomInfo.numPlayers);
     fontPrint(x-fontWidth(temp)-fontWidth("W"),y,c,temp);
 
+#ifndef _MACOSX_FIX_ME
     passwordlen = wcslen(gameinfo->game.directoryCustomInfo.stringdata);
 
     wcstombs(temp,gameinfo->game.directoryCustomInfo.stringdata + 1+passwordlen,512);
@@ -1413,6 +1443,7 @@ void lgListOfGamesItemDraw(rectangle *rect, listitemhandle data)
     }
 
     fontMakeCurrent(oldfont);
+#endif
 }
 
 // initilize the list of games window structure to needed settings
@@ -1677,6 +1708,7 @@ void lgSetupGame(char*name,featom*atom)
 
 void lgStartGame(char*name,featom*atom)
 {
+#ifndef _MACOSX_FIX_ME
     sdword i;
 
     if (tpGameCreated.numPlayers == 0)
@@ -1725,6 +1757,7 @@ void lgStartGame(char*name,featom*atom)
     sigsPressedStartGame = TRUE;
 
     lgShutdownMultiPlayerGameScreens();
+#endif // _MACOSX_FIX_ME
 }
 
 void lgGameChatTextEntry(char *name, featom *atom)
@@ -1854,6 +1887,7 @@ void lgDirtyNumPlayerRegions()
 
 void lgCreateGameNow(char *name, featom *atom)
 {
+#ifndef _MACOSX_FIX_ME
     if (SeeingDetailsForGameName[0])
     {
         SeeingDetailsForGameName[0] = 0;
@@ -1924,6 +1958,7 @@ void lgCreateGameNow(char *name, featom *atom)
 
         lgUpdateGameInfo();
     }
+#endif // _MACOSX_FIX_ME
 }
 
 void lgGameNameTextEntry(char *name, featom *atom)
@@ -2052,6 +2087,7 @@ void lgBackFromPassword(char *name, featom *atom)
 
 void lgGoPassword(char *name, featom *atom)
 {
+#ifndef _MACOSX_FIX_ME
     static wchar_t widepasswordentryboxtext[MAX_PASSWORD_LENGTH];
 
     if (joingame!=NULL)
@@ -2067,6 +2103,7 @@ void lgGoPassword(char *name, featom *atom)
             mgShowScreen(LGS_Message_Box,FALSE);
         }
     }
+#endif
 }
 
 
@@ -2195,6 +2232,7 @@ void CopyToTpGameCreatedExceptPlayerColors(CaptainGameInfo *newcaptaingameinfo)
 
 void lgProcessGameHere(lgqueuegamehere *game)
 {
+#ifndef _MACOSX_FIX_ME
     LANAdvert_GameHere *gamehere = &game->gamehere;
 
     // see if gamehere is already in the list
@@ -2277,6 +2315,7 @@ void lgProcessGameHere(lgqueuegamehere *game)
     {
         gameinfo->item = NULL;
     }
+#endif // _MACOSX_FIX_ME
 }
 
 void lgProcessChatMsg(lgqueuechatmsg *chat)
@@ -2521,6 +2560,7 @@ void lgSendChatMessage(char *towho,char *message)
 
 static void lgExplicitlyDeleteGameFromGameList(wchar_t *name)
 {
+#ifndef _MACOSX_FIX_ME
     lggamelist *gameinfo;
     Node     *walk2;
 
@@ -2553,6 +2593,7 @@ static void lgExplicitlyDeleteGameFromGameList(wchar_t *name)
 
         walk2 = walk2->next;
     }
+#endif
 }
 
 #pragma optimize("gy", off)                       //turn on stack frame (we need ebp for this function)
@@ -2564,7 +2605,9 @@ void lgProcessCallBacksTask(void)
 
     taskYield(0);
 
+#ifndef C_ONLY
     while (1)
+#endif
     {
         taskStackSaveCond(0);
 
@@ -2665,7 +2708,7 @@ void lgProcessCallBacksTask(void)
         {
             LockQueue(&lgThreadTransfer);
 
-            sizeofpacket = Dequeue(&lgThreadTransfer, &packet);
+            sizeofpacket = HWDequeue(&lgThreadTransfer, &packet);
             dbgAssert(sizeofpacket > 0);
             copypacket = memAlloc(sizeofpacket,"lg(lgthreadtransfer)", Pyrophoric);
             memcpy(copypacket, packet, sizeofpacket);
@@ -2823,8 +2866,8 @@ void lgStartup(void)
 
     TTimerDisable(&lgAdvertiseMyselfTimer);
 
-    lgchangescreenmutex       = (void *)CreateMutex(NULL,FALSE,NULL);
-    gamestartedmutex        = (void *)CreateMutex(NULL,FALSE,NULL);
+    lgchangescreenmutex = SDL_CreateMutex();
+    gamestartedmutex    = SDL_CreateMutex();
 
     lgProccessCallback = taskStart(lgProcessCallBacksTask, LG_TaskServicePeriod, 0);
     taskPause(lgProccessCallback);
@@ -2837,7 +2880,7 @@ void lgShutdown(void)
 {
     CloseQueue(&lgThreadTransfer);
 
-    CloseHandle((HANDLE)lgchangescreenmutex);
+    SDL_DestroyMutex(lgchangescreenmutex);
 }
 
 
@@ -2870,7 +2913,7 @@ void titanReceivedLanBroadcastCB(const void* thePacket, unsigned short theLen)
                 {
                     memcpy(&userhere.userhere,thePacket,sizeof(LANAdvert_UserHere));
 
-                    Enqueue(&lgThreadTransfer, (ubyte *)&userhere, sizeof(userhere));
+                    HWEnqueue(&lgThreadTransfer, (ubyte *)&userhere, sizeof(userhere));
                 }
                 else
                 {
@@ -2889,7 +2932,7 @@ void titanReceivedLanBroadcastCB(const void* thePacket, unsigned short theLen)
                 {
                     memcpy(&gamehere.gamehere,thePacket,sizeof(LANAdvert_GameHere));
 
-                    Enqueue(&lgThreadTransfer, (ubyte *)&gamehere,sizeof(gamehere));
+                    HWEnqueue(&lgThreadTransfer, (ubyte *)&gamehere,sizeof(gamehere));
                 }
                 else
                 {
@@ -2908,7 +2951,7 @@ void titanReceivedLanBroadcastCB(const void* thePacket, unsigned short theLen)
                 {
                     memcpy(&chatmsg.chatmsg,thePacket,sizeof(LANAdvert_ChatMsg));
 
-                    Enqueue(&lgThreadTransfer, (ubyte *)&chatmsg,sizeof(chatmsg));
+                    HWEnqueue(&lgThreadTransfer, (ubyte *)&chatmsg,sizeof(chatmsg));
                 }
                 else
                 {
@@ -2941,7 +2984,7 @@ void lgDisplayMessage(char *message)
     status.header.packettype = LG_QUEUESTATUSINFO;
     strcpy(status.status.message, message);
 
-    Enqueue(&lgThreadTransfer, (ubyte *)&status, sizeof(lgqueuestatusline));
+    HWEnqueue(&lgThreadTransfer, (ubyte *)&status, sizeof(lgqueuestatusline));
 
     UnLockQueue(&lgThreadTransfer);
 }
@@ -2973,7 +3016,7 @@ void lgUpdateGameInfo(void)
         player.player.race        = tpGameCreated.playerInfo[i].race;
         player.player.index       = i;
 
-        Enqueue(&lgThreadTransfer, (ubyte *)&player, sizeof(lgqueuegameplayerinfo));
+        HWEnqueue(&lgThreadTransfer, (ubyte *)&player, sizeof(lgqueuegameplayerinfo));
     }
 
     sigsNumPlayers = tpGameCreated.numPlayers;
@@ -3010,7 +3053,7 @@ void lgNotifyGameDisolved(void)
     LockQueue(&lgThreadTransfer);
 
     disolved.packettype = LG_QUEUEGAMEDISOLVED;
-    Enqueue(&lgThreadTransfer, (ubyte *)&disolved, sizeof(lgqueuegeneral));
+    HWEnqueue(&lgThreadTransfer, (ubyte *)&disolved, sizeof(lgqueuegeneral));
 
     UnLockQueue(&lgThreadTransfer);
 }
@@ -3034,7 +3077,7 @@ void lgProcessGameChatPacket(ChatPacket *packet)
     else
         chat.chat.messagetype = LG_NORMALCHAT;
 
-    Enqueue(&lgThreadTransfer, (ubyte *)&chat, sizeof(lgqueuechatlist));
+    HWEnqueue(&lgThreadTransfer, (ubyte *)&chat, sizeof(lgqueuechatlist));
 
     UnLockQueue(&lgThreadTransfer);
 }

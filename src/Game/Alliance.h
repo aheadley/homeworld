@@ -15,6 +15,10 @@
 #define ALLIANCE_FORMNEWALLIANCE    1
 #define ALLIANCE_BREAKALLIANCE      2
 
+struct ChatPacket;
+struct Ship;
+struct Player;
+
 void allianceFormWith(udword playerindex);
 void allianceBreakWith(udword playerindex);
 void allianceFormRequestRecievedCB(struct ChatPacket *packet);

@@ -1,7 +1,7 @@
 #ifndef __KASFUNC_H
 #define __KASFUNC_H
 
-#include "types.h"
+#include "Types.h"
 #include "AIUtilities.h"
 #include "Volume.h"
 

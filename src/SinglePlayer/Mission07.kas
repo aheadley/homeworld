@@ -156,8 +156,8 @@
 #define MASTERTEAM     TEAM_P2Mothership
 #define EVENTSTEAM     TEAM_Dummy1
 #include "Swarmer.kash"
-#include "speechevent.h"
-#include "soundmusic.h"
+#include "SpeechEvent.h"
+#include "SoundMusic.h"
 #include "CommandDefs.h"
 //-----------------------------------------------------------------------------
 //    Name        : Events

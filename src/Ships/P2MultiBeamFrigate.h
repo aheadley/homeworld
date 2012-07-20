@@ -9,8 +9,8 @@
 #ifndef ___P2_MULTI_BEAM_FRIGATE_H
 #define ___P2_MULTI_BEAM_FRIGATE_H
 
-#include "types.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "SpaceObj.h"
 
 /*=============================================================================
     Defines:

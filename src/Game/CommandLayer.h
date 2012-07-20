@@ -10,13 +10,13 @@
 #ifndef ___COMMAND_LAYER_H
 #define ___COMMAND_LAYER_H
 
-#include "types.h"
-#include "vector.h"
-#include "spaceobj.h"
-#include "shipselect.h"
-#include "formation.h"
-#include "dock.h"
-#include "rescollect.h"
+#include "Types.h"
+#include "Vector.h"
+#include "SpaceObj.h"
+#include "ShipSelect.h"
+#include "Formation.h"
+#include "Dock.h"
+#include "ResCollect.h"
 #include "CommandDefs.h"
 
 #ifndef HW_Release
@@ -57,8 +57,8 @@ typedef SelectAnyCommand SpecialCommand;
 typedef SelectCommand ProtectCommand;
 typedef SelectCommandMax6 ProtectCommandMax6;
 
-#define IAmAWingman(attackvar) (attackvar##->myLeaderIs)
-#define IAmALeader(attackvar) (attackvar##->myWingmanIs)
+#define IAmAWingman(attackvar) ((attackvar)->myLeaderIs)
+#define IAmALeader(attackvar) ((attackvar)->myWingmanIs)
 
 typedef struct
 {
@@ -138,6 +138,8 @@ void clClose(CommandLayer *comlayer);
 void clReset(CommandLayer *comlayer);
 void clProcess(CommandLayer *comlayer);
 void clPostProcess(CommandLayer *comlayer);
+
+void clChecksum(void);
 
 // Ship Command Layer
 void clMove(CommandLayer *comlayer,SelectCommand *selectcom,vector from,vector to);

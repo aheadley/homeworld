@@ -8,10 +8,10 @@
 #define TUTOR_H
 
 #include "Types.h"
-#include "shipselect.h"
-#include "shipdefs.h"
-#include "feflow.h"
-#include "volume.h"
+#include "ShipSelect.h"
+#include "ShipDefs.h"
+#include "FEFlow.h"
+#include "Volume.h"
 
 /*=============================================================================
     Definitions:

@@ -6,11 +6,14 @@
     Copyright Relic Entertainment, Inc.  All rights reserved.
 =============================================================================*/
 
-#include "types.h"
-#include "spaceobj.h"
-#include "shipselect.h"
+#include "Types.h"
+#include "SpaceObj.h"
+#include "ShipSelect.h"
 
-#define SAVE_VERSION_NUMBER             0x10ad0027
+/* Save game version for original Homeworld. */
+/*#define SAVE_VERSION_NUMBER             0x10ad0027*/
+/* Save game version for Homeworld SDL. */
+#define SAVE_VERSION_NUMBER             0x10ad0028
 
 #define BASIC_STRUCTURE                 0x80000000
 #define VARIABLE_STRUCTURE              0x40000000
@@ -73,12 +76,12 @@ typedef struct
 
 #define VerifyChunk(c,t,s)              \
     dbgAssert(c);                       \
-    dbgAssert(c->type == t);            \
-    dbgAssert(c->contentsSize == s)
+    dbgAssert((c)->type == (t));        \
+    dbgAssert((c)->contentsSize == (s))
 
 #define VerifyChunkNoSize(c,t)          \
     dbgAssert(c);                       \
-    dbgAssert(c->type == t);
+    dbgAssert((c)->type == (t));
 
 bool SaveGame(char *filename);
 void LoadGame(char *filename);

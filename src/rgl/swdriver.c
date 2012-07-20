@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <math.h>
 #include "kgl.h"
 #include "span.h"
@@ -1932,6 +1934,7 @@ static void clear_colorbuffer(GLcontext* ctx)
                 dp[x] = fill;
             }
 #else
+    #if defined (_MSC_VER)
             __asm
             {
                 push ecx ;
@@ -1950,6 +1953,13 @@ static void clear_colorbuffer(GLcontext* ctx)
                 pop eax ;
                 pop ecx ;
             }
+    #elif defined (__GNUC__) && defined (__i386__)
+            __asm__ __volatile__ (
+                "    .align 16\n"
+                "    rep stosl\n"
+                :
+                : "c" (pitch), "a" (fill), "D" (dp) );
+    #endif
 #endif
         }
     }

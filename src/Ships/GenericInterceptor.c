@@ -9,31 +9,31 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-#include "types.h"
-#include "fastmath.h"
-#include "debug.h"
-#include "objtypes.h"
-#include "spaceobj.h"
-#include "collision.h"
-#include "physics.h"
-#include "universe.h"
+#include "Types.h"
+#include "FastMath.h"
+#include "Debug.h"
+#include "ObjTypes.h"
+#include "SpaceObj.h"
+#include "Collision.h"
+#include "Physics.h"
+#include "Universe.h"
 #include "GenericInterceptor.h"
-#include "statscript.h"
-#include "gun.h"
-#include "aiship.h"
-#include "aitrack.h"
-#include "mex.h"
-#include "soundevent.h"
-#include "flightman.h"
-#include "commandlayer.h"
-#include "univupdate.h"
-#include "tactics.h"
-#include "nis.h"
-#include "madlinkin.h"
-#include "madlinkindefs.h"
+#include "StatScript.h"
+#include "Gun.h"
+#include "AIShip.h"
+#include "AITrack.h"
+#include "MEX.h"
+#include "SoundEvent.h"
+#include "FlightMan.h"
+#include "CommandLayer.h"
+#include "UnivUpdate.h"
+#include "Tactics.h"
+#include "NIS.h"
+#include "MadLinkIn.h"
+#include "MadLinkInDefs.h"
 #include "DefenseFighter.h"
-#include "randy.h"
-#include "battle.h"
+#include "Randy.h"
+#include "Battle.h"
 
 #ifdef gshaw
 //#define DEBUG_AIATTACK
@@ -850,7 +850,7 @@ void GenericInterceptorAttack(Ship *ship,SpaceObjRotImpTarg *target,real32 maxdi
                         formtype = NO_FORMATION;            // yet another R1 Mothership special consideration
                     }
 
-                    if ( (abs(trajectory.z) >= 0.75) )
+                    if ( (ABS(trajectory.z) >= 0.75) )
                     {
                         //vecScalarMultiply(tmpvec,trajectory,interceptorstat->flyPastDist[ship->tacticstype][targetIndex]);
                         vecScalarMultiply(tmpvec,trajectory,FAKE_FLY_BY_DISTANCE_MUCH_BIGGER_THAN_NEEDED);
@@ -868,7 +868,7 @@ void GenericInterceptorAttack(Ship *ship,SpaceObjRotImpTarg *target,real32 maxdi
                         //vecNormalizeToLength(&tmpvec,interceptorstat->flyPastDist[ship->tacticstype][targetIndex]);
                         vecNormalizeToLength(&tmpvec,FAKE_FLY_BY_DISTANCE_MUCH_BIGGER_THAN_NEEDED);
 
-                        if (abs(trajectory.x) > abs(trajectory.y))
+                        if (ABS(trajectory.x) > ABS(trajectory.y))
                         {
                             matMakeRotAboutY(&tmpmat,(real32)cos(randegf),(real32)sin(randegf));
                         }
@@ -1225,7 +1225,6 @@ void CloakedFighterHouseKeep(Ship *ship)
 
 bool InterceptorInRange(Ship *ship,SpaceObjRotImpTarg *target)
 {
-    GenericInterceptorSpec *spec = (GenericInterceptorSpec *)ship->ShipSpecifics;
     GenericInterceptorStatics *interceptorstat = (GenericInterceptorStatics *)ship->staticinfo->custstatinfo;
     real32 range;
     uword targetIndex;

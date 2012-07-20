@@ -6,27 +6,39 @@
     Copyright Relic Entertainment, Inc.  All rights reserved.
 =============================================================================*/
 
+#ifdef _WIN32
 #include <windows.h>
+#endif
 #include <stdio.h>
+#include <stdlib.h>
+#include <strings.h>
 #include "GameChat.h"
 #include "utility.h"
-#include "uicontrols.h"
-#include "region.h"
-#include "fontreg.h"
-#include "universe.h"
-#include "chatting.h"
-#include "linkedlist.h"
-#include "commandnetwork.h"
-#include "strings.h"
+#include "UIControls.h"
+#include "Region.h"
+#include "FontReg.h"
+#include "Universe.h"
+#include "Chatting.h"
+#include "LinkedList.h"
+#include "CommandNetwork.h"
+#include "Strings.h"
 #include "mainrgn.h"
-#include "commandwrap.h"
-#include "soundevent.h"
+#include "CommandWrap.h"
+#include "SoundEvent.h"
+
+#ifdef _MSC_VER
+#define strncasecmp strnicmp
+#endif
 
 /*=============================================================================
     Defines:
 =============================================================================*/
 
+#ifdef _WIN32
 #define GC_FIBFile          "FEMan\\Game_Chat.FIB"
+#else
+#define GC_FIBFile          "FEMan/Game_Chat.FIB"
+#endif
 #define GC_ChatHistoryMax   200
 #define GC_MAXCHARACTERS    256
 
@@ -57,7 +69,7 @@ featom          chatdrawatom=
     0,0,0,0,
     0,0,
     0,
-    0,0
+    {0},{0}  /* TC: I'm guessing? (thinking this might be based off what's commented out) */
 };
 
 fescreen       *gcScreenHandle=NULL;
@@ -128,8 +140,8 @@ fedrawcallback gcDrawCallback[] =
 ----------------------------------------------------------------------------*/
 void gcLockGameChat(void)
 {
-    DWORD result = WaitForSingleObject((HANDLE)chatmutex, INFINITE);
-    dbgAssert(result != WAIT_FAILED);
+    int result = SDL_mutexP(chatmutex);
+    dbgAssert(result != -1);
 }
 
 /*-----------------------------------------------------------------------------
@@ -141,8 +153,8 @@ void gcLockGameChat(void)
 ----------------------------------------------------------------------------*/
 void gcUnLockGameChat(void)
 {
-    BOOL result = ReleaseMutex((HANDLE)chatmutex);
-    dbgAssert(result);
+    int result = SDL_mutexV(chatmutex);
+    dbgAssert(result != -1);
 }
 
 /*-----------------------------------------------------------------------------
@@ -354,7 +366,7 @@ sdword gcParseChatEntry(char *message)
             for (index=0;index<universe.numPlayers;index++)
             {
                 gcRemoveAmpersands(ampremoved, playerNames[index]);
-                if (strnicmp(ampremoved,toname,i)==0)
+                if (strncasecmp(ampremoved,toname,i)==0)
                 {
                     userindex = index;
 
@@ -884,7 +896,7 @@ void gcStartup(void)
     listAddNode(&chathistorylist,&dummy->link,dummy);
     curPosition = &dummy->link;
 
-    chatmutex = (void *)CreateMutex(NULL,FALSE,NULL);
+    chatmutex = SDL_CreateMutex();
 
     if (chatdrawregion!=NULL)
     {
@@ -932,7 +944,7 @@ void gcStartup(void)
 ----------------------------------------------------------------------------*/
 void gcShutdown(void)
 {
-    CloseHandle((HANDLE)chatmutex);
+    SDL_DestroyMutex(chatmutex);
     chatmutex = NULL;
 
     curPosition = NULL;

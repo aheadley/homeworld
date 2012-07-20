@@ -4,7 +4,7 @@
 #include "scan.h"
 #include "asm.h"
 
-#include "stipple.c"
+#include "stipple.c.h"
 
 #define MONOCOLOR_RED   255
 #define MONOCOLOR_GREEN 0

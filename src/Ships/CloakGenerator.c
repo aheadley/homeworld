@@ -7,19 +7,19 @@
 =============================================================================*/
 
 #include <string.h>
-#include "types.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "SpaceObj.h"
 #include "CloakGenerator.h"
 #include "SoundEvent.h"
-#include "linkedlist.h"
+#include "LinkedList.h"
 #include "memory.h"
-#include "universe.h"
-#include "vector.h"
+#include "Universe.h"
+#include "Vector.h"
 #include "SaveGame.h"
-#include "genericinterceptor.h"
-#include "salcapcorvette.h"
-#include "attack.h"
-#include "battle.h"
+#include "GenericInterceptor.h"
+#include "SalCapCorvette.h"
+#include "Attack.h"
+#include "Battle.h"
 
 CloakGeneratorStatics CloakGeneratorStatic;
 
@@ -167,9 +167,7 @@ void CloakAddObjectsInProximity(Ship *cloakship)
 {
     Player *playerowner = cloakship->playerowner;
     Node *objnode = universe.ShipList.head;
-    udword num = universe.ShipList.num;
     CloakGeneratorStatics *cloakgeneratorstatics;
-    CloakGeneratorSpec *spec = (CloakGeneratorSpec *)cloakship->ShipSpecifics;  //maybe don't need
     Ship *spaceobj;
     real32 distanceSqr;
     vector diff;

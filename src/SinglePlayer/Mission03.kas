@@ -2,7 +2,7 @@
 //  MISSION03
 //
 
-#include "speechevent.h"
+#include "SpeechEvent.h"
 
     LOCALIZATION //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 //LString Standards:

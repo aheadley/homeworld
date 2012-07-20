@@ -12,27 +12,27 @@
 #include <string.h>
 #include <math.h>
 #include <stdlib.h>
-#include "types.h"
-#include "debug.h"
-#include "univupdate.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "Debug.h"
+#include "UnivUpdate.h"
+#include "SpaceObj.h"
 #include "MinelayerCorvette.h"
-#include "statscript.h"
-#include "gun.h"
-#include "attack.h"
+#include "StatScript.h"
+#include "Gun.h"
+#include "Attack.h"
 #include "DefaultShip.h"
-#include "universe.h"
-#include "gun.h"
-#include "aitrack.h"
-#include "aiship.h"
-#include "attack.h"
-#include "collision.h"
-#include "fastmath.h"
-#include "physics.h"
+#include "Universe.h"
+#include "Gun.h"
+#include "AITrack.h"
+#include "AIShip.h"
+#include "Attack.h"
+#include "Collision.h"
+#include "FastMath.h"
+#include "Physics.h"
 #include "SaveGame.h"
-#include "randy.h"
-#include "soundevent.h"
-#include "battle.h"
+#include "Randy.h"
+#include "SoundEvent.h"
+#include "Battle.h"
 
 MinelayerCorvetteStatics MinelayerCorvetteStatic;
 
@@ -194,7 +194,6 @@ void MinelayerCorvetteFire(Ship *ship,SpaceObjRotImpTarg *target)
 void SetAIVecHeading(Ship *ship, SpaceObjRotImpTarg *target, vector *trajectory)
 {
     //real32 range;
-    ShipStaticInfo *shipstaticinfo = (ShipStaticInfo *)ship->staticinfo;
     vector tmpvec;
     udword target_class;
     real32 randegf;
@@ -265,19 +264,10 @@ void SetAIVecHeading(Ship *ship, SpaceObjRotImpTarg *target, vector *trajectory)
 void MineLayerAttackRun(Ship *ship,SpaceObjRotImpTarg *target,AttackSideStep *attacksidestep,AttackSideStepParameters *parameters)
 {
     vector trajectory;
-    //real32 dist;
     real32 range;
-    //real32 temp;
-//    bool didshoot;
-    ShipStaticInfo *shipstaticinfo = (ShipStaticInfo *)ship->staticinfo;
     Gun *gun;
     udword numGuns,target_class;
     GunInfo *guninfo = ship->gunInfo;
-    //vector tmpvec;
-    //real32 randegf;
-    //sdword randeg;
-    //matrix tmpmat;
-    //vector targetheading;
     MinelayerCorvetteSpec *spec = (MinelayerCorvetteSpec *)ship->ShipSpecifics;
     MinelayerCorvetteStatics *minelayercorvettestatics;
     minelayercorvettestatics = (MinelayerCorvetteStatics *) ((ShipStaticInfo *)(ship->staticinfo))->custstatinfo;
@@ -472,7 +462,6 @@ bool MinelayerCorvetteStaticMineDrop(Ship *ship,SpaceObjRotImpTarg *target)
     MinelayerCorvetteStatics *minelayercorvettestatics;
     MinelayerCorvetteSpec *spec = (MinelayerCorvetteSpec *)ship->ShipSpecifics;
     sdword flag;
-    GunInfo *guninfo = ship->gunInfo;
     Gun *gun0,*gun1;
     real32 time;
     sdword maxmis;
@@ -650,10 +639,6 @@ bool MinelayerCorvetteStaticMineDrop(Ship *ship,SpaceObjRotImpTarg *target)
 
 bool MinelayerCorvetteSpecialActivate(Ship *ship)
 {
-    MinelayerCorvetteStatics *minelayercorvettestatics;
-    MinelayerCorvetteSpec *spec = (MinelayerCorvetteSpec *)ship->ShipSpecifics;
-    minelayercorvettestatics = (MinelayerCorvetteStatics *) ((ShipStaticInfo *)(ship->staticinfo))->custstatinfo;
-
     return(MinelayerCorvetteStaticMineDrop(ship,NULL));
 }
 
@@ -795,7 +780,7 @@ void univUpdateMineWallFormations()
                 }
             }
         }
-ret:
+
         node = node->next;
     }
 

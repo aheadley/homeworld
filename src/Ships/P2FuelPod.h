@@ -9,8 +9,8 @@
 #ifndef ___P2_FUEL_POD_H
 #define ___P2_FUEL_POD_H
 
-#include "types.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "SpaceObj.h"
 
 /*=============================================================================
     Defines:

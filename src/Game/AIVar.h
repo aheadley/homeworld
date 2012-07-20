@@ -1,7 +1,7 @@
 #ifndef __AIVAR_H
 #define __AIVAR_H
 
-#include "types.h"
+#include "Types.h"
 
 //
 //  general purpose AI variable stuff (can be used as flags, counters, etc.)

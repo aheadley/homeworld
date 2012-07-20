@@ -9,22 +9,20 @@
 #ifndef ___SOUND_PRIV_H
 #define ___SOUND_PRIV_H
 
-#include <windows.h>
-#include <windowsx.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
 
 #include "soundlow.h"
-#include "types.h"
-#include "switches.h"
-#include "memory.h"
-#include "file.h"
-#include "universe.h"
-#include "univupdate.h"
-#include "fastmath.h"
-#include "randy.h"
+#include "Types.h"
+#include "Switches.h"
+#include "Memory.h"
+#include "File.h"
+#include "Universe.h"
+#include "UnivUpdate.h"
+#include "FastMath.h"
+#include "Randy.h"
 #include "main.h"
 #include "fqeffect.h"
 
@@ -47,7 +45,11 @@
 #define EXPLOSION_OFFSET	58
 #define HIT_OFFSET			65
 
+#ifdef _WIN32
 #define SOUNDFXDIR "SoundFX\\"
+#else
+#define SOUNDFXDIR "SoundFX/"
+#endif
 
 #define CGW1 0
 #if defined(Downloadable) || defined(DLPublicBeta)
@@ -73,93 +75,93 @@
     Tweaks
 =============================================================================*/
 
-real32 SFX_VOL_FACTOR;
-sdword SFX_MAX_ENGINES;
-sdword SFX_MIN_CAPSHIPS;
-sdword SFX_AMBIENT_VOLUME;
-sdword SFX_NIS_MAX_ENGINES;
-sdword SFX_NIS_MIN_CAPSHIPS;
-real32 SFX_MAX_ENGINE_RANGE;
-bool   SFX_CAPSHIPS_ALWAYS_ON;
-sdword SFX_MAX_AMBIENT;
-real32 SFX_FLOAT_VELOCITY;
-real32 SFX_NIS_FLOAT_VELOCITY;
-real32 SFX_MIN_PERCEPTABLE_VOL;
+extern real32 SFX_VOL_FACTOR;
+extern sdword SFX_MAX_ENGINES;
+extern sdword SFX_MIN_CAPSHIPS;
+extern sdword SFX_AMBIENT_VOLUME;
+extern sdword SFX_NIS_MAX_ENGINES;
+extern sdword SFX_NIS_MIN_CAPSHIPS;
+extern real32 SFX_MAX_ENGINE_RANGE;
+extern bool   SFX_CAPSHIPS_ALWAYS_ON;
+extern sdword SFX_MAX_AMBIENT;
+extern real32 SFX_FLOAT_VELOCITY;
+extern real32 SFX_NIS_FLOAT_VELOCITY;
+extern real32 SFX_MIN_PERCEPTABLE_VOL;
 
-sword  SFX_HYPERSPACE_VOLUME;
+extern sword  SFX_HYPERSPACE_VOLUME;
 
-real32 SFX_DAMAGERATIO_LIGHT;
-real32 SFX_DAMAGERATIO_MEDIUM;
-real32 SFX_DAMAGERATIO_HEAVY;
-bool   SFX_DAMAGERATIO_ENABLE;
+extern real32 SFX_DAMAGERATIO_LIGHT;
+extern real32 SFX_DAMAGERATIO_MEDIUM;
+extern real32 SFX_DAMAGERATIO_HEAVY;
+extern bool   SFX_DAMAGERATIO_ENABLE;
 
-real32 SFX_CARDIOD_FACTOR;
-real32 SFX_CARDIOD_MIN;
+extern real32 SFX_CARDIOD_FACTOR;
+extern real32 SFX_CARDIOD_MIN;
 
-real32 FIGHTER_VELOCITY_LOWPITCH;
-real32 FIGHTER_VELOCITY_HIGHPITCH;
-real32 FIGHTER_VELOCITY_SCALE;
+extern real32 FIGHTER_VELOCITY_LOWPITCH;
+extern real32 FIGHTER_VELOCITY_HIGHPITCH;
+extern real32 FIGHTER_VELOCITY_SCALE;
 
-real32 CORVETTE_VELOCITY_LOWPITCH;
-real32 CORVETTE_VELOCITY_HIGHPITCH;
-real32 CORVETTE_VELOCITY_SCALE;
+extern real32 CORVETTE_VELOCITY_LOWPITCH;
+extern real32 CORVETTE_VELOCITY_HIGHPITCH;
+extern real32 CORVETTE_VELOCITY_SCALE;
 
-real32 FIGHTER_DOPPLER_SCALE;
-sdword FIGHTER_DOPPLER_LOW;
-sdword FIGHTER_DOPPLER_HIGH;
-bool   FIGHTER_DOPPLER_USEVELOCITY;
+extern real32 FIGHTER_DOPPLER_SCALE;
+extern sdword FIGHTER_DOPPLER_LOW;
+extern sdword FIGHTER_DOPPLER_HIGH;
+extern bool   FIGHTER_DOPPLER_USEVELOCITY;
 
-real32 CORVETTE_DOPPLER_SCALE;
-sdword CORVETTE_DOPPLER_LOW;
-sdword CORVETTE_DOPPLER_HIGH;
-bool   CORVETTE_DOPPLER_USEVELOCITY;
+extern real32 CORVETTE_DOPPLER_SCALE;
+extern sdword CORVETTE_DOPPLER_LOW;
+extern sdword CORVETTE_DOPPLER_HIGH;
+extern bool   CORVETTE_DOPPLER_USEVELOCITY;
 
-real32 SPEECH_VOL_FACTOR;
-sword  SPEECH_VOL_LOW;
-sword  SPEECH_VOL_MAX;
-real32 SPEECH_NOISE_FACTOR;
-real32 SPEECH_NOISE_LOW;
-real32 SPEECH_NOISE_HIGH;
-udword SPEECH_FILTER_LOW;
-udword SPEECH_FILTER_HIGH;
-real32 SPEECH_BREAK_THRESHOLD;
-real32 SPEECH_BREAK_RATE_FACTOR;
-udword SPEECH_BREAK_RATE_LOW;
-udword SPEECH_BREAK_RATE_HIGH;
-real32 SPEECH_BREAK_LENGTH_FACTOR;
-udword SPEECH_BREAK_LENGTH_LOW;
-udword SPEECH_BREAK_LENGTH_HIGH;
-real32 SPEECH_CAPSHIP_CHATTER_RANGE;
-sdword SPEECH_CAPSHIP_CHATTER_TIME;
-real32 SPEECH_COMBAT_CHATTER_RANGE;
-sdword SPEECH_COMBAT_CHATTER_TIME;
-real32 SPEECH_DISOBEY_FORCEDATTACK;
+extern real32 SPEECH_VOL_FACTOR;
+extern sword  SPEECH_VOL_LOW;
+extern sword  SPEECH_VOL_MAX;
+extern real32 SPEECH_NOISE_FACTOR;
+extern real32 SPEECH_NOISE_LOW;
+extern real32 SPEECH_NOISE_HIGH;
+extern udword SPEECH_FILTER_LOW;
+extern udword SPEECH_FILTER_HIGH;
+extern real32 SPEECH_BREAK_THRESHOLD;
+extern real32 SPEECH_BREAK_RATE_FACTOR;
+extern udword SPEECH_BREAK_RATE_LOW;
+extern udword SPEECH_BREAK_RATE_HIGH;
+extern real32 SPEECH_BREAK_LENGTH_FACTOR;
+extern udword SPEECH_BREAK_LENGTH_LOW;
+extern udword SPEECH_BREAK_LENGTH_HIGH;
+extern real32 SPEECH_CAPSHIP_CHATTER_RANGE;
+extern sdword SPEECH_CAPSHIP_CHATTER_TIME;
+extern real32 SPEECH_COMBAT_CHATTER_RANGE;
+extern sdword SPEECH_COMBAT_CHATTER_TIME;
+extern real32 SPEECH_DISOBEY_FORCEDATTACK;
 
-real32 SPEECH_MIN_PERCEPTABLE_VOL;
-real32 SPEECH_AMBIENT_LEVEL;
-bool   SPEECH_AMBIENT_ENABLE;
+extern real32 SPEECH_MIN_PERCEPTABLE_VOL;
+extern real32 SPEECH_AMBIENT_LEVEL;
+extern bool   SPEECH_AMBIENT_ENABLE;
 
-real32 SPEECH_STIKEDAMAGE_MULT;
-real32 SPEECH_CAPDAMAGE_MULT;
+extern real32 SPEECH_STIKEDAMAGE_MULT;
+extern real32 SPEECH_CAPDAMAGE_MULT;
 
-real32 SPEECH_SINGLEPLAYER_RATIO;
-real32 SPEECH_STATUS_RATIO;
-real32 SPEECH_CHATTER_RATIO;
+extern real32 SPEECH_SINGLEPLAYER_RATIO;
+extern real32 SPEECH_STATUS_RATIO;
+extern real32 SPEECH_CHATTER_RATIO;
 
-real32 MUSIC_DISTANCE_SILENT;
-real32 MUSIC_DISTANCE_MAX;
-real32 MUSIC_MAXGAME_VOL;
-real32 MUSIC_MINACTIVE_VOL;
-real32 MUSIC_MININACTIVE_VOL;
-real32 MUSIC_SENSORS_VOL;
-real32 MUSIC_MANAGERS_VOL;
-real32 MUSIC_TUTORIAL_VOL;
-real32 MUSIC_FADE_TIME;
-real32 MUSIC_MAXBATTLE_VOL;
-real32 MUSIC_MINBATTLE_VOL;
+extern real32 MUSIC_DISTANCE_SILENT;
+extern real32 MUSIC_DISTANCE_MAX;
+extern real32 MUSIC_MAXGAME_VOL;
+extern real32 MUSIC_MINACTIVE_VOL;
+extern real32 MUSIC_MININACTIVE_VOL;
+extern real32 MUSIC_SENSORS_VOL;
+extern real32 MUSIC_MANAGERS_VOL;
+extern real32 MUSIC_TUTORIAL_VOL;
+extern real32 MUSIC_FADE_TIME;
+extern real32 MUSIC_MAXBATTLE_VOL;
+extern real32 MUSIC_MINBATTLE_VOL;
 
-real32 RANDOM_AMBIENCE_MINFREQ;
-sdword RANDOM_AMBIENCE_ADDRANDOM;
+extern real32 RANDOM_AMBIENCE_MINFREQ;
+extern sdword RANDOM_AMBIENCE_ADDRANDOM;
 
 
 /*=============================================================================

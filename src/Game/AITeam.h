@@ -9,14 +9,14 @@
 #ifndef __AITEAM_H
 #define __AITEAM_H
 
-#include "types.h"
-#include "spaceobj.h"
-#include "shipselect.h"
-#include "aievents.h"
-#include "formation.h"
+#include "Types.h"
+#include "SpaceObj.h"
+#include "ShipSelect.h"
+#include "AIEvents.h"
+#include "Formation.h"
 #include "FormationDefs.h"
 #include "AIVar.h"
-#include "vector.h"
+#include "Vector.h"
 #include "AIUtilities.h"
 #include "KAS.h"
 #include "Volume.h"
@@ -139,18 +139,18 @@ typedef struct AlternativeShips
 } AlternativeShips;
 
 #define SetNumAlternatives(alt,num) \
-    alt##.numNextPicks = num;   \
-    alt##.alternativeFlags = 0; \
-    dbgAssert(num <= MAX_NUM_ALTERNATIVES);
+    (alt).numNextPicks = (num);   \
+    (alt).alternativeFlags = 0; \
+    dbgAssert((num) <= MAX_NUM_ALTERNATIVES);
 
 #define SetNumAlternativesFlags(alt,num,flags) \
-    alt##.numNextPicks = num;   \
-    alt##.alternativeFlags = flags; \
-    dbgAssert(num <= MAX_NUM_ALTERNATIVES);
+    (alt).numNextPicks = (num);   \
+    (alt).alternativeFlags = (flags); \
+    dbgAssert((num) <= MAX_NUM_ALTERNATIVES);
 
 #define SetAlternative(alt,index,stype,equivnum) \
-    alt##.shipTypeNextPicks[index] = (sbyte)stype;  \
-    alt##.shipNumEquivNextPicks[index] = equivnum;
+    (alt).shipTypeNextPicks[index] = (sbyte)(stype);  \
+    (alt).shipNumEquivNextPicks[index] = (equivnum);
 
 typedef struct {
     char varName[AIVAR_LABEL_MAX_LENGTH+1];
@@ -484,23 +484,23 @@ typedef struct AITeamMove {
     Macros:
 =============================================================================*/
 #define InitNewMove(newMove,movetype,waitflag,removeflag,form,tactic,moveprocessfunc,moveshipdiedfunc,moveclosefunc)    \
-    newMove##->type                     = movetype;               \
-    newMove##->processing               = FALSE;                  \
-    newMove##->wait                     = waitflag;               \
-    newMove##->remove                   = removeflag;             \
-    newMove##->formation                = form;                   \
+    (newMove)->type                     = (movetype);             \
+    (newMove)->processing               = FALSE;                  \
+    (newMove)->wait                     = (waitflag);             \
+    (newMove)->remove                   = (removeflag);           \
+    (newMove)->formation                = (form);                 \
     dbgAssert(tactic >= 0);                                       \
     dbgAssert(tactic < NUM_TACTICS_TYPES);                        \
-    newMove##->tactics                  = tactic;                 \
-    newMove##->processFunction          = moveprocessfunc;        \
-    newMove##->moveShipDiedFunction     = moveshipdiedfunc;       \
-    newMove##->moveCloseFunction        = moveclosefunc;          \
+    (newMove)->tactics                  = (tactic);               \
+    (newMove)->processFunction          = (moveprocessfunc);      \
+    (newMove)->moveShipDiedFunction     = (moveshipdiedfunc);     \
+    (newMove)->moveCloseFunction        = (moveclosefunc);        \
     aieHandlersClear(newMove)
 
 #define FixMoveFuncPtrs(move,moveprocessfunc,moveshipdiedfunc,moveclosefunc)     \
-    move##->processFunction          = moveprocessfunc;        \
-    move##->moveShipDiedFunction     = moveshipdiedfunc;       \
-    move##->moveCloseFunction        = moveclosefunc
+    (move)->processFunction          = (moveprocessfunc);      \
+    (move)->moveShipDiedFunction     = (moveshipdiedfunc);     \
+    (move)->moveCloseFunction        = (moveclosefunc)
 
 #define aitApproxTeamPos(team)          ((team)->shipList.selection->ShipPtr[0]->posinfo.position)
 #define aitNumTeamShips(team)           ((team)->shipList.selection->numShips)

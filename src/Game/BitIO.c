@@ -14,8 +14,8 @@
 #include "BitIO.h"
 
 #ifdef BF_HOMEWORLD
-#include "memory.h"
-#include "debug.h"
+#include "Memory.h"
+#include "Debug.h"
 #else 
 #include "assert.h"
 #endif

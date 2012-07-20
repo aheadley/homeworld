@@ -6,26 +6,32 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <strings.h>
 #include "glinc.h"
 #include "mainrgn.h"
-#include "shipselect.h"
+#include "ShipSelect.h"
 #include "AITeam.h"
 #include "AIPlayer.h"
 #include "AIUtilities.h"
 #include "AIVar.h"
 #include "Timer.h"
-#include "vector.h"
-#include "kas.h"
-#include "file.h"
-#include "volume.h"
+#include "Vector.h"
+#include "KAS.h"
+#include "File.h"
+#include "Volume.h"
 #include "font.h"
 #include "render.h"
 #include "prim3d.h"
 #include "Objectives.h"
 #include "SinglePlayer.h"
 #include "SaveGame.h"
-#include "hs.h"
+#include "HS.h"
 #include "CommandWrap.h"
+
+#ifdef _WIN32
+#define strcasecmp  _stricmp
+#define strncasecmp _strnicmp
+#endif
 
 extern sdword objectivesUsed;
 #if SP_DEBUGKEYS
@@ -248,13 +254,13 @@ AITeam *kasAITeamPtr(char *label)
     while (i < aiCurrentAIPlayer->teamsUsed)
     {
         aiteamp = aiCurrentAIPlayer->teams[i];
-        if (aiteamp->teamType == ScriptTeam && !strnicmp(aiteamp->kasLabel, label, KAS_TEAM_NAME_MAX_LENGTH))
+        if (aiteamp->teamType == ScriptTeam && !strncasecmp(aiteamp->kasLabel, label, KAS_TEAM_NAME_MAX_LENGTH))
             return aiteamp;
         ++i;
     }
 
     // special reference to sender of last message received
-    if (!stricmp(label, "MsgSender"))
+    if (!strcasecmp(label, "MsgSender"))
         return CurrentTeamP->msgSender;
 #ifndef HW_Release
     dbgFatalf(DBG_Loc,"\nKAS: unresolved reference to team %s", label);
@@ -273,12 +279,12 @@ GrowSelection *kasAITeamShipsPtr(char *label)
     while (i < aiCurrentAIPlayer->teamsUsed)
     {
         aiteamp = aiCurrentAIPlayer->teams[i];
-        if (aiteamp->teamType == ScriptTeam && !strnicmp(aiteamp->kasLabel, label, KAS_TEAM_NAME_MAX_LENGTH))
+        if (aiteamp->teamType == ScriptTeam && !strncasecmp(aiteamp->kasLabel, label, KAS_TEAM_NAME_MAX_LENGTH))
             return &aiteamp->shipList;
         ++i;
     }
     // special reference to sender of last message received
-    if (!stricmp(label, "MsgSender"))
+    if (!strcasecmp(label, "MsgSender"))
         if (CurrentTeamP->msgSender)
             return &CurrentTeamP->msgSender->shipList;
 #ifndef HW_Release
@@ -295,7 +301,6 @@ hvector *kasShipsVectorPtr(char *label)
     static hvector errorPos= {0, 0, 0, 1};  // safe fallback
     static hvector location;
     vector loc;
-    sdword i = 0;
     GrowSelection *grow;
     real32 dummy;
 
@@ -408,7 +413,7 @@ Path *kasPathPtrNoErrorChecking(char *label)
     sdword i = 0;
     while (i < LabelledPathsUsed)
     {
-        if (!strnicmp(LabelledPaths[i]->label, label, KAS_MAX_LABEL_LENGTH))
+        if (!strncasecmp(LabelledPaths[i]->label, label, KAS_MAX_LABEL_LENGTH))
             return LabelledPaths[i]->path;
         ++i;
     }
@@ -423,7 +428,7 @@ Path *kasPathPtr(char *label)
     sdword i = 0;
     while (i < LabelledPathsUsed)
     {
-        if (!strnicmp(LabelledPaths[i]->label, label, KAS_MAX_LABEL_LENGTH))
+        if (!strncasecmp(LabelledPaths[i]->label, label, KAS_MAX_LABEL_LENGTH))
             return LabelledPaths[i]->path;
         ++i;
     }
@@ -440,7 +445,7 @@ Volume *kasVolumePtr(char *label)
     sdword i = 0;
     while (i < LabelledVolumesUsed)
     {
-        if (!strnicmp(LabelledVolumes[i]->label, label, KAS_MAX_LABEL_LENGTH))
+        if (!strncasecmp(LabelledVolumes[i]->label, label, KAS_MAX_LABEL_LENGTH))
             return LabelledVolumes[i]->volume;
         ++i;
     }
@@ -458,7 +463,7 @@ hvector *kasVectorPtrIfExists(char *label)
     sdword i = 0;
     while (i < LabelledVectorsUsed)
     {
-        if (!strnicmp(LabelledVectors[i]->label, label, KAS_MAX_LABEL_LENGTH))
+        if (!strncasecmp(LabelledVectors[i]->label, label, KAS_MAX_LABEL_LENGTH))
             return LabelledVectors[i]->hvector;
         ++i;
     }
@@ -483,7 +488,7 @@ GrowSelection *kasGetGrowSelectionPtrIfExists(char *label)
 
     while (i < SelectionsUsed)
     {
-        if (!strnicmp(Selections[i]->label, label, KAS_MAX_LABEL_LENGTH))
+        if (!strncasecmp(Selections[i]->label, label, KAS_MAX_LABEL_LENGTH))
             return &(Selections[i]->shipList);
         ++i;
     }
@@ -501,7 +506,7 @@ GrowSelection *kasGrowSelectionPtr(char *label)
 
     while (i < SelectionsUsed)
     {
-        if (!strnicmp(Selections[i]->label, label, KAS_MAX_LABEL_LENGTH))
+        if (!strncasecmp(Selections[i]->label, label, KAS_MAX_LABEL_LENGTH))
             return &(Selections[i]->shipList);
         ++i;
     }
@@ -708,7 +713,7 @@ void kasAddShipToTeam(Ship *ship,char *label)
     for (i = 0; i < aiCurrentAIPlayer->teamsUsed; i++)
     {
         teamp = aiCurrentAIPlayer->teams[i];
-        if (teamp->teamType == ScriptTeam && !strnicmp(teamp->kasLabel, label, KAS_TEAM_NAME_MAX_LENGTH))
+        if (teamp->teamType == ScriptTeam && !strncasecmp(teamp->kasLabel, label, KAS_TEAM_NAME_MAX_LENGTH))
             break;
     }
     if (i >= aiCurrentAIPlayer->teamsUsed)
@@ -784,9 +789,14 @@ void kasTakeADump(void)
     udword i, remaining;
     Timer *tp;
 
-    fullName = filePathPrepend(fileName, 0);
+    fullName = filePathPrepend(fileName, FF_UserSettingsPath);
+
+    if (!fileMakeDestinationDirectory(fullName))
+        return;
 
     fp = fopen(fullName, "wt");
+    if (!fp)
+        return;
 
     fprintf(fp, "%s\n\n", CurrentMissionName);
 
@@ -1365,8 +1375,23 @@ sdword kasConvertFuncPtrToOffset(void *func)
     }
     else
     {
+        udword i;
+        const void** func_list;
+        udword func_list_size;
 
-        return ((ubyte *)func) - ((ubyte *)IndexToWatchFunction(singlePlayerGameInfo.currentMission-1));
+        func_list =
+            IndexToFunctionList(singlePlayerGameInfo.currentMission - 1);
+        func_list_size = (func_list
+            ? FunctionListSize(singlePlayerGameInfo.currentMission - 1)
+            : 0);
+
+        for (i = 0; i < func_list_size; i++)
+        {
+            if (func_list[i] == (void*)func)
+                return (sdword)i;
+        }
+
+        return -1;
     }
 }
 
@@ -1378,7 +1403,18 @@ void *kasConvertOffsetToFuncPtr(sdword offset)
     }
     else
     {
-        return (void *)( ((ubyte *)IndexToWatchFunction(singlePlayerGameInfo.currentMission-1)) + offset);
+        const void** func_list;
+        udword func_list_size;
+
+        func_list =
+            IndexToFunctionList(singlePlayerGameInfo.currentMission - 1);
+        func_list_size = (func_list
+            ? FunctionListSize(singlePlayerGameInfo.currentMission - 1)
+            : 0);
+
+        return ((udword)offset < func_list_size
+            ? func_list[offset]
+            : NULL);
     }
 }
 

@@ -6,21 +6,21 @@
     Copyright Relic Entertainment, Inc.  All rights reserved.
 =============================================================================*/
 
-#include "types.h"
-#include "debug.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "Debug.h"
+#include "SpaceObj.h"
 #include "AdvanceSupportFrigate.h"
-#include "statscript.h"
-#include "gun.h"
-#include "attack.h"
+#include "StatScript.h"
+#include "Gun.h"
+#include "Attack.h"
 #include "DefaultShip.h"
-#include "shipselect.h"
-#include "aiship.h"
-#include "collision.h"
-#include "dock.h"
-#include "universe.h"
-#include "commandlayer.h"
-#include "repaircorvette.h"
+#include "ShipSelect.h"
+#include "AIShip.h"
+#include "Collision.h"
+#include "Dock.h"
+#include "Universe.h"
+#include "CommandLayer.h"
+#include "RepairCorvette.h"
 
 
 typedef struct

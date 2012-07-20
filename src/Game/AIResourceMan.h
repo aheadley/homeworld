@@ -8,8 +8,10 @@
 #ifndef ___AIRESOURCEMAN_H
 #define ___AIRESOURCEMAN_H
 
-#include "types.h"
-#include "shipselect.h"
+#include "Types.h"
+#include "ShipSelect.h"
+
+struct AITeam;
 
 void airResourceManager(void);
 

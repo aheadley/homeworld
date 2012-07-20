@@ -1,8 +1,8 @@
 //
 //      MISSION12 - Elite Guard Trap
 //
-#include "..\\Game\\speechevent.h"
-#include "..\\Game\\soundmusic.h"
+#include "../Game/SpeechEvent.h"
+#include "../Game/SoundMusic.h"
 
 
     LOCALIZATION //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴

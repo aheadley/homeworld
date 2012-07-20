@@ -3,28 +3,33 @@
 //
 
 #include <string.h>
+#include <strings.h>
 #include <stdio.h>
-#include "types.h"
+#include "Types.h"
 #include "Objectives.h"
-#include "shipselect.h"
+#include "ShipSelect.h"
 #include "KASFunc.h"
-#include "memory.h"
+#include "Memory.h"
 #include "Strings.h"
 #include "font.h"
 #include "render.h"
-#include "feflow.h"
+#include "FEFlow.h"
 #include "mainrgn.h"
-#include "sensors.h"
-#include "universe.h"
-#include "taskbar.h"
-#include "kasfunc.h"
+#include "Sensors.h"
+#include "Universe.h"
+#include "TaskBar.h"
+#include "KASFunc.h"
 #include "SaveGame.h"
-#include "fontreg.h"
-#include "singleplayer.h"
-#include "soundevent.h"
+#include "FontReg.h"
+#include "SinglePlayer.h"
+#include "SoundEvent.h"
 #include "AIVar.h"
-#include "nis.h"
-#include "subtitle.h"
+#include "NIS.h"
+#include "Subtitle.h"
+
+#ifdef _MSC_VER
+#define strcasecmp _stricmp
+#endif
 
 extern sdword popupTextNumLines;
 extern char *getWord(char *dest, char *source); // defined in researchgui.c
@@ -116,7 +121,7 @@ Objective *objectiveAndFleetIntelligenceCreate(char *label, char *briefDescripti
     memStrncpy(objective->label, label, MAX_OBJECTIVE_LABEL_LENGTH);
     objective->description = memStringDupe(briefDescription);
 
-    if (!_stricmp(label, "hyperspace"))
+    if (!strcasecmp(label, "hyperspace"))
     {
         hyperspace = TRUE;
         singlePlayerGameInfo.playerCanHyperspace = TRUE;
@@ -213,8 +218,6 @@ void objectiveShutdown(void)
 void objectiveSet(char *label, sdword status)
 {
     Objective *obj = objectiveFind(label);
-    sdword i = 0, completed = 0;
-
 
     if (!obj)
         return;
@@ -644,7 +647,7 @@ void objectiveLoad(void)
     for (i=0;i<objectivesUsed;i++)
     {
         objectives[i] = LoadObjective();
-        if (!_stricmp(objectives[i]->label, "hyperspace"))
+        if (!strcasecmp(objectives[i]->label, "hyperspace"))
         {
             dbgAssert(hyperspaceObjective == NULL);
             hyperspaceObjective = objectives[i];

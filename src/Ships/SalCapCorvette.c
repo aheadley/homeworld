@@ -9,48 +9,48 @@
 #include <stdio.h>
 #include <math.h>
 
-#include "types.h"
-#include "debug.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "Debug.h"
+#include "SpaceObj.h"
 #include "SalCapCorvette.h"
-#include "statscript.h"
-#include "gun.h"
-#include "attack.h"
+#include "StatScript.h"
+#include "Gun.h"
+#include "Attack.h"
 #include "DefaultShip.h"
-#include "select.h"
-#include "shipselect.h"
-#include "univupdate.h"
-#include "aiship.h"
-#include "aitrack.h"
+#include "Select.h"
+#include "ShipSelect.h"
+#include "UnivUpdate.h"
+#include "AIShip.h"
+#include "AITrack.h"
 #include "memory.h"
-#include "universe.h"
-#include "fastmath.h"
-#include "dock.h"
-#include "vector.h"
-#include "commandlayer.h"
-#include "soundevent.h"
-#include "physics.h"
-#include "multiplayergame.h"
+#include "Universe.h"
+#include "FastMath.h"
+#include "Dock.h"
+#include "Vector.h"
+#include "CommandLayer.h"
+#include "SoundEvent.h"
+#include "Physics.h"
+#include "MultiplayerGame.h"
 #include "SaveGame.h"
-#include "aivar.h"
+#include "AIVar.h"
 #include "prim3d.h"
 #include "render.h"
-#include "clamp.h"
-#include "nis.h"
-#include "madlinkin.h"
-#include "madlinkindefs.h"
-#include "mothership.h"
-#include "collision.h"
-#include "carrier.h"
-#include "alliance.h"
-#include "tactics.h"
-#include "ping.h"
-#include "singleplayer.h"
-#include "battle.h"
-#include "commandwrap.h"
-#include "genericdefender.h"
-#include "gravwellgenerator.h"
-#include "randy.h"
+#include "Clamp.h"
+#include "NIS.h"
+#include "MadLinkIn.h"
+#include "MadLinkInDefs.h"
+#include "Mothership.h"
+#include "Collision.h"
+#include "Carrier.h"
+#include "Alliance.h"
+#include "Tactics.h"
+#include "Ping.h"
+#include "SinglePlayer.h"
+#include "Battle.h"
+#include "CommandWrap.h"
+#include "GenericDefender.h"
+#include "GravWellGenerator.h"
+#include "Randy.h"
 
 #define DEBUG_SALCAP
 
@@ -94,7 +94,7 @@
 void clLaunchShip(CommandLayer *comlayer,SelectCommand *selectcom,ShipPtr receiverShip);
 void startTractorBeam(Ship *ship, SpaceObjRotImpTargGuidanceShipDerelict *target);
 
-
+SalCapCorvetteStatics SalCapCorvetteStatic;
 SalCapCorvetteStatics SalCapCorvetteStaticRace1;
 SalCapCorvetteStatics SalCapCorvetteStaticRace2;
 SalCapCorvetteStatics SalCapCorvetteStaticDawg;
@@ -217,8 +217,8 @@ bool SalCapCorvetteSpecialActivate(Ship *ship)
 //make tractor beam originate from 'tractor beam light'
 void startTractorBeam(Ship *ship, SpaceObjRotImpTargGuidanceShipDerelict *target)
 {
-    ShipStaticInfo *shipstatic = (ShipStaticInfo *)ship->staticinfo;
-    TractorBeamStatic *tractorBeamStatic = shipstatic->tractorEmitterStatic;
+    //ShipStaticInfo *shipstatic = (ShipStaticInfo *)ship->staticinfo;
+    //TractorBeamStatic *tractorBeamStatic = shipstatic->tractorEmitterStatic;
     SalCapCorvetteSpec *spec = (SalCapCorvetteSpec *)ship->ShipSpecifics;
 
     //vector beamposition;
@@ -289,7 +289,6 @@ void startTractorBeam(Ship *ship, SpaceObjRotImpTargGuidanceShipDerelict *target
 ----------------------------------------------------------------------------*/
 void StopTractorBeam(Ship *ship)
 {
-    SalCapCorvetteSpec *spec = (SalCapCorvetteSpec *)ship->ShipSpecifics;
     etgEffectDelete(ship->rceffect);
     univRemoveObjFromRenderList((SpaceObj *)ship->rceffect);
     listDeleteNode(&ship->rceffect->objlink);
@@ -1169,7 +1168,6 @@ sdword salCapTrackHeadingAndUp(SpaceObjRotImpTargGuidanceShipDerelict *target,re
 
 sdword salCapFlyToWithinDockingRange(Ship *ship)
 {
-    SalCapCorvetteStatics *salcapcorvettestatics = ((ShipStaticInfo *)(ship->staticinfo))->custstatinfo;
     real32 maxpushvelocity;
 
     SalCapCorvetteSpec *spec = (SalCapCorvetteSpec *)ship->ShipSpecifics;
@@ -1264,7 +1262,6 @@ sdword getDockIndex(Ship *ship,SpaceObjRotImpTargGuidanceShipDerelict *target,Sh
 sdword salCapFlyToDockingPoint1over2(Ship *ship,SpaceObjRotImpTargGuidanceShipDerelict *target)
 {
     SalCapCorvetteSpec *spec = (SalCapCorvetteSpec *)ship->ShipSpecifics;
-    SalCapCorvetteStatics *salcapcorvettestatics = ((ShipStaticInfo *)(ship->staticinfo))->custstatinfo;
 
     vector coneheadingInWorldCoordSys,conepositionInWorldCoordSys;
     vector destination,dockwithHeading;
@@ -1307,7 +1304,7 @@ sdword salCapFlyToDockingPoint1over2(Ship *ship,SpaceObjRotImpTargGuidanceShipDe
 sdword salCapFlyToDockingPoint1(Ship *ship,SpaceObjRotImpTargGuidanceShipDerelict *target)
 {
     SalCapCorvetteSpec *spec = (SalCapCorvetteSpec *)ship->ShipSpecifics;
-    SalCapCorvetteStatics *salcapcorvettestatics = ((ShipStaticInfo *)(ship->staticinfo))->custstatinfo;
+    //SalCapCorvetteStatics *salcapcorvettestatics = ((ShipStaticInfo *)(ship->staticinfo))->custstatinfo;
 
     vector coneheadingInWorldCoordSys,conepositionInWorldCoordSys;
     vector dockwithUp,dockwithHeading,dockwithRight,navpoint;
@@ -1337,6 +1334,7 @@ sdword salCapFlyToDockingPoint1(Ship *ship,SpaceObjRotImpTargGuidanceShipDerelic
             }
         }
     }
+
         matGetVectFromMatrixCol1(dockwithUp,spec->dockwith->rotinfo.coordsys);
         matGetVectFromMatrixCol2(dockwithRight,spec->dockwith->rotinfo.coordsys);
         matGetVectFromMatrixCol3(dockwithHeading,spec->dockwith->rotinfo.coordsys);
@@ -1355,11 +1353,10 @@ sdword salCapFlyToDockingPoint1(Ship *ship,SpaceObjRotImpTargGuidanceShipDerelic
             desiredUp = dockwithUp;
         }
     }
+    
     matMultiplyMatByVec(&coneheadingInWorldCoordSys,&spec->dockwith->rotinfo.coordsys,&spec->dockwith->dockInfo->dockpoints[spec->dockindex].dockstaticpoint->conenormal);
     matMultiplyMatByVec(&conepositionInWorldCoordSys,&spec->dockwith->rotinfo.coordsys,&spec->dockwith->dockInfo->dockpoints[spec->dockindex].dockstaticpoint->position);
     vecAddTo(conepositionInWorldCoordSys,spec->dockwith->posinfo.position);
-
-
 
     needDest = TRUE;
     if(spec->dockwith->shiptype == Mothership)
@@ -1840,7 +1837,7 @@ reachedit:
             {
                 //not enough doods targetting this bizitch...play sound event
                 //with ye'old battler chatter of course
-    bloot:;
+                ;
             }
         }
         spec->salvageState = SAL_DOCKINGSTATE1;
@@ -2078,7 +2075,7 @@ reachedit:
                 if(!salCapAreEnoughSalvagersTargettingThisTarget(ship,spec->target))
                 {
                     //not enough doods targetting this bizitch...play sound event
-    blooty:;
+                    ;
                 }
             }
         }
@@ -2800,7 +2797,6 @@ void SalCapCorvetteHouseKeep(Ship *ship)
 //Don't forget to clear tractorbeaminfo in ship and derelict structures.!
 void SalCapClose(Ship *ship)
 {
-    SalCapCorvetteSpec *spec = (SalCapCorvetteSpec *)ship->ShipSpecifics;
 }
 
 void salCapClearTechBool()
@@ -3156,7 +3152,6 @@ void SalCapDropTarget(Ship *ship)
 
 void SalCapCorvette_RegisterExtraSpaceObjs(Ship *ship)
 {
-    SalCapCorvetteSpec *spec = (SalCapCorvetteSpec *)ship->ShipSpecifics;
 }
 
 void SalCapCorvette_PreFix(Ship *ship)

@@ -49,7 +49,8 @@ vertex_buffer* gl_alloc_vb(void);
 //void gl_render_vb(GLcontext*, GLboolean);
 //void gl_reset_vb(GLcontext*, GLboolean);
 
-void gl_transform_vb_part1();
-void gl_transform_vb_part2();
+struct gl_context_s;
+void gl_transform_vb_part1(struct gl_context_s*, GLboolean);  /* kgl.c needs this, too. */
+//void gl_transform_vb_part2();
 
 #endif

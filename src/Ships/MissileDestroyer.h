@@ -9,8 +9,8 @@
 #ifndef ___MISSILE_DESTROYER_H
 #define ___MISSILE_DESTROYER_H
 
-#include "types.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "SpaceObj.h"
 
 /*=============================================================================
     Defines:

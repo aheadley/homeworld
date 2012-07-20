@@ -1,8 +1,8 @@
 #ifndef __TIMER_H
 #define __TIMER_H
 
-#include "types.h"
-#include "universe.h"
+#include "Types.h"
+#include "Universe.h"
 
 //
 //  Created 1997/07/01  Darren Stone

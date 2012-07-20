@@ -7,24 +7,24 @@
 =============================================================================*/
 
 #include <string.h>
-#include "types.h"
-#include "debug.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "Debug.h"
+#include "SpaceObj.h"
 #include "RepairCorvette.h"
-#include "statscript.h"
-#include "fastmath.h"
-#include "gun.h"
-#include "attack.h"
+#include "StatScript.h"
+#include "FastMath.h"
+#include "Gun.h"
+#include "Attack.h"
 #include "DefaultShip.h"
-#include "shipselect.h"
-#include "aiship.h"
-#include "aitrack.h"
-#include "commandlayer.h"
-#include "univupdate.h"
-#include "universe.h"
-#include "collision.h"
+#include "ShipSelect.h"
+#include "AIShip.h"
+#include "AITrack.h"
+#include "CommandLayer.h"
+#include "UnivUpdate.h"
+#include "Universe.h"
+#include "Collision.h"
 #include "SaveGame.h"
-#include "soundevent.h"
+#include "SoundEvent.h"
 
 void stopRepairEffect(Ship *ship);
 
@@ -62,10 +62,10 @@ void stopRepairEffect(Ship *ship);
         {                                                                                       \
             aitrackZeroVelocity(ship);                                                          \
         }
-
-//aishipGetTrajectory(ship,(SpaceObjRotImpTarg *)spec->target,&trajectory);         \
-//        range = RangeToTarget(ship,(SpaceObjRotImpTarg *)spec->target,&trajectory);           \
-//                                                                                          \
+/*
+        aishipGetTrajectory(ship,(SpaceObjRotImpTarg *)spec->target,&trajectory);           \
+        range = RangeToTarget(ship,(SpaceObjRotImpTarg *)spec->target,&trajectory);         \
+*/                                                                                          
 
 
 

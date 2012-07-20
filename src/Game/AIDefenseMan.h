@@ -9,8 +9,8 @@
 #ifndef ___AIDEFENSEMANAGER_H
 #define ___AIDEFENSEMANAGER_H
 
-#include "types.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "SpaceObj.h"
 
 void aidDefenseManager(void);
 bool aidShipDied(struct AIPlayer *aiplayer, ShipPtr ship);

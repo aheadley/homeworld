@@ -9,8 +9,8 @@
 #ifndef ___GRAV_WELL_GENERATOR_H
 #define ___GRAV_WELL_GENERATOR_H
 
-#include "types.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "SpaceObj.h"
 
 /*=============================================================================
     Types:

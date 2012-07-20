@@ -6,56 +6,67 @@
     Copyright Relic Entertainment, Inc.  All rights reserved.
 =============================================================================*/
 
+#ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <direct.h>
+#include <io.h>
+#else
+#include <unistd.h>
+#include <dirent.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <direct.h>
-#include <io.h>
 #include <math.h>
-#include "types.h"
-#include "globals.h"
+#include <limits.h>
+#include "Types.h"
+#include "Globals.h"
 #include "glinc.h"
-#include "types.h"
+#include "Types.h"
 #include "Debug.h"
 #include "prim2d.h"
-#include "universe.h"
+#include "Universe.h"
 #include "render.h"
 #include "CommandNetwork.h"
-#include "horserace.h"
-#include "region.h"
-#include "uicontrols.h"
-#include "feflow.h"
+#include "HorseRace.h"
+#include "Region.h"
+#include "UIControls.h"
+#include "FEFlow.h"
 #include "font.h"
-#include "fontreg.h"
+#include "FontReg.h"
 #include "prim2d.h"
 #include "utility.h"
-#include "task.h"
-#include "demo.h"
+#include "Task.h"
+#include "Demo.h"
 #include "mouse.h"
-#include "linkedlist.h"
-#include "chatting.h"
+#include "LinkedList.h"
+#include "Chatting.h"
 #include "glcaps.h"
-#include "nis.h"
-#include "multiplayergame.h"
-#include "etg.h"
-#include "file.h"
-#include "feReg.h"
+#include "NIS.h"
+#include "MultiplayerGame.h"
+#include "ETG.h"
+#include "File.h"
+#include "FEReg.h"
 #include "interfce.h"
-#include "teams.h"
+#include "Teams.h"
 #include "TimeoutTimer.h"
-#include "strings.h"
-#include "singleplayer.h"
-#include "autodownloadmap.h"
+#include "Strings.h"
+#include "SinglePlayer.h"
+#include "AutoDownloadMap.h"
 #include "glcompat.h"
 #include "texreg.h"
-#include "titan.h"
+#include "Titan.h"
 #include "devstats.h"
+
+#ifdef _WIN32
+#define strcasecmp _stricmp
+#endif
 
 #define ShouldHaveMousePtr (FALSE)
 
-extern LONGLONG utyTimerLast;
+extern Uint32 utyTimerLast;
 extern udword gDevcaps2;
 
 /*=============================================================================
@@ -73,7 +84,7 @@ color HorseRaceDropoutColor = colRGB(75,75,75);
     data:
 =============================================================================*/
 
-extern HDC hGLDeviceContext;
+/*extern HDC hGLDeviceContext;*/
 
 static rectangle hrSinglePlayerPos;
 static color hrSinglePlayerColor;
@@ -82,8 +93,8 @@ static sdword JustInit;
 static sdword localbar;
 
 // Pixels and info about the background image chosen
-static BOOL hrBackgroundInitFrame = 0;
-static DWORD *hrBackgroundImage = NULL;
+static bool hrBackgroundInitFrame = 0;
+static udword *hrBackgroundImage = NULL;
 static long hrBackgroundDirty = 0;
 bool hrBackgroundReinit = FALSE;
 static long hrBackXSize, hrBackYSize;
@@ -374,11 +385,19 @@ void hrChooseSinglePlayerBitmap(char* pFilenameBuffer)
 #if defined(OEM)
     if (singlePlayerGameInfo.currentMission == 5)
     {
+#ifdef _WIN32
         sprintf(fname, "SinglePlayer\\mission05_OEM\\loading.jpg");
+#else
+        sprintf(fname, "SinglePlayer/mission05_OEM/loading.jpg");
+#endif
     }
     else
 #endif
+#ifdef _WIN32
     sprintf(fname, "SinglePlayer\\mission%02d\\loading.jpg", singlePlayerGameInfo.currentMission);
+#else
+    sprintf(fname, "SinglePlayer/mission%02d/loading.jpg", singlePlayerGameInfo.currentMission);
+#endif
     if (!fileExists(fname, 0))
     {
         pFilenameBuffer[0] = '\0';
@@ -399,7 +418,11 @@ void hrChooseSinglePlayerBitmap(char* pFilenameBuffer)
     hrSinglePlayerPos.x1 = x + width;
     hrSinglePlayerPos.y1 = y + height;
 
+#ifdef _WIN32
     sprintf(fname, "SinglePlayer\\mission%02d\\loading.script", singlePlayerGameInfo.currentMission);
+#else
+    sprintf(fname, "SinglePlayer/mission%02d/loading.script", singlePlayerGameInfo.currentMission);
+#endif
     if (!fileExists(fname, 0))
     {
         hrSinglePlayerColor = colRGB(255,63,63);
@@ -415,17 +438,29 @@ void hrChooseSinglePlayerBitmap(char* pFilenameBuffer)
 
 void hrChooseRandomBitmap(char *pFilenameBuffer)
 {
-filehandle handle;
-long    hFind, FileCount, BigFileCount, WhichFile, Result;
+#ifdef _WIN32
 struct _finddata_t  FindData;
-char BigName[512], CurDir[512], NewDir[512];
+    long hFind;
+#else
+    DIR *dp;
+    struct dirent* dir_entry;
+    FILE* fp;
+#endif
+    filehandle handle;
+    long FileCount, BigFileCount, WhichFile, Result;
+    char BigName[PATH_MAX], CurDir[PATH_MAX], NewDir[PATH_MAX];
 
     FileCount = BigFileCount = 0;
 
-    GetCurrentDirectory(511, CurDir);
+    /*GetCurrentDirectory(511, CurDir);*/
+    getcwd(CurDir, PATH_MAX);
 
     // First, find screen shots listed in the BigFile
+#ifdef _WIN32
     handle = fileOpen("ScreenShots\\ShotList.script", FF_ReturnNULLOnFail | FF_TextMode);
+#else
+    handle = fileOpen("ScreenShots/ShotList.script", FF_ReturnNULLOnFail | FF_TextMode);
+#endif
     if(handle)
     {
         do {
@@ -443,11 +478,13 @@ char BigName[512], CurDir[512], NewDir[512];
     FileCount = BigFileCount;
 
     NewDir[0] = 0;
-    strcpy(NewDir, filePathPrepend("ScreenShots", 0));
+    strcpy(NewDir, filePathPrepend("ScreenShots", FF_UserSettingsPath));
 
 
     // Switch to the screenshots directory and count the ones in there
-    SetCurrentDirectory(NewDir);
+    /*SetCurrentDirectory(NewDir);*/
+    chdir(NewDir);
+#ifdef _WIN32
     hFind = _findfirst("*.jpg", &FindData);
     if(hFind != -1)
     {
@@ -458,12 +495,41 @@ char BigName[512], CurDir[512], NewDir[512];
         } while (_findnext(hFind, &FindData) == 0);
         _findclose(hFind);
     }
+#else
+    dp = opendir(".");
+
+    if (dp)
+    {
+        unsigned int dir_str_len;
+
+        while ((dir_entry = readdir(dp)))
+        {
+            if (dir_entry->d_name[0] == '.')
+                continue;
+            dir_str_len = strlen(dir_entry->d_name);
+            if (dir_str_len < 4 ||
+                strcasecmp(dir_entry->d_name + dir_str_len - 4, ".jpg"))
+                continue;
+
+            /* See if the current process can actually open the file (simple
+               check for read permissions and if it's a directory). */
+            if (!(fp = fopen(dir_entry->d_name, "rb")))
+                continue;
+            fclose(fp);
+
+            FileCount++;
+        }
+
+        closedir(dp);
+    }
+#endif
 
     // Did we find any at all?
     if(FileCount == 0)
     {
         pFilenameBuffer[0] = 0;
-        SetCurrentDirectory(CurDir);
+        /*SetCurrentDirectory(CurDir);*/
+        chdir(CurDir);
         return;
     }
 
@@ -472,7 +538,11 @@ char BigName[512], CurDir[512], NewDir[512];
     if(WhichFile < BigFileCount)
     {
         // The file we want is in the bigfile script
+#ifdef _WIN32
         handle = fileOpen("ScreenShots\\ShotList.script", FF_ReturnNULLOnFail | FF_TextMode);
+#else
+        handle = fileOpen("ScreenShots/ShotList.script", FF_ReturnNULLOnFail | FF_TextMode);
+#endif
         if(handle)
         {
             do {
@@ -482,9 +552,14 @@ char BigName[512], CurDir[512], NewDir[512];
                     WhichFile--;
 
             } while( (WhichFile >= 0) && (Result != FR_EndOfFile));
+#ifdef _WIN32
             strcpy(pFilenameBuffer, "ScreenShots\\");
+#else
+            strcpy(pFilenameBuffer, "ScreenShots/");
+#endif
             strcat(pFilenameBuffer, BigName);
-            SetCurrentDirectory(CurDir);
+            /*SetCurrentDirectory(CurDir);*/
+            chdir(CurDir);
             return;
         }
     }
@@ -494,6 +569,7 @@ char BigName[512], CurDir[512], NewDir[512];
         // remove BigFileCount from the file index we're looking for
         WhichFile -= BigFileCount;
         FileCount = 0;
+#ifdef _WIN32
         hFind = _findfirst("*.jpg", &FindData);
         if(hFind != -1)
         {
@@ -514,8 +590,42 @@ char BigName[512], CurDir[512], NewDir[512];
                 }
             } while (_findnext(hFind, &FindData) == 0);
         }
+#else
+        dp = opendir(".");
+
+        if (dp)
+        {
+            unsigned int dir_str_len;
+
+            while ((dir_entry = readdir(dp)))
+            {
+                if (dir_entry->d_name[0] == '.')
+                    continue;
+                dir_str_len = strlen(dir_entry->d_name);
+                if (dir_str_len < 4 ||
+                    strcasecmp(dir_entry->d_name + dir_str_len - 4, ".jpg"))
+                    continue;
+                if (!(fp = fopen(dir_entry->d_name, "rb")))
+                    continue;
+                fclose(fp);
+
+                if (FileCount != WhichFile)
+                {
+                    FileCount++;
+                    continue;
     }
-    SetCurrentDirectory(CurDir);
+
+                strcpy(pFilenameBuffer, "ScreenShots/");
+                strcat(pFilenameBuffer, dir_entry->d_name);
+                break;
+            }
+
+            closedir(dp);
+        }
+#endif
+    }
+    /*SetCurrentDirectory(CurDir);*/
+    chdir(CurDir);
 }
 
 typedef struct
@@ -672,7 +782,7 @@ static bool hrDrawPixelsSupported(void)
         //bit in devcaps2
         return FALSE;
     }
-    else if (_stricmp(GLC_VENDOR, "ati") == 0 &&
+    else if (strcasecmp(GLC_VENDOR, "ati") == 0 &&
              strstr(GLC_RENDERER, "128") != NULL)
     {
         //ATI Rage 128
@@ -693,7 +803,7 @@ static bool hrDrawPixelsSupported(void)
 
 void hrInitBackground(void)
 {
-char hrImageName[512];
+char hrImageName[PATH_MAX];
 filehandle handle;
 long XSize, YSize, i;
 unsigned long *pDest;
@@ -704,9 +814,10 @@ float IncX, IncY;
 long DestX, DestY;
 long DestXSize, DestYSize, Size, Top, Bot;
 JPEGDATA    jp;
-char CurDir[512], NewDir[512];
+char CurDir[PATH_MAX], NewDir[PATH_MAX];
 
-    GetCurrentDirectory(511, CurDir);
+    /*GetCurrentDirectory(511, CurDir);*/
+    getcwd(CurDir, PATH_MAX);
 
     hrImageName[0] = 0;
     if (singlePlayerGame)
@@ -719,9 +830,10 @@ char CurDir[512], NewDir[512];
             hrChooseRandomBitmap( hrImageName );
     }
 
-    GetCurrentDirectory(511, NewDir);
+    /*GetCurrentDirectory(511, NewDir);*/
+    getcwd(NewDir, PATH_MAX);
 
-    dbgAssert(stricmp(CurDir,NewDir) == 0);
+    dbgAssert(strcasecmp(CurDir,NewDir) == 0);
 
     // Load the bitmap image
     handle = fileOpen(hrImageName, FF_ReturnNULLOnFail);
@@ -766,7 +878,7 @@ char CurDir[512], NewDir[512];
             //fixed width for singleplayer game images
             DestXSize = 640;
             DestYSize = 480;
-            hrBackgroundImage = (unsigned long*)malloc(DestXSize * DestYSize * 4);
+            hrBackgroundImage = (udword*)malloc(DestXSize * DestYSize * 4);
         }
         else
         {
@@ -775,7 +887,7 @@ char CurDir[512], NewDir[512];
                 //no DrawPixels support, must use glcompat 640x480 quilting
                 DestXSize = 640;
                 DestYSize = 480;
-                hrBackgroundImage = (unsigned long*)malloc(DestXSize * DestYSize * 4);
+                hrBackgroundImage = (udword*)malloc(DestXSize * DestYSize * 4);
             }
             else
             {
@@ -785,7 +897,7 @@ char CurDir[512], NewDir[512];
                     DestXSize = (long)((float)MAIN_WindowWidth * Scale);
                     DestYSize = (long)((float)MAIN_WindowHeight * Scale);
 
-                    hrBackgroundImage = (unsigned long *)malloc(DestXSize * DestYSize * 4);
+                    hrBackgroundImage = (udword *)malloc(DestXSize * DestYSize * 4);
                 } while((hrBackgroundImage == NULL) && (Scale > 0.4f));
             }
         }
@@ -801,7 +913,7 @@ char CurDir[512], NewDir[512];
         IncX = (float)XSize / (float)DestXSize;
         IncY = (float)YSize / (float)DestYSize;
 
-        pDest = hrBackgroundImage;
+        pDest = (unsigned long*)hrBackgroundImage;
         if((IncX < 1.0f) && (IncY < 1.0f) && (pDest != NULL))
         {
             SrcY = 0.0f;
@@ -810,7 +922,11 @@ char CurDir[512], NewDir[512];
                 SrcX = 0.0f;
                 for(DestX = 0; DestX < DestXSize; DestX++)
                 {
+#ifdef ENDIAN_BIG
+                    pDest[DestX] = LittleLong( hrGetInterpPixel(pTempImage, XSize, SrcX, SrcY) );
+#else
                     pDest[DestX] = hrGetInterpPixel(pTempImage, XSize, SrcX, SrcY);
+#endif
                     SrcX += IncX;
                 }
                 pDest += DestXSize;
@@ -826,7 +942,12 @@ char CurDir[512], NewDir[512];
                 for(DestX = 0; DestX < DestXSize; DestX++)
                 {
                     pRGB = &pTempImage[ (((unsigned long)SrcY * XSize) + (unsigned long)SrcX) * 3 ];
+
+#ifdef ENDIAN_BIG
+                    pDest[DestX] = LittleLong( 0xff000000 + ((unsigned long)pRGB[0]) + ((unsigned long)pRGB[1] << 8) + ((unsigned long)pRGB[2] << 16) );
+#else
                     pDest[DestX] = 0xff000000 + ((unsigned long)pRGB[0]) + ((unsigned long)pRGB[1] << 8) + ((unsigned long)pRGB[2] << 16);
+#endif
 
                     SrcX += IncX;
                 }
@@ -937,8 +1058,13 @@ void hrDrawBackground(void)
 
         if (singlePlayerGame && (hrBackgroundInitFrame & 1))
         {
+#ifdef _WIN32
             hrDrawFile("feman\\loadscreen\\ring.lif", 115, 342);
             hrDrawFile("feman\\loadscreen\\arrows.lif", 195, 134);
+#else
+            hrDrawFile("feman/loadscreen/ring.lif", 115, 342);
+            hrDrawFile("feman/loadscreen/arrows.lif", 195, 134);
+#endif
         }
     }
 }
@@ -1263,10 +1389,19 @@ void hrUncleanDecorative(void)
 
 void horseRaceRender()
 {
-    MSG message;
+    SDL_Event e;
 
+#if defined (_MSC_VER)
     _asm xor eax,eax
     _asm mov regRenderEventIndex, eax
+#elif defined (__GNUC__) && defined (__i386__)
+    __asm__ __volatile__ (
+        "xorl %%eax, %%eax\n\t"
+        "movl %%eax, %0\n\t"
+        : "=m" (regRenderEventIndex) );
+#else
+    regRenderEventIndex = 0;
+#endif
 
     //special-case code for double-clicks
 
@@ -1332,9 +1467,9 @@ void horseRaceRender()
     if (TitanActive)
         titanPumpEngine();
 
-    Sleep(0);
+    SDL_Delay(0);
 
-    if (!PeekMessage(&message, NULL, 0, 0, PM_NOREMOVE)!=0)
+    if (!SDL_PollEvent(0))
     {
         regProcessingRegions = TRUE;
         regRegionProcess(horseCrapRegion.child, 0xffffffff);
@@ -1348,12 +1483,11 @@ void horseRaceRender()
     else
     {
         regRegionProcess(horseCrapRegion.child, 0xffffffff);
-        while (PeekMessage(&message, NULL, 0, 0, PM_NOREMOVE)!=0)
+        while (SDL_PollEvent(0))
         {
-            if(GetMessage(&message, NULL, 0, 0))
+            if (SDL_WaitEvent(&e))
             {
-                TranslateMessage(&message);
-                DispatchMessage(&message);
+                HandleEvent(&e);
 
                 if (multiPlayerGame)
                 {
@@ -1395,7 +1529,7 @@ void horseRaceRender()
             if (TitanActive)
                 titanPumpEngine();
 
-            Sleep(0);
+            SDL_Delay(0);
         }
     }
 
@@ -1512,13 +1646,13 @@ real32 horseRaceGetPacketPercent(real32 barPercent)
 
 bool HorseRaceNext(real32 percent)
 {
+    Uint32 lp;
     HorsePacket packet;
     real32 temptime;
     udword i;
     sdword dontrenderhack = FALSE;
     bool sendhrpackethack = FALSE;
 //    static real32 lastper = 0.0f;
-    SYSTEMTIME lp;
     static sdword modulusCounter = 0;
 
     if (percent > 1.0f) percent = 1.0f;
@@ -1553,8 +1687,8 @@ bool HorseRaceNext(real32 percent)
         SendHorseRacePacket((ubyte *)&packet,sizeof(HorsePacket));      // always send horse race packet when autouploading map
     }
 
-    GetSystemTime(&lp);
-    temptime = (lp.wMilliseconds+lp.wSecond*1000.0f);
+    lp = SDL_GetTicks();
+    temptime = (float)lp;
     if(temptime - lasttime < horseRaceRenderTime)
     {
         if(lasttime > temptime)

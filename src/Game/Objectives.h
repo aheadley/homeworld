@@ -5,9 +5,9 @@
 //  SINGLE-PLAYER MISSION OBJECTIVES
 //
 
-#include "types.h"
-#include "feflow.h"
-#include "linkedlist.h"
+#include "Types.h"
+#include "FEFlow.h"
+#include "LinkedList.h"
 
 #define MAX_OBJECTIVE_LABEL_LENGTH 32
 #define OBJECTIVES_ALLOC_INITIAL 8

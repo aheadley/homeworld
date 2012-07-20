@@ -8,6 +8,7 @@
 #ifndef ___STRINGS_H
 #define ___STRINGS_H
 
+#include "Types.h"
 #include "StringsOnly.h"
 // try not to include many files in here since strings.h may be included by jpeg files, etc.
 

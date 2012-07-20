@@ -9,8 +9,8 @@
 #ifndef ___GENERIC_DEFENDER_H
 #define ___GENERIC_DEFENDER_H
 
-#include "types.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "SpaceObj.h"
 
 /*=============================================================================
     Defines:

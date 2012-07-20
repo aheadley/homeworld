@@ -1,8 +1,8 @@
 //
 //  MISSION05 - Battle w/ sacking force
 //
-#include "..\\Game\\speechevent.h"
-#include "..\\Game\\soundmusic.h"
+#include "../Game/SpeechEvent.h"
+#include "../Game/SoundMusic.h"
 
     LOCALIZATION //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 

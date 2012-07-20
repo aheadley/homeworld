@@ -1,7 +1,7 @@
 //
 //      MISSION14 - Mining Facility
 //
-#include "..\\Game\\speechevent.h"
+#include "../Game/SpeechEvent.h"
 
 
     LOCALIZATION //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴

@@ -6,13 +6,13 @@
     Copyright Relic Entertainment, Inc.  All rights reserved.
 =============================================================================*/
 
-#include "types.h"
+#include "Types.h"
 #include "KeyBindings.h"
-#include "uicontrols.h"
-#include "key.h"
-#include "fontreg.h"
+#include "UIControls.h"
+#include "Key.h"
+#include "FontReg.h"
 #include "FEColour.h"
-#include "strings.h"
+#include "Strings.h"
 
 /*=============================================================================
     Defines :

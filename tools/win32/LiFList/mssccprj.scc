@@ -1,5 +1,0 @@
-SCC = This is a Source Code Control file
-
-[liflist.mak]
-SCC_Aux_Path = "\\codex\Homeworld\SS"
-SCC_Project_Name = "$/tools/win32/LiFList", KOMAAAAA

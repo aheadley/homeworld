@@ -1,0 +1,40 @@
+Homeworld SDL - Original Source Patching Instructions
+Version 0.3 alpha
+http://www.thereisnospork.com/projects/homeworld/
+---
+
+Homeworld © 1999-2000 Sierra On-Line, Inc.  All Rights Reserved.
+Homeworld is a registered trademark, and Sierra and Sierra Studios are
+registered trademarks of Sierra On-Line, Inc.  Relic is a trademark of Relic
+Entertainment, Inc.
+
+SDL/Linux port by Ted Cipicchio <ted@thereisnospork.com>
+
+------------------------------------------------------------------------------
+
+To patch the Windows source with the changes made for Homeworld SDL, you will
+need a copy of the original Homeworld source code.  The source is available
+from the Relic Developers Network (http://www.relic.com/rdn/) after
+registering (don't worry, it's free).
+
+- Unzip the source code into this directory.
+- Run the following from the command line:
+
+    ./prep-hw-source.sh
+    cat homeworld_sdl-orig-to-0.3.patch | patch -p1
+
+The source code should now be patched and ready for compiling.  Additional
+instructions are provided in the INSTALL file included with this package.
+
+If you want to save space, the following directories are not used by the SDL
+port and can be deleted:
+
+- documents
+- EB Levels
+- exe
+- Lib
+- obj
+- sound
+- tools
+- src/Titan
+- src/Win32

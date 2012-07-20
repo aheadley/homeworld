@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "Timer.h"
-#include "memory.h"
+#include "Memory.h"
 #include "SaveGame.h"
 
 //

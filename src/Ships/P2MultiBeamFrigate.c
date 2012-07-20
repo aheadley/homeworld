@@ -9,25 +9,25 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
-#include "types.h"
-#include "fastmath.h"
-#include "debug.h"
-#include "objtypes.h"
-#include "spaceobj.h"
-#include "collision.h"
-#include "physics.h"
-#include "universe.h"
-#include "p2MultiBeamFrigate.h"
-#include "statscript.h"
-#include "gun.h"
-#include "aiship.h"
-#include "aitrack.h"
-#include "attack.h"
-#include "mex.h"
-#include "soundevent.h"
-#include "flightman.h"
-#include "commandlayer.h"
-#include "univupdate.h"
+#include "Types.h"
+#include "FastMath.h"
+#include "Debug.h"
+#include "ObjTypes.h"
+#include "SpaceObj.h"
+#include "Collision.h"
+#include "Physics.h"
+#include "Universe.h"
+#include "P2MultiBeamFrigate.h"
+#include "StatScript.h"
+#include "Gun.h"
+#include "AIShip.h"
+#include "AITrack.h"
+#include "Attack.h"
+#include "MEX.h"
+#include "SoundEvent.h"
+#include "FlightMan.h"
+#include "CommandLayer.h"
+#include "UnivUpdate.h"
 #include "DefaultShip.h"
 
 #define STATE_INIT          0
@@ -354,12 +354,12 @@ void P2MultiBeamFrigateAttackPassive(Ship *ship,Ship *target,bool rotate)
 
 void P2MultiBeamFrigateHouseKeep(Ship *ship)
 {
-    P2MultiBeamFrigateSpec *spec = (P2MultiBeamFrigateSpec *)ship->ShipSpecifics;
-//    ShipStaticInfo         *shipstaticinfo = (ShipStaticInfo *)ship->staticinfo;
-  //  real32 desiredrotspeed;
-  //  real32 rotspeed;
-
 /*
+    P2MultiBeamFrigateSpec *spec = (P2MultiBeamFrigateSpec *)ship->ShipSpecifics;
+    ShipStaticInfo         *shipstaticinfo = (ShipStaticInfo *)ship->staticinfo;
+    real32 desiredrotspeed;
+    real32 rotspeed;
+
     if (spec->spining)
     {
         if (universe.totaltimeelapsed - spec->aiattacklast > 0.15)

@@ -1,6 +1,6 @@
 #include "AIUtilities.h"
-#include "vector.h"
-#include "volume.h"
+#include "Vector.h"
+#include "Volume.h"
 
 //
 //  returns true if the point is in the volume

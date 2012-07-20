@@ -785,6 +785,12 @@ DLL void API glDrawPixels(
 
 DLL void API glDrawArrays(GLenum mode, GLint first, GLsizei count);
 
+DLL void API glColorTableEXT(
+    GLenum target, GLenum internalformat, GLsizei length,
+    GLenum format, GLenum type, GLvoid const* palette);
+DLL void API glLitColorTableEXT(
+    GLenum target, GLenum internalformat, GLsizei length,
+    GLenum format, GLenum type, GLvoid const* palette);
 DLL void API glColorTable(
     GLenum target, GLenum internalformat, GLsizei length,
     GLenum format, GLenum type, GLvoid const* palette);

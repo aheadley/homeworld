@@ -9,8 +9,8 @@
 #ifndef ___RESEARCH_SHIP_H
 #define ___RESERACH_SHIP_H
 
-#include "types.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "SpaceObj.h"
 
 /*=============================================================================
     Types:

@@ -9,9 +9,9 @@
 #ifndef ___P2_ADVANCESWARMER_H
 #define ___P2_ADVANCESWARMER_H
 
-#include "types.h"
-#include "spaceobj.h"
-#include "attack.h"
+#include "Types.h"
+#include "SpaceObj.h"
+#include "Attack.h"
 
 /*=============================================================================
     Types:

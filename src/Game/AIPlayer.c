@@ -8,20 +8,20 @@
 
 #include <stdarg.h>
 #include <string.h>
-#include "types.h"
-#include "Objtypes.h"
+#include "Types.h"
+#include "ObjTypes.h"
 #include "AIPlayer.h"
-#include "file.h"
-#include "universe.h"
-#include "select.h"
+#include "File.h"
+#include "Universe.h"
+#include "Select.h"
 #include "AIFleetMan.h"
 #include "AIAttackMan.h"
 #include "AIDefenseMan.h"
 #include "AIUtilities.h"
 #include "AITeam.h"
-#include "stats.h"
-#include "randy.h"
-#include "nis.h"
+#include "Stats.h"
+#include "Randy.h"
+#include "NIS.h"
 #include "SaveGame.h"
 #include "SinglePlayer.h"
 
@@ -474,7 +474,7 @@ void aiplayerChooseEnemies(udword num_players, udword num_human, udword num_comp
     sdword players[MAX_MULTIPLAYER_PLAYERS][MAX_MULTIPLAYER_PLAYERS],
            bigots[MAX_MULTIPLAYER_PLAYERS],
            normcomp[MAX_MULTIPLAYER_PLAYERS];
-    udword humancnt = 0, bigotcnt = 0, normcnt = 0;
+    udword bigotcnt = 0, normcnt = 0;
     udword numbigotsperhuman, numbigotsleftover, numloops, numcompenemies;
     udword slot, i, j;
     sdword giveup;
@@ -1236,7 +1236,7 @@ shipdiedstuff:
 //  return 1 if the ship isn't on any team of the aiplayer
 //  return 0 otherwise
 //
-static ShipNotOnTeam(AIPlayer *aiplayer, Ship *ship)
+static int ShipNotOnTeam(AIPlayer *aiplayer, Ship *ship)
 {
     sdword i, j;
     AITeam *teamp;
@@ -1581,7 +1581,7 @@ void SaveRequestShipsCB(void *stuff)
     RequestShips copyOfRequest;
 
     memcpy(&copyOfRequest,stuff,sizeof(RequestShips));
-    copyOfRequest.creator = (sdword)SpaceObjRegistryGetID((SpaceObj *)copyOfRequest.creator);
+    copyOfRequest.creator = (ShipPtr)SpaceObjRegistryGetID((SpaceObj *)copyOfRequest.creator);
 
     SaveStructureOfSize(&copyOfRequest,sizeof(RequestShips));
 }
@@ -1594,7 +1594,7 @@ void SaveTeamWaitingCB(void *stuff)
     chunk = CreateChunk(BASIC_STRUCTURE,sizeof(TeamWaitingForTheseShips),stuff);
     sc = (TeamWaitingForTheseShips *)chunkContents(chunk);
 
-    sc->team = AITeamToTeamIndex(sc->team);
+    sc->team = (AITeam*)AITeamToTeamIndex(sc->team);
 
     SaveThisChunk(chunk);
     memFree(chunk);
@@ -1631,33 +1631,33 @@ void SaveThisAIPlayer(AIPlayer *aiplayer)
     chunk = CreateChunk(BASIC_STRUCTURE|AIPLAYER,sizeof(AIPlayer),aiplayer);
     sc = chunkContents(chunk);
 
-    sc->player = SavePlayerToPlayerIndex(aiplayer->player);
-    sc->primaryEnemyPlayer = SavePlayerToPlayerIndex(aiplayer->primaryEnemyPlayer);
+    sc->player = (Player*)SavePlayerToPlayerIndex(aiplayer->player);
+    sc->primaryEnemyPlayer = (Player*)SavePlayerToPlayerIndex(aiplayer->primaryEnemyPlayer);
 
     for (i=0;i<aiplayer->numSupportTeams;i++)
     {
-        sc->supportTeam[i] = AITeamToTeamIndex(aiplayer->supportTeam[i]);
+        sc->supportTeam[i] = (AITeam*)AITeamToTeamIndex(aiplayer->supportTeam[i]);
     }
 
     for (i=0;i<AIPLAYER_NUM_RECONTEAMS;i++)
     {
-        sc->reconTeam[i] = AITeamToTeamIndex(aiplayer->reconTeam[i]);
+        sc->reconTeam[i] = (AITeam*)AITeamToTeamIndex(aiplayer->reconTeam[i]);
     }
 
-    sc->harassTeam = AITeamToTeamIndex(aiplayer->harassTeam);
+    sc->harassTeam = (AITeam*)AITeamToTeamIndex(aiplayer->harassTeam);
 
     for (i=0;i<AIPLAYER_NUM_ATTACKTEAMS;i++)
     {
-        sc->attackTeam[i] = AITeamToTeamIndex(aiplayer->attackTeam[i]);
+        sc->attackTeam[i] = (AITeam*)AITeamToTeamIndex(aiplayer->attackTeam[i]);
     }
 
     for (i=0;i<aiplayer->numGuardTeams;i++)
     {
-        sc->guardTeams[i] = AITeamToTeamIndex(aiplayer->guardTeams[i]);
+        sc->guardTeams[i] = (AITeam*)AITeamToTeamIndex(aiplayer->guardTeams[i]);
     }
 
-    sc->ScriptCreator = (sdword)SpaceObjRegistryGetID((SpaceObj *)aiplayer->ScriptCreator);
-    sc->AICreator     = (sdword)SpaceObjRegistryGetID((SpaceObj *)aiplayer->AICreator);
+    sc->ScriptCreator = (ShipPtr)SpaceObjRegistryGetID((SpaceObj *)aiplayer->ScriptCreator);
+    sc->AICreator     = (ShipPtr)SpaceObjRegistryGetID((SpaceObj *)aiplayer->AICreator);
 
     SaveThisChunk(chunk);
     memFree(chunk);

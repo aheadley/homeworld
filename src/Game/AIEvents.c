@@ -1,8 +1,8 @@
 #include "AIEvents.h"
 #include "AITeam.h"
-#include "memory.h"
+#include "Memory.h"
 #include "AIPlayer.h"
-#include "blobs.h"
+#include "Blobs.h"
 
 //
 //  handle any events applicable for the
@@ -414,7 +414,7 @@ sdword aieCheckEnemyNotNearby(AITeam *team)
         }
     }
 
-  end:
+//  end:
     aiumemFree(ships);
     return TRUE;
 }
@@ -665,20 +665,20 @@ void aiePreFixAIEvents(struct AITeamMove *move)
         dbgAssert(move->events.interrupt.intvar < sizeof(AIPlayer));
     }
 
-    move->events.gettingRocked.handler  = aieHandlerToNum((aieHandlerSimple)move->events.gettingRocked.handler);
-    move->events.enemyNearby.handler    = aieHandlerToNum((aieHandlerSimple)move->events.enemyNearby.handler);
-    move->events.enemyNotNearby.handler = aieHandlerToNum(move->events.enemyNotNearby.handler);
-    move->events.firing.handler         = aieHandlerToNum(move->events.firing.handler);
-    move->events.disengage.handler      = aieHandlerToNum(move->events.disengage.handler);
-    move->events.healthLow.handler      = aieHandlerToNum(move->events.healthLow.handler);
-    move->events.healthHigh.handler     = aieHandlerToNum(move->events.healthHigh.handler);
-    move->events.numbersLow.handler     = aieHandlerToNum(move->events.numbersLow.handler);
-    move->events.numbersHigh.handler    = aieHandlerToNum(move->events.numbersHigh.handler);
-    move->events.fuelLow.handler        = aieHandlerToNum(move->events.fuelLow.handler);
-    move->events.fuelHigh.handler       = aieHandlerToNum(move->events.fuelHigh.handler);
-    move->events.shipDied.handler       = aieHandlerToNum((aieHandlerSimple)move->events.shipDied.handler);
-    move->events.teamDied.handler       = aieHandlerToNum(move->events.teamDied.handler);
-    move->events.interrupt.handler      = aieHandlerToNum((aieHandlerSimple)move->events.interrupt.handler);
+    move->events.gettingRocked.handler  = (aieHandlerShips)aieHandlerToNum((aieHandlerSimple)move->events.gettingRocked.handler);
+    move->events.enemyNearby.handler    = (aieHandlerShips)aieHandlerToNum((aieHandlerSimple)move->events.enemyNearby.handler);
+    move->events.enemyNotNearby.handler = (aieHandlerSimple)aieHandlerToNum(move->events.enemyNotNearby.handler);
+    move->events.firing.handler         = (aieHandlerSimple)aieHandlerToNum(move->events.firing.handler);
+    move->events.disengage.handler      = (aieHandlerSimple)aieHandlerToNum(move->events.disengage.handler);
+    move->events.healthLow.handler      = (aieHandlerSimple)aieHandlerToNum(move->events.healthLow.handler);
+    move->events.healthHigh.handler     = (aieHandlerSimple)aieHandlerToNum(move->events.healthHigh.handler);
+    move->events.numbersLow.handler     = (aieHandlerSimple)aieHandlerToNum(move->events.numbersLow.handler);
+    move->events.numbersHigh.handler    = (aieHandlerSimple)aieHandlerToNum(move->events.numbersHigh.handler);
+    move->events.fuelLow.handler        = (aieHandlerSimple)aieHandlerToNum(move->events.fuelLow.handler);
+    move->events.fuelHigh.handler       = (aieHandlerSimple)aieHandlerToNum(move->events.fuelHigh.handler);
+    move->events.shipDied.handler       = (aieHandlerShip)aieHandlerToNum((aieHandlerSimple)move->events.shipDied.handler);
+    move->events.teamDied.handler       = (aieHandlerSimple)aieHandlerToNum(move->events.teamDied.handler);
+    move->events.interrupt.handler      = (aieHandlerInt)aieHandlerToNum((aieHandlerSimple)move->events.interrupt.handler);
 }
 
 void aieFixAIEvents(struct AITeamMove *move)

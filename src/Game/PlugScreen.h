@@ -10,7 +10,7 @@
 #define ___PLUGSCREEN_H
 
 #include "texreg.h"
-#include "region.h"
+#include "Region.h"
 
 /*=============================================================================
     Switches:

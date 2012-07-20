@@ -9,10 +9,10 @@
 #ifndef ___REPAIR_CORVETTE_H
 #define ___REPAIR_CORVETTE_H
 
-#include "types.h"
-#include "spaceobj.h"
-#include "attack.h"
-#include "shipselect.h"
+#include "Types.h"
+#include "SpaceObj.h"
+#include "Attack.h"
+#include "ShipSelect.h"
 
 /*=============================================================================
     Types:

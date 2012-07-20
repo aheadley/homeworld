@@ -1,9 +1,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include "types.h"
-#include "memory.h"
-#include "debug.h"
+#include "Types.h"
+#include "Memory.h"
+#include "Debug.h"
 #include "SaveGame.h"
 #include "AIVar.h"
 
@@ -163,7 +163,7 @@ char *aivarLabelGenerate(char *label)
 {
     label[0] = '_';
     label[1] = 'V';
-    _itoa(uniqueNum, &label[2], 10 );
+    sprintf(&label[2], "%d", uniqueNum);
     uniqueNum++;
     return label;
 }

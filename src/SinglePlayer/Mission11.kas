@@ -1,9 +1,9 @@
 //
 //  MISSION11 - Battle against P3 (help the Traders)
 //
-#include "..\\Game\\speechevent.h"
-#include "..\\Game\\soundmusic.h"
-#include "attributes.h"
+#include "../Game/SpeechEvent.h"
+#include "../Game/SoundMusic.h"
+#include "Attributes.h"
 
 
     LOCALIZATION //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴

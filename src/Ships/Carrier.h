@@ -9,8 +9,8 @@
 #ifndef ___CARRIER_H
 #define ___CARRIER_H
 
-#include "types.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "SpaceObj.h"
 
 /*=============================================================================
     Defines:

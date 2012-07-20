@@ -9,11 +9,11 @@
 #ifndef ___TRADEMGR_H
 #define ___TRADEMGR_H
 
-#include "types.h"
-#include "region.h"
+#include "Types.h"
+#include "Region.h"
 
 #include "texreg.h"
-#include "researchapi.h"
+#include "ResearchAPI.h"
 
 /*=============================================================================
     Switches:
@@ -161,7 +161,7 @@ typedef struct
 wkTradeType;
 
 extern wkTradeType wkTradeShips[WK_MAX_SHIPS];
-bool wkTradeStuffActive;
+extern bool wkTradeStuffActive;
 void mrTradeStuffTest(sdword *a, sdword *b);
 void wkTradeUpdate(void);
 

@@ -9,8 +9,8 @@
 #ifndef ___DEFAULT_SHIP_H
 #define ___DEFAULT_SHIP_H
 
-#include "types.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "SpaceObj.h"
 
 /*=============================================================================
     Types:

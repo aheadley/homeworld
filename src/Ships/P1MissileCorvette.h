@@ -9,9 +9,9 @@
 #ifndef ___P1_MISSILE_CORVETTE_H
 #define ___P1_MISSILE_CORVETTE_H
 
-#include "types.h"
-#include "spaceobj.h"
-#include "attack.h"
+#include "Types.h"
+#include "SpaceObj.h"
+#include "Attack.h"
 
 /*=============================================================================
     Defines:

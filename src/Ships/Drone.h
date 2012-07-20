@@ -9,8 +9,8 @@
 #ifndef ___DRONE_H
 #define ___DRONE_H
 
-#include "types.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "SpaceObj.h"
 
 /*=============================================================================
     Defines:

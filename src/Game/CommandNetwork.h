@@ -7,13 +7,13 @@
 =============================================================================*/
 
 #ifndef ___COMMAND_NETWORK_H
-#define ___COMMNAD_NETWORK_H
+#define ___COMMAND_NETWORK_H
 
-#include "switches.h"
-#include "types.h"
-#include "globals.h"
-#include "commandlayer.h"
-#include "chatting.h"
+#include "Switches.h"
+#include "Types.h"
+#include "Globals.h"
+#include "CommandLayer.h"
+#include "Chatting.h"
 
 
 

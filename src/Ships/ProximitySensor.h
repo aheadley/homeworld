@@ -9,11 +9,11 @@
 #ifndef ___PROXIMITYSENSOR_H
 #define ___PROXIMITYSENSOR_H
 
-#include "types.h"
-#include "spaceobj.h"
-#include "select.h"
+#include "Types.h"
+#include "SpaceObj.h"
+#include "Select.h"
 #ifndef STATVIEWER_PROGRAM
-#include "universe.h"
+#include "Universe.h"
 #endif
 
 
@@ -51,7 +51,7 @@ typedef struct
 #define SENSOR_SENSE    1
 #define SENSOR_SENSED   2
 #define SENSOR_SENSED2  3
-color ProximitySensorBlipColor;
+extern color ProximitySensorBlipColor;
 
 /*=============================================================================
     Functions:

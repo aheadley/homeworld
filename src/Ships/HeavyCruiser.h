@@ -9,8 +9,8 @@
 #ifndef ___HEAVY_CRUISER_H
 #define ___HEAVY_CRUISER_H
 
-#include "types.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "SpaceObj.h"
 
 /*=============================================================================
     Defines:

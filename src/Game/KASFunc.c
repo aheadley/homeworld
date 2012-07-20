@@ -4,52 +4,58 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <strings.h>
 #include <stdlib.h>
-#include "shipselect.h"
+#include <ctype.h>
+#include "ShipSelect.h"
 #include "AITeam.h"
 #include "KASFunc.h"
 #include "AIPlayer.h"
 #include "AIUtilities.h"
-#include "vector.h"
-#include "kas.h"
+#include "Vector.h"
+#include "KAS.h"
 #include "Volume.h"
 #include "Timer.h"
 #include "CommandWrap.h"
 #include "AIVar.h"
 #include "AIMoves.h"
 #include "FormationDefs.h"
-#include "randy.h"
+#include "Randy.h"
 #include "SinglePlayer.h"
 #include "font.h"
 #include "render.h"
 #include "prim2d.h"
-#include "ping.h"
+#include "Ping.h"
 #include "Objectives.h"
-#include "univupdate.h"
-#include "tutor.h"
-#include "soundevent.h"
-#include "soundeventdefs.h"
-#include "speechevent.h"
+#include "UnivUpdate.h"
+#include "Tutor.h"
+#include "SoundEvent.h"
+#include "SoundEventDefs.h"
+#include "SpeechEvent.h"
 #include "SalCapCorvette.h"
-#include "hs.h"
+#include "HS.h"
 #include "SaveGame.h"
-#include "collision.h"
+#include "Collision.h"
 #include "mainrgn.h"
-#include "nis.h"
+#include "NIS.h"
 #include "texreg.h"
-#include "sensors.h"
-#include "subtitle.h"
-#include "btg.h"
-#include "aitrack.h"
+#include "Sensors.h"
+#include "Subtitle.h"
+#include "BTG.h"
+#include "AITrack.h"
 #include "utility.h"
-#include "fastmath.h"
-#include "animatic.h"
+#include "FastMath.h"
+#include "Animatic.h"
 #include "TradeMgr.h"
 #include "StringsOnly.h"
-#include "taskbar.h"
+#include "TaskBar.h"
 #include "DDDFrigate.h"
-#include "consmgr.h"
-#include "universe.h"
+#include "ConsMgr.h"
+#include "Universe.h"
+
+#ifdef _WIN32
+#define strncasecmp _strnicmp
+#endif
 
 extern char SinglePlayerSavedGamesPath[];
 extern sdword CurrentMissionSkillLevel;
@@ -3039,8 +3045,6 @@ void kasfKamikazeEveryone(GrowSelection *targets)
 
 void kasfSpecialToggle(void)
 {
-    real32 maxHealth = 0.0, actualHealth = 0.0;
-
     if (!CurrentTeamP || !CurrentTeamP->shipList.selection->numShips)
         return;
     clWrapSpecial(&universe.mainCommandLayer, CurrentTeamP->shipList.selection, NULL);
@@ -3717,7 +3721,9 @@ void kasfSoundEventShips(GrowSelection *ships, sdword event)
 void kasfSpeechEvent(sdword event, sdword variable)
 {
     subMessageEnded = 0;
+#ifndef _MACOSX_FIX_ME
     speechEventFleet(event, variable, universe.curPlayerIndex);
+#endif
 }
 
 void kasfSpeechEventShips(GrowSelection *ships, sdword event, sdword variable)
@@ -3839,7 +3845,7 @@ void kasfGateMoveToNearest(void)
 
     for (i = 0; i < LabelledVectorsUsed; ++i)
     {
-        if (!strnicmp(LabelledVectors[i]->label, "GATE", 4))
+        if (!strncasecmp(LabelledVectors[i]->label, "GATE", 4))
         {
             vecGrabVecFromHVec(loc, *(LabelledVectors[i]->hvector));
             temp = aiuFindDistanceSquared(shippos,loc);
@@ -3919,7 +3925,7 @@ sdword kasfGateShipsOutNearest(GrowSelection *ships)
 
     for (i = 0; i < LabelledVectorsUsed; ++i)
     {
-        if (!strnicmp(LabelledVectors[i]->label, "GATE", 4))
+        if (!strncasecmp(LabelledVectors[i]->label, "GATE", 4))
         {
             vecGrabVecFromHVec(loc, *(LabelledVectors[i]->hvector));
             temp = aiuFindDistanceSquared(
@@ -4058,7 +4064,7 @@ void kasfLocationCard(sdword milliseconds, char *location)
     char buffer[SUB_SubtitleLength];
 
     dbgAssert(milliseconds > 10);
-    _snprintf(buffer, SUB_SubtitleLength - 1, "#r%x#t%x%s", STR_LocationCard, STT_LocationCard, location);
+    snprintf(buffer, SUB_SubtitleLength - 1, "#r%x#t%x%s", STR_LocationCard, STT_LocationCard, location);
     subTitleAdd(STA_LocationCard, kasfDummyEventNumber, buffer, strlen(buffer), (real32)milliseconds / 1000.0f);
     kasfDummyEventNumber++;
 }

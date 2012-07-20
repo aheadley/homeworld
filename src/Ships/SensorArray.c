@@ -6,11 +6,11 @@
     Copyright Relic Entertainment, Inc.  All rights reserved.
 =============================================================================*/
 
-#include "types.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "SpaceObj.h"
 #include "SensorArray.h"
 #include "SoundEvent.h"
-#include "universe.h"
+#include "Universe.h"
 
 typedef struct
 {

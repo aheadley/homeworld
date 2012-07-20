@@ -8,8 +8,8 @@
 #ifndef ___GAMECHAT_H
 #define ___GAMECHAT_H
 
-#include "types.h"
-#include "multiplayergame.h"
+#include "Types.h"
+#include "MultiplayerGame.h"
 
 #define GC_NORMALMESSAGE        1
 #define GC_WHISPEREDMESSAGE     2

@@ -6,8 +6,13 @@
 #define MEMSET memset
 #define MIN2(X, Y) ((X) < (Y) ? (X) : (Y))
 
+#ifdef _WIN32
 #define DLL __declspec(dllexport)
 #define API __stdcall
+#else
+#define DLL
+#define API
+#endif
 
 #define LOCK_BUFFER(CTX) \
     if (CTX->DriverFuncs.lock_buffer != NULL) \

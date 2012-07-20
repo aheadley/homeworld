@@ -6,7 +6,7 @@
     _asm fistp dword ptr i
 
 extern double chop_temp;
-#if 1
+#if 0
 
 #define FAST_TO_INT(X) \
     ((chop_temp = (double)(X) + BIG_NUM), *(int*)(&chop_temp))

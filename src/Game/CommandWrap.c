@@ -8,19 +8,20 @@
 =============================================================================*/
 
 #include <string.h>
-#include "types.h"
+#include "Types.h"
 #include "CommandLayer.h"
 #include "CommandNetwork.h"
 #include "CommandWrap.h"
-#include "universe.h"
-#include "globals.h"
+#include "Universe.h"
+#include "Globals.h"
 #include "mainswitches.h"
 #include "SoundEvent.h"
-#include "tutor.h"
-#include "multiplayergame.h"
-#include "salcapcorvette.h"
-#include "shipselect.h"
-#include "select.h"
+#include "Tutor.h"
+#include "MultiplayerGame.h"
+#include "SalCapCorvette.h"
+#include "ShipSelect.h"
+#include "Select.h"
+#include "InfoOverlay.h"
 
 /*-----------------------------------------------------------------------------
     Name        : clCommandMessage

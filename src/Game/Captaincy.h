@@ -8,7 +8,7 @@
     Copyright Relic Entertainment, Inc.  All rights reserved.
 =============================================================================*/
 
-#include "types.h"
+#include "Types.h"
 //#include "CommandNetwork.h"
 
 typedef enum CaptaincyEvent {
@@ -24,6 +24,8 @@ typedef enum CaptaincyEvent {
     CAPEVENT_I_AM_NEW_CAPTAIN,
     CAPEVENT_RECEIVED_SYNC_PKT
 } CaptaincyEvent;
+
+struct CaptaincyCustomInfo;
 
 void TransferCaptaincyGameEnded(void);
 void TransferCaptaincyGameStarted(void);

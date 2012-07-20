@@ -9,25 +9,25 @@
 
 #include <string.h>
 #include <math.h>
-#include "types.h"
-#include "fastmath.h"
-#include "debug.h"
-#include "memory.h"
-#include "linkedlist.h"
-#include "camera.h"
+#include "Types.h"
+#include "FastMath.h"
+#include "Debug.h"
+#include "Memory.h"
+#include "LinkedList.h"
+#include "Camera.h"
 #include "utility.h"
 #include "prim2d.h"
-#include "statscript.h"
-#include "universe.h"
-#include "shipselect.h"
-#include "cameracommand.h"
-#include "proximitysensor.h"
-#include "sensors.h"
+#include "StatScript.h"
+#include "Universe.h"
+#include "ShipSelect.h"
+#include "CameraCommand.h"
+#include "ProximitySensor.h"
+#include "Sensors.h"
 #include "main.h"
-#include "alliance.h"
-#include "tutor.h"
-#include "singlePlayer.h"
-#include "task.h"
+#include "Alliance.h"
+#include "Tutor.h"
+#include "SinglePlayer.h"
+#include "Task.h"
 
 #ifdef gshaw
 #define DEBUG_CAMERACOMMAND     0
@@ -411,7 +411,7 @@ DVect LookToObj, LookToCam, nLookToObj, nLookToCam;
 udword CloseOnAngle(real32 *tracking,real32 desired,real32 rate)
 {
     real32 diff = desired - *tracking;
-    real32 absdiff = abs(diff);
+    real32 absdiff = ABS(diff);
 
     if (absdiff > PI)       // at most we will be PI radians off, so if we are "more" than
     {                       // PI radians off we are going the wrong way.
@@ -424,10 +424,10 @@ udword CloseOnAngle(real32 *tracking,real32 desired,real32 rate)
             desired += TWOPI;
         }
         diff = desired - *tracking;
-        absdiff = abs(diff);
+        absdiff = ABS(diff);
     }
 
-    if (abs(diff) < rate)
+    if (ABS(diff) < rate)
     {
         *tracking = desired;
         return 1;
@@ -465,7 +465,7 @@ udword CloseOn(real32 *tracking,real32 desired,real32 rate)
 {
     real32 diff = desired - *tracking;
 
-    if (abs(diff) < rate)
+    if (ABS(diff) < rate)
     {
         *tracking = desired;
         return 1;
@@ -494,7 +494,7 @@ udword CloseOn(real32 *tracking,real32 desired,real32 rate)
 udword CloseOnFast(real32 *tracking,real32 desired,real32 minrate)
 {
     real32 diff = desired - *tracking;
-    real32 dist = abs(diff);
+    real32 dist = ABS(diff);
     real32 rate = dist / 8.0f;
 
     if (rate <= minrate)
@@ -675,17 +675,13 @@ void CameraChase(CameraCommand *cameracommand,real32 zoomfactor)
 {
 Camera *desired = &currentCameraStackEntry(cameracommand)->remembercam;
 vector targetvelocity;
-udword lockedon = 1;
 bool dontUseVelocityPredInChase = FALSE;
 long  Frames, IndZoom, IndAng;
-static real32 oldTime = 0.0f;
 vector deLookVector;
 
 static float angSpeed = 0.0f, decSpeed = 0.0f;
-static float xSpeed = 0.0f, ySpeed = 0.0f;
-static float zSpeed = 0.0f, distSpeed = 0.0f;
+    static float xSpeed = 0.0f, ySpeed = 0.0f, zSpeed = 0.0f;
 static float eyeXSpeed = 0.0f, eyeYSpeed = 0.0f, eyeZSpeed = 0.0f;
-
 
     if (cameracommand->dontUseVelocityPredInChase == TRUE)
     {
@@ -785,7 +781,7 @@ void GetDistanceAngleDeclination(Camera *camera,vector *distvec)
     camera->angle = (real32)atan2(distvec->y,distvec->x);
     value = -distvec->z/camera->distance;
 
-    dbgAssert( abs(value) <= 1.01f );       // USE 1.01 SO ROUND OFF ERRORS DON'T CRASH US
+    dbgAssert( ABS(value) <= 1.01f );       // USE 1.01 SO ROUND OFF ERRORS DON'T CRASH US
 
     if(value < -1.0f)
         value = -1.0f;
@@ -1780,9 +1776,9 @@ sdword ccFocusCullRadiusGeneral(FocusCommand *out, FocusCommand *in, real32 radi
 
     for (out->numShips = index = 0; index < in->numShips; index++)
     {
-        dx = abs(in->ShipPtr[index]->posinfo.position.x - centre->x);
-        dy = abs(in->ShipPtr[index]->posinfo.position.y - centre->y);
-        dz = abs(in->ShipPtr[index]->posinfo.position.z - centre->z);
+        dx = ABS(in->ShipPtr[index]->posinfo.position.x - centre->x);
+        dy = ABS(in->ShipPtr[index]->posinfo.position.y - centre->y);
+        dz = ABS(in->ShipPtr[index]->posinfo.position.z - centre->z);
         distanceSqr = dx * dx + dy * dy + dz * dz;          //compute distance from centre
         if (distanceSqr <= radiusSqr)
         {                                                   //if this ship close enough to the mean

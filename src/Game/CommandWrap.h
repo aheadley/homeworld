@@ -9,8 +9,8 @@
 #ifndef ___COMMAND_WRAP_H
 #define ___COMMNAD_WRAP_H
 
-#include "types.h"
-#include "commandlayer.h"
+#include "Types.h"
+#include "CommandLayer.h"
 
 void clCommandMessage(char CommandMessage[MAX_MESSAGE_LENGTH]);
 

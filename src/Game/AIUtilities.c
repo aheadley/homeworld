@@ -15,19 +15,19 @@
 #include "AITeam.h"
 #include "AIHandler.h"
 #include "CommandWrap.h"
-#include "fastmath.h"
-#include "randy.h"
-#include "select.h"
-#include "spaceobj.h"
-#include "shipdefs.h"
-#include "shipselect.h"
-#include "stats.h"
+#include "FastMath.h"
+#include "Randy.h"
+#include "Select.h"
+#include "SpaceObj.h"
+#include "ShipDefs.h"
+#include "ShipSelect.h"
+#include "Stats.h"
 #include "AIMoves.h"
 #include "ProximitySensor.h"
 #include "Tactics.h"
-#include "collision.h"
-#include "alliance.h"
-#include "aiship.h"
+#include "Collision.h"
+#include "Alliance.h"
+#include "AIShip.h"
 
 //later put this into the scripts
 #define AIU_MOTHERSHIP_VALUE    5500
@@ -552,7 +552,7 @@ bool aiuTakeoutShip(ShipPtr ship, struct AITeam *team)
 ----------------------------------------------------------------------------*/
 ShipPtr aiuTakeoutShipType(SelectCommand *selection, struct AITeam *team, ShipType type)
 {
-    real32 dist = REALlyBig, tempdist;
+    real32 tempdist;
     ShipPtr InvaderShip, ChosenShip = NULL;
     vector teamPos = team->shipList.selection->ShipPtr[0]->posinfo.position;
 
@@ -1781,7 +1781,6 @@ bool aiuShipIsVulnerableGoodGuy(ShipPtr ship)
 bool aiuShipIsLargeVulnerableGoodGuy(ShipPtr ship)
 {
     ShipType shiptype = ship->shiptype;
-    ShipClass shipclass = ship->staticinfo->shipclass;
 
     if ((ship->playerowner == aiCurrentAIPlayer->player) &&
         ((shiptype == AdvanceSupportFrigate) ||
@@ -1809,7 +1808,6 @@ SelectCommand *aiuFindClosestVulnerableGoodGuyShips(ShipPtr ship, udword type)
     udword i, j;
     vector ship_pos = ship->posinfo.position;
     real32 dist, tempdist;
-    bool done = FALSE;
 
     //initialize structures
     targets = (SelectCommand *)memAlloc(sizeofSelectCommand(aiuGoodGuyBlobs->numBlobs), "cvggs", 0);
@@ -2050,7 +2048,6 @@ ShipPtr aiuFindBestFighterVulnerableEnemyShip(SelectCommand *teamShips, real32 r
 ----------------------------------------------------------------------------*/
 SelectCommand *aiuFindNearbyEnemyShips(Ship *primarytarget,real32 range)
 {
-    blob *myblob = primarytarget->collMyBlob;
     SelectCommand *enemyShips;
     MaxSelection tempShips;
     Ship *ship = getShipNearObjTok((SpaceObjRotImpTarg *)primarytarget, range);
@@ -2945,7 +2942,7 @@ bool aiuShipIsResourcingOrSomething(ShipPtr ship)
 ----------------------------------------------------------------------------*/
 Resource *aiuFindBestResource(Resource **biggestResource, ShipPtr ship, ResourceSelection *resources)
 {
-    udword ResourceRoom, i, best_resValue = 0, biggest_resValue = 0;
+    udword ResourceRoom, i, biggest_resValue = 0; //, best_resValue = 0;
     real32 distsq, shortest_distsq = REALlyBig;
     Resource *best_resource = NULL;
     vector shippos = ship->posinfo.position;

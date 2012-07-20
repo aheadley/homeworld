@@ -1,9 +1,9 @@
 //
 //  MISSION06 - Asteroids 3D
 //
-#include "..\\Game\\speechevent.h"
-#include "attributes.h"
-#include "..\\Game\\soundmusic.h"
+#include "../Game/SpeechEvent.h"
+#include "Attributes.h"
+#include "../Game/SoundMusic.h"
 
     LOCALIZATION //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 

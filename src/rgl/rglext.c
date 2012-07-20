@@ -372,13 +372,20 @@ DLL void rglSmoothTexturedTriangle(GLint iPoly)
     VB->Count += 3;
 }
 
+#if defined (_MSC_VER)
 #define S(x)   dword ptr [esi + 4*x]
 #define D(x)   dword ptr [edi + 4*x]
 #define M(n)   dword ptr [edx + 4*n]
+#elif defined (__GNUC__) && defined (__i386__)
+    #define S(x)   "4*" #x "(%%esi)"
+    #define D(x)   "4*" #x "(%%edi)"
+    #define M(n)   "4*" #n "(%%edx)"
+#endif
 
 static void affine_transform(
     GLuint n, GLfloat* d, GLfloat m[16], GLfloat* s)
 {
+#if defined (_MSC_VER)
     _asm
     {
         push esi
@@ -450,10 +457,77 @@ static void affine_transform(
         pop edi
         pop esi
     }
+#elif defined (__GNUC__) && defined (__i386__)
+    __asm__ __volatile__ (
+        "    testl %%ecx, %%ecx\n"
+        "    jz afft_two\n"
+
+        "    movl $0x3f800000, %%eax\n"
+
+        "afft_one:\n"
+        "    flds " S(0) "\n"
+        "    fmuls " M(0) "\n"
+        "    flds " S(0) "\n"
+        "    fmuls " M(1) "\n"
+        "    flds " S(0) "\n"
+        "    fmuls " M(2) "\n"
+
+        "    flds " S(1) "\n"
+        "    fmuls " M(4) "\n"
+        "    flds " S(1) "\n"
+        "    fmuls " M(5) "\n"
+        "    flds " S(1) "\n"
+        "    fmuls " M(6) "\n"
+
+        "    fxch %%st(2)\n"
+        "    faddp %%st, %%st(5)\n"
+        "    faddp %%st, %%st(3)\n"
+        "    faddp %%st, %%st(1)\n"
+
+        "    flds " S(2) "\n"
+        "    fmuls " M(8) "\n"
+        "    flds " S(2) "\n"
+        "    fmuls " M(9) "\n"
+        "    flds " S(2) "\n"
+        "    fmul " M(10) "\n"
+
+        "    fxch %%st(2)\n"
+        "    faddp %%st, %%st(5)\n"
+        "    faddp %%st, %%st(3)\n"
+        "    faddp %%st, %%st(1)\n"
+
+        "    fxch %%st(2)\n"
+        "    fadds " M(12) "\n"
+        "    fxch %%st(1)\n"
+        "    fadds " M(13) "\n"
+        "    fxch %%st(2)\n"
+        "    fadds " M(14) "\n"
+
+        "    fxch %%st(1)\n"
+        "    fstps " D(0) "\n"
+        "    fstps " D(2) "\n"
+        "    fstps " D(1) "\n"
+        "    movl %%eax, " D(3) "\n"
+
+        "    leal " S(4) ", %%esi\n"
+        "    decl %%ecx\n"
+
+        "    leal " D(4) ", %%edi\n"
+
+        "    jnz afft_one\n"
+
+        "afft_two:\n"
+        :
+        : "c" (n), "D" (d), "d" (m), "S" (s)
+        : "eax" );
+#else
+#error affine_transform(): Not yet implemented on this platform.
+#endif
 }
 
 static void normal_transform(GLfloat* d, GLfloat* s, GLfloat* m, GLuint n)
 {
+#if defined (_MSC_VER)
     _asm
     {
         push esi
@@ -514,6 +588,60 @@ static void normal_transform(GLfloat* d, GLfloat* s, GLfloat* m, GLuint n)
         pop edi
         pop esi
     }
+#elif defined (__GNUC__) && defined (__i386__)
+    __asm__ __volatile__ (
+        "    testl %%ecx, %%ecx\n"
+        "    jz normt_two\n"
+
+        "normt_one:\n"
+        "    flds " S(0) "\n"
+        "    fmuls " M(0) "\n"
+        "    flds " S(0) "\n"
+        "    fmuls " M(4) "\n"
+        "    flds " S(0) "\n"
+        "    fmuls " M(8) "\n"
+
+        "    flds " S(1) "\n"
+        "    fmuls " M(1) "\n"
+        "    flds " S(1) "\n"
+        "    fmuls " M(5) "\n"
+        "    flds " S(1) "\n"
+        "    fmuls " M(9) "\n"
+
+        "    fxch %%st(2)\n"
+        "    faddp %%st, %%st(5)\n"
+        "    faddp %%st, %%st(3)\n"
+        "    faddp %%st, %%st(1)\n"
+
+        "    flds " S(2) "\n"
+        "    fmuls " M(2) "\n"
+        "    flds " S(2) "\n"
+        "    fmuls " M(6) "\n"
+        "    flds " S(2) "\n"
+        "    fmuls " M(10) "\n"
+
+        "    fxch %%st(2)\n"
+        "    faddp %%st, %%st(5)\n"
+        "    faddp %%st, %%st(3)\n"
+        "    faddp %%st, %%st(1)\n"
+
+        "    fxch %%st(2)\n"
+        "    fstps " D(0) "\n"
+        "    fstps " D(1) "\n"
+        "    fstps " D(2) "\n"
+
+        "    leal " S(4) ", %%esi\n"
+        "    decl %%ecx\n"
+
+        "    leal " D(3) ", %%edi\n"
+        "    jnz normt_one\n"
+
+        "normt_two:\n"
+        :
+        : "c" (n), "D" (d), "d" (m), "S" (s) );
+#else
+#error normal_transform(): Not yet implemented on this platform.
+#endif
 }
 
 DLL void rglMeshRender(

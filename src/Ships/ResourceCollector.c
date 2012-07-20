@@ -6,15 +6,15 @@
     Copyright Relic Entertainment, Inc.  All rights reserved.
 =============================================================================*/
 
-#include "types.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "SpaceObj.h"
 #include "ResourceCollector.h"
 #include "SoundEvent.h"
-#include "statscript.h"
+#include "StatScript.h"
 #include "DefaultShip.h"
-#include "shipselect.h"
-#include "repaircorvette.h"
-#include "rescollect.h"
+#include "ShipSelect.h"
+#include "RepairCorvette.h"
+#include "ResCollect.h"
 
 typedef struct
 {

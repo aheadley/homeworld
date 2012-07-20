@@ -11,23 +11,23 @@
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
-#include "types.h"
-#include "fastmath.h"
-#include "debug.h"
-#include "memory.h"
-#include "formation.h"
-#include "commandlayer.h"
-#include "aiship.h"
-#include "aitrack.h"
-#include "statscript.h"
-#include "universe.h"
-#include "univupdate.h"
-#include "soundevent.h"
-#include "select.h"
-#include "collision.h"
-#include "flightman.h"
-#include "attack.h"
-#include "aiplayer.h"
+#include "Types.h"
+#include "FastMath.h"
+#include "Debug.h"
+#include "Memory.h"
+#include "Formation.h"
+#include "CommandLayer.h"
+#include "AIShip.h"
+#include "AITrack.h"
+#include "StatScript.h"
+#include "Universe.h"
+#include "UnivUpdate.h"
+#include "SoundEvent.h"
+#include "Select.h"
+#include "Collision.h"
+#include "FlightMan.h"
+#include "Attack.h"
+#include "AIPlayer.h"
 #include "GenericInterceptor.h"
 #include "DDDFrigate.h"
 #include "SalCapCorvette.h"
@@ -35,24 +35,24 @@
 #include "GravWellGenerator.h"
 #include "CloakGenerator.h"
 #include "ResearchShip.h"
-#include "researchAPI.h"
-#include "tactics.h"
-#include "singleplayer.h"
-#include "repaircorvette.h"
-#include "genericdefender.h"
-#include "alliance.h"
-#include "probe.h"
-#include "heavycorvette.h"
-#include "madLinkIn.h"
-#include "proximitysensor.h"
-#include "consmgr.h"
-#include "rescollect.h"
-#include "tutor.h"
-#include "randy.h"
-#include "battle.h"
-#include "ping.h"
-#include "netcheck.h"
-#include "commandnetwork.h"
+#include "ResearchAPI.h"
+#include "Tactics.h"
+#include "SinglePlayer.h"
+#include "RepairCorvette.h"
+#include "GenericDefender.h"
+#include "Alliance.h"
+#include "Probe.h"
+#include "HeavyCorvette.h"
+#include "MadLinkIn.h"
+#include "ProximitySensor.h"
+#include "ConsMgr.h"
+#include "ResCollect.h"
+#include "Tutor.h"
+#include "Randy.h"
+#include "Battle.h"
+#include "Ping.h"
+#include "NetCheck.h"
+#include "CommandNetwork.h"
 
 #ifdef gshaw
 #ifndef HW_Release
@@ -1572,7 +1572,6 @@ bool delegateCommand(CommandToDo *attacktodo,sdword group,sdword doform, SelectC
     sdword numShips = selection->numShips;
     sdword allNotAttacking;
     sdword formationoverride = FALSE;
-    sdword numShipsToAttack = attack->numTargets;
     Ship *ship;
     sdword pee;
     Ship *tempship;
@@ -2558,7 +2557,7 @@ bool processMpHyperspaceingToDo(CommandToDo *movetodo)
 
                     movetodo->selection->ShipPtr[j]->hyperspacePing=TRUE;
                     //create ping HERE!
-                    newPing = pingCreate(NULL, (SpaceObj *)movetodo->selection->ShipPtr[j], hyperspaceOutPingTimeOut, NULL, 0, (udword)movetodo->selection->ShipPtr[j]);
+                    newPing = pingCreate(NULL, (SpaceObj *)movetodo->selection->ShipPtr[j], (pingeval)hyperspaceOutPingTimeOut, NULL, 0, (udword)movetodo->selection->ShipPtr[j]);
                     newPing->c = TW_HW_PING_COLOUR_OUT;
                     newPing->size = TW_HW_PING_MAX_SIZE_OUT;
                     newPing->minScreenSize = primScreenToGLScaleX(2);
@@ -2654,7 +2653,7 @@ bool processMpHyperspaceingToDo(CommandToDo *movetodo)
                     ping *newPing;
                     movetodo->selection->ShipPtr[j]->hyperspacePing=TRUE;
                     //create ping HERE!
-                    newPing = pingCreate(NULL, (SpaceObj *)movetodo->selection->ShipPtr[j], hyperspaceInPingTimeOut, NULL, 0, (udword)movetodo->selection->ShipPtr[j]);
+                    newPing = pingCreate(NULL, (SpaceObj *)movetodo->selection->ShipPtr[j], (pingeval)hyperspaceInPingTimeOut, NULL, 0, (udword)movetodo->selection->ShipPtr[j]);
                     newPing->c = TW_HW_PING_COLOUR_IN;
                     newPing->size = TW_HW_PING_MAX_SIZE_IN;
                     newPing->minScreenSize = primScreenToGLScaleX(2);
@@ -5335,8 +5334,6 @@ void RemoveAttackTargetFromExtraAttackInfo(SpaceObjRotImpTarg *targettoremove,Co
     sdword i;
     SelectCommand *selection = todo->selection;
     sdword numShips = selection->numShips;
-    AttackCommand *attack = todo->attack;
-    sdword numShipsToAttack = attack->numTargets;
     Ship *ship;
     AttackTargets *multipleAttackTargets;
 
@@ -5793,7 +5790,7 @@ void InitExtraAttackInfo(SelectCommand *selection,AttackCommand *attack,bool fin
     vecDivideByScalar(avgposSelection,((real32)numShips),temp);
     vecDivideByScalar(avgposTargets,((real32)numTargetsToAttack),temp);
     vecSub(diff,avgposSelection,avgposTargets);
-    diff.z = abs(diff.z);
+    diff.z = ABS(diff.z);
 
     if ((diff.z >= ATTACKING_FROM_ABOVE_MIN_DIST) &&
         (diff.z >= (fsqrt(diff.x*diff.x + diff.y*diff.y)*ATTACKING_FROM_ABOVE_MIN_RATIO)))
@@ -6363,7 +6360,6 @@ void clPassiveAttack(CommandLayer *comlayer,SelectCommand *selectcom,AttackComma
 ----------------------------------------------------------------------------*/
 void ChangeOrderToSpecial(CommandToDo *alreadycommand,SpecialCommand *targets)
 {
-    SelectCommand *selection = alreadycommand->selection;
     SpecialCommand *specialtargets;
     udword sizeofspecialtargets;
 
@@ -8835,7 +8831,6 @@ processdock:
                     {
                         if (command->dock.wasHarvesting)
                         {
-                            Ship *resourceShip = command->selection->ShipPtr[0];
                             dbgAssert(command->selection->numShips == 1);
 
                             // changing COMMAND_DOCK to COMMAND_COLLECTRESOURCE

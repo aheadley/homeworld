@@ -4,11 +4,11 @@
 #include "AIEvents.h"
 #include "AIVar.h"
 #include "AIMoves.h"
-#include "memory.h"
+#include "Memory.h"
 #include "AIPlayer.h"
 #include "AIFleetMan.h"
 #include "CommandWrap.h"
-#include "randy.h"
+#include "Randy.h"
 #include "AIUtilities.h"
 #include "SaveGame.h"
 
@@ -173,7 +173,7 @@ void aimCloseGetShips(AITeam *team,AITeamMove *move)
 
 AITeamMove *aimCreateGetShipsNoAdd(AITeam *team, ShipType shiptype, sbyte num_ships, sdword priority, bool8 wait, bool8 remove)
 {
-    TypeOfFormation formation = SAME_FORMATION;
+//    TypeOfFormation formation = SAME_FORMATION;
     AlternativeShips alternatives;
     AITeamMove *newMove = (AITeamMove *)memAlloc(sizeof(AITeamMove), "getshipsmove", 0);
 
@@ -217,7 +217,7 @@ void aimFix_GetShips(AITeamMove *move)
 
 void aimPreFix_GetShips(AITeamMove *move)
 {
-    move->params.getShips.doneVar = AIVarToNumber(move->params.getShips.doneVar);
+    move->params.getShips.doneVar = (AIVar*)AIVarToNumber(move->params.getShips.doneVar);
 }
 
 #pragma warning( 2 : 4047)      // turn back on "different levels of indirection warning"
@@ -440,6 +440,6 @@ void aimFix_VarDestroy(AITeamMove *move)
 //
 //  temporary contention relief
 //
-#include "AIMoves1.c"  // Falko
-#include "AIMoves2.c"  // Gary
+#include "AIMoves1.c.h"  // Falko
+#include "AIMoves2.c.h"  // Gary
 

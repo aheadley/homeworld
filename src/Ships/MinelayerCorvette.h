@@ -9,10 +9,10 @@
 #ifndef ___MINELAYER_CORVETTE_H
 #define ___MINELAYER_CORVETTE_H
 
-#include "types.h"
-#include "spaceobj.h"
-#include "attack.h"
-#include "formation.h"
+#include "Types.h"
+#include "SpaceObj.h"
+#include "Attack.h"
+#include "Formation.h"
 /*=============================================================================
     Types:
 =============================================================================*/

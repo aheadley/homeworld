@@ -6,22 +6,26 @@
     Copyright Relic Entertainment, Inc.  All rights reserved.
 =============================================================================*/
 
-// unfortunately need this for the timers
+#ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#else
+    #include <sys/time.h>
+#endif
 
+#include "SDL.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
-#include "types.h"
-#include "memory.h"
-#include "debug.h"
-#include "globals.h"
-#include "commandnetwork.h"
-#include "captaincy.h"
+#include "Types.h"
+#include "Memory.h"
+#include "Debug.h"
+#include "Globals.h"
+#include "CommandNetwork.h"
+#include "Captaincy.h"
 #include "utility.h"
 #include "CommandWrap.h"
-#include "file.h"
+#include "File.h"
 
 
 /*
@@ -48,12 +52,12 @@
     misc - new captain you should acknowledge
 */
 
-extern LONGLONG utyTimerDivisor;
+extern Uint32 utyTimerDivisor;
 
 typedef struct TimeoutTimer
 {
     bool enabled;
-    LONGLONG timerLast;
+    Uint32 timerLast;
     udword timeoutTicks;
 } TimeoutTimer;
 
@@ -122,11 +126,24 @@ void captaincyLog(bool echotoscreen,char *format, ...)
 
     if (logEnable)
     {
+#ifdef _WIN32
         SYSTEMTIME systime;
         char buffer2[200];
 
         GetSystemTime(&systime);
         sprintf(buffer2,"\n%2d:%2d:%2d %s",systime.wHour,systime.wMinute,systime.wSecond,buffer);
+#else   /* TEE...VEE...MIND! */
+        struct timeval tv;
+        long tv_hour, tv_minute, tv_second;
+        char buffer2[200];
+
+        gettimeofday(&tv, 0);
+        tv_hour   = (tv.tv_sec % 86400) / 3600;
+        tv_minute = (tv.tv_sec %  3600) /   60;
+        tv_second = (tv.tv_sec %    60);
+        sprintf(buffer2, "\n%2ld:%2ld:%2ld %s", tv_hour, tv_minute, tv_second,
+            buffer);
+#endif
         logfileLog(CAPTAINCYLOGFILE,buffer2);
     }
 }
@@ -177,13 +194,13 @@ void TimeoutTimerUpdateAll(void)
     {
         if (timeoutTimers[i].enabled)
         {
-            LARGE_INTEGER perftimer;
-            LONGLONG difference;
+            Uint32 timerval;
+            Uint32 difference;
             udword nTicks;
 
-            QueryPerformanceCounter(&perftimer);
+            timerval = SDL_GetTicks();
 
-            difference = perftimer.QuadPart - timeoutTimers[i].timerLast;
+            difference = timerval - timeoutTimers[i].timerLast;
             nTicks = (udword)(difference / utyTimerDivisor);
 
             if (nTicks >= timeoutTimers[i].timeoutTicks)
@@ -196,27 +213,27 @@ void TimeoutTimerUpdateAll(void)
 
 void TimeoutTimerStart(sdword timer,real32 timeout)
 {
-    LARGE_INTEGER perftimer;
+    Uint32 timerval;
 
-    QueryPerformanceCounter(&perftimer);
+    timerval = SDL_GetTicks();
 
     timeoutTimers[timer].enabled = TRUE;
-    timeoutTimers[timer].timerLast = perftimer.QuadPart;
+    timeoutTimers[timer].timerLast = timerval;
     timeoutTimers[timer].timeoutTicks = (udword) (timeout * UTY_TimerResloutionMax);
 }
 
 void TimeoutTimerReset(sdword timer)
 {
-    LARGE_INTEGER perftimer;
+    Uint32 timerval;
 
     if (!timeoutTimers[timer].enabled)
     {
         return;
     }
 
-    QueryPerformanceCounter(&perftimer);
+    timerval = SDL_GetTicks();
 
-    timeoutTimers[timer].timerLast = perftimer.QuadPart;
+    timeoutTimers[timer].timerLast = timerval;
 }
 
 void TimeoutTimerDisable(sdword timer)
@@ -316,7 +333,7 @@ void TransferCaptaincyUpdate(void)
 
     while (numPackets > 0)
     {
-        sizeofPacket = Dequeue(&ProcessCaptaincyPktQ,&packet);
+        sizeofPacket = HWDequeue(&ProcessCaptaincyPktQ,&packet);
         dbgAssert(sizeofPacket > 0);
         copypacket = memAlloc(sizeofPacket,"cp(miscpacket)",Pyrophoric);
         memcpy(copypacket,packet,sizeofPacket);
@@ -339,7 +356,7 @@ void TransferCaptaincyUpdate(void)
     }
     else
     {
-        sizeofPacket = Dequeue(&ProcessCaptaincyPktQ,&packet);
+        sizeofPacket = HWDequeue(&ProcessCaptaincyPktQ,&packet);
         dbgAssert(sizeofPacket > 0);
         copypacket = memAlloc(sizeofPacket,"cp(miscpacket)",Pyrophoric);
         memcpy(copypacket,packet,sizeofPacket);

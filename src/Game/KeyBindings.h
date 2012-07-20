@@ -10,10 +10,10 @@
 #ifndef ___KEYBINDINGS_H
 #define ___KEYBINDINGS_H
 
-#include "feflow.h"
+#include "FEFlow.h"
 #include "font.h"
-#include "key.h"
-#include "strings.h"
+#include "Key.h"
+#include "Strings.h"
 
 /*=============================================================================
     Defines :

@@ -9,31 +9,31 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include "switches.h"
-#include "types.h"
-#include "debug.h"
-#include "memory.h"
-#include "task.h"
-#include "queue.h"
-#include "universe.h"
-#include "univupdate.h"
+#include "Switches.h"
+#include "Types.h"
+#include "Debug.h"
+#include "Memory.h"
+#include "Task.h"
+#include "Queue.h"
+#include "Universe.h"
+#include "UnivUpdate.h"
 #include "CommandLayer.h"
-#include "netcheck.h"
-#include "globals.h"
+#include "NetCheck.h"
+#include "Globals.h"
 #include "utility.h"
 #include "CommandNetwork.h"
 #include "TitanInterfaceC.h"
 #include "HorseRace.h"
-#include "chatting.h"
+#include "Chatting.h"
 #include "mainswitches.h"
 #include "Captaincy.h"
-#include "titan.h"
+#include "Titan.h"
 #include "TimeoutTimer.h"
-#include "titannet.h"
-#include "multiplayergame.h"        // for mutex stuff
-#include "autodownloadmap.h"
+#include "TitanNet.h"
+#include "MultiplayerGame.h"        // for mutex stuff
+#include "AutoDownloadMap.h"
 #include "LagPrint.h"
-#include "sensors.h"
+#include "Sensors.h"
 
 /*=============================================================================
     Private Defines:
@@ -91,7 +91,6 @@ void KeepAliveStartTimers();
 void receivedIAmAlivePacket(HWPacketHeader *packet,udword sizeofPacket);
 void receivedAliveStatusPacket(AliveStatusPacket *packet,udword sizeofPacket);
 
-static void SendCaptainInfoPacket(void);
 void BroadCastHorseRacePacketFromCaptain(ubyte *packet, udword sizeofpacket);
 void BroadCastChatPacketFromCapatain(ChatPacket *packet, udword sizeofpacket);
 
@@ -151,7 +150,7 @@ void ReceivedSyncPacketCB(ubyte *packet,udword sizeofPacket)
     dbgAssert(((HWPacketHeader *)packet)->type == PACKETTYPE_SYNC);
 
     LockQueue(&ProcessSyncPktQ);
-    Enqueue(&ProcessSyncPktQ,packet,sizeofPacket);
+    HWEnqueue(&ProcessSyncPktQ,packet,sizeofPacket);
     UnLockQueue(&ProcessSyncPktQ);
 }
 
@@ -170,7 +169,7 @@ void ReceivedCmdPacketCB(ubyte *packet,udword sizeofPacket)
     if (IAmCaptain)
     {
         LockQueue(&ProcessCmdPktQ);
-        Enqueue(&ProcessCmdPktQ,packet,sizeofPacket);
+        HWEnqueue(&ProcessCmdPktQ,packet,sizeofPacket);
         UnLockQueue(&ProcessCmdPktQ);
     }
     // else throw packet away
@@ -189,7 +188,7 @@ void ReceivedRequestedSyncPacketCB(ubyte *packet,udword sizeofPacket)
     dbgAssert(((HWPacketHeader *)packet)->type == PACKETTYPE_REQUESTEDSYNC);
 
     LockQueue(&ProcessRequestedSyncPktQ);
-    Enqueue(&ProcessRequestedSyncPktQ,packet,sizeofPacket);
+    HWEnqueue(&ProcessRequestedSyncPktQ,packet,sizeofPacket);
     UnLockQueue(&ProcessRequestedSyncPktQ);
 }
 
@@ -250,7 +249,7 @@ void ReceivedTransferCaptaincyPacketCB(ubyte *packet,udword sizeofPacket)
     dbgAssert(((HWPacketHeader *)packet)->type == PACKETTYPE_TRANSFERCAPTAINCY);
 
     LockQueue(&ProcessCaptaincyPktQ);
-    Enqueue(&ProcessCaptaincyPktQ,packet,sizeofPacket);
+    HWEnqueue(&ProcessCaptaincyPktQ,packet,sizeofPacket);
     UnLockQueue(&ProcessCaptaincyPktQ);
 }
 
@@ -471,6 +470,8 @@ void SetTargetID(TargetID *targetID,SpaceObjRotImpTarg *target)
         case OBJ_DerelictType:
             targetID->objNumber = ((Derelict *)target)->derelictID.derelictNumber;
             break;
+        default:
+            break;
     }
 }
 
@@ -508,14 +509,19 @@ SelectCommand *convertNetSelectionToSelectCommand(NetSelection *netselection,boo
         else
         {
             shipPlayerIndex = selectCommand->ShipPtr[i]->playerowner->playerIndex;
-            if ((shipPlayerIndex >= 0) && (shipPlayerIndex < tpGameCreated.numPlayers))     // if it's a human ship
-            if (shipPlayerIndex != from)                                                    // do further cheat check - only can control own ship
+            
+            // if it's a human ship
+            if ((shipPlayerIndex >= 0) && (shipPlayerIndex < tpGameCreated.numPlayers))
+            {
+                // do further cheat check - only can control own ship
+                if (shipPlayerIndex != from)
             {
                 selectCommand->ShipPtr[i] = NULL;       // reject ship
                 someShipsDied = TRUE;
                 someShipsOrderedByWrongPlayer = TRUE;
             }
         }
+    }
     }
 
     if (someShipsDied)
@@ -1914,7 +1920,7 @@ WaitPacketStatus clWaitSyncPacket(CommandLayer *comlayer)
         }
         else
         {
-            sizeofPacket = Dequeue(&ProcessRequestedSyncPktQ,&packet);       // actually dequeue it
+            sizeofPacket = HWDequeue(&ProcessRequestedSyncPktQ,&packet);       // actually HWDequeue it
             dbgAssert(sizeofPacket > 0);
             copypacket = memAlloc(sizeofPacket,"cp(copypacket)",Pyrophoric);
             memcpy(copypacket,packet,sizeofPacket);
@@ -1963,12 +1969,12 @@ WaitPacketStatus clWaitSyncPacket(CommandLayer *comlayer)
 
             if (((HWPacketHeader *)packet)->frame == receivedPacketNumber)
             {
-                sizeofPacket = Dequeue(&ProcessSyncPktQ,&packet);       // actually dequeue it
+                sizeofPacket = HWDequeue(&ProcessSyncPktQ,&packet);       // actually HWDequeue it
                 dbgAssert(sizeofPacket > 0);
                 break;
             }
 
-            // frame is > receivedPacketNumber, don't dequeue it,
+            // frame is > receivedPacketNumber, don't HWDequeue it,
             if (!explicitlyRequestingPackets)       // and request packets receivedPacketNumber..frame-1 (but only once)
             {
                 explicitlyRequestingFrom = receivedPacketNumber;
@@ -1986,7 +1992,7 @@ WaitPacketStatus clWaitSyncPacket(CommandLayer *comlayer)
             return NO_PACKET;
 
 getnextpacket:
-            sizeofPacket = Dequeue(&ProcessSyncPktQ,&packet);       // actually dequeue it
+            sizeofPacket = HWDequeue(&ProcessSyncPktQ,&packet);       // actually HWDequeue it
             dbgAssert(sizeofPacket > 0);
             numPackets = queueNumberEntries(ProcessSyncPktQ);
             if (numPackets == 0)
@@ -2047,7 +2053,9 @@ void captainServerTask(void)
 
     taskYield(0);
 
+#ifndef C_ONLY
     for(;;)
+#endif
     {
         taskStackSaveCond(0);
         if ( (recordFakeSendPackets) ||
@@ -2077,7 +2085,7 @@ void captainServerTask(void)
             while (queueNumberEntries(ProcessCmdPktQ) > 0)
             {
                 curqinfo = &qinfos[numCommands];
-                curqinfo->qsizeof = Dequeue(&ProcessCmdPktQ,(ubyte **)&curqinfo->qdata);
+                curqinfo->qsizeof = HWDequeue(&ProcessCmdPktQ,(ubyte **)&curqinfo->qdata);
                 dbgAssert(curqinfo->qsizeof > 0);
                 dbgAssert(curqinfo->qdata != NULL);
                 dbgAssert(numCommands < qTotalNumberEntries);
@@ -2164,6 +2172,7 @@ donecap:;
         taskStackRestoreCond();
         taskYield(0);
     }
+
     taskExit();
 }
 #pragma optimize("", on)

@@ -9,9 +9,9 @@
 #ifndef ___LIGHT_CORVETTE_H
 #define ___LIGHT_CORVETTE_H
 
-#include "types.h"
-#include "spaceobj.h"
-#include "attack.h"
+#include "Types.h"
+#include "SpaceObj.h"
+#include "Attack.h"
 
 /*=============================================================================
     Types:

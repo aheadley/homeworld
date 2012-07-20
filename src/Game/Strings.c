@@ -7,16 +7,19 @@
     Copyright Relic Entertainment, Inc.  All rights reserved.
 =============================================================================*/
 
+#ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include <string.h>
-#include "types.h"
-#include "memory.h"
-#include "statscript.h"
-#include "Strings.h"
-#include "debug.h"
+#endif
 
-#define strEntry(var)  {#var,strSetStringCB,&MessageStrings[##var]}
+#include <string.h>
+#include "Types.h"
+#include "Memory.h"
+#include "StatScript.h"
+#include "Strings.h"
+#include "Debug.h"
+
+#define strEntry(var)  {#var,strSetStringCB,&MessageStrings[var]}
 
 udword strCurLanguage=0;
 udword strCurKeyboardLanguage=0;
@@ -553,7 +556,7 @@ scriptEntry LanguageStrings[] =
     strEntry(strHOMEKEY),
     strEntry(strPAGEDOWNKEY),
     strEntry(strPAGEUPKEY),
-    strEntry(strBACKSLASHKEY,),
+    strEntry(strBACKSLASHKEY),
     strEntry(strPAUSEKEY),
     strEntry(strSCROLLKEY),
     strEntry(strPRINTKEY),
@@ -680,6 +683,7 @@ static char * strParseString(char *str);
 
 void strSetCurKeyboard(void)
 {
+#ifdef _WIN32
     udword keyboard;
 
     if (keyboard = GetKeyboardLayout(0))
@@ -706,6 +710,7 @@ void strSetCurKeyboard(void)
         }
     }
     else
+#endif
         strCurKeyboardLanguage = languageEnglish;
 }
 
@@ -720,13 +725,16 @@ void strSetCurKeyboard(void)
 bool8 strLoadLanguage(strLanguageType language)
 {
     udword i;
+#ifdef _WIN32
     udword keyboard;
+#endif
 
     for (i=0;i<NumStrings;i++)
     {
         MessageStrings[i]=crapMessage;
     }
 
+#ifdef _WIN32
     if (keyboard = GetKeyboardLayout(0))
     {
         if (PRIMARYLANGID(keyboard)==LANG_ENGLISH)
@@ -751,6 +759,7 @@ bool8 strLoadLanguage(strLanguageType language)
         }
     }
     else
+#endif
         strCurKeyboardLanguage = languageEnglish;
 
     if (strInitialized==TRUE)
@@ -817,10 +826,10 @@ bool8 strFreeLanguage(void)
     Outputs     : none
     Return      : none
 ----------------------------------------------------------------------------*/
-void strSetStringCB(char *directory,char *field,void **dataToFillIn)
+void strSetStringCB(char *directory,char *field,void *dataToFillIn)
 {
-    *dataToFillIn = (void *)memStringDupe(field);
-    *dataToFillIn = strParseString(*dataToFillIn);
+    *(void**)dataToFillIn = (void *)memStringDupe(field);
+    *(void**)dataToFillIn = strParseString(*(void**)dataToFillIn);
 }
 
 

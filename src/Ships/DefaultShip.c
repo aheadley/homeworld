@@ -6,14 +6,14 @@
     Copyright Relic Entertainment, Inc.  All rights reserved.
 =============================================================================*/
 
-#include "types.h"
-#include "spaceobj.h"
-#include "gun.h"
-#include "attack.h"
-#include "universe.h"
+#include "Types.h"
+#include "SpaceObj.h"
+#include "Gun.h"
+#include "Attack.h"
+#include "Universe.h"
 #include "DefaultShip.h"
 #include "GenericInterceptor.h"
-#include "univupdate.h"
+#include "UnivUpdate.h"
 
 typedef struct
 {

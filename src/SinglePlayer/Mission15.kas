@@ -2,9 +2,9 @@
 //  MISSION14 - Headshot asteroid
 //
 
-#include "speechevent.h"
+#include "SpeechEvent.h"
 #include "CommandDefs.h"
-#include "soundmusic.h"
+#include "SoundMusic.h"
 
 // ---could be from "Subtitle.h" if it didn't include so much extra....
 #define STA_FleetCommand        0

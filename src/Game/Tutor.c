@@ -4,45 +4,52 @@
 
 */
 
+#ifdef _WIN32
 #include <windows.h>
+#endif
+
 #include "glinc.h"
 #include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
-#include "types.h"
-#include "feflow.h"
-#include "aiplayer.h"
+#include <strings.h>
+#include "Types.h"
+#include "FEFlow.h"
+#include "AIPlayer.h"
 #include "utility.h"
-#include "levelload.h"
-#include "region.h"
+#include "LevelLoad.h"
+#include "Region.h"
 #include "KAS.h"
-#include "uicontrols.h"
-#include "strings.h"
-#include "fontreg.h"
-#include "select.h"
+#include "UIControls.h"
+#include "Strings.h"
+#include "FontReg.h"
+#include "Select.h"
 #include "texreg.h"
-#include "fontReg.h"
+#include "FontReg.h"
 #include "render.h"
 #include "mouse.h"
-#include "fastmath.h"
+#include "FastMath.h"
 #include "Tutor.h"
-#include "Utility.h"
-#include "consmgr.h"
-#include "cameracommand.h"
-#include "fastmath.h"
-#include "savegame.h"
-#include "collision.h"
-#include "gamepick.h"
+#include "ConsMgr.h"
+#include "CameraCommand.h"
+#include "FastMath.h"
+#include "SaveGame.h"
+#include "Collision.h"
+#include "GamePick.h"
 #include "main.h"
-#include "subtitle.h"
-#include "singleplayer.h"
-#include "speechevent.h"
-#include "soundevent.h"
-#include "file.h"
+#include "Subtitle.h"
+#include "SinglePlayer.h"
+#include "SpeechEvent.h"
+#include "SoundEvent.h"
+#include "File.h"
 #include "mainrgn.h"
-#include "taskbar.h"
-#include "..\\Generated\\tutorial1.h"
+#include "TaskBar.h"
+#include "../Generated/Tutorial1.h"
+
+#ifdef _MSC_VER
+#define strcasecmp _stricmp
+#endif
 
 //hack to get the speech to work when game is paused
 bool FalkosFuckedUpTutorialFlag = FALSE;
@@ -63,9 +70,6 @@ ShipType tutFEContextMenuShipType;
 
 static char tutLastLessonName[256] = "";
 static char tutCurrLessonName[256] = "";
-
-static const sbyte ExpandY = 0;
-static const sbyte ExpandX = 1;
 
 /*
 sdword  tutTextPointerType = 0;
@@ -137,10 +141,11 @@ featom tutRootAtom =
     NULL,                   //  ubyte *pData;                               //pointer to type-specific data
     NULL,                   //  ubyte *attribs;                             //sound(button atom) or font(static text atom) reference
     0,                      //  char   hotKeyModifiers;
-    0,                      //  char   hotKey[FE_NumberLanguages];
-    0,                      //  udword drawstyle[2];
+    {0},                    //  char   hotKey[FE_NumberLanguages];
+    {0},                    //  char   pad2[2]
+    {0},                    //  udword drawstyle[2];
     0,                      //  void*  region;
-    0                       //  udword pad[2];
+    {0}                     //  udword pad[2];
 };
 
 
@@ -161,10 +166,11 @@ featom tutTextAtom =
     NULL,                   //  ubyte *pData;                               //pointer to type-specific data
     NULL,                   //  ubyte *attribs;                             //sound(button atom) or font(static text atom) reference
     0,                      //  char   hotKeyModifiers;
-    0,                      //  char   hotKey[FE_NumberLanguages];
-    0,                      //  udword drawstyle[2];
+    {0},                    //  char   hotKey[FE_NumberLanguages];
+    {0},                    //  char   pad2[2]
+    {0},                    //  udword drawstyle[2];
     0,                      //  void*  region;
-    0                       //  udword pad[2];
+    {0}                     //  udword pad[2];
 };
 
 featom tutImageAtom =
@@ -184,10 +190,11 @@ featom tutImageAtom =
     NULL,                   //  ubyte *pData;                               //pointer to type-specific data
     NULL,                   //  ubyte *attribs;                             //sound(button atom) or font(static text atom) reference
     0,                      //  char   hotKeyModifiers;
-    0,                      //  char   hotKey[FE_NumberLanguages];
-    0,                      //  udword drawstyle[2];
+    {0},                    //  char   hotKey[FE_NumberLanguages];
+    {0},                    //  char   pad2[2]
+    {0},                    //  udword drawstyle[2];
     0,                      //  void*  region;
-    0                       //  udword pad[2];
+    {0}                     //  udword pad[2];
 };
 
 featom tutNextAtom =
@@ -207,10 +214,11 @@ featom tutNextAtom =
     NULL,                   //  ubyte *pData;                               //pointer to type-specific data
     NULL,                   //  ubyte *attribs;                             //sound(button atom) or font(static text atom) reference
     0,                      //  char   hotKeyModifiers;
-    0,                      //  char   hotKey[FE_NumberLanguages];
-    0,                      //  udword drawstyle[2];
+    {0},                    //  char   hotKey[FE_NumberLanguages];
+    {0},                    //  char   pad2[2]
+    {0},                    //  udword drawstyle[2];
     0,                      //  void*  region;
-    0                       //  udword pad[2];
+    {0}                     //  udword pad[2];
 };
 
 featom tutBackAtom =
@@ -230,10 +238,11 @@ featom tutBackAtom =
     NULL,                   //  ubyte *pData;                               //pointer to type-specific data
     NULL,                   //  ubyte *attribs;                             //sound(button atom) or font(static text atom) reference
     0,                      //  char   hotKeyModifiers;
-    0,                      //  char   hotKey[FE_NumberLanguages];
-    0,                      //  udword drawstyle[2];
+    {0},                    //  char   hotKey[FE_NumberLanguages];
+    {0},                    //  char   pad2[2]
+    {0},                    //  udword drawstyle[2];
     0,                      //  void*  region;
-    0                       //  udword pad[2];
+    {0}                     //  udword pad[2];
 };
 
 
@@ -501,7 +510,11 @@ static char *tutTutorialNames[4] = {"", "Tutorial1"};
 
 void tutPreInitTutorial(char *dirfile, char *levelfile)
 {
+#ifdef _WIN32
     sprintf(dirfile, "Tutorials\\%s\\", tutTutorialNames[tutorial]);
+#else
+    sprintf(dirfile, "Tutorials/%s/", tutTutorialNames[tutorial]);
+#endif
     sprintf(levelfile, "%s.mission", tutTutorialNames[tutorial]);
 
     tutEnableEverything();
@@ -1674,7 +1687,7 @@ long    i;
     i = 0;
     while(pTokenList[i][0])
     {
-        if(stricmp(pTokenList[i], pToken) == 0)
+        if(strcasecmp(pTokenList[i], pToken) == 0)
             return i;
         i++;
     }
@@ -1831,7 +1844,11 @@ void tutInitialize(void)
         if (tutTexture[i] == TR_InvalidInternalHandle)
         {
             dbgAssert(tutImage[i] == NULL);
+#ifdef _WIN32
             strcpy(Filename, "feman\\texdecorative\\");
+#else
+            strcpy(Filename, "feman/texdecorative/");
+#endif
 
             //load the correct texture depending on language
             if (strCurLanguage == languageEnglish)
@@ -1919,7 +1936,11 @@ long FlagBit;
     pFlagMem = (long *)&tutEnable;
     pFlagMem += Index/32;
 
+#ifdef _MACOSX_FIX_ME // ENDIAN_BIG?
+	FlagBit = 1 << (31 - Index & 31);
+#else
     FlagBit = 1 << (Index & 31);
+#endif
 
     if(Val)
         *pFlagMem |= FlagBit;
@@ -2059,7 +2080,7 @@ long    StrIndex, Count;
     {
         for(i=0; i<tutGameMessageIndex; i++)
         {
-            if(stricmp(szToken, tutGameMessageList[i]) == 0)
+            if(strcasecmp(szToken, tutGameMessageList[i]) == 0)
                 RetVal = 1;
         }
         StrIndex = GetNextCommaDelimitedToken(NULL, szToken, StrIndex);

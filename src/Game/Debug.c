@@ -10,11 +10,12 @@
 #include <string.h>
 #include <time.h>
 #include "resource.h"
-#include "types.h"
+#include "Types.h"
 #include "utility.h"
 #include "debugwnd.h"
-#include "task.h"
-#include "debug.h"
+#include "Task.h"
+#include "Debug.h"
+#include "File.h"
 
 /*=============================================================================
     Data:
@@ -35,7 +36,15 @@ sdword dbgInt3Enabled = TRUE;
 ----------------------------------------------------------------------------*/
 sdword dbgMessage(char *string)
 {
-    return(dbwPrint(0, string));
+    /* Debug window disabled (using stdout instead, at least for now).
+       dbw*() functions in other parts of code (main.c, utility.c, and
+       Options.c) will need to be uncommented if the debug window is
+       reenabled. */
+    /*return(dbwPrint(0, string));*/
+    if (string[0] == '\n')
+        string++;
+    printf("%s\n", string);
+    return OKAY;
 }
 
 /*-----------------------------------------------------------------------------
@@ -54,7 +63,7 @@ sdword dbgMessagef(char *format, ...)
     sdword nParams;
 
     va_start(argList, format);                              //get first arg
-    _vsnprintf(buffer, DBG_BufferMax, format, argList);                      //prepare output string
+    vsnprintf(buffer, DBG_BufferMax, format, argList);                      //prepare output string
     va_end(argList);
 
     nParams = dbgMessage(buffer);
@@ -75,7 +84,7 @@ sdword dbgWarning(char *file, sdword line, char *string)
 {
     char buffer[DBG_BufferLength];
 
-    _snprintf(buffer, DBG_BufferMax, "\n%s (%d): Warning- %s", file, line, string);
+    snprintf(buffer, DBG_BufferMax, "\n%s (%d): Warning- %s", file, line, string);
 
     return(dbgMessage(buffer));                             //print the message
 }
@@ -98,9 +107,9 @@ sdword dbgWarningf(char *file, sdword line, char *format, ...)
     va_list argList;
     sdword returnValue;
 
-    _snprintf(newFormat, DBG_BufferMax, "\n%s (%d): Warning- %s", file, line, format);
+    snprintf(newFormat, DBG_BufferMax, "\n%s (%d): Warning- %s", file, line, format);
     va_start(argList, format);                              //get first arg
-    _vsnprintf(buffer, DBG_BufferMax, newFormat, argList);                   //prepare output string
+    vsnprintf(buffer, DBG_BufferMax, newFormat, argList);                   //prepare output string
     va_end(argList);
 
     returnValue = dbgMessage(buffer);
@@ -119,7 +128,7 @@ sdword dbgWarningf(char *file, sdword line, char *format, ...)
 ----------------------------------------------------------------------------*/
 sdword dbgFatal(char *file, sdword line, char *string)
 {
-    _snprintf(dbgFatalErrorString, DBG_BufferMax, "\n%s (%d): Fatal error - %s", file, line, string);
+    snprintf(dbgFatalErrorString, DBG_BufferMax, "\n%s (%d): Fatal error - %s", file, line, string);
 #if DBG_STACK_CONTEXT
     {
         char *fileName = dbgStackDump();
@@ -133,7 +142,11 @@ sdword dbgFatal(char *file, sdword line, char *string)
     dbgMessage(dbgFatalErrorString);                        //print the message
     if (dbgInt3Enabled)
     {
+#if defined (_MSC_VER)
         _asm int 3
+#elif defined (__GNUC__) && defined (__i386__)
+        __asm__ ( "int $3\n\t" );
+#endif
     }
     utyFatalErrorWaitLoop(DBG_ExitCode);                    //exit with a MessageBox
     return(ERROR);
@@ -155,9 +168,9 @@ sdword dbgFatalf(char *file, sdword line, char *format, ...)
     char newFormat[DBG_BufferLength];
     va_list argList;
 
-    _snprintf(newFormat, DBG_BufferMax, "\n%s (%d): Fatal Error - %s", file, line, format);
+    snprintf(newFormat, DBG_BufferMax, "\n%s (%d): Fatal Error - %s", file, line, format);
     va_start(argList, format);                              //get first arg
-    _vsnprintf(dbgFatalErrorString, DBG_BufferMax, newFormat, argList);      //prepare output string
+    vsnprintf(dbgFatalErrorString, DBG_BufferMax, newFormat, argList);      //prepare output string
     va_end(argList);
 #if DBG_STACK_CONTEXT
     {
@@ -172,7 +185,11 @@ sdword dbgFatalf(char *file, sdword line, char *format, ...)
     dbgMessage(dbgFatalErrorString);                        //print the message
     if (dbgInt3Enabled)
     {
+#if defined (_MSC_VER)
         _asm int 3
+#elif defined (__GNUC__) && defined (__i386__)
+        __asm__ ( "int $3\n\t" );
+#endif
     }
     utyFatalErrorWaitLoop(DBG_ExitCode);                    //exit with a MessageBox
     return(ERROR);
@@ -191,7 +208,11 @@ sdword dbgNonFatal(char *file, sdword line, char *error)
     sprintf(dbgFatalErrorString, "\n%s (%d): Non-fatal error - %s", file, line, error);
     if (utyNonFatalErrorWaitLoop() && dbgInt3Enabled)
     {
+#if defined (_MSC_VER)
         _asm int 3
+#elif defined (__GNUC__) && defined (__i386__)
+        __asm__ ( "int $3\n\t" );
+#endif
     }
     return(0);
 }
@@ -225,7 +246,7 @@ sdword dbgNonFatalf(char *file, sdword line, char *format, ...)
     Return      : filename of file written to, or NULL on error
 ----------------------------------------------------------------------------*/
 #if DBG_STACK_CONTEXT
-static char dbgStackFilename[256];
+static char dbgStackFilename[PATH_MAX + 1];
 udword dbgStackBase = 0;
 char *dbgStackDump(void)
 {
@@ -242,8 +263,12 @@ char *dbgStackDump(void)
     }
 
     //find stack pointers
+#if defined (_MSC_VER)
     _asm mov eax, esp
     _asm mov _ESP, eax
+#elif defined (__GNUC__) && defined (__i386__)
+    __asm__ __volatile__ ( "movl %%esp, %0\n\t" : "=r" (_ESP) );
+#endif
 
     _ESP = _ESP & (~3);                                     //round off to dword boundary
     dbgStackBase = dbgStackBase & (~3);
@@ -260,7 +285,12 @@ char *dbgStackDump(void)
             *blankPtr = '-';
         }
     }
-    fp = fopen(dbgStackFilename, "wb");                     //open the dump file
+
+    blankPtr = filePathPrepend(dbgStackFilename, FF_UserSettingsPath);
+    if (!fileMakeDestinationDirectory(blankPtr))
+        return NULL;
+
+    fp = fopen(blankPtr, "wb");                             //open the dump file
     if (fp == NULL)
     {
         return(NULL);

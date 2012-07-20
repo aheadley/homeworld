@@ -8,14 +8,18 @@
 #ifndef HORSERACE_H
 #define HORSERACE_H
 
-#include "types.h"
-#include "globals.h"
+#include "Types.h"
+#include "Globals.h"
 
 /*=============================================================================
     defines:
 =============================================================================*/
 
+#ifdef _WIN32
 #define HR_FIBFile          "FEMAN\\Horse_Race.fib"
+#else
+#define HR_FIBFile          "FEMAN/Horse_Race.fib"
+#endif
 #define HR_RaceScreen       "Horse_Race"
 #define HR_RaceScreenNotNetwork "Horse_Race_NonNetwork"
 #define HR_SingleRaceScreen "Horse_Race_Single"
@@ -61,6 +65,7 @@ extern HorseStatus horseracestatus;
 /*=============================================================================
     Prototypes:
 =============================================================================*/
+struct ChatPacket;
 
 void horseRaceInit(void);
 void horseRaceShutdown(void);

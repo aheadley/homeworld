@@ -9,10 +9,10 @@
 #ifndef ___SAL_CAP_CORVETTE_H
 #define ___SAL_CAP_CORVETTE_H
 
-#include "types.h"
-#include "spaceobj.h"
-#include "attack.h"
-#include "shipselect.h"
+#include "Types.h"
+#include "SpaceObj.h"
+#include "Attack.h"
+#include "ShipSelect.h"
 
 /*=============================================================================
     Types:
@@ -47,7 +47,7 @@ typedef struct
     real32 maxPushingVelocitySingle;
     real32 noLightClampingDistance;
 } SalCapCorvetteStatics;
-SalCapCorvetteStatics SalCapCorvetteStatic;
+extern SalCapCorvetteStatics SalCapCorvetteStatic;
 
 //Defs for Salvaging State...
 #define SALVAGE_AT_GET_TECH 0x01

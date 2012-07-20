@@ -9,8 +9,8 @@
 #ifndef AISHIP_H
 #define AISHIP_H
 
-#include "types.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "SpaceObj.h"
 
 /*=============================================================================
     Defines:
@@ -60,10 +60,10 @@ Ship *getShipNearObjTok(SpaceObjRotImpTarg *obj, real32 range);
 =============================================================================*/
 
 #define aishipFlyToPointAvoidingObjs(shp,dst,flags,limitv) aishipFlyToPointAvoidingObjsFunc(shp,dst,flags,limitv,NULL)
-#define aishipFlyToShipAvoidingObjs(shp,targ,flags,limitv) aishipFlyToPointAvoidingObjsFunc(shp,&((targ)##->posinfo.position),flags,limitv,NULL)
+#define aishipFlyToShipAvoidingObjs(shp,targ,flags,limitv) aishipFlyToPointAvoidingObjsFunc(shp,&((targ)->posinfo.position),flags,limitv,NULL)
 
 #define aishipFlyToPointAvoidingObjsWithVel(shp,dst,flags,limitv,withvel) aishipFlyToPointAvoidingObjsFunc(shp,dst,flags,limitv,withvel)
-#define aishipFlyToShipAvoidingObjsWithVel(shp,targ,flags,limitv,withvel) aishipFlyToPointAvoidingObjsFunc(shp,&((targ)##->posinfo.position),flags,limitv,withvel)
+#define aishipFlyToShipAvoidingObjsWithVel(shp,targ,flags,limitv,withvel) aishipFlyToPointAvoidingObjsFunc(shp,&((targ)->posinfo.position),flags,limitv,withvel)
 
 /*=============================================================================
     Data:

@@ -1,0 +1,67 @@
+AC_INIT(configure.in)
+AC_CONFIG_AUX_DIR(config)
+AM_CONFIG_HEADER(config.h)
+AC_CANONICAL_TARGET
+AM_INIT_AUTOMAKE(HomeworldSDL, 0.3)
+
+AC_PROG_CC
+AC_PROG_YACC
+AM_PROG_LEX
+AC_LIBTOOL_DLOPEN
+AM_PROG_LIBTOOL
+
+dnl Check if building on Windows (based off GTK+ 2.2.4 configure.in...I'm not
+dnl very familiar with autoconf).
+AC_MSG_CHECKING([if we're in Windows])
+case "$host" in
+	*-*-mingw*|*-*-cygwin*)
+		platform_win32=yes
+		;;
+	*)
+		platform_win32=no
+		;;
+esac
+AC_MSG_RESULT([$platform_win32])
+AM_CONDITIONAL(PLATFORM_WIN32, test "$platform_win32" = "yes")
+
+dnl Platform-independent data types.
+AX_CREATE_STDINT_H
+
+dnl "bool" supported by C++ compiler?
+AC_CXX_BOOL
+
+dnl Check for SDL.
+SDL_VERSION=1.2.0
+AM_PATH_SDL($SDL_VERSION,
+            :,
+            AC_MSG_ERROR([*** SDL version $SDL_VERSION not found!])
+)
+
+dnl Configure options for building debug and interim versions.
+AC_ARG_ENABLE(hwinterim,
+	AC_HELP_STRING([--enable-hwinterim], [build an interim binary for Homeworld]),
+	enable_hwinterim=yes)
+AC_ARG_ENABLE(hwdebug,
+	AC_HELP_STRING([--enable-hwdebug], [build a debug binary for Homeworld (overrides --enable-hwinterim)]),
+	enable_hwdebug=yes)
+if test "x$enable_hwdebug" = "xyes" ; then
+	echo "* Building debug binary for Homeworld (HW_Debug) *"
+	HWBIN_CFLAGS="-DHW_Debug"
+elif test "x$enable_hwinterim" = "xyes" ; then
+	echo "* Building interim binary for Homeworld (HW_Interim) *"
+	HWBIN_CFLAGS="-DHW_Interim"
+else
+	echo "* Building release binary for Homeworld (HW_Release) *"
+	HWBIN_CFLAGS="-DHW_Release"
+fi
+
+dnl Add necessary flags for compiler and linker.
+dnl - One and only one of "HW_Debug", "HW_Interim", and "HW_Release" macros
+dnl   must be defined.  This is defined above in the HWBIN_CFLAGS variable
+dnl   using the "--enable-hwdebug" and "--enable-hwinterim" configure options
+dnl   (defaults to "HW_Release").
+dnl - $SDL_CFLAGS and $SDL_LIBS should be pretty much self-explanatory. =]
+CFLAGS="$CFLAGS $HWBIN_CFLAGS $SDL_CFLAGS"
+LIBS="$LIBS $SDL_LIBS"
+
+AC_OUTPUT(Makefile config/Makefile src/Makefile src/Game/Makefile src/Generated/Makefile src/JPG/Makefile src/kas2c/Makefile src/rgl/Makefile src/SDL/Makefile src/Ships/Makefile)

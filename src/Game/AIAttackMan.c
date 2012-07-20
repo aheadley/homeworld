@@ -7,19 +7,20 @@
 =============================================================================*/
 
 #include <string.h>
-#include "types.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "SpaceObj.h"
 #include "AIPlayer.h"
 #include "AIFleetMan.h"
 #include "AITeam.h"
 #include "AIOrders.h"
 #include "AIMoves.h"
 #include "AIHandler.h"
-#include "select.h"
-#include "stats.h"
+#include "Select.h"
+#include "Stats.h"
 #include "AIUtilities.h"
-#include "randy.h"
+#include "Randy.h"
 #include "MultiplayerGame.h"
+
 
 #define MAX_NUM_HARASS_TEAMS    2
 
@@ -229,7 +230,7 @@ void aiaArmada(void)
 ----------------------------------------------------------------------------*/
 ShipPtr aiaGetTakeoutTarget(void)
 {
-    udword i,j=0;
+    udword i;
     ShipPtr targetship;
     SelectCommand *temp_sel;
     SelectCommand *target_sel = memAlloc(sizeofSelectCommand(TOTAL_NUM_SHIPS), "tata", Pyrophoric);
@@ -441,7 +442,7 @@ bool aiaGenerateNewAttackOrder(AttackType attacktype)
 ----------------------------------------------------------------------------*/
 void aiaGenerateNewAttackTeam(sdword AttackTeamNumber)
 {
-    AttackType random;
+    AttackType randomAttack;
     udword probability_of_attack;
     bool attack_type_found = FALSE;
     udword i=0;
@@ -453,12 +454,12 @@ void aiaGenerateNewAttackTeam(sdword AttackTeamNumber)
     //upper limit to avoid weird infinite loops
     while ((!attack_type_found) && (i<100))
     {
-        random = (AttackType)(ranRandom(RAN_AIPlayer)%NUM_ATTACK_TYPES);
+        randomAttack = (AttackType)(ranRandom(RAN_AIPlayer)%NUM_ATTACK_TYPES);
         probability_of_attack = ranRandom(RAN_AIPlayer)&255;
 
-        if (probability_of_attack < aiCurrentAIPlayer->aiaAttackProbability[random])
+        if (probability_of_attack < aiCurrentAIPlayer->aiaAttackProbability[randomAttack])
         {
-            attack_type_found = aiaGenerateAttackType(aiCurrentAIPlayer->attackTeam[AttackTeamNumber], random, FALSE);
+            attack_type_found = aiaGenerateAttackType(aiCurrentAIPlayer->attackTeam[AttackTeamNumber], randomAttack, FALSE);
         }
         else
         {

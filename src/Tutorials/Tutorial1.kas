@@ -1328,7 +1328,7 @@
     ENDL
 
 //includes
-#include "speechevent.h"
+#include "SpeechEvent.h"
 #include "Attributes.h"
 #include "FormationDefs.h"
 

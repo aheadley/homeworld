@@ -1,9 +1,9 @@
 #ifndef __AIORDERS_H
 #define __AIORDERS_H
 
-#include "types.h"
-#include "shipselect.h"
-#include "aiUtilities.h"
+#include "Types.h"
+#include "ShipSelect.h"
+#include "AIUtilities.h"
 
 /*=============================================================================
     Constant Definitions:

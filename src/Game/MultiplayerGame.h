@@ -9,10 +9,10 @@
 #ifndef ___MULTIPLAYERGAME_H
 #define ___MULTIPLAYERGAME_H
 
-#include "types.h"
-#include "region.h"
-#include "linkedlist.h"
-#include "uicontrols.h"
+#include "Types.h"
+#include "Region.h"
+#include "LinkedList.h"
+#include "UIControls.h"
 #include "TitanInterfaceC.h"
 #include "TimeoutTimer.h"
 
@@ -20,7 +20,11 @@
     defines:
 =============================================================================*/
 
+#ifdef _WIN32
 #define MG_FIBFile          "FEMan\\Multiplayer_Game.FIB"
+#else
+#define MG_FIBFile          "FEMan/Multiplayer_Game.FIB"
+#endif
 #define MAX_GAMENAME_LENGTH     MAX_TITAN_GAME_NAME_LEN
 #define MAX_MAPNAME_LENGTH      MAX_MAPNAME_LEN
 #define MAX_CHANNELNAME_LENGTH  MAX_CHANNEL_NAME_LEN
@@ -277,6 +281,8 @@ typedef struct
 /*=============================================================================
     Function Prototypes:
 =============================================================================*/
+
+struct ChatPacket;
 
 void mgStartMultiPlayerGameScreens(regionhandle region, sdword ID, udword event, udword data, bool AlreadyLoggedIn);
 void mgShutdownMultiPlayerGameScreens(void);

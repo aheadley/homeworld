@@ -7,39 +7,40 @@
 =============================================================================*/
 
 #include <string.h>
-#include "types.h"
+#include <limits.h>
+#include "Types.h"
 #include "LinkedList.h"
-#include "spaceobj.h"
-#include "blobs.h"
-#include "shipselect.h"
-#include "universe.h"
-#include "univupdate.h"
-#include "singleplayer.h"
-#include "file.h"
+#include "SpaceObj.h"
+#include "Blobs.h"
+#include "ShipSelect.h"
+#include "Universe.h"
+#include "UnivUpdate.h"
+#include "SinglePlayer.h"
+#include "File.h"
 #include "CameraCommand.h"
-#include "clouds.h"
+#include "Clouds.h"
 #include "Star3d.h"
 #include "SalCapCorvette.h"
-#include "tactics.h"
-#include "consMgr.h"
+#include "Tactics.h"
+#include "ConsMgr.h"
 #include "AIPlayer.h"
 #include "SaveGame.h"
 #include "Objectives.h"
 #include "utility.h"
-#include "levelload.h"
-#include "damage.h"
-#include "tutor.h"
+#include "LevelLoad.h"
+#include "Damage.h"
+#include "Tutor.h"
 #include "TradeMgr.h"
-#include "ping.h"
-#include "teams.h"
-#include "btg.h"
+#include "Ping.h"
+#include "Teams.h"
+#include "BTG.h"
 #include "light.h"
-#include "commandwrap.h"
-#include "strings.h"
-#include "sensors.h"
-#include "randy.h"
-#include "soundevent.h"
-#include "multiplayergame.h"
+#include "CommandWrap.h"
+#include "Strings.h"
+#include "Sensors.h"
+#include "Randy.h"
+#include "SoundEvent.h"
+#include "MultiplayerGame.h"
 
 void SaveConsMgr();
 void LoadConsMgr();
@@ -464,9 +465,11 @@ void LoadLighting(void)
 {
     Load_StringToAddress(lightCurrentLighting);
 
-    if (strlen(lightCurrentLighting) > 1)
+    if (lightCurrentLighting[0])
     {
-        lightParseHSF(lightCurrentLighting);
+        char tmp_path[PATH_MAX];
+        strcpy(tmp_path, lightCurrentLighting);
+        lightParseHSF(tmp_path);
     }
     else
     {
@@ -599,7 +602,7 @@ bool SaveGame(char *filename)
 {
     sdword i;
 
-    savefile = fileOpen(filename,FF_WriteMode|FF_ReturnNULLOnFail);
+    savefile = fileOpen(filename, FF_WriteMode | FF_ReturnNULLOnFail | FF_UserSettingsPath);
     if (savefile == NULL)
     {
         return FALSE;
@@ -684,7 +687,7 @@ sdword VerifySaveFile(char *filename)
 {
     sdword verify;
 
-    savefile = fileOpen(filename,FF_ReturnNULLOnFail);
+    savefile = fileOpen(filename, FF_ReturnNULLOnFail | FF_UserSettingsPath);
     if (savefile == NULL)
     {
         return VERIFYSAVEFILE_ERROROPENING;
@@ -711,7 +714,7 @@ void PreLoadGame(char *filename)
 {
     sdword verify;
 
-    savefile = fileOpen(filename,0);
+    savefile = fileOpen(filename, FF_UserSettingsPath);
     verify = LoadVersionInfo();
     if (verify != VERIFYSAVEFILE_OK)
     {
@@ -1090,7 +1093,7 @@ void SaveAttackTargets(AttackTargets *multipleAttackTargets)
 
     for (i=0;i<multipleAttackTargets->numAttackTargets;i++)
     {
-        savecontents->TargetPtr[i] = (sdword)SpaceObjRegistryGetID((SpaceObj *)multipleAttackTargets->TargetPtr[i]);
+        savecontents->TargetPtr[i] = (TargetPtr)SpaceObjRegistryGetID((SpaceObj *)multipleAttackTargets->TargetPtr[i]);
     }
 
     SaveThisChunk(chunk);
@@ -1198,7 +1201,7 @@ void SaveDockInfo(Ship *ship)
         }
         else
         {
-            savecontents->dockpoints[i].dockstaticpoint = savecontents->dockpoints[i].dockstaticpoint->dockindex;
+            savecontents->dockpoints[i].dockstaticpoint = (DockStaticPoint*)savecontents->dockpoints[i].dockstaticpoint->dockindex;
         }
     }
 
@@ -2642,6 +2645,8 @@ SpaceObj *LoadSpaceObj()
             dbgAssert(FALSE);
             return NULL;
     }
+
+	return NULL;
 }
 
 typedef struct SaveLLSpaceObj {
@@ -3643,7 +3648,7 @@ void LoadLinkedListOfInsideShips(LinkedList *list)
     while (cur < num)
     {
         insideShip = memAlloc(sizeof(InsideShip),"InsideShip",0);
-        insideShip->ship = loadcontents->ID[cur++];
+        insideShip->ship = (Ship*)loadcontents->ID[cur++];
         if (insideShip->ship != -1)
         {
             listAddNode(list,&insideShip->node,insideShip);

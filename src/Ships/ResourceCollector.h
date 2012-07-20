@@ -9,8 +9,8 @@
 #ifndef ___RESOURCE_COLLECTOR_H
 #define ___RESOURCE_COLLECTOR_H
 
-#include "types.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "SpaceObj.h"
 
 /*=============================================================================
     Types:

@@ -9,8 +9,8 @@
 #ifndef ___SENSOR_ARRAY_H
 #define ___SENSOR_ARRAY_H
 
-#include "types.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "SpaceObj.h"
 
 /*=============================================================================
     Types:

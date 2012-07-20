@@ -6,16 +6,16 @@
     Copyright Relic Entertainment, Inc.  All rights reserved.
 =============================================================================*/
 
-#include "infooverlay.h"
-#include "key.h"
-#include "fontreg.h"
+#include "InfoOverlay.h"
+#include "Key.h"
+#include "FontReg.h"
 #include "utility.h"
-#include "select.h"
-#include "region.h"
-#include "task.h"
-#include "statscript.h"
-#include "strings.h"
-#include "tutor.h"
+#include "Select.h"
+#include "Region.h"
+#include "Task.h"
+#include "StatScript.h"
+#include "Strings.h"
+#include "Tutor.h"
 
 #include <stdio.h>
 

@@ -5,7 +5,7 @@
 //                                                             //
 //                                                             //
 //-------------------------------------------------------------//
-#include "..\\Game\\speechevent.h"
+#include "../Game/SpeechEvent.h"
 
 
     LOCALIZATION //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
@@ -47,8 +47,8 @@
 
     ENDL //ฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤ
 
-#include "utilities.kash"
-#include "attributes.h"
+#include "Utilities.kash"
+#include "Attributes.h"
 
 //ออออออออออออออออออออ      Mission Flow     อออออออออออออออออออ
 FSM MissionFlow

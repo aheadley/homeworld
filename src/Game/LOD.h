@@ -9,10 +9,10 @@
 #ifndef ___LOD_H
 #define ___LOD_H
 
-#include "types.h"
+#include "Types.h"
 #include "color.h"
-#include "mesh.h"
-#include "matrix.h"
+#include "Mesh.h"
+#include "Matrix.h"
 
 /*=============================================================================
     Switches

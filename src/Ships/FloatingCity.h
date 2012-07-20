@@ -9,8 +9,8 @@
 #ifndef ___FLOATING_CITY_H
 #define ___FLOATING_CITY_H
 
-#include "types.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "SpaceObj.h"
 
 /*=============================================================================
     Defines:

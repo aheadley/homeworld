@@ -7,23 +7,23 @@
 =============================================================================*/
 
 #include <string.h>
-#include "types.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "SpaceObj.h"
 #include "GravWellGenerator.h"
 #include "SoundEvent.h"
-#include "vector.h"
-#include "universe.h"
-#include "aitrack.h"
-#include "select.h"
+#include "Vector.h"
+#include "Universe.h"
+#include "AITrack.h"
+#include "Select.h"
 #include "SaveGame.h"
-#include "madlinkin.h"
-#include "univupdate.h"
-#include "attack.h"
-#include "randy.h"
-#include "battle.h"
-#include "fastmath.h"
-#include "blobs.h"
-#include "etg.h"
+#include "MadLinkIn.h"
+#include "UnivUpdate.h"
+#include "Attack.h"
+#include "Randy.h"
+#include "Battle.h"
+#include "FastMath.h"
+#include "Blobs.h"
+#include "ETG.h"
 
 GravWellGeneratorStatics GravWellGeneratorStatic;
 
@@ -393,9 +393,7 @@ void GravWellGeneratorAddObj(Ship *ship,  Ship *objtoadd)
 void GravAddObjectsInProximity(Ship *gravship)
 {
     Node *objnode = universe.ShipList.head;
-    udword num = universe.ShipList.num;
     GravWellGeneratorStatics *gravwellgeneratorstatics;
-    GravWellGeneratorSpec *spec = (GravWellGeneratorSpec *)gravship->ShipSpecifics;  //maybe don't need
     Ship *ship;
 
     real32 distanceSqr;

@@ -9,8 +9,8 @@
 #ifndef ___RESOURCE_CONTROLLER_H
 #define ___RESOURCE_CONTROLLER_H
 
-#include "types.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "SpaceObj.h"
 
 /*=============================================================================
     Types:

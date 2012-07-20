@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 #include <assert.h>
 #include "kgl.h"
@@ -89,6 +90,7 @@ GLboolean _alphatest(GLcontext* ctx, GLubyte alpha)
 
 void loFPU()
 {
+#if defined (_MSC_VER)
     _asm
     {
         fstcw   [OldFPUCW]
@@ -97,14 +99,32 @@ void loFPU()
         mov     [FPUCW],ax
         fldcw   [FPUCW]
     }
+#elif defined (__GNUC__) && defined (__i386__)
+    __asm__ __volatile__ (
+        "   fstcw   %0\n"
+        "   movw    %0, %%ax\n"
+        "   andl    $0xFF, %%eax\n"
+        "   movw    %%ax, %1\n"
+        "   fldcw   %1\n"
+        :
+        : "m" (OldFPUCW), "m" (FPUCW)
+        : "eax" );
+#endif
 }
 
 void restoreFPU()
 {
+#if defined (_MSC_VER)
     _asm
     {
         fldcw [OldFPUCW]
     }
+#elif defined (__GNUC__) && defined (__i386__)
+    __asm__ __volatile__ (
+        "   fldcw %0\n"
+        :
+        : "m" (OldFPUCW) );
+#endif
 }
 
 static void adjust_color_to_black(

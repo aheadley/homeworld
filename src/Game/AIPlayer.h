@@ -9,9 +9,9 @@
 #ifndef __AIPlayer_H
 #define __AIPlayer_H
 
-#include "types.h"
-#include "objtypes.h"
-#include "universe.h"
+#include "Types.h"
+#include "ObjTypes.h"
+#include "Universe.h"
 #include "AIResourceMan.h"
 #include "AIAttackMan.h"
 #include "AIVar.h"
@@ -405,7 +405,7 @@ void aiplayerStartup(udword num_players, udword num_human_players, udword num_co
 void aiplayerShutdown(void);
 
 #ifndef HW_Release
-#define aiplayerLog(x)    aiplayerDebugLog##x
+#define aiplayerLog(x)    aiplayerDebugLog x
 #else
 #define aiplayerLog(x)    {;}
 #endif
@@ -426,6 +426,8 @@ void aiplayerAddLeader(AIPlayer *aiplayer, ShipPtr ship);
 /*=============================================================================
     Save Game stuff
 =============================================================================*/
+
+struct Path;
 
 void aiplayerSave(void);
 void aiplayerLoad(void);

@@ -9,8 +9,8 @@
 #ifndef ___ADVANCE_SUPPORT_FRIGATE_H
 #define ___ADVANCE_SUPPORT_FRIGATE_H
 
-#include "types.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "SpaceObj.h"
 
 /*=============================================================================
     Defines:

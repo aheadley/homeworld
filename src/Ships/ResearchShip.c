@@ -7,22 +7,22 @@
 =============================================================================*/
 
 #include <math.h>
-#include "types.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "SpaceObj.h"
 #include "ResearchShip.h"
-#include "univupdate.h"
+#include "UnivUpdate.h"
 #include "SoundEvent.h"
-#include "statscript.h"
-#include "aitrack.h"
-#include "matrix.h"
-#include "aiship.h"
-#include "debug.h"
-#include "fastmath.h"
-#include "select.h"
-#include "universe.h"
-#include "linkedlist.h"
+#include "StatScript.h"
+#include "AITrack.h"
+#include "Matrix.h"
+#include "AIShip.h"
+#include "Debug.h"
+#include "FastMath.h"
+#include "Select.h"
+#include "Universe.h"
+#include "LinkedList.h"
 #include "SaveGame.h"
-#include "dock.h"
+#include "Dock.h"
 
 #define ROTATE_WAIT 0
 #define ROTATE_DO   1
@@ -476,13 +476,14 @@ void CleanResearchShip(Ship *ship)
 
 void ResearchShipMakeReadyForHyperspace(Ship *ship)
 {
-    ResearchShipSpec *spec = (ResearchShipSpec *)ship->ShipSpecifics;
+//    ResearchShipSpec *spec = (ResearchShipSpec *)ship->ShipSpecifics;
     if(ship->flags & SOF_Slaveable)
     {
         bitClear(ship->slaveinfo->Master->specialFlags,SPECIAL_StopForResearchDocking);
         dockCrushMaster(ship->slaveinfo->Master);
     }
-/*   if(ship->dockvars.reserveddocking != -1)
+/*
+    if(ship->dockvars.reserveddocking != -1)
     {
         sdword dockpointindex;
 

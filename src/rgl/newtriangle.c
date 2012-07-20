@@ -4,6 +4,7 @@
 #include "kgl.h"
 #include "newtriangle.h"
 #include "stipple.h"
+#include "span.h"
 
 #define FixedFloor(X)   ((X) & FIXED_INT_MASK)
 #define SignedFloatToFixed(X) FloatToFixed(X)

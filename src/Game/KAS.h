@@ -2,10 +2,10 @@
 #define __KAS_H
 
 #include "AIUtilities.h"
-#include "shipselect.h"
-#include "vector.h"
-#include "volume.h"
-#include "kasfunc.h"
+#include "ShipSelect.h"
+#include "Vector.h"
+#include "Volume.h"
+#include "KASFunc.h"
 
 // run-time scoping for variables, timers, etc.
 enum {

@@ -15,24 +15,24 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "types.h"
-#include "vector.h"
-#include "matrix.h"
-#include "fastmath.h"
-#include "debug.h"
-#include "spaceobj.h"
-#include "physics.h"
-#include "aitrack.h"
-#include "aiship.h"
-#include "statscript.h"
-#include "universe.h"
-#include "ships.h"
-#include "univupdate.h"
-#include "collision.h"
-#include "blobs.h"
-#include "tactics.h"
-#include "alliance.h"
-#include "randy.h"
+#include "Types.h"
+#include "Vector.h"
+#include "Matrix.h"
+#include "FastMath.h"
+#include "Debug.h"
+#include "SpaceObj.h"
+#include "Physics.h"
+#include "AITrack.h"
+#include "AIShip.h"
+#include "StatScript.h"
+#include "Universe.h"
+#include "Ships.h"
+#include "UnivUpdate.h"
+#include "Collision.h"
+#include "Blobs.h"
+#include "Tactics.h"
+#include "Alliance.h"
+#include "Randy.h"
 #include "ProfileTimers.h"
 
 #ifdef gshaw
@@ -470,9 +470,9 @@ real32 GetCollSizeInDirection(SpaceObjRotImp *obj,vector dir)
     matGetVectFromMatrixCol2(right,obj->rotinfo.coordsys);
     matGetVectFromMatrixCol3(heading,obj->rotinfo.coordsys);
 
-    upcomp = abs(vecDotProduct(up,dir));
-    rightcomp = abs(vecDotProduct(right,dir));
-    headingcomp = abs(vecDotProduct(heading,dir));
+    upcomp = ABS(vecDotProduct(up,dir));
+    rightcomp = ABS(vecDotProduct(right,dir));
+    headingcomp = ABS(vecDotProduct(heading,dir));
 
     return (upcomp*collInfo->uplength + rightcomp*collInfo->rightlength + headingcomp*collInfo->forwardlength)*0.5f;
 }
@@ -1007,7 +1007,7 @@ udword aishipFlyToPointAvoidingObjsFunc(Ship *ship,vector *destination,udword ai
                     real32 xdistanceleft = (destination->x - ship->posinfo.position.x);
                     real32 ydistanceleft = (destination->y - ship->posinfo.position.y);
                     real32 r;
-                    zdistanceleft = abs(destination->z - ship->posinfo.position.z);
+                    zdistanceleft = ABS(destination->z - ship->posinfo.position.z);
                     r = fsqrt(xdistanceleft*xdistanceleft + ydistanceleft*ydistanceleft);
                     if ((zdistanceleft < MIN_DIST_FOR_FANCY_DESCEND) ||
                         (zdistanceleft < (r*MIN_ANGLE_FOR_FANCY_DESCEND)))
@@ -1262,7 +1262,7 @@ passagain:
 
                 maxdistconsider = avoidcollpad + shiprowcollpad;
 
-                if (abs(distcheck) > maxdistconsider)
+                if (ABS(distcheck) > maxdistconsider)
                 {
                     goto nextnode;
                 }
@@ -1398,7 +1398,7 @@ passagain:
 
                 maxdistconsider = avoidcollpad + shipcollpad;
 
-                if (abs(distcheck) > maxdistconsider)
+                if (ABS(distcheck) > maxdistconsider)
                 {
                     goto nextnode;
                 }
@@ -1764,7 +1764,7 @@ noavoid:
                     // calculate normalize distance left
                     if ((destination) && (ship->aidescend != 0.0f))
                     {
-                        zdistanceleft = (destination->z - ship->posinfo.position.z) * abs(ship->aidescend);
+                        zdistanceleft = (destination->z - ship->posinfo.position.z) * ABS(ship->aidescend);
                         pitchtodescend = getPitchToDescend(zdistanceleft,shipstaticinfo->pitchdescend);
 #if DEBUG_AISHIP
                         dbgMessagef("\nzdistanceleft: %f pitchtodescend: %f",zdistanceleft,pitchtodescend);
@@ -2215,7 +2215,7 @@ Ship *aishipmineaquiretarget(Missile *mine)
 {
     blob *MyBlob;
     SelectCommand *shipselection;
-    sdword shipindex = 0;
+    //sdword shipindex = 0;
     Ship *ship;
     Ship *ShiptoRecieveShitPounding = NULL;
     //real32 distanceSqr;
@@ -2342,6 +2342,8 @@ bool aishipGuideMine(Missile *mine)
             case OBJ_NebulaType:
             case OBJ_DustType:
                 mine->target = NULL;
+            default:
+                break;
         }
     }
 

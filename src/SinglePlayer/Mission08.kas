@@ -178,16 +178,16 @@
 
     ENDL //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
 
-#include "speechevent.h"
+#include "SpeechEvent.h"
 #include "CommandDefs.h"
-#include "soundmusic.h"
+#include "SoundMusic.h"
 
 #define MISSION8
 #define MOTHERTEAM         TEAM_MsgSender
 #define MASTERTEAM         TEAM_Master
 #define EVENTSTEAM         TEAM_Events
 
-#include "swarmer.kash"
+#include "Swarmer.kash"
 
 
 

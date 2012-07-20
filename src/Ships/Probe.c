@@ -5,19 +5,18 @@
     Created 01/06/1998 by bpasechnik
     Copyright Relic Entertainment, Inc.  All rights reserved.
 =============================================================================*/
-#include <windows.h>
 #include <math.h>
-#include "types.h"
-#include "spaceobj.h"
-#include "aitrack.h"
+#include "Types.h"
+#include "SpaceObj.h"
+#include "AITrack.h"
 #include "Probe.h"
-#include "statscript.h"
+#include "StatScript.h"
 #include "SoundEvent.h"
-#include "debug.h"
-#include "universe.h"
-#include "vector.h"
-#include "madlinkin.h"
-#include "madlinkindefs.h"
+#include "Debug.h"
+#include "Universe.h"
+#include "Vector.h"
+#include "MadLinkIn.h"
+#include "MadLinkInDefs.h"
 
 #define PROBE_WAIT_FOR_SAILS_TO_OPEN    3.0f
 
@@ -64,7 +63,7 @@ void ProbeInit(Ship *ship)
 void ProbeHouseKeep(Ship *ship)
 {
     ProbeSpec *spec = (ProbeSpec *) ship->ShipSpecifics;
-    ProbeStatics *probestatics = ((ShipStaticInfo *)(ship->staticinfo))->custstatinfo;
+    //ProbeStatics *probestatics = ((ShipStaticInfo *)(ship->staticinfo))->custstatinfo;
     vector right,heading,testvec;
 
 
@@ -82,7 +81,7 @@ void ProbeHouseKeep(Ship *ship)
             //open wings after being given a move command!
             if(command != NULL && command->ordertype.order == COMMAND_DOCK)
             {
-
+                // don't open sails as we're docking at the end of a mission having not been used during it
             }
             else
             {

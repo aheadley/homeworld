@@ -9,8 +9,8 @@
 #ifndef ___MOTHERSHIP_H
 #define ___MOTHERSHIP_H
 
-#include "types.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "SpaceObj.h"
 
 /*=============================================================================
     Defines:

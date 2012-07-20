@@ -6,11 +6,11 @@
     Copyright Relic Entertainment, Inc.  All rights reserved.
 =============================================================================*/
 
-#include "types.h"
-#include "spaceobj.h"
-#include "universe.h"
-#include "univupdate.h"
-#include "rescollect.h"
+#include "Types.h"
+#include "SpaceObj.h"
+#include "Universe.h"
+#include "UnivUpdate.h"
+#include "ResCollect.h"
 #include "CommandWrap.h"
 #include "AIResourceMan.h"
 #include "AIPlayer.h"
@@ -19,11 +19,11 @@
 #include "AITeam.h"
 #include "AIUtilities.h"
 #include "AIDefenseMan.h"
-#include "select.h"
-#include "blobs.h"
-#include "consMgr.h"
+#include "Select.h"
+#include "Blobs.h"
+#include "ConsMgr.h"
 #include "MultiplayerGame.h"
-#include "randy.h"
+#include "Randy.h"
 
 udword UPDATE_RU_COUNT_RATE = 3;
 
@@ -99,7 +99,6 @@ sdword NumberOfEasilyAccesibleRUs(Player *player)
 
         numRUs += resource->resourcevalue;
 
-nextnode:
         objnode = objnode->next;
     }
 

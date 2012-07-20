@@ -118,7 +118,7 @@
 
 #define MASTERTEAM          TEAM_ImperialFlagship
 #define MASTERTEAMSHIPS     TEAMSHIPS_ImperialFlagship
-#include "speechevent.h"
+#include "SpeechEvent.h"
 #include "CommandDefs.h"
 #include "AIFeatures.h"
 #include "Utilities.kash"

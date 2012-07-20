@@ -1,17 +1,17 @@
 
-#include "types.h"
-#include "fastmath.h"
+#include "Types.h"
+#include "FastMath.h"
 #include "AIOrders.h"
 #include "AITeam.h"
 #include "AIMoves.h"
-#include "shipselect.h"
-#include "debug.h"
+#include "ShipSelect.h"
+#include "Debug.h"
 #include "AIUtilities.h"
 #include "AIPlayer.h"
 #include "AIEvents.h"
 #include "AIHandler.h"
 #include "CommandWrap.h"
-#include "randy.h"
+#include "Randy.h"
 #include "GravWellGenerator.h"
 
 /*=============================================================================
@@ -770,6 +770,6 @@ void aioCreateP2MothershipAttack(AITeam *team)
 //
 //  temporary contention relief
 //
-#include "AIOrders2.c"  // Gary
+#include "AIOrders2.c.h"  // Gary
 
 

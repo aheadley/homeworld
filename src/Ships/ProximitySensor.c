@@ -6,21 +6,21 @@
     Copyright Relic Entertainment, Inc.  All rights reserved.
 =============================================================================*/
 
-#include "types.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "SpaceObj.h"
 #include "ProximitySensor.h"
 #include "SoundEvent.h"
-#include "universe.h"
+#include "Universe.h"
 #include "memory.h"
-#include "univupdate.h"
-#include "linkedlist.h"
-#include "fastmath.h"
-#include "vector.h"
-#include "ping.h"
-#include "blobs.h"
-#include "madlinkin.h"
-#include "madlinkindefs.h"
-#include "battle.h"
+#include "UnivUpdate.h"
+#include "LinkedList.h"
+#include "FastMath.h"
+#include "Vector.h"
+#include "Ping.h"
+#include "Blobs.h"
+#include "MadLinkIn.h"
+#include "MadLinkInDefs.h"
+#include "Battle.h"
 #include "Alliance.h"
 
 
@@ -251,7 +251,7 @@ sdword proxGetBlipRadius(Ship *ship)
     Outputs     :
     Return      : TRUE if the ping times out.
 ----------------------------------------------------------------------------*/
-bool ProximitySensorPingTimeout(struct ping *hellaPing, udword userID, ubyte *userData, bool bRemoveReferences)
+bool ProximitySensorPingTimeout(struct ping *hellaPing, udword userID, char *userData, bool bRemoveReferences)
 {
     ProximitySensorSpec *spec = (ProximitySensorSpec *)((Ship *)userID)->ShipSpecifics;
 

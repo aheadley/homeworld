@@ -9,9 +9,9 @@
 #ifndef ___AIATTACKMANAGER_H
 #define ___AIATTACKMANAGER_H
 
-#include "types.h"
-#include "spaceobj.h"
-#include "select.h"
+#include "Types.h"
+#include "SpaceObj.h"
+#include "Select.h"
 
 typedef struct
 {

@@ -7,8 +7,8 @@
 =============================================================================*/
 
 #include <string.h>
-#include "types.h"
-#include "universe.h"
+#include "Types.h"
+#include "Universe.h"
 #include "AIPlayer.h"
 #include "AIFleetMan.h"
 #include "AIResourceMan.h"
@@ -18,12 +18,12 @@
 #include "AIUtilities.h"
 #include "AIVar.h"
 #include "CommandWrap.h"
-#include "select.h"
-#include "researchapi.h"
+#include "Select.h"
+#include "ResearchAPI.h"
 #include "SinglePlayer.h"
 #include "MultiplayerGame.h"
-#include "alliance.h"
-#include "randy.h"
+#include "Alliance.h"
+#include "Randy.h"
 
 Player *aifFindEnemyOf(Player *player)
 {
@@ -686,12 +686,12 @@ void aifResourceManRequestsShipsCB(ShipType shiptype,sdword number,sdword priori
 }
 
 #define constructTeamWaiting(twaiting,stype,nships,tm,dSetVar)   \
-            twaiting = memAlloc(sizeof(TeamWaitingForTheseShips),"teamwaitingships",0);     \
-            twaiting##->shiptype = stype;                                                   \
-            twaiting##->num_ships = nships;                                                 \
-            twaiting##->team = tm;                                                          \
+            (twaiting) = memAlloc(sizeof(TeamWaitingForTheseShips),"teamwaitingships",0);   \
+            (twaiting)->shiptype = (stype);                                                 \
+            (twaiting)->num_ships = (nships);                                               \
+            (twaiting)->team = (tm);                                                        \
             dbgAssert(strlen(dSetVar) <= AIVAR_LABEL_MAX_LENGTH);                           \
-            strcpy(twaiting##->doneSetVarStr,dSetVar)
+            strcpy((twaiting)->doneSetVarStr,(dSetVar))
 
 void aifTeamRequestsShipsCB(ShipType shiptype,sdword number,struct AITeam *team,char *doneSetVar, sdword priority)
 {

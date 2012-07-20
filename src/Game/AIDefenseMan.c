@@ -6,19 +6,19 @@
     Copyright Relic Entertainment, Inc.  All rights reserved.
 =============================================================================*/
 
-#include "types.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "SpaceObj.h"
 #include "AIPlayer.h"
 #include "AIFleetMan.h"
 #include "AIHandler.h"
 #include "AITeam.h"
 #include "AIOrders.h"
 #include "AIUtilities.h"
-#include "select.h"
-#include "stats.h"
+#include "Select.h"
+#include "Stats.h"
 #include "AIMoves.h"
-#include "fastmath.h"
-#include "randy.h"
+#include "FastMath.h"
+#include "Randy.h"
 
 bool aitAnyTeamOfPlayerGuardingThisShip(struct AIPlayer *aiplayer,Ship *ship)
 {

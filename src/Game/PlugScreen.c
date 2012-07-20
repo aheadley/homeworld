@@ -11,19 +11,19 @@
 #include <string.h>
 #include <math.h>
 #include "glinc.h"
-#include "task.h"
-#include "region.h"
+#include "Task.h"
+#include "Region.h"
 #include "color.h"
 #include "prim2d.h"
 #include "interfce.h"
 #include "texreg.h"
-#include "fontreg.h"
-#include "statscript.h"
-#include "feflow.h"
+#include "FontReg.h"
+#include "StatScript.h"
+#include "FEFlow.h"
 #include "mouse.h"
 #include "utility.h"
-#include "soundevent.h"
-#include "strings.h"
+#include "SoundEvent.h"
+#include "Strings.h"
 #include "PlugScreen.h"
 #include "render.h"
 #include "glcompat.h"
@@ -575,11 +575,13 @@ extern void *hGLDeviceContext;              //void * is really a HDC
 void psRenderTaskFunction(void)
 {
     static bool shouldSwap;
-    static sdword index;
     static regionhandle reg;
 
     taskYield(0);
+    
+#ifndef C_ONLY
     while (1)
+#endif
     {
         primErrorMessagePrint();
 
@@ -747,7 +749,7 @@ void psModeEnd(void)
     Outputs     :
     Return      : void
 ----------------------------------------------------------------------------*/
-ubyte psScreenSkipKey[] = {ESCKEY, SPACEKEY, ENTERKEY, 0};
+udword psScreenSkipKey[] = {ESCKEY, SPACEKEY, ENTERKEY, 0};
 void psScreenStart(char *name)
 {
     sdword index;

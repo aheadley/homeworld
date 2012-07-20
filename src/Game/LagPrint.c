@@ -8,11 +8,11 @@
 =============================================================================*/
 
 
-#include "types.h"
+#include "Types.h"
 #include "texreg.h"
 #include "LagPrint.h"
-#include "fereg.h"
-#include "commandnetwork.h"
+#include "FEReg.h"
+#include "CommandNetwork.h"
 
 //  Data to be added to tweak.script later
 

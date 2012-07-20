@@ -6,40 +6,53 @@
     Copyright Relic Entertainment, Inc.  All rights reserved.
 =============================================================================*/
 
-#include <windows.h>
+#define _GNU_SOURCE   /* Get to wcscasecmp() */
+
 #include <stdio.h>
+#include <stdlib.h>
+#include <strings.h>
+
+#ifndef _MACOSX
+    #include <wchar.h>
+#endif
+
 #include "MultiplayerGame.h"
 #include "MultiplayerLANGame.h"
-#include "feflow.h"
+#include "FEFlow.h"
 #include "utility.h"
-#include "scenpick.h"
-#include "uicontrols.h"
+#include "ScenPick.h"
+#include "UIControls.h"
 #include "TitanInterfaceC.h"
-#include "titannet.h"
-#include "region.h"
+#include "TitanNet.h"
+#include "Region.h"
 #include "mouse.h"
-#include "fontreg.h"
-#include "scroller.h"
-#include "linkedlist.h"
+#include "FontReg.h"
+#include "Scroller.h"
+#include "LinkedList.h"
 #include "prim2d.h"
-#include "randy.h"
-#include "chatting.h"
-#include "commandnetwork.h"
-#include "globals.h"
-#include "msg\serverstatus.h"
+#include "Randy.h"
+#include "Chatting.h"
+#include "CommandNetwork.h"
+#include "Globals.h"
+#include "msg/ServerStatus.h"
 #include "ChannelFSM.h"
-#include "colpick.h"
+#include "ColPick.h"
 #include "mainswitches.h"
-#include "chatting.h"
-#include "strings.h"
-#include "queue.h"
-#include "titan.h"
-#include "file.h"
-#include "statscript.h"
-#include "titannet.h"
-#include "universe.h"
-#include "gamechat.h"
+#include "Chatting.h"
+#include "Strings.h"
+#include "Queue.h"
+#include "Titan.h"
+#include "File.h"
+#include "StatScript.h"
+#include "TitanNet.h"
+#include "Universe.h"
+#include "GameChat.h"
 #include "SaveGame.h" // for ConvertNumToPointerInList
+
+#ifdef _MSC_VER
+#define strncasecmp _strnicmp
+#define wcscasecmp wcsicmp
+#endif
 
 #ifdef HW_Debug
 #ifdef gshaw
@@ -51,7 +64,11 @@
     Defines:
 =============================================================================*/
 
+#ifdef _WIN32
 #define MG_FIBFile_SERVERS      "FEMan\\Choose_Server.FIB"
+#else
+#define MG_FIBFile_SERVERS      "FEMan/Choose_Server.FIB"
+#endif
 
 #define MG_FontNameLength       64
 
@@ -192,14 +209,14 @@ bool            donepinging     = TRUE;
 bool            mgCreatingNetworkGame = FALSE;
 
 // structures and variables for creating a game.
-CaptainGameInfo tpGameCreated=
+extern CaptainGameInfo tpGameCreated;
 // N    P   M   D   u   p      nc  sf  bs  sr   ii    ia     lt    la   ad  ab  p     f
- {L"", L"", "", "", 0,  0,0,0,  0,  1,  3,   1, 1440, 2000, 19200, 2000, 50, 50, 0, 22058};
+//= {L"", L"", "", "", 0,  {0,0,0},  0,  1,  3,   1, 1440, 2000, 19200, 2000, 50, 50, 0, 22058};
 
 CaptainGameInfo BackupGameCreated;
 sdword          spCurrentSelectedBack;
-char            scenPickBack[];
-Address myAddress;
+/*char            scenPickBack[]*/
+char           *scenPickBack;
 
 // tweakable fonthandles.
 fonthandle mgListOfGamesFont=0;
@@ -502,9 +519,6 @@ int betaDoneVerifying = 0;
 
 // temporary variable for storing name, in case of cancel
 char tempname[64];
-
-wchar_t GameWereInterestedIn[MAX_TITAN_GAME_NAME_LEN] = L"";
-void *GameWereInterestedInMutex;
 
 CaptainGameInfo joinBackuptpGameCreated;
 bool joinBackuptpGameCreatedValid = FALSE;
@@ -929,9 +943,11 @@ void mgResetNamePassword(void)
 
 void mgGameInterestedIn(wchar_t *interested)
 {
+#ifndef _MACOSX_FIX_ME
     LockMutex(GameWereInterestedInMutex);
     wcscpy(GameWereInterestedIn,interested);
     UnLockMutex(GameWereInterestedInMutex);
+#endif
 }
 
 void mgGameInterestedOff()
@@ -990,7 +1006,7 @@ void *mgParseChatEntry(char *messageorig, bool preGameChat)
                 {
                     user = listGetStructOfNode(walk);
                     gcRemoveAmpersands(ampremoved, user->userName);
-                    if (strnicmp(ampremoved,toname,i)==0)
+                    if (strncasecmp(ampremoved,toname,i)==0)
                     {
                         // found a match so far
                         matched = user;
@@ -1013,7 +1029,7 @@ void *mgParseChatEntry(char *messageorig, bool preGameChat)
                 {
                     guser = listGetStructOfNode(walk);
                     gcRemoveAmpersands(ampremoved, guser->name);
-                    if (strnicmp(ampremoved,toname,i)==0)
+                    if (strncasecmp(ampremoved,toname,i)==0)
                     {
                         // found a match so far
                         gmatched = guser;
@@ -1089,7 +1105,7 @@ void *mgCompleteRoomPlayerName(char *message, char *compname, bool preGameChat)
                 {
                     user = listGetStructOfNode(walk);
                     gcRemoveAmpersands(ampremoved, user->userName);
-                    if (strnicmp(ampremoved,toname,i)==0)
+                    if (strncasecmp(ampremoved,toname,i)==0)
                     {
                         // found a match so far
                         matched = user;
@@ -1112,7 +1128,7 @@ void *mgCompleteRoomPlayerName(char *message, char *compname, bool preGameChat)
                 {
                     guser = listGetStructOfNode(walk);
                     gcRemoveAmpersands(ampremoved, guser->name);
-                    if (strnicmp(ampremoved,toname,i)==0)
+                    if (strncasecmp(ampremoved,toname,i)==0)
                     {
                         // found a match so far
                         gmatched = guser;
@@ -1163,7 +1179,7 @@ Node *mgIsUserInList(LinkedList *list, char *name)
     {
         namestruct = (mgUserNameList *)listGetStructOfNode(search);
 
-        if (strnicmp(name, namestruct->name, MAX_PERSONAL_NAME_LEN)==0)
+        if (strncasecmp(name, namestruct->name, MAX_PERSONAL_NAME_LEN)==0)
         {
             return(search);
         }
@@ -1292,7 +1308,7 @@ sdword mgCommandEntered(char *text, bool preGameChat)
 
         while (mgCommandInfoPtr[i].callback != NULL)
         {
-            if ((strnicmp(parse, mgCommandInfoPtr[i].Command, max(strlen(mgCommandInfoPtr[i].Command),space-text-1))==0) &&
+            if ((strncasecmp(parse, mgCommandInfoPtr[i].Command, max(strlen(mgCommandInfoPtr[i].Command),space-text-1))==0) &&
                 (space[0] == ' ') &&
                 (  ((GameCreator) && (mgCommandInfoPtr[i].captainonly)) ||
                    ((preGameChat)&&(mgCommandInfoPtr[i].pregamechat)) ||
@@ -1337,7 +1353,6 @@ sdword mgCommandComplete(char *text, char *commandstr, bool preGameChat)
     sdword      j,i,nummatches, command=-1;
     char        toname[64], compname[64];
     bool        done=FALSE;
-    bool        matched=FALSE;
 
     // if not command at all then return NULL
     if (text[0]!='!') return(-1);
@@ -1366,7 +1381,7 @@ sdword mgCommandComplete(char *text, char *commandstr, bool preGameChat)
 
                 for (j=0;mgCommandInfoPtr[j].callback != NULL;j++)
                 {
-                    if ((strnicmp(toname, mgCommandInfoPtr[j].Command, strlen(toname))==0) &&
+                    if ((strncasecmp(toname, mgCommandInfoPtr[j].Command, strlen(toname))==0) &&
                         (  ((GameCreator) && (mgCommandInfoPtr[j].captainonly)) ||
                            ((preGameChat)&&(mgCommandInfoPtr[j].pregamechat)) ||
                            ((!preGameChat)&&(mgCommandInfoPtr[j].roomchat))) )
@@ -1615,8 +1630,8 @@ void mgShowScreen(sdword screennum, bool disappear)
 ----------------------------------------------------------------------------*/
 void LockMutex(void *mutex)
 {
-    DWORD result = WaitForSingleObject((HANDLE)mutex, INFINITE);
-    dbgAssert(result != WAIT_FAILED);
+    int result = SDL_mutexP(mutex);
+    dbgAssert(result != -1);
 }
 
 /*-----------------------------------------------------------------------------
@@ -1628,8 +1643,8 @@ void LockMutex(void *mutex)
 ----------------------------------------------------------------------------*/
 void UnLockMutex(void *mutex)
 {
-    BOOL result = ReleaseMutex((HANDLE)mutex);
-    dbgAssert(result);
+    int result = SDL_mutexV(mutex);
+    dbgAssert(result != -1);
 }
 
 /*-----------------------------------------------------------------------------
@@ -1641,7 +1656,7 @@ void UnLockMutex(void *mutex)
 ----------------------------------------------------------------------------*/
 void *gameCreateMutex()
 {
-    return (void *)CreateMutex(NULL,FALSE,NULL);
+    return SDL_CreateMutex();
 }
 
 /*-----------------------------------------------------------------------------
@@ -1653,7 +1668,7 @@ void *gameCreateMutex()
 ----------------------------------------------------------------------------*/
 void gameCloseMutex(void *mutex)
 {
-    CloseHandle((HANDLE)mutex);
+    SDL_DestroyMutex(mutex);
 }
 
 /*=============================================================================
@@ -1822,6 +1837,11 @@ void mgSkirmish(char *name, featom *atom)
     tpGameCreated.numComputers  = 1;
     tpGameCreated.numPlayers    = 1;
     mgShowScreen(MGS_Skirmish_Basic, TRUE);
+
+#ifdef _MACOSX_FIX_ME
+	multiPlayerGame = FALSE;
+#endif
+
 #endif
 }
 
@@ -1910,7 +1930,7 @@ void mgFirewallButton(char *name, featom *atom)
     }
     else
     {
-        firewallButton = (ubyte)atom->pData;
+        firewallButton = (ubyte)(size_t)atom->pData;
     }
 }
 
@@ -2386,7 +2406,8 @@ void mgChatTextEntry(char*name,featom *atom)
                         aNumChars = mbstowcs(aWideStringP, strptr, (uword)strlen(strptr));
                         if (aNumChars != (size_t)-1)
                         {
-                            SendPrivateChatMessage(&user->userID,1,(uword)(aNumChars*2),aWideStringP);
+                            SendPrivateChatMessage((unsigned long*)(&user->userID), 1,
+                                                   (uword)(aNumChars*2),aWideStringP);
                         }
                     }
                 }
@@ -2703,6 +2724,7 @@ void mgJoinChannelNow(wchar_t *channelname,wchar_t *description)
 
 void mgJoinChannel(char*name,featom*atom)
 {
+#ifndef _MACOSX_FIX_ME
     sdword       i;
     channellist *channelinfo;
 
@@ -2728,6 +2750,7 @@ void mgJoinChannel(char*name,featom*atom)
             }
         }
     }
+#endif
 }
 
 void mgCreateChannel(char*name,featom*atom)
@@ -2999,6 +3022,7 @@ void mgChannelConfirmEntry(char*name, featom *atom)
 
 bool channelAlreadyExists(wchar_t *channelname)
 {
+#ifndef _MACOSX_FIX_ME
     sdword i;
 
     tpLockChannelList();
@@ -3012,6 +3036,8 @@ bool channelAlreadyExists(wchar_t *channelname)
         }
     }
     tpUnLockChannelList();
+#endif
+
     return FALSE;
 }
 
@@ -3202,6 +3228,7 @@ void mgJoinGame(char*name,featom*atom)
             }
         }
 
+#ifndef _MACOSX_FIX_ME
         if (wcslen(gameinfo->game.directoryCustomInfo.stringdata)>1)
         {
             joingame = &gameinfo->game;
@@ -3211,6 +3238,7 @@ void mgJoinGame(char*name,featom*atom)
         {
             mgRequestJoinGame(&gameinfo->game);
         }
+#endif
     }
 }
 
@@ -3238,7 +3266,10 @@ void mgListOfGamesBack(char *name, featom *atom)
 // callback for sorting the game list window
 bool mgListOfGamesCompare(void *firststruct,void *secondstruct)
 {
+#ifndef _MACOSX_FIX_ME
     sdword i;
+#endif
+
     gamelist *one = (gamelist *)(((listitemhandle)firststruct)->data);
     gamelist *two = (gamelist *)(((listitemhandle)secondstruct)->data);
 
@@ -3253,11 +3284,11 @@ bool mgListOfGamesCompare(void *firststruct,void *secondstruct)
             return(FALSE);
     }
 
-
+#ifndef _MACOSX_FIX_ME
     switch (mgListOfGamesWindow->sorttype)
     {
         case MG_SortByGameName:
-            if ((i=wcsicmp( one->game.Name,two->game.Name)) > 0)
+            if ((i=wcscasecmp( one->game.Name,two->game.Name)) > 0)
                 return (mgListOfGamesWindow->sortOrder);
             else
             {
@@ -3294,7 +3325,7 @@ bool mgListOfGamesCompare(void *firststruct,void *secondstruct)
             wchar_t *onemapname = one->game.directoryCustomInfo.stringdata + 1+wcslen(one->game.directoryCustomInfo.stringdata);
             wchar_t *twomapname = two->game.directoryCustomInfo.stringdata + 1+wcslen(two->game.directoryCustomInfo.stringdata);
 
-            if ((i=wcsicmp( onemapname,twomapname)) > 0)
+            if ((i=wcscasecmp( onemapname,twomapname)) > 0)
                 return (mgListOfGamesWindow->sortOrder);
             else
             {
@@ -3306,6 +3337,9 @@ bool mgListOfGamesCompare(void *firststruct,void *secondstruct)
 
         }
     }
+#endif // _MACOSX_FIX_ME
+
+    return FALSE;
 }
 
 // callback if the title is clicked on
@@ -3465,9 +3499,12 @@ void mgListOfGamesItemDraw(rectangle *rect, listitemhandle data)
     color       c;
     fonthandle  oldfont;
     gamelist   *gameinfo = (gamelist *)data->data;
-    udword passwordlen;
     bool gameinprogress = gameinfo->game.directoryCustomInfo.flag & GAME_IN_PROGRESS;
     bool diffversion = (!CheckNetworkVersionCompatibility(gameinfo->game.directoryCustomInfo.versionInfo));
+
+#ifndef _MACOSX_FIX_ME
+    udword passwordlen;
+#endif
 
     oldfont = fontMakeCurrent(mgListOfGamesFont);
 
@@ -3501,6 +3538,7 @@ void mgListOfGamesItemDraw(rectangle *rect, listitemhandle data)
     sprintf(temp,"%i",gameinfo->game.directoryCustomInfo.numPlayers);
     fontPrint(x-fontWidth(temp)-fontWidth("W"),y,c,temp);
 
+#ifndef _MACOSX_FIX_ME
     passwordlen = wcslen(gameinfo->game.directoryCustomInfo.stringdata);
 
     wcstombs(temp,gameinfo->game.directoryCustomInfo.stringdata + 1+passwordlen,512);
@@ -3521,6 +3559,7 @@ void mgListOfGamesItemDraw(rectangle *rect, listitemhandle data)
     }
 
     fontMakeCurrent(oldfont);
+#endif
 }
 
 // initilize the list of games window structure to needed settings
@@ -4113,6 +4152,7 @@ void mgDirtyNumPlayerRegions()
 
 bool mgInvalidGameName()
 {
+#ifndef _MACOSX_FIX_ME
     featom  *atomchange;
 
     if (wcslen(tpGameCreated.Name)<2)
@@ -4137,12 +4177,14 @@ bool mgInvalidGameName()
 
         return TRUE;
     }
+#endif
 
     return FALSE;
 }
 
 bool mgInvalidGamePassword()
 {
+#ifndef _MACOSX_FIX_ME
     if (bitTest(tpGameCreated.flag,MG_PasswordProtected))
     {
         if (wcslen(tpGameCreated.Password) < 2)
@@ -4150,6 +4192,7 @@ bool mgInvalidGamePassword()
             return TRUE;
         }
     }
+#endif
 
     return FALSE;
 }
@@ -4194,12 +4237,14 @@ void mgCreateGameNow(char *name, featom *atom)
                 return;
             }
 
+#ifndef _MACOSX_FIX_ME
             if (wcslen(GetCurrentChannel()) <= 0)
             {
                 mgPrepareMessageBox(strGetString(strMustBeInRoomToCreateGame),strGetString(strMustBeInRoomToCreateGame2));
                 mgShowScreen(MGS_Message_Box,FALSE);
                 return;
             }
+#endif
 
             if (mgInvalidGamePassword())
             {
@@ -4336,11 +4381,13 @@ bool mgAccelerator(void)
 }
 
 
-/*void mgAcceleratorRelease(void)
+#if 0
+void mgAcceleratorRelease(void)
 {
-/*    mgAccRate = MG_START_ACC_RATE;
+/*    mgAccRate = MG_START_ACC_RATE;*/
     mgAccCount = 1;
-}*/
+}
+#endif
 
 sdword mgSelectOpponentType(regionhandle region, sdword yClicked)
 {
@@ -4384,7 +4431,8 @@ sdword mgRemoveCPUProcess(regionhandle region, sdword ID, udword event, udword d
             mgRemoveCPUOpp();
         mgCPULeftArrowActive = TRUE;
 
-/*        if ( TRUE ) // max  )
+#if 0
+        if ( TRUE ) // max  )
         {
             mgCPULeftArrowActive = TRUE;
             if (mgAccelerator())
@@ -4392,8 +4440,9 @@ sdword mgRemoveCPUProcess(regionhandle region, sdword ID, udword event, udword d
         }
         else
         {
-            /*    Put sound effect HERE
-        }*/
+            /*    Put sound effect HERE */
+        }
+#endif
     }
     region->status |= RSF_DrawThisFrame;
     return(0);
@@ -4422,7 +4471,8 @@ sdword mgAddCPUProcess(regionhandle region, sdword ID, udword event, udword data
         if (mgAccelerator())
             mgAddCPUOpp();
         mgCPURightArrowActive = TRUE;
-/*        if ( TRUE /* max  )
+#if 0
+        if ( TRUE /* max */ )
         {
             mgCPURightArrowActive = TRUE;
             if (mgAccelerator())
@@ -4434,7 +4484,8 @@ sdword mgAddCPUProcess(regionhandle region, sdword ID, udword event, udword data
         else
         {
             //    Put sound effect HERE
-        }*/
+        }
+#endif
     }
     region->status |= RSF_DrawThisFrame;
     return(0);
@@ -4627,7 +4678,7 @@ void mgStartingFleet(char *name, featom *atom)
     }
     else
     {
-        tpGameCreated.startingFleet = (ubyte)atom->pData;
+        tpGameCreated.startingFleet = (ubyte)(size_t)atom->pData;
     }
     mgGameTypesOtherButtonPressed();
 }
@@ -4669,7 +4720,7 @@ void mgGameType(char *name, featom *atom)
     }
     else
     {
-        gameNum = (ubyte)atom->pData;
+        gameNum = (ubyte)(size_t)atom->pData;
         mgSetGameTypeByNum(gameNum);
         //regRecursiveSetReallyDirty(feStack[feStackIndex].baseRegion);
         feAllCallOnCreate(feStack[feStackIndex].screen);
@@ -4843,7 +4894,7 @@ void mgBountySize(char *name, featom *atom)
     }
     else
     {
-        tpGameCreated.bountySize = (ubyte)atom->pData;
+        tpGameCreated.bountySize = (ubyte)(size_t)atom->pData;
     }
     mgGameTypesOtherButtonPressed();
 #endif
@@ -5019,7 +5070,7 @@ void mgStartingResources(char *name, featom *atom)
     }
     else
     {
-        tpGameCreated.startingResources = (ubyte)atom->pData;
+        tpGameCreated.startingResources = (ubyte)(size_t)atom->pData;
     }
     mgGameTypesOtherButtonPressed();
 }
@@ -5098,7 +5149,7 @@ void mgResourceInjectionAmount(char *name, featom *atom)
     {
         // initialize button here
         mgResourceInjectionAmountEntryBox = (textentryhandle)atom->pData;
-        sprintf(temp,"%d",tpGameCreated.resourceInjectionsAmount);
+        sprintf(temp,"%ld",tpGameCreated.resourceInjectionsAmount);
         uicTextEntrySet(mgResourceInjectionAmountEntryBox,temp,strlen(temp)+1);
         uicTextBufferResize(mgResourceInjectionAmountEntryBox,MAX_NUM_LENGTH-6);
         uicTextEntryInit(mgResourceInjectionAmountEntryBox,UICTE_NumberEntry);
@@ -5110,7 +5161,7 @@ void mgResourceInjectionAmount(char *name, featom *atom)
     {
         case CM_LoseFocus :
         case CM_AcceptText :
-            sscanf(mgResourceInjectionAmountEntryBox->textBuffer,"%d",&tpGameCreated.resourceInjectionsAmount);
+            sscanf(mgResourceInjectionAmountEntryBox->textBuffer,"%ld",&tpGameCreated.resourceInjectionsAmount);
             if (uicTextEntryMessage(atom)==CM_AcceptText) feToggleButtonSet("MG_ResourceInjections", TRUE);
         break;
         case CM_GainFocus :
@@ -5193,7 +5244,7 @@ void mgResourceLumpSumAmount(char *name, featom *atom)
     {
         // initialize button here
         mgResourceLumpSumAmountEntryBox = (textentryhandle)atom->pData;
-        sprintf(temp,"%d",tpGameCreated.resourceLumpSumAmount);
+        sprintf(temp,"%ld",tpGameCreated.resourceLumpSumAmount);
         uicTextEntrySet(mgResourceLumpSumAmountEntryBox,temp,strlen(temp)+1);
         uicTextBufferResize(mgResourceLumpSumAmountEntryBox,MAX_NUM_LENGTH-6);
         uicTextEntryInit(mgResourceLumpSumAmountEntryBox,UICTE_NumberEntry);
@@ -5205,7 +5256,7 @@ void mgResourceLumpSumAmount(char *name, featom *atom)
     {
         case CM_LoseFocus :
         case CM_AcceptText :
-            sscanf(mgResourceLumpSumAmountEntryBox->textBuffer,"%d",&tpGameCreated.resourceLumpSumAmount);
+            sscanf(mgResourceLumpSumAmountEntryBox->textBuffer,"%ld",&tpGameCreated.resourceLumpSumAmount);
             if (uicTextEntryMessage(atom)==CM_AcceptText) feToggleButtonSet("MG_ResourceLumpSum", TRUE);
         break;
         case CM_GainFocus :
@@ -5483,6 +5534,7 @@ void mgBackFromPassword(char *name, featom *atom)
 
 void mgGoPassword(char *name, featom *atom)
 {
+#ifndef _MACOSX_FIX_ME
     static wchar_t widepasswordentryboxtext[MAX_PASSWORD_LENGTH];
 
     if (joingame!=NULL)
@@ -5498,6 +5550,7 @@ void mgGoPassword(char *name, featom *atom)
             mgShowScreen(MGS_Message_Box,FALSE);
         }
     }
+#endif
 }
 
 void mgBackFromRoomPassword(char *name, featom *atom)
@@ -5507,11 +5560,13 @@ void mgBackFromRoomPassword(char *name, featom *atom)
 
 void mgGoRoomPassword(char *name, featom *atom)
 {
+#ifndef _MACOSX_FIX_ME
     if (wcslen(joinchannelname) >= 2)
     {
         mbstowcs(ChannelPassword,mgGamePasswordEntryEntryBox->textBuffer,strlen(mgGamePasswordEntryEntryBox->textBuffer)+1);
         mgJoinChannelNow(joinchannelname,joinchanneldescription);
     }
+#endif
 }
 
 /*=============================================================================
@@ -5756,6 +5811,7 @@ void mgProcessPingInfo(mgqueuenewping *ping)
 
 void mgProcessGameListGameAdded(mgqueuegamelistgame *added)
 {
+#ifndef _MACOSX_FIX_ME
     Node       *walk;
     gamelist   *gameinfo;
 
@@ -5795,10 +5851,12 @@ void mgProcessGameListGameAdded(mgqueuegamelistgame *added)
     {
         gameinfo->item = NULL;
     }
+#endif
 }
 
 void mgProcessGameListGameRemoved(mgqueuegamelistgame *removed)
 {
+#ifndef _MACOSX_FIX_ME
     Node       *walk;
     gamelist   *gameinfo;
 
@@ -5833,10 +5891,12 @@ foundit:
     }
 
     listDeleteNode(walk);
+#endif
 }
 
 void mgProcessGameListGameChanged(mgqueuegamelistgame *changed)
 {
+#ifndef _MACOSX_FIX_ME
     Node       *walk;
     gamelist   *gameinfo;
 
@@ -5872,6 +5932,7 @@ foundit:
 #endif
         mgListOfGamesWindow->reg.status |= RSF_DrawThisFrame;
     }
+#endif // _MACOSX_FIX_ME
 }
 
 void mgProcessGameListNew(mgqueuegamelistnew *newlist)
@@ -6084,6 +6145,7 @@ void mgProcessKickedOut(void)
 #pragma optimize("gy", off)                       //turn on stack frame (we need ebp for this function)
 void mgProcessCallBacksTask(void)
 {
+#ifndef _MACOSX_FIX_ME
     static Node           *walk;
     static Node           *nextnode;
     static channellist    *channelinfo;
@@ -6095,7 +6157,9 @@ void mgProcessCallBacksTask(void)
 
     taskYield(0);
 
+#ifndef C_ONLY
     while (1)
+#endif
     {
         taskStackSaveCond(0);
 #if defined(OEM) || defined(Downloadable) || defined(CGW)
@@ -6313,7 +6377,7 @@ void mgProcessCallBacksTask(void)
         {
             LockQueue(&mgThreadTransfer);
 
-            sizeofpacket = Dequeue(&mgThreadTransfer, &packet);
+            sizeofpacket = HWDequeue(&mgThreadTransfer, &packet);
             dbgAssert(sizeofpacket > 0);
             copypacket = memAlloc(sizeofpacket,"mg(mgthreadtransfer)", Pyrophoric);
             memcpy(copypacket, packet, sizeofpacket);
@@ -6408,6 +6472,7 @@ void mgProcessCallBacksTask(void)
         taskStackRestoreCond();
         taskYield(0);
     }
+#endif // _MACOSX_FIX_ME
 }
 #pragma optimize("", on)
 
@@ -6531,9 +6596,9 @@ void mgStartup(void)
 
     GameWereInterestedIn[0] = 0;
 
-    changescreenmutex       = (void *)CreateMutex(NULL,FALSE,NULL);
-    gamestartedmutex        = (void *)CreateMutex(NULL,FALSE,NULL);
-    GameWereInterestedInMutex = (void *)CreateMutex(NULL,FALSE,NULL);
+    changescreenmutex       = SDL_CreateMutex();
+    gamestartedmutex        = SDL_CreateMutex();
+    GameWereInterestedInMutex = SDL_CreateMutex();
 
     ProccessCallback = taskStart(mgProcessCallBacksTask, MG_TaskServicePeriod, 0);
     taskPause(ProccessCallback);
@@ -6569,9 +6634,9 @@ void mgShutdown(void)
 {
     CloseQueue(&mgThreadTransfer);
 
-    CloseHandle((HANDLE)changescreenmutex);
-    CloseHandle((HANDLE)gamestartedmutex);
-    CloseHandle((HANDLE)GameWereInterestedInMutex);
+    SDL_DestroyMutex(changescreenmutex);
+    SDL_DestroyMutex(gamestartedmutex);
+    SDL_DestroyMutex(GameWereInterestedInMutex);
 
     titanGameShutdown();
 }
@@ -6625,7 +6690,7 @@ void chatReceiveUserJoinReply(short status, unsigned long userID)
     strcpy(user.user.userName, utyName);
     user.user.userID = userID;
 
-    Enqueue(&mgThreadTransfer, (ubyte *)&user, sizeof(mgqueueuserlist));
+    HWEnqueue(&mgThreadTransfer, (ubyte *)&user, sizeof(mgqueueuserlist));
 
     // Queue up the packet that will say, <you> have joined the room.
     chat.header.packettype = MG_QUEUEROOMCHATINFO;
@@ -6634,7 +6699,7 @@ void chatReceiveUserJoinReply(short status, unsigned long userID)
     chat.chat.index = userID;
     chat.chat.messagetype = MG_MESSAGECHAT;
 
-    Enqueue(&mgThreadTransfer, (ubyte *)&chat, sizeof(mgqueuechatlist));
+    HWEnqueue(&mgThreadTransfer, (ubyte *)&chat, sizeof(mgqueuechatlist));
 
     UnLockQueue(&mgThreadTransfer);
 
@@ -6657,7 +6722,7 @@ void chatReceiveUsersHere(const char *name, unsigned long userID)
     user.user.userID       = userID;
     strcpy(user.user.userName, name);
 
-    Enqueue(&mgThreadTransfer, (ubyte *)&user, sizeof(mgqueueuserlist));
+    HWEnqueue(&mgThreadTransfer, (ubyte *)&user, sizeof(mgqueueuserlist));
 
     UnLockQueue(&mgThreadTransfer);
 }
@@ -6673,7 +6738,7 @@ void chatReceiveUsersJoined(const char *name, unsigned long userID)
     user.user.userID       = userID;
     strcpy(user.user.userName, name);
 
-    Enqueue(&mgThreadTransfer, (ubyte *)&user, sizeof(mgqueueuserlist));
+    HWEnqueue(&mgThreadTransfer, (ubyte *)&user, sizeof(mgqueueuserlist));
 
     // Queue up the packet that will say, <they> have joined the room.
     chat.header.packettype = MG_QUEUEROOMCHATINFO;
@@ -6682,7 +6747,7 @@ void chatReceiveUsersJoined(const char *name, unsigned long userID)
     chat.chat.index = userID;
     chat.chat.messagetype = MG_MESSAGECHAT;
 
-    Enqueue(&mgThreadTransfer, (ubyte *)&chat, sizeof(mgqueuechatlist));
+    HWEnqueue(&mgThreadTransfer, (ubyte *)&chat, sizeof(mgqueuechatlist));
 
     UnLockQueue(&mgThreadTransfer);
 }
@@ -6701,12 +6766,12 @@ void chatReceiveUserLeft(unsigned long userID)
     chat.chat.index = userID;
     chat.chat.messagetype = MG_MESSAGECHAT;
 
-    Enqueue(&mgThreadTransfer, (ubyte *)&chat, sizeof(mgqueuechatlist));
+    HWEnqueue(&mgThreadTransfer, (ubyte *)&chat, sizeof(mgqueuechatlist));
 
     user.header.packettype = MG_QUEUEROOMGONEUSERINFO;
     user.user.userID       = userID;
 
-    Enqueue(&mgThreadTransfer, (ubyte *)&user, sizeof(mgqueueuserlist));
+    HWEnqueue(&mgThreadTransfer, (ubyte *)&user, sizeof(mgqueueuserlist));
 
     UnLockQueue(&mgThreadTransfer);
 }
@@ -6740,7 +6805,7 @@ void chatReceiveMessage(unsigned long originUserID, sdword whisper,unsigned long
             chat.chat.messagetype = MG_NORMALCHAT;
         chat.chat.index  = originUserID;
 
-        Enqueue(&mgThreadTransfer, (ubyte *)&chat, sizeof(mgqueuechatlist));
+        HWEnqueue(&mgThreadTransfer, (ubyte *)&chat, sizeof(mgqueuechatlist));
 
         UnLockQueue(&mgThreadTransfer);
     }
@@ -7069,7 +7134,7 @@ void titanPingReplyReceivedCB(Address *address,unsigned long theLag)
     ping.ping.Port         = GetPortFromInternetAddress(*address);
     ping.ping.pingtime     = theLag;
 
-    Enqueue(&mgThreadTransfer, (ubyte *)&ping, sizeof(mgqueuenewping));
+    HWEnqueue(&mgThreadTransfer, (ubyte *)&ping, sizeof(mgqueuenewping));
 
     UnLockQueue(&mgThreadTransfer);
 }
@@ -7083,7 +7148,7 @@ void mgGameListGameAdded(tpscenario *thegame)
     qgame.header.packettype = MG_QUEUEGAMELISTGAMEADDED;
     qgame.game = *thegame;
 
-    Enqueue(&mgThreadTransfer, (ubyte *)&qgame, sizeof(mgqueuegamelistgame));
+    HWEnqueue(&mgThreadTransfer, (ubyte *)&qgame, sizeof(mgqueuegamelistgame));
 
     UnLockQueue(&mgThreadTransfer);
 }
@@ -7097,7 +7162,7 @@ void mgGameListGameRemoved(tpscenario *thegame)
     qgame.header.packettype = MG_QUEUEGAMELISTGAMEREMOVED;
     qgame.game = *thegame;
 
-    Enqueue(&mgThreadTransfer, (ubyte *)&qgame, sizeof(mgqueuegamelistgame));
+    HWEnqueue(&mgThreadTransfer, (ubyte *)&qgame, sizeof(mgqueuegamelistgame));
 
     UnLockQueue(&mgThreadTransfer);
 }
@@ -7111,7 +7176,7 @@ void mgGameListGameChanged(tpscenario *thegame)
     qgame.header.packettype = MG_QUEUEGAMELISTGAMECHANGED;
     qgame.game = *thegame;
 
-    Enqueue(&mgThreadTransfer, (ubyte *)&qgame, sizeof(mgqueuegamelistgame));
+    HWEnqueue(&mgThreadTransfer, (ubyte *)&qgame, sizeof(mgqueuegamelistgame));
 
     UnLockQueue(&mgThreadTransfer);
 }
@@ -7124,7 +7189,7 @@ void mgGameListNew(void)
 
     qnew.header.packettype = MG_QUEUEGAMELISTNEW;
 
-    Enqueue(&mgThreadTransfer, (ubyte *)&qnew, sizeof(mgqueuegamelistnew));
+    HWEnqueue(&mgThreadTransfer, (ubyte *)&qnew, sizeof(mgqueuegamelistnew));
 
     UnLockQueue(&mgThreadTransfer);
 }
@@ -7148,7 +7213,7 @@ void titanGotNumUsersInRoomCB(const wchar_t *theRoomName, int theNumUsers)
     wcscpy(qnew.channelname,theRoomName);
     qnew.numpeople = theNumUsers;
 
-    Enqueue(&mgThreadTransfer, (ubyte *)&qnew, sizeof(mgqueuenumpeopleroominfo));
+    HWEnqueue(&mgThreadTransfer, (ubyte *)&qnew, sizeof(mgqueuenumpeopleroominfo));
 
     UnLockQueue(&mgThreadTransfer);
 }
@@ -7174,7 +7239,7 @@ void mgDisplayMessage(char *message)
     status.header.packettype = MG_QUEUESTATUSINFO;
     strcpy(status.status.message, message);
 
-    Enqueue(&mgThreadTransfer, (ubyte *)&status, sizeof(mgqueuestatusline));
+    HWEnqueue(&mgThreadTransfer, (ubyte *)&status, sizeof(mgqueuestatusline));
 
     UnLockQueue(&mgThreadTransfer);
 }
@@ -7186,7 +7251,7 @@ void mgNotifyKickedOut(void)
     LockQueue(&mgThreadTransfer);
 
     general.packettype = MG_QUEUEKICKEDOUT;
-    Enqueue(&mgThreadTransfer, (ubyte *)&general, sizeof(general));
+    HWEnqueue(&mgThreadTransfer, (ubyte *)&general, sizeof(general));
 
     UnLockQueue(&mgThreadTransfer);
 }
@@ -7216,7 +7281,7 @@ void mgUpdateGameInfo(void)
         player.player.race        = tpGameCreated.playerInfo[i].race;
         player.player.index       = i;
 
-        Enqueue(&mgThreadTransfer, (ubyte *)&player, sizeof(mgqueuegameplayerinfo));
+        HWEnqueue(&mgThreadTransfer, (ubyte *)&player, sizeof(mgqueuegameplayerinfo));
     }
 
     sigsNumPlayers = tpGameCreated.numPlayers;
@@ -7339,7 +7404,7 @@ void mgChatConnectionFailed(void)
     LockQueue(&mgThreadTransfer);
 
     connfailed.packettype = MG_QUEUECHATDISCONNECTED;
-    Enqueue(&mgThreadTransfer, (ubyte *)&connfailed, sizeof(mgqueuegeneral));
+    HWEnqueue(&mgThreadTransfer, (ubyte *)&connfailed, sizeof(mgqueuegeneral));
 
     UnLockQueue(&mgThreadTransfer);
 }
@@ -7357,7 +7422,7 @@ void mgNotifyGameDisolved(void)
     LockQueue(&mgThreadTransfer);
 
     disolved.packettype = MG_QUEUEGAMEDISOLVED;
-    Enqueue(&mgThreadTransfer, (ubyte *)&disolved, sizeof(mgqueuegeneral));
+    HWEnqueue(&mgThreadTransfer, (ubyte *)&disolved, sizeof(mgqueuegeneral));
 
     UnLockQueue(&mgThreadTransfer);
 }
@@ -7381,7 +7446,7 @@ void mgProcessGameChatPacket(ChatPacket *packet)
     else
         chat.chat.messagetype = MG_NORMALCHAT;
 
-    Enqueue(&mgThreadTransfer, (ubyte *)&chat, sizeof(mgqueuechatlist));
+    HWEnqueue(&mgThreadTransfer, (ubyte *)&chat, sizeof(mgqueuechatlist));
 
     UnLockQueue(&mgThreadTransfer);
 }
@@ -7640,6 +7705,7 @@ void mgDrawListOfServersTitle(rectangle *rect)
 // callback for sorting the server list window
 bool mgListOfServersCompare(void *firststruct,void *secondstruct)
 {
+#ifndef _MACOSX_FIX_ME
     sdword i;
     serverlist *one = (serverlist *)(((listitemhandle)firststruct)->data);
     serverlist *two = (serverlist *)(((listitemhandle)secondstruct)->data);
@@ -7647,7 +7713,7 @@ bool mgListOfServersCompare(void *firststruct,void *secondstruct)
     switch (mgListOfServersWindow->sorttype)
     {
         case MG_ServerSortByName:
-            if ((i=wcsicmp( one->ServerName,two->ServerName)) > 0)
+            if ((i=wcscasecmp( one->ServerName,two->ServerName)) > 0)
                 return (mgListOfServersWindow->sortOrder);
             else
             {
@@ -7658,7 +7724,7 @@ bool mgListOfServersCompare(void *firststruct,void *secondstruct)
             }
 
         case MG_ServerSortByDescription:
-            if ((i=wcsicmp( one->ServerDescription,two->ServerDescription)) > 0)
+            if ((i=wcscasecmp( one->ServerDescription,two->ServerDescription)) > 0)
                 return (mgListOfServersWindow->sortOrder);
             else
             {
@@ -7701,6 +7767,7 @@ bool mgListOfServersCompare(void *firststruct,void *secondstruct)
                     return (FALSE);
             }
     }
+#endif
 
     return FALSE;
 }

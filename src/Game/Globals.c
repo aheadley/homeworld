@@ -6,15 +6,15 @@
     Copyright Relic Entertainment, Inc.  All rights reserved.
 =============================================================================*/
 
-#include "types.h"
-#include "globals.h"
+#include "Types.h"
+#include "Globals.h"
 #include "mainswitches.h"
-#include "universe.h"
+#include "Universe.h"
 #include "TitanInterfaceC.h"
-#include "aiplayer.h"
+#include "AIPlayer.h"
 #include "CommandNetwork.h"
-#include "netcheck.h"
-#include "multiplayergame.h"
+#include "NetCheck.h"
+#include "MultiplayerGame.h"
 #include "ProfileTimers.h"
 #include "mainrgn.h"
 

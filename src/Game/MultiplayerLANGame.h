@@ -12,18 +12,22 @@
 #define ___MULTIPLAYERLANGAME_H
 
 
-#include "types.h"
-#include "region.h"
-#include "linkedlist.h"
-#include "uicontrols.h"
+#include "Types.h"
+#include "Region.h"
+#include "LinkedList.h"
+#include "UIControls.h"
 #include "TitanInterfaceC.h"
-#include "multiplayergame.h"
+#include "MultiplayerGame.h"
 
 /*=============================================================================
     defines:
 =============================================================================*/
 
+#ifdef _WIN32
 #define LG_FIBFile          "FEMan\\Multiplayer_LAN_Game.FIB"
+#else
+#define LG_FIBFile          "FEMan/Multiplayer_LAN_Game.FIB"
+#endif
 #define MAX_GAMENAME_LENGTH     MAX_TITAN_GAME_NAME_LEN
 #define MAX_MAPNAME_LENGTH      MAX_MAPNAME_LEN
 #define MAX_CHANNELNAME_LENGTH  MAX_CHANNEL_NAME_LEN

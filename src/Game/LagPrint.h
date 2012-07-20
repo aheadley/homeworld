@@ -10,7 +10,11 @@
 #ifndef ___LAGPRINT_H
 #define ___LAGPRINT_H
 
+#ifdef _WIN32
 #define LAG_PATH                    "FeMan\\LagIcon\\"
+#else
+#define LAG_PATH                    "FeMan/LagIcon/"
+#endif
 
 #define SLOW_COMPUTERICON           LAG_PATH"SlowComputerIcon.lif"
 #define SLOW_INTERNETICON           LAG_PATH"SlowInternetIcon.lif"

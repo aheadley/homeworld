@@ -9,9 +9,9 @@
 #ifndef ___GENERIC_INTERCEPTOR_H
 #define ___GENERIC_INTERCEPTOR_H
 
-#include "types.h"
-#include "spaceobj.h"
-#include "flightman.h"
+#include "Types.h"
+#include "SpaceObj.h"
+#include "FlightMan.h"
 
 /*=============================================================================
     Types:

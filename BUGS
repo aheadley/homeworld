@@ -1,0 +1,30 @@
+Known bugs (as of 2004-08-01):
+
+- Software renderer currently does not render 3D graphics properly (looks like
+  it's not rendering any 3D for the most part, with triangles popping at
+  various times).
+
+- Various warnings (i.e. MEX files not found) are given during level loading
+  (single player game or training mission).  This actually happens in the
+  original Windows version, too, so it's nothing to worry about.
+
+- Saved games are not compatible between the original Windows version of
+  Homeworld and the SDL/Linux port of Homeworld.  Essentially, saved games
+  created using the original Homeworld code are inherently non-portable due to
+  the method used to save level state information.  Steps have been made to
+  attempt to avoid any compatibility issues with this and future releases of
+  Homeworld SDL across any platforms, compilers, or compiler flags used.  The
+  game will no longer attempt to load saved games from the original Homeworld
+  or from Homeworld SDL versions prior to 0.2.
+
+- If you are currently running in OpenGL mode and you switch to software mode,
+  you will be presented with a blank screen (not including a couple things
+  drawn in the bottom left corner).  Basically, don't switch back to software
+  once you have the OpenGL renderer selected.
+
+- Certain systems configurations appear to be currently unable to switch to
+  the OpenGL renderer.  This is being looked into.
+
+- Rendering will cease to work properly from time to time when exiting the
+  sensors manager.  In particular, this tends to happen when playing a
+  skirmish against the CPU.  This may actually be fixed by now.

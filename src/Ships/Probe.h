@@ -9,8 +9,8 @@
 #ifndef ___PROBE_H
 #define ___PROBE_H
 
-#include "types.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "SpaceObj.h"
 
 /*=============================================================================
     Types:

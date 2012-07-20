@@ -4,6 +4,8 @@
 #include "kgl.h"
 #include "maths.h"
 
+extern void invert_matrix(GLfloat const*, GLfloat*);
+
 typedef enum {X,Y,Z,W} quat_coefficient;
 
 GLfloat xaxis[3] = {1.0f,0.0f,0.0f};
@@ -388,7 +390,6 @@ void mat4_transpose(GLfloat* d, GLfloat* s)
 
 void mat4_inverse(GLfloat* d, GLfloat* s)
 {
-    extern void invert_matrix(GLfloat const*, GLfloat*);
     invert_matrix(s, d);
 }
 

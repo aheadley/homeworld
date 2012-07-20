@@ -2,6 +2,7 @@
 #include "kgl.h"
 #include "newtriangle.h"
 #include "swdrv.h"
+#include "span.h"
 
 #define PIXEL_ADDRESS2(X,Y) (GLushort*)(ctx->FrameBuffer + ctx->scrMultByte[Y] + ctx->Buffer.ByteMult*(X))
 

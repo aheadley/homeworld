@@ -9,9 +9,9 @@
 #ifndef ___CLOAK_GENERATOR_H
 #define ___CLOAK_GENERATOR_H
 
-#include "types.h"
-#include "spaceobj.h"
-#include "linkedlist.h"
+#include "Types.h"
+#include "SpaceObj.h"
+#include "LinkedList.h"
 
 
 /*=============================================================================

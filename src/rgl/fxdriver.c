@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include <assert.h>
+#include <string.h>
 #include "kgl.h"
 #include "fxdrv.h"
 
@@ -109,6 +110,8 @@ void _fxLog(char* s)
 
 static unsigned short CW, oldCW;
 
+#if defined (_MSC_VER)
+
 #define loFPU() \
     __asm { \
         __asm fstcw [oldCW] \
@@ -122,6 +125,29 @@ static unsigned short CW, oldCW;
     __asm { \
         __asm fldcw [oldCW] \
     }
+
+#elif defined (__GNUC__) && defined (__i386__)
+
+#define loFPU() \
+    __asm__ __volatile__ (            \
+        "fstcw %0\n\t"                \
+        "movw %0, %%ax\n\t"           \
+        "andl $0xFFFFFCFF, %%eax\n\t" \
+        "movw %%ax, %1\n\t"           \
+        "fldcw %1\n\t"                \
+        : "=m" (oldCW)                \
+        : "m" (CW)                    \
+        : "eax" );
+
+#define restoreFPU() \
+    __asm__ __volatile__ ( \
+        "fldcw %0\n\t"     \
+        :                  \
+        : "m" (oldCW) );
+
+#else
+#error Inline assembly requires x86 platform.
+#endif
 
 #define SNAPPER (float)(3L << 18)
 //intel-specific snapper, relies on loFPU

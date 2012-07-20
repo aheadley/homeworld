@@ -1,9 +1,11 @@
 #ifndef __AIEVENTS_H
 #define __AIEVENTS_H
 
-#include "types.h"
-#include "shipselect.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "ShipSelect.h"
+#include "SpaceObj.h"
+
+struct AITeam;
 
 //
 //  the voids should actual be AITeams, but
@@ -144,6 +146,8 @@ sdword aieCheckFuelHigh(struct AITeam *team);
 sdword aieCheckShipDied(struct AITeam *team, ShipPtr *ship);
 sdword aieCheckTeamDied(struct AITeam *team);
 sdword aieCheckInterrupt(struct AITeam *team);
+
+struct AITeamMove;
 
 void aieHandlerSetGettingRocked (struct AITeamMove *move, bool8 oneShot, aieHandlerShips handler);
 void aieHandlerSetEnemyNearby(struct AITeamMove *move, real32 watchRadius, bool8 oneShot, aieHandlerShips handler);

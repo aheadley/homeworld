@@ -9,13 +9,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "types.h"
-#include "statscript.h"
-#include "memory.h"
-#include "spaceobj.h"
-#include "debug.h"
-#include "file.h"
-#include "key.h"
+#include <ctype.h>
+#include <limits.h>
+#include "Types.h"
+#include "StatScript.h"
+#include "Memory.h"
+#include "SpaceObj.h"
+#include "Debug.h"
+#include "File.h"
+#include "Key.h"
 #include "texreg.h"
 #include "LOD.h"
 
@@ -136,7 +138,7 @@ lodinfo *lodTableReadScript(char *directory, char *fileName)
     info->nLevels = index;                                  //store number of levels
 #if LOD_AUTO_SAVE
     {
-        char partialName[_MAX_PATH];
+        char partialName[PATH_MAX];
         char *fullName;
         sprintf(partialName, "%s%s", directory, fileName);
         fullName = filePathPrepend(partialName, 0);
@@ -173,13 +175,16 @@ static void lodColorScalarRead(char *directory,char *field,void *dataToFillIn)
 static void lodTypeRead(char *directory,char *field,void *dataToFillIn)
 {                                                           //set correct LOD type
     lod *dest;
+    unsigned int i;
 
     dest = (lod *)dataToFillIn;
 #if LOD_AUTO_SAVE
     dest->baseScalar = (trBaseColorScalar == 0.0f) ? 1.0f : trBaseColorScalar;
     dest->stripeScalar = (trStripeColorScalar == 0.0f) ? 1.0f : trStripeColorScalar;
 #endif
-    _strupr(field);
+    /*_strupr(field);*/
+    for (i = 0; (field[i] = toupper(field[i])); i++) { }
+
     if (strstr(field, "INVALID"))
     {
         dest->flags = (udword)((dest->flags & (~LM_LODType)) | LT_Invalid);
@@ -331,7 +336,6 @@ lod *lodLevelGet(void *spaceObj, vector *camera, vector *ship)
 lod* lodPanicLevelGet(void* spaceObj, vector* camera, vector* ship)
 {
     SpaceObj* obj = (SpaceObj*)spaceObj;
-    lod* LOD = lodLevelGet(spaceObj, camera, ship);
     lodinfo* info = obj->staticinfo->staticheader.LOD;
 
     if (obj->currentLOD == 3)
@@ -445,9 +449,21 @@ sdword lodAutoSave(lodinfo *LOD)
     sdword level;
     FILE *fp;
     char *filePath;
+    char *lodFileNameFull;
     real32 baseScalar = 1.0f, stripeScalar = 1.0f;
 
-    fp = fopen(LOD->fileName, "wt");
+    lodFileNameFull = filePathPrepend(LOD->fileName, FF_UserSettingsPath);
+
+    if (!fileMakeDestinationDirectory(lodFileNameFull))
+    {
+        dbgWarningf(
+            DBG_Loc,
+            "Cannot create destination directory for file '%s'.",
+            LOD->fileName);
+        return ERROR;
+    }
+
+    fp = fopen(lodFileNameFull, "wt");
     if (fp == NULL)
     {
         dbgWarningf(DBG_Loc, "Cannot open '%s' for writing - not checked out?", LOD->fileName);
@@ -472,7 +488,11 @@ sdword lodAutoSave(lodinfo *LOD)
         fprintf(fp, "type%d                       %s\n", level, lodTypeStrings[LOD->level[level].flags & LM_LODType]);
         if ((LOD->level[level].flags & LM_LODType) == LT_Mesh)
         {
+#ifdef _WIN32
             filePath = strchr(((meshdata *)LOD->level[level].pData)->fileName, '\\') + 1;
+#else
+            filePath = strpbrk(((meshdata *)LOD->level[level].pData)->fileName, "\\/") + 1;
+#endif
 #if LOD_ERROR_CHECKING
             if (*filePath == 0)
             {

@@ -7,22 +7,22 @@
 =============================================================================*/
 
 #include <string.h>
-#include "types.h"
-#include "debug.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "Debug.h"
+#include "SpaceObj.h"
 #include "HeavyCorvette.h"
-#include "statscript.h"
-#include "gun.h"
-#include "attack.h"
+#include "StatScript.h"
+#include "Gun.h"
+#include "Attack.h"
 #include "DefaultShip.h"
-#include "shipselect.h"
-#include "aiship.h"
-#include "aitrack.h"
-#include "tactics.h"
-#include "fastmath.h"
-#include "universe.h"
-#include "soundevent.h"
-#include "battle.h"
+#include "ShipSelect.h"
+#include "AIShip.h"
+#include "AITrack.h"
+#include "Tactics.h"
+#include "FastMath.h"
+#include "Universe.h"
+#include "SoundEvent.h"
+#include "Battle.h"
 
 //#define DEBUG_HEAVYCORVETTE
 
@@ -237,9 +237,6 @@ bool flytoBurstPosition(Ship *ship)
 bool doBurstFire(Ship *ship)
 {
     HeavyCorvetteSpec *spec = (HeavyCorvetteSpec *)ship->ShipSpecifics;
-    GunInfo *gunInfo = ship->gunInfo;
-    sdword numGuns = gunInfo->numGuns;
-    //Gun *gun;
     sdword done;
     vector trajectory,heading;
     real32 range,one_over_range;
@@ -268,8 +265,6 @@ bool doBurstFire(Ship *ship)
 
     //fix later
     spec->bulletLifeTime = range*oneOverburstSpeed;
-
-
 
     bitSet(ship->specialFlags,SPECIAL_BurstFiring);
     done = gunShootGunsAtTarget(ship,&dummyTarg,0.0f,&trajectory);

@@ -9,8 +9,8 @@
 #ifndef ___DFG_FRIGATE_H
 #define ___DFG_FRIGATE_H
 
-#include "types.h"
-#include "spaceobj.h"
+#include "Types.h"
+#include "SpaceObj.h"
 
 /*=============================================================================
     Defines:

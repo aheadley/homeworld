@@ -1,8 +1,8 @@
 //
 //      MISSION02 - Battle w/ Turanic Raiders
 //
-#include "..\\Game\\speechevent.h"
-#include "..\\Game\\soundmusic.h"
+#include "../Game/SpeechEvent.h"
+#include "../Game/SoundMusic.h"
 
 
     LOCALIZATION //컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴
